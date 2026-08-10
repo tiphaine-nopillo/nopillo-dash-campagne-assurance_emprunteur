@@ -90,7 +90,6 @@ gh repo create nopillo-signal --public --source=. --push
 
 # 3. données réelles
 export HUBSPOT_TOKEN="pat-eu1-..."
-export HUBSPOT_USER_ID="12345678"
 pip install requests
 python3 refresh.py && git commit -am "refresh" && git push
 ```
@@ -101,13 +100,14 @@ Tant que `data.json` porte `"mode": "DEMO"`, un bandeau jaune l'affiche explicit
 
 | Scope | Pourquoi |
 |---|---|
-| `automation.sequences.read` | lister les séquences et leurs steps |
 | `sales-email-read` | objets EMAIL = toutes les métriques |
 | `crm.objects.owners.read` | résoudre les senders |
 | `crm.objects.contacts.read` | rapprochement contact ↔ enrôlement |
 | `crm.objects.meetings.read` | suivi des RDV (optionnel) |
 
-Requiert un siège **Sales Hub Pro ou Enterprise** assigné à l'utilisateur du token.
+Toutes en **lecture seule** : n'accorde aucune écriture. Le script ne fait que lire ; un token en lecture ne peut ni modifier ni supprimer de données CRM.
+
+L'API Sequences n'est pas utilisée — `cohorts.json` déclare les identifiants — donc aucun siège Sales Hub n'est requis, et aucun `HUBSPOT_USER_ID`.
 
 ## Refresh automatique
 
@@ -133,7 +133,7 @@ jobs:
       - run: python3 refresh.py
         env:
           HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
-          HUBSPOT_USER_ID: ${{ secrets.HUBSPOT_USER_ID }}
+
       - run: |
           git config user.name "signal-bot"
           git config user.email "bot@nopillo.com"
