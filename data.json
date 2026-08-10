@@ -1,115 +1,11 @@
 {
  "meta": {
-  "generated_at": "2026-08-10T12:59:21.086425+00:00",
-  "period": "2 cohorte(s)",
+  "generated_at": "2026-08-10T13:04:50.864506+00:00",
+  "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE"
  },
  "cohorts": [
-  {
-   "id": "2026-07-24",
-   "label": "Cohorte du 24/07/2026",
-   "sent_at": "2026-07-24T08:33:00Z",
-   "campaign": "Assurance emprunteur",
-   "confirmed": false,
-   "confirm_note": "Mapping déduit des dates d'enrôlement, non confirmé par Tiphaine. Renseigner list_id et vérifier audience/version avant d'exploiter cette cohorte.",
-   "cells": [
-    {
-     "list_id": null,
-     "list_name": null,
-     "sequence_id": "835657914",
-     "audience": "RP",
-     "version": "0",
-     "list_size": null,
-     "enrolled": 1064,
-     "sent": 1217,
-     "bounced": 0,
-     "opens": 869,
-     "clicks": 16,
-     "replies": 319,
-     "meetings": 0,
-     "deals_ae": 0,
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Nous vérifions votre déclaration LMNP",
-       "sent": 1064,
-       "opens": 775,
-       "clicks": 15,
-       "replies": 275
-      },
-      {
-       "order": 2,
-       "subject": "Dernière chance pour vérifier votre déclaration LMNP",
-       "sent": 149,
-       "opens": 90,
-       "clicks": 1,
-       "replies": 41
-      },
-      {
-       "order": 3,
-       "subject": "Re : Nous vérifions votre déclaration LMNP",
-       "sent": 4,
-       "opens": 4,
-       "clicks": 0,
-       "replies": 3
-      }
-     ],
-     "by_owner": []
-    },
-    {
-     "list_id": null,
-     "list_name": null,
-     "sequence_id": "835429574",
-     "audience": "LMNP",
-     "version": "0",
-     "list_size": null,
-     "enrolled": 197,
-     "sent": 491,
-     "bounced": 0,
-     "opens": 328,
-     "clicks": 1,
-     "replies": 122,
-     "meetings": 0,
-     "deals_ae": 0,
-     "steps": [
-      {
-       "order": 1,
-       "subject": "On vérifie gratuitement votre déclaration LMNP",
-       "sent": 197,
-       "opens": 135,
-       "clicks": 0,
-       "replies": 30
-      },
-      {
-       "order": 2,
-       "subject": "Dernière étape : vérification de votre déclaration LMNP",
-       "sent": 174,
-       "opens": 115,
-       "clicks": 0,
-       "replies": 51
-      },
-      {
-       "order": 3,
-       "subject": "Dernière chance pour vérifier votre déclaration LMNP",
-       "sent": 119,
-       "opens": 77,
-       "clicks": 0,
-       "replies": 41
-      },
-      {
-       "order": 4,
-       "subject": "Re : Dernière étape : vérification de votre déclaration LMNP",
-       "sent": 1,
-       "opens": 1,
-       "clicks": 1,
-       "replies": 0
-      }
-     ],
-     "by_owner": []
-    }
-   ]
-  },
   {
    "id": "2026-08-05",
    "label": "Cohorte du 05/08/2026",
@@ -274,7 +170,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-10T12:59:21.086441+00:00",
+  "snapshot_at": "2026-08-10T13:04:50.864525+00:00",
   "stages": [
    {
     "id": "5363445962",
