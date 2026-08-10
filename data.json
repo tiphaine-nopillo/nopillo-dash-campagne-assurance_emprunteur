@@ -1,0 +1,526 @@
+{
+ "meta": {
+  "generated_at": "2026-08-10T10:00:00Z",
+  "collected": true,
+  "source": "HubSpot · EMAIL.hs_sequence_id · MEETING_EVENT · DEAL pipeline 3817233652 · CONTACT.hubspot_owner_id",
+  "warning": null,
+  "attribution_note": "RDV et transactions rattachés via contact.hs_latest_sequence_enrolled : cette propriété ne conserve que la DERNIÈRE séquence. Un contact réenrôlé ailleurs depuis le 05/08 sort du décompte. Chiffres à considérer comme un plancher."
+ },
+ "cohorts": [
+  {
+   "id": "2026-08-05",
+   "label": "Cohorte du 05/08/2026",
+   "sent_at": "2026-08-05T08:31:00Z",
+   "campaign": "Assurance emprunteur",
+   "confirmed": true,
+   "cells": [
+    {
+     "list_id": "14319",
+     "list_name": "OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A",
+     "sequence_id": "841303267",
+     "audience": "RP",
+     "version": "A",
+     "list_size": null,
+     "enrolled": 249,
+     "sent": 492,
+     "delivered": 491,
+     "bounced": 1,
+     "opens": 254,
+     "clicks": 5,
+     "replies": 7,
+     "meetings": 9,
+     "deals_ae": 1,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "rapide point sur votre assurance emprunteur",
+       "sent": 249,
+       "opens": 138,
+       "clicks": 4,
+       "replies": 3
+      },
+      {
+       "order": 2,
+       "subject": "renegociation assurance emprunteur",
+       "sent": 243,
+       "opens": 116,
+       "clicks": 1,
+       "replies": 4
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 5,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4,
+       "deals_ae": 1
+      }
+     ]
+    },
+    {
+     "list_id": "14334",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026",
+     "sequence_id": "841303268",
+     "audience": "RP",
+     "version": "B",
+     "list_size": null,
+     "enrolled": 255,
+     "sent": 501,
+     "delivered": 498,
+     "bounced": 3,
+     "opens": 250,
+     "clicks": 10,
+     "replies": 9,
+     "meetings": 6,
+     "deals_ae": 2,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "l'economie que les proprietaires immobiliers ignorent",
+       "sent": 255,
+       "opens": 130,
+       "clicks": 2,
+       "replies": 3
+      },
+      {
+       "order": 2,
+       "subject": "renegociation assurance emprunteur",
+       "sent": 246,
+       "opens": 120,
+       "clicks": 8,
+       "replies": 6
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 0,
+       "deals_ae": 1
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 2,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4,
+       "deals_ae": 1
+      }
+     ]
+    },
+    {
+     "list_id": "14336",
+     "list_name": "OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A",
+     "sequence_id": "841303243",
+     "audience": "LMNP",
+     "version": "A",
+     "list_size": 51,
+     "enrolled": 50,
+     "sent": 99,
+     "delivered": 99,
+     "bounced": 0,
+     "opens": 52,
+     "clicks": 2,
+     "replies": 0,
+     "meetings": 2,
+     "deals_ae": 3,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "rapide point sur votre assurance emprunteur",
+       "sent": 50,
+       "opens": 30,
+       "clicks": 1,
+       "replies": 0
+      },
+      {
+       "order": 2,
+       "subject": "renegociation assurance emprunteur",
+       "sent": 49,
+       "opens": 22,
+       "clicks": 1,
+       "replies": 0
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 1,
+       "deals_ae": 3
+      }
+     ]
+    },
+    {
+     "list_id": "14337",
+     "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B",
+     "sequence_id": "841252078",
+     "audience": "LMNP",
+     "version": "B",
+     "list_size": null,
+     "enrolled": 46,
+     "sent": 91,
+     "delivered": 91,
+     "bounced": 0,
+     "opens": 48,
+     "clicks": 1,
+     "replies": 2,
+     "meetings": 4,
+     "deals_ae": 4,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "economisez jusqu'a 5000€ sur votre assurance emprunteur",
+       "sent": 46,
+       "opens": 23,
+       "clicks": 0,
+       "replies": 1
+      },
+      {
+       "order": 2,
+       "subject": "renegociation assurance emprunteur",
+       "sent": 45,
+       "opens": 25,
+       "clicks": 1,
+       "replies": 1
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1,
+       "deals_ae": 1
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 3,
+       "deals_ae": 3
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "audience_labels": {
+  "RP": "Résidence principale",
+  "LMNP": "LMNP"
+ },
+ "stats_config": {
+  "min_n_for_rate": 100,
+  "alpha": 0.05,
+  "power": 0.8
+ },
+ "pipeline_ae": {
+  "id": "3817233652",
+  "key": "pipe_courtage_ae",
+  "label": "Pipeline courtage AE",
+  "snapshot_at": "2026-08-10T09:40:00Z",
+  "amount_per_deal": 415,
+  "amount_note": "Montant identique sur 100 % des dossiers : valeur par défaut écrite par n8n. Tout total en euros est un proxy de volume, jamais un prévisionnel.",
+  "stages": [
+   {
+    "id": "5363445962",
+    "key": "optimization_activated",
+    "label": "Optimisation activée",
+    "probability": 10,
+    "closed": false,
+    "won": false,
+    "count": 13
+   },
+   {
+    "id": "5363445963",
+    "key": "simulation_started",
+    "label": "Simulation démarrée",
+    "probability": 40,
+    "closed": false,
+    "won": false,
+    "count": 8
+   },
+   {
+    "id": "simulation_completed",
+    "key": "simulation_completed",
+    "label": "Simulation terminée",
+    "probability": 60,
+    "closed": false,
+    "won": false,
+    "count": 0
+   },
+   {
+    "id": "simulation_ready",
+    "key": "simulation_ready",
+    "label": "Simulation prête",
+    "probability": 60,
+    "closed": false,
+    "won": false,
+    "count": 0
+   },
+   {
+    "id": "5363445965",
+    "key": "offer_viewed",
+    "label": "Offre consultée",
+    "probability": 70,
+    "closed": false,
+    "won": false,
+    "count": 1
+   },
+   {
+    "id": "5363445966",
+    "key": "offer_accepted",
+    "label": "Offre acceptée",
+    "probability": 80,
+    "closed": false,
+    "won": false,
+    "count": 2
+   },
+   {
+    "id": "5363445967",
+    "key": "process_started",
+    "label": "Dossier lancé",
+    "probability": 80,
+    "closed": false,
+    "won": false,
+    "count": 4
+   },
+   {
+    "id": "process_completed",
+    "key": "process_completed",
+    "label": "Dossier finalisé",
+    "probability": 100,
+    "closed": true,
+    "won": true,
+    "count": 0
+   },
+   {
+    "id": "5363445968",
+    "key": "optimization_declined",
+    "label": "Optimisation refusée",
+    "probability": 0,
+    "closed": true,
+    "won": false,
+    "count": 3
+   }
+  ],
+  "open_total": 28,
+  "won_total": 0,
+  "lost_total": 3,
+  "deals": [
+   {
+    "id": "505443816648",
+    "stage": "5363445963",
+    "days_in_stage": 63,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "505032662260",
+    "stage": "5363445967",
+    "days_in_stage": 56,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "505438796993",
+    "stage": "5363445962",
+    "days_in_stage": 66,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "503790819516",
+    "stage": "5363445966",
+    "days_in_stage": 67,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "505440151774",
+    "stage": "5363445962",
+    "days_in_stage": 66,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "505439101166",
+    "stage": "5363445963",
+    "days_in_stage": 66,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515144621272",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515159195854",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515297818839",
+    "stage": "5363445963",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515189616843",
+    "stage": "5363445967",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515144621270",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515285620974",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "514041806017",
+    "stage": "5363445965",
+    "days_in_stage": 5,
+    "is_test": true,
+    "backfilled": false
+   },
+   {
+    "id": "515248622833",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "505443557584",
+    "stage": "5363445962",
+    "days_in_stage": 66,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515189616846",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515280460000",
+    "stage": "5363445963",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515153770729",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "505110714589",
+    "stage": "5363445963",
+    "days_in_stage": 63,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515150114021",
+    "stage": "5363445962",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   },
+   {
+    "id": "515261735111",
+    "stage": "5363445963",
+    "days_in_stage": 3,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515550867676",
+    "stage": "5363445962",
+    "days_in_stage": 0,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515598230772",
+    "stage": "5363445967",
+    "days_in_stage": 0,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "504047926488",
+    "stage": "5363445967",
+    "days_in_stage": 61,
+    "is_test": false,
+    "backfilled": false
+   },
+   {
+    "id": "515166673145",
+    "stage": "5363445963",
+    "days_in_stage": 4,
+    "is_test": false,
+    "backfilled": true
+   }
+  ],
+  "deals_loaded": 25,
+  "deals_expected": 28,
+  "anomalies": [
+   {
+    "level": "high",
+    "title": "Aucun dossier finalisé",
+    "body": "process_completed (étape gagnée, 100 %) contient 0 dossier sur 31. simulation_completed et simulation_ready n'ont jamais été utilisées non plus. Trois étapes vides d'affilée : le flow n8n n'écrit probablement pas les étapes terminales. Aucun taux de conversion n'est communicable tant que ce n'est pas tranché."
+   },
+   {
+    "level": "high",
+    "title": "Reprise en masse du 06/08",
+    "body": "15 dossiers créés entre 15:25:25 et 15:25:48 le 06/08. C'est une reprise de données, pas de l'activité. L'ancienneté de ces dossiers est remise à zéro artificiellement et n'est pas exploitable."
+   },
+   {
+    "level": "med",
+    "title": "Dossier de test en production",
+    "body": "TEST OPS occupe la seule position offer_viewed. Le volume réel de cette étape est 0."
+   },
+   {
+    "level": "med",
+    "title": "closedate incohérent",
+    "body": "Plusieurs dossiers ouverts portent une date de clôture déjà passée (31/05, 04/06, 30/06). Propriété inexploitable."
+   }
+  ]
+ }
+}
