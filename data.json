@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-10T13:37:55.244924+00:00",
+  "generated_at": "2026-08-10T13:47:24.206900+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -242,7 +242,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-10T13:37:55.244942+00:00",
+  "snapshot_at": "2026-08-10T13:47:24.206920+00:00",
   "stages": [
    {
     "id": "5363445962",
