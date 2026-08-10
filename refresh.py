@@ -458,7 +458,14 @@ def build_all():
         meta=dict(generated_at=dt.datetime.now(dt.timezone.utc).isoformat(),
                   period=f"{len(cohorts)} cohorte(s)",
                   source="HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
-                  mode="LIVE"),
+                  mode="LIVE",
+                  # Lu par le dashboard pour son badge d'état. Sans cette clé il
+                  # affichait « métriques non collectées » alors que les chiffres
+                  # étaient présents.
+                  collected=True,
+                  attribution_note="RDV et simulations rattachés par appartenance aux listes statiques, "
+                                   "sur les objets créés après l'horodatage d'envoi de la cohorte. "
+                                   "Attribution temporelle, non causale."),
         cohorts=cohorts,
         audience_labels=cfg["audience_labels"],
         stats_config=cfg["stats"],
