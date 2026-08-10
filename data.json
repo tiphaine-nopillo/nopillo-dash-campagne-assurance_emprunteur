@@ -1,18 +1,122 @@
 {
  "meta": {
-  "generated_at": "2026-08-10T10:00:00Z",
-  "collected": true,
-  "source": "HubSpot · EMAIL.hs_sequence_id · MEETING_EVENT · DEAL pipeline 3817233652 · CONTACT.hubspot_owner_id",
-  "warning": null,
-  "attribution_note": "RDV et transactions rattachés via contact.hs_latest_sequence_enrolled : cette propriété ne conserve que la DERNIÈRE séquence. Un contact réenrôlé ailleurs depuis le 05/08 sort du décompte. Chiffres à considérer comme un plancher."
+  "generated_at": "2026-08-10T12:59:21.086425+00:00",
+  "period": "2 cohorte(s)",
+  "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
+  "mode": "LIVE"
  },
  "cohorts": [
+  {
+   "id": "2026-07-24",
+   "label": "Cohorte du 24/07/2026",
+   "sent_at": "2026-07-24T08:33:00Z",
+   "campaign": "Assurance emprunteur",
+   "confirmed": false,
+   "confirm_note": "Mapping déduit des dates d'enrôlement, non confirmé par Tiphaine. Renseigner list_id et vérifier audience/version avant d'exploiter cette cohorte.",
+   "cells": [
+    {
+     "list_id": null,
+     "list_name": null,
+     "sequence_id": "835657914",
+     "audience": "RP",
+     "version": "0",
+     "list_size": null,
+     "enrolled": 1064,
+     "sent": 1217,
+     "bounced": 0,
+     "opens": 869,
+     "clicks": 16,
+     "replies": 319,
+     "meetings": 0,
+     "deals_ae": 0,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Nous vérifions votre déclaration LMNP",
+       "sent": 1064,
+       "opens": 775,
+       "clicks": 15,
+       "replies": 275
+      },
+      {
+       "order": 2,
+       "subject": "Dernière chance pour vérifier votre déclaration LMNP",
+       "sent": 149,
+       "opens": 90,
+       "clicks": 1,
+       "replies": 41
+      },
+      {
+       "order": 3,
+       "subject": "Re : Nous vérifions votre déclaration LMNP",
+       "sent": 4,
+       "opens": 4,
+       "clicks": 0,
+       "replies": 3
+      }
+     ],
+     "by_owner": []
+    },
+    {
+     "list_id": null,
+     "list_name": null,
+     "sequence_id": "835429574",
+     "audience": "LMNP",
+     "version": "0",
+     "list_size": null,
+     "enrolled": 197,
+     "sent": 491,
+     "bounced": 0,
+     "opens": 328,
+     "clicks": 1,
+     "replies": 122,
+     "meetings": 0,
+     "deals_ae": 0,
+     "steps": [
+      {
+       "order": 1,
+       "subject": "On vérifie gratuitement votre déclaration LMNP",
+       "sent": 197,
+       "opens": 135,
+       "clicks": 0,
+       "replies": 30
+      },
+      {
+       "order": 2,
+       "subject": "Dernière étape : vérification de votre déclaration LMNP",
+       "sent": 174,
+       "opens": 115,
+       "clicks": 0,
+       "replies": 51
+      },
+      {
+       "order": 3,
+       "subject": "Dernière chance pour vérifier votre déclaration LMNP",
+       "sent": 119,
+       "opens": 77,
+       "clicks": 0,
+       "replies": 41
+      },
+      {
+       "order": 4,
+       "subject": "Re : Dernière étape : vérification de votre déclaration LMNP",
+       "sent": 1,
+       "opens": 1,
+       "clicks": 1,
+       "replies": 0
+      }
+     ],
+     "by_owner": []
+    }
+   ]
+  },
   {
    "id": "2026-08-05",
    "label": "Cohorte du 05/08/2026",
    "sent_at": "2026-08-05T08:31:00Z",
    "campaign": "Assurance emprunteur",
    "confirmed": true,
+   "confirm_note": null,
    "cells": [
     {
      "list_id": "14319",
@@ -20,20 +124,19 @@
      "sequence_id": "841303267",
      "audience": "RP",
      "version": "A",
-     "list_size": null,
+     "list_size": 263,
      "enrolled": 249,
      "sent": 492,
-     "delivered": 491,
      "bounced": 1,
      "opens": 254,
      "clicks": 5,
      "replies": 7,
-     "meetings": 9,
+     "meetings": 8,
      "deals_ae": 1,
      "steps": [
       {
        "order": 1,
-       "subject": "rapide point sur votre assurance emprunteur",
+       "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 249,
        "opens": 138,
        "clicks": 4,
@@ -41,27 +144,14 @@
       },
       {
        "order": 2,
-       "subject": "renegociation assurance emprunteur",
+       "subject": "Renégociation assurance emprunteur",
        "sent": 243,
        "opens": 116,
        "clicks": 1,
        "replies": 4
       }
      ],
-     "by_owner": [
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 5,
-       "deals_ae": 0
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 4,
-       "deals_ae": 1
-      }
-     ]
+     "by_owner": []
     },
     {
      "list_id": "14334",
@@ -69,12 +159,11 @@
      "sequence_id": "841303268",
      "audience": "RP",
      "version": "B",
-     "list_size": null,
+     "list_size": 264,
      "enrolled": 255,
      "sent": 501,
-     "delivered": 498,
      "bounced": 3,
-     "opens": 250,
+     "opens": 253,
      "clicks": 10,
      "replies": 9,
      "meetings": 6,
@@ -82,7 +171,7 @@
      "steps": [
       {
        "order": 1,
-       "subject": "l'economie que les proprietaires immobiliers ignorent",
+       "subject": "L’économie que les propriétaires immobiliers ignorent",
        "sent": 255,
        "opens": 130,
        "clicks": 2,
@@ -90,33 +179,14 @@
       },
       {
        "order": 2,
-       "subject": "renegociation assurance emprunteur",
+       "subject": "Renégociation assurance emprunteur",
        "sent": 246,
-       "opens": 120,
+       "opens": 123,
        "clicks": 8,
        "replies": 6
       }
      ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 0,
-       "deals_ae": 1
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 2,
-       "deals_ae": 0
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 4,
-       "deals_ae": 1
-      }
-     ]
+     "by_owner": []
     },
     {
      "list_id": "14336",
@@ -127,17 +197,16 @@
      "list_size": 51,
      "enrolled": 50,
      "sent": 99,
-     "delivered": 99,
      "bounced": 0,
      "opens": 52,
      "clicks": 2,
      "replies": 0,
      "meetings": 2,
-     "deals_ae": 3,
+     "deals_ae": 2,
      "steps": [
       {
        "order": 1,
-       "subject": "rapide point sur votre assurance emprunteur",
+       "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 50,
        "opens": 30,
        "clicks": 1,
@@ -145,27 +214,14 @@
       },
       {
        "order": 2,
-       "subject": "renegociation assurance emprunteur",
+       "subject": "Renégociation assurance emprunteur",
        "sent": 49,
        "opens": 22,
        "clicks": 1,
        "replies": 0
       }
      ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 1,
-       "deals_ae": 0
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 1,
-       "deals_ae": 3
-      }
-     ]
+     "by_owner": []
     },
     {
      "list_id": "14337",
@@ -173,12 +229,11 @@
      "sequence_id": "841252078",
      "audience": "LMNP",
      "version": "B",
-     "list_size": null,
+     "list_size": 47,
      "enrolled": 46,
      "sent": 91,
-     "delivered": 91,
      "bounced": 0,
-     "opens": 48,
+     "opens": 49,
      "clicks": 1,
      "replies": 2,
      "meetings": 4,
@@ -186,7 +241,7 @@
      "steps": [
       {
        "order": 1,
-       "subject": "economisez jusqu'a 5000€ sur votre assurance emprunteur",
+       "subject": "Economisez jusqu’à 5000€ sur votre assurance emprunteur",
        "sent": 46,
        "opens": 23,
        "clicks": 0,
@@ -194,27 +249,14 @@
       },
       {
        "order": 2,
-       "subject": "renegociation assurance emprunteur",
+       "subject": "Renégociation assurance emprunteur",
        "sent": 45,
-       "opens": 25,
+       "opens": 26,
        "clicks": 1,
        "replies": 1
       }
      ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 1,
-       "deals_ae": 1
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 3,
-       "deals_ae": 3
-      }
-     ]
+     "by_owner": []
     }
    ]
   }
@@ -232,9 +274,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-10T09:40:00Z",
-  "amount_per_deal": 415,
-  "amount_note": "Montant identique sur 100 % des dossiers : valeur par défaut écrite par n8n. Tout total en euros est un proxy de volume, jamais un prévisionnel.",
+  "snapshot_at": "2026-08-10T12:59:21.086441+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -323,203 +363,191 @@
   "lost_total": 3,
   "deals": [
    {
-    "id": "505443816648",
-    "stage": "5363445963",
-    "days_in_stage": 63,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "505032662260",
+    "id": "504047926488",
     "stage": "5363445967",
-    "days_in_stage": 56,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "505438796993",
-    "stage": "5363445962",
-    "days_in_stage": 66,
-    "is_test": false,
-    "backfilled": false
+    "days_in_stage": 61,
+    "is_test": false
    },
    {
     "id": "503790819516",
     "stage": "5363445966",
     "days_in_stage": 67,
-    "is_test": false,
-    "backfilled": false
+    "is_test": false
    },
    {
-    "id": "505440151774",
-    "stage": "5363445962",
-    "days_in_stage": 66,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "505439101166",
-    "stage": "5363445963",
-    "days_in_stage": 66,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "515144621272",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515159195854",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515297818839",
-    "stage": "5363445963",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515189616843",
+    "id": "505032662260",
     "stage": "5363445967",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515144621270",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515285620974",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "514041806017",
-    "stage": "5363445965",
-    "days_in_stage": 5,
-    "is_test": true,
-    "backfilled": false
-   },
-   {
-    "id": "515248622833",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "505443557584",
-    "stage": "5363445962",
-    "days_in_stage": 66,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "515189616846",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515280460000",
-    "stage": "5363445963",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
-   },
-   {
-    "id": "515153770729",
-    "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
+    "days_in_stage": 56,
+    "is_test": false
    },
    {
     "id": "505110714589",
     "stage": "5363445963",
     "days_in_stage": 63,
-    "is_test": false,
-    "backfilled": false
+    "is_test": false
+   },
+   {
+    "id": "505443557584",
+    "stage": "5363445962",
+    "days_in_stage": 66,
+    "is_test": false
+   },
+   {
+    "id": "505439101166",
+    "stage": "5363445963",
+    "days_in_stage": 65,
+    "is_test": false
+   },
+   {
+    "id": "505443816648",
+    "stage": "5363445963",
+    "days_in_stage": 63,
+    "is_test": false
+   },
+   {
+    "id": "505440151774",
+    "stage": "5363445962",
+    "days_in_stage": 65,
+    "is_test": false
+   },
+   {
+    "id": "505438796993",
+    "stage": "5363445962",
+    "days_in_stage": 65,
+    "is_test": false
+   },
+   {
+    "id": "514041806017",
+    "stage": "5363445965",
+    "days_in_stage": 5,
+    "is_test": true
+   },
+   {
+    "id": "515153770729",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515166673145",
+    "stage": "5363445963",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515280460000",
+    "stage": "5363445963",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515189616843",
+    "stage": "5363445967",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515189616846",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515248622833",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515295953110",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515144621270",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515285620974",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515297818839",
+    "stage": "5363445963",
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515144621272",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
    },
    {
     "id": "515150114021",
     "stage": "5363445962",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
+    "days_in_stage": 3,
+    "is_test": false
+   },
+   {
+    "id": "515159195854",
+    "stage": "5363445962",
+    "days_in_stage": 3,
+    "is_test": false
    },
    {
     "id": "515261735111",
     "stage": "5363445963",
     "days_in_stage": 3,
-    "is_test": false,
-    "backfilled": false
+    "is_test": false
+   },
+   {
+    "id": "515116114107",
+    "stage": "5363445966",
+    "days_in_stage": 0,
+    "is_test": false
    },
    {
     "id": "515550867676",
     "stage": "5363445962",
     "days_in_stage": 0,
-    "is_test": false,
-    "backfilled": false
+    "is_test": false
    },
    {
     "id": "515598230772",
     "stage": "5363445967",
     "days_in_stage": 0,
-    "is_test": false,
-    "backfilled": false
+    "is_test": false
    },
    {
-    "id": "504047926488",
-    "stage": "5363445967",
-    "days_in_stage": 61,
-    "is_test": false,
-    "backfilled": false
-   },
-   {
-    "id": "515166673145",
+    "id": "515550867678",
     "stage": "5363445963",
-    "days_in_stage": 4,
-    "is_test": false,
-    "backfilled": true
+    "days_in_stage": 0,
+    "is_test": false
    }
   ],
-  "deals_loaded": 25,
+  "deals_loaded": 28,
   "deals_expected": 28,
   "anomalies": [
    {
     "level": "high",
     "title": "Aucun dossier finalisé",
-    "body": "process_completed (étape gagnée, 100 %) contient 0 dossier sur 31. simulation_completed et simulation_ready n'ont jamais été utilisées non plus. Trois étapes vides d'affilée : le flow n8n n'écrit probablement pas les étapes terminales. Aucun taux de conversion n'est communicable tant que ce n'est pas tranché."
-   },
-   {
-    "level": "high",
-    "title": "Reprise en masse du 06/08",
-    "body": "15 dossiers créés entre 15:25:25 et 15:25:48 le 06/08. C'est une reprise de données, pas de l'activité. L'ancienneté de ces dossiers est remise à zéro artificiellement et n'est pas exploitable."
+    "body": "L'étape gagnée process_completed contient 0 dossier. Étapes jamais utilisées : simulation_completed, simulation_ready. Vérifier que le flow n8n écrit bien les étapes terminales."
    },
    {
     "level": "med",
     "title": "Dossier de test en production",
-    "body": "TEST OPS occupe la seule position offer_viewed. Le volume réel de cette étape est 0."
+    "body": "1 dossier(s) de test dans le pipeline, exclus des décomptes."
    },
    {
     "level": "med",
-    "title": "closedate incohérent",
-    "body": "Plusieurs dossiers ouverts portent une date de clôture déjà passée (31/05, 04/06, 30/06). Propriété inexploitable."
+    "title": "Dossiers dormants",
+    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 67 jours."
    }
   ]
  }
