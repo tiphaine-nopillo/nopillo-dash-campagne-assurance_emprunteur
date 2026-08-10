@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-10T13:04:50.864506+00:00",
+  "generated_at": "2026-08-10T13:22:23.191886+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE"
@@ -24,7 +24,7 @@
      "enrolled": 249,
      "sent": 492,
      "bounced": 1,
-     "opens": 254,
+     "opens": 255,
      "clicks": 5,
      "replies": 7,
      "meetings": 8,
@@ -42,12 +42,31 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 243,
-       "opens": 116,
+       "opens": 117,
        "clicks": 1,
        "replies": 4
       }
      ],
-     "by_owner": []
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 0,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 4,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4,
+       "deals_ae": 1
+      }
+     ]
     },
     {
      "list_id": "14334",
@@ -82,7 +101,26 @@
        "replies": 6
       }
      ],
-     "by_owner": []
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 0,
+       "deals_ae": 1
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 2,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4,
+       "deals_ae": 1
+      }
+     ]
     },
     {
      "list_id": "14336",
@@ -117,7 +155,20 @@
        "replies": 0
       }
      ],
-     "by_owner": []
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1,
+       "deals_ae": 0
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 1,
+       "deals_ae": 2
+      }
+     ]
     },
     {
      "list_id": "14337",
@@ -152,7 +203,26 @@
        "replies": 1
       }
      ],
-     "by_owner": []
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1,
+       "deals_ae": 1
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 3,
+       "deals_ae": 3
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 0,
+       "deals_ae": 0
+      }
+     ]
     }
    ]
   }
@@ -170,7 +240,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-10T13:04:50.864525+00:00",
+  "snapshot_at": "2026-08-10T13:22:23.191906+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -303,13 +373,13 @@
    {
     "id": "505440151774",
     "stage": "5363445962",
-    "days_in_stage": 65,
+    "days_in_stage": 66,
     "is_test": false
    },
    {
     "id": "505438796993",
     "stage": "5363445962",
-    "days_in_stage": 65,
+    "days_in_stage": 66,
     "is_test": false
    },
    {
