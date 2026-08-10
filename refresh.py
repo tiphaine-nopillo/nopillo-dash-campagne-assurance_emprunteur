@@ -35,6 +35,43 @@ SINCE_MS = int(SINCE.timestamp() * 1000)
 ONLY_SEQUENCES = []
 
 
+# ---------------------------------------------------------------- conversions
+# HubSpot n'est pas cohérent sur les types renvoyés par l'API : un compteur
+# peut arriver en "1", en "1.0" ou en None, un booléen en "true" ou en True,
+# une date en millisecondes ou en ISO 8601. Ces trois helpers absorbent les
+# variantes plutôt que de faire échouer tout le refresh sur un cas limite.
+
+def num(v):
+    """Entier tolérant. int('1.0') lève ValueError, d'où le passage par float."""
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return 0
+
+
+def is_true(v):
+    """Booléen tolérant : accepte True, 'true', 'True', 1, '1'."""
+    if isinstance(v, bool):
+        return v
+    return str(v).strip().lower() in ("true", "1")
+
+
+def to_dt(v):
+    """Date tolérante : millisecondes epoch ou chaîne ISO 8601. None si illisible."""
+    if v in (None, ""):
+        return None
+    try:
+        return dt.datetime.fromtimestamp(float(v) / 1000, dt.timezone.utc)
+    except (TypeError, ValueError):
+        pass
+    try:
+        d = dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+        return d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)
+    except ValueError:
+        return None
+
+
+
 def get(path, **params):
     r = requests.get(BASE + path, headers=H, params=params, timeout=30)
     r.raise_for_status()
@@ -190,14 +227,12 @@ def fetch_ae_pipeline():
         is_test = "TEST" in name.upper()
 
         counts[stage] = counts.get(stage, 0) + 1     # décompte exhaustif
-        if p.get("hs_is_closed") == "true":
+        if is_true(p.get("hs_is_closed")):
             continue
 
         entered = p.get("hs_v2_date_entered_current_stage") or p.get("createdate")
-        days = None
-        if entered:
-            e = dt.datetime.fromtimestamp(int(entered) / 1000, dt.timezone.utc)
-            days = (now - e).days
+        e = to_dt(entered)
+        days = (now - e).days if e else None
         deals.append(dict(id=r["id"], stage=stage, days_in_stage=days,
                           is_test=is_test))       # pas de dealname : RGPD
 
@@ -296,7 +331,7 @@ def emails_by_step(sequence_id):
         for src, dst in (("hs_email_open_count", "opens"),
                          ("hs_email_click_count", "clicks"),
                          ("hs_email_reply_count", "replies")):
-            hit = 1 if int(p.get(src) or 0) > 0 else 0
+            hit = 1 if num(p.get(src)) > 0 else 0
             st[dst] += hit
             totals[dst] += hit
     ordered = sorted(steps.items(), key=lambda x: -x[1]["sent"])
