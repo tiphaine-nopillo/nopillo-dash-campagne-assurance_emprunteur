@@ -1,5 +1,7 @@
 {
- "_doc": "Définition des cohortes. Une cellule = une liste statique + la séquence qui lui a été envoyée. Mapping explicite volontaire : les titres de listes et de séquences n'ont pas d'ordre de tokens stable, un parseur casserait. Pour les prochaines cohortes, format recommandé : 'AE | 2026-09-02 | LMNP | A'.",
+ "_doc": "Définition des cohortes. Une cellule = une liste STATIQUE + la séquence qui lui a été envoyée. Mapping explicite volontaire : les titres de listes n'ont pas d'ordre de tokens stable, un parseur casserait. Pour les prochaines cohortes, format recommandé : 'AE | 2026-09-02 | LMNP | A'.",
+ "_regle": "Une cellule sans list_id ne peut pas rattacher les RDV ni les simulations : elle afficherait des zéros trompeurs. Ne déclare une cohorte ici que si tu as les 4 identifiants de listes. Sinon laisse-la dans _brouillon.",
+
  "cohorts": [
   {
    "id": "2026-08-05",
@@ -17,20 +19,26 @@
     {"list_id": "14337", "sequence_id": "841252078", "audience": "LMNP", "version": "B",
      "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B"}
    ]
-  },
-  {
-   "id": "2026-07-24",
-   "label": "Cohorte du 24/07/2026",
-   "sent_at": "2026-07-24T08:33:00Z",
-   "campaign": "Assurance emprunteur",
-   "confirmed": false,
-   "confirm_note": "Mapping déduit des dates d'enrôlement, non confirmé par Tiphaine. Renseigner list_id et vérifier audience/version avant d'exploiter cette cohorte.",
-   "cells": [
-    {"list_id": null, "sequence_id": "835657914", "audience": "RP",   "version": "0", "list_name": null},
-    {"list_id": null, "sequence_id": "835429574", "audience": "LMNP", "version": "0", "list_name": null}
-   ]
   }
  ],
+
+ "_brouillon": {
+  "_note": "Cohorte repérée dans le portail mais NON qualifiée : mapping audience/version déduit des dates d'enrôlement, listes inconnues. Le script ignore cette section. Pour l'activer : renseigne les list_id, vérifie audience et version, puis déplace le bloc dans cohorts.",
+  "cohortes_a_qualifier": [
+   {
+    "id": "2026-07-24",
+    "label": "Cohorte du 24/07/2026",
+    "sent_at": "2026-07-24T08:33:00Z",
+    "campaign": "Assurance emprunteur",
+    "confirmed": false,
+    "cells": [
+     {"list_id": null, "sequence_id": "835657914", "audience": "?", "version": "?", "list_name": null},
+     {"list_id": null, "sequence_id": "835429574", "audience": "?", "version": "?", "list_name": null}
+    ]
+   }
+  ]
+ },
+
  "audience_labels": {"RP": "Résidence principale", "LMNP": "LMNP"},
  "deal_pipeline": "3817233652",
  "stats": {"min_n_for_rate": 100, "alpha": 0.05, "power": 0.8}
