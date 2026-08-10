@@ -7,22 +7,21 @@ Principe : l'API Sequences ne renvoie AUCUNE métrique de performance.
 On reconstruit donc tout depuis l'objet d'engagement EMAIL, qui porte hs_sequence_id.
 
 Prérequis
-  export HUBSPOT_TOKEN="pat-eu1-..."   # private app token
-  export HUBSPOT_USER_ID="12345678"    # requis par l'API Sequences
+  export HUBSPOT_TOKEN="pat-eu1-..."   # token de l'application privée
   pip install requests
 
-Scopes de la private app
-  automation.sequences.read
-  crm.objects.contacts.read
-  sales-email-read            (objets EMAIL)
-  crm.objects.owners.read
-  crm.objects.meetings.read   (si suivi RDV)
+Portées de l'application privée — LECTURE SEULE, aucune écriture
+  sales-email-read              objets EMAIL (envois, ouvertures, clics, réponses)
+  crm.objects.contacts.read     membres des listes statiques
+  crm.lists.read                filtre d'appartenance aux listes
+  crm.objects.deals.read        simulations du pipe_courtage_ae
+  crm.objects.meetings.read     RDV
+  crm.objects.owners.read       noms des propriétaires
 """
 import os, json, time, datetime as dt
 import requests
 
 TOKEN = os.environ["HUBSPOT_TOKEN"]
-USER_ID = os.environ.get("HUBSPOT_USER_ID", "")
 BASE = "https://api.hubapi.com"
 H = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
 
@@ -53,26 +52,7 @@ def post(path, body):
     r.raise_for_status()
 
 
-# ---------------------------------------------------------------- séquences
-def list_sequences():
-    out, after = [], None
-    while True:
-        p = {"limit": 100, "userId": USER_ID}
-        if after:
-            p["after"] = after
-        d = get("/automation/sequences/2026-03", **p)
-        out += d.get("results", [])
-        after = (d.get("paging") or {}).get("next", {}).get("after")
-        if not after:
-            break
-    if ONLY_SEQUENCES:
-        keep = set(str(x) for x in ONLY_SEQUENCES)
-        out = [s for s in out if s["id"] in keep or s["name"] in keep]
-    return out
 
-
-def sequence_detail(sid):
-    return get(f"/automation/sequences/2026-03/{sid}", userId=USER_ID)
 
 
 # --------------------------------------------------------- emails engagement
@@ -115,106 +95,6 @@ def owners_map():
             for o in d.get("results", [])}
 
 
-# ------------------------------------------------------------------ agrégats
-def iso_week(ts_ms):
-    d = dt.datetime.fromtimestamp(int(ts_ms) / 1000, dt.timezone.utc)
-    return f"W{d.isocalendar().week}"
-
-
-def build():
-    owners = owners_map()
-    seqs_out, weekly = [], {}
-    senders = {}
-
-    for s in list_sequences():
-        detail = sequence_detail(s["id"])
-        step_defs = {st["stepOrder"]: st for st in detail.get("steps", [])
-                     if st.get("actionType", "").startswith("EMAIL")}
-        emails = search_emails(s["id"])
-        if not emails:
-            continue
-
-        agg = dict(sent=0, bounced=0, opens=0, clicks=0, replies=0)
-        steps = {}
-        for e in emails:
-            p = e["properties"]
-            status = (p.get("hs_email_status") or "").upper()
-            if status not in ("SENT", "BOUNCED"):
-                continue
-            agg["sent"] += 1
-            if status == "BOUNCED":
-                agg["bounced"] += 1
-                # on ne compte pas d'engagement sur un bounce
-            else:
-                # bornage à 1 pour obtenir de l'unique par email
-                op = 1 if int(p.get("hs_email_open_count") or 0) > 0 else 0
-                cl = 1 if int(p.get("hs_email_click_count") or 0) > 0 else 0
-                rp = 1 if int(p.get("hs_email_reply_count") or 0) > 0 else 0
-                agg["opens"] += op
-                agg["clicks"] += cl
-                agg["replies"] += rp
-
-            # regroupement par objet d'email = proxy de step
-            subj = p.get("hs_email_subject") or "(sans objet)"
-            st = steps.setdefault(subj, dict(sent=0, opens=0, clicks=0, replies=0))
-            st["sent"] += 1
-            if status == "SENT":
-                st["opens"] += 1 if int(p.get("hs_email_open_count") or 0) > 0 else 0
-                st["clicks"] += 1 if int(p.get("hs_email_click_count") or 0) > 0 else 0
-                st["replies"] += 1 if int(p.get("hs_email_reply_count") or 0) > 0 else 0
-
-            # hebdo
-            w = weekly.setdefault(iso_week(p.get("hs_timestamp") or p.get("hs_createdate")),
-                                  dict(sent=0, delivered=0, opens=0, clicks=0, replies=0,
-                                       meetings=0, enrolled=0))
-            w["sent"] += 1
-            if status == "SENT":
-                w["delivered"] += 1
-                w["opens"] += 1 if int(p.get("hs_email_open_count") or 0) > 0 else 0
-                w["clicks"] += 1 if int(p.get("hs_email_click_count") or 0) > 0 else 0
-                w["replies"] += 1 if int(p.get("hs_email_reply_count") or 0) > 0 else 0
-
-            # sender
-            oid = p.get("hubspot_owner_id")
-            snd = senders.setdefault(owners.get(oid, "Inconnu"),
-                                     dict(sent=0, bounced=0, replies=0))
-            snd["sent"] += 1
-            if status == "BOUNCED":
-                snd["bounced"] += 1
-            else:
-                snd["replies"] += 1 if int(p.get("hs_email_reply_count") or 0) > 0 else 0
-
-        owner_name = owners.get(str(detail.get("userId")), "—")
-        seqs_out.append(dict(
-            id=s["id"], name=s["name"], owner=owner_name, status="ACTIVE",
-            # Approximation assumée : enrôlés ≈ envois du 1er step.
-            # Pour de l'exact, il faut logger les enrôlements via un workflow
-            # HubSpot qui horodate une propriété contact à l'enrôlement.
-            enrolled=max((v["sent"] for v in steps.values()), default=0),
-            sent=agg["sent"], delivered=agg["sent"] - agg["bounced"], bounced=agg["bounced"],
-            opens_unique=agg["opens"], clicks_unique=agg["clicks"],
-            replies=agg["replies"], meetings=0, unsubs=0,
-            ended_no_reply=0,
-            steps=[dict(order=i + 1, type="EMAIL", subject=k, **v)
-                   for i, (k, v) in enumerate(sorted(steps.items(), key=lambda x: -x[1]["sent"]))],
-        ))
-
-    data = dict(
-        meta=dict(generated_at=dt.datetime.now(dt.timezone.utc).isoformat(),
-                  period=f"{WEEKS_BACK} dernières semaines",
-                  source="HubSpot CRM Search · objet EMAIL · hs_sequence_id",
-                  mode="LIVE"),
-        sequences=seqs_out,
-        weekly=[dict(week=k, **v) for k, v in sorted(
-            weekly.items(), key=lambda x: int(x[0][1:]))],
-        senders=[dict(name=k, sent=v["sent"], bounced=v["bounced"], replies=v["replies"],
-                      bounce_rate=v["bounced"] / v["sent"] if v["sent"] else 0,
-                      reply_rate=v["replies"] / v["sent"] if v["sent"] else 0)
-                 for k, v in senders.items()],
-    )
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-    print(f"OK · {len(seqs_out)} séquences · {sum(s['sent'] for s in seqs_out)} emails")
 
 
 
@@ -245,90 +125,10 @@ def build():
 MEETING_ATTRIB_DAYS = 30   # fenêtre d'attribution enrôlement → RDV
 
 
-def load_objectives():
-    try:
-        with open("objectives.json", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
 
 
-def count_link_clicks(contact_property):
-    """Clics sur le lien suivi, dédupliqués par contact.
-
-    Ne compte PAS des clics : compte les contacts dont la propriété a été
-    horodatée par le workflow déclenché sur la vue de la page relais.
-    C'est volontaire — un contact qui clique trois fois reste un prospect.
-
-    Prérequis côté HubSpot (à faire une fois) :
-      1. page nopillo.com/go/<campagne> avec le script de tracking, puis
-         redirection JS vers la destination (obligatoire si la destination
-         est un domaine partenaire : le tracking HubSpot n'y tourne pas) ;
-      2. workflow contact, déclencheur "a visité une page dont l'URL contient
-         /go/<campagne>", action : définir <contact_property> = date du jour.
-    """
-    body = {
-        "filterGroups": [{"filters": [
-            {"propertyName": contact_property, "operator": "HAS_PROPERTY"},
-            {"propertyName": contact_property, "operator": "GTE", "value": str(SINCE_MS)},
-        ]}],
-        "properties": [contact_property],
-        "limit": 1,
-    }
-    return post("/crm/v3/objects/contacts/search", body).get("total", 0)
 
 
-def count_meetings(contact_ids):
-    """RDV pris / honorés / no-show / annulés sur les contacts enrôlés.
-
-    hs_outcome_*_count permet de séparer le RDV posé au calendrier du RDV
-    réellement tenu. L'écart est le vrai sujet de pilotage : un no-show
-    compte dans « RDV pris » mais ne génère aucun revenu.
-    """
-    agg = dict(booked=0, completed=0, noshow=0, canceled=0)
-    ids = list(contact_ids)
-    for i in range(0, len(ids), 100):
-        body = {
-            "filterGroups": [{"filters": [
-                {"propertyName": "associations.contact", "operator": "IN",
-                 "values": ids[i:i + 100]},
-                {"propertyName": "hs_createdate", "operator": "GTE", "value": str(SINCE_MS)},
-            ]}],
-            "properties": ["hs_meeting_outcome", "hs_outcome_completed_count",
-                           "hs_outcome_no_show_count", "hs_outcome_canceled_count",
-                           "hs_meeting_start_time", "hs_object_source_label"],
-            "limit": 200,
-        }
-        for m in post("/crm/v3/objects/meetings/search", body).get("results", []):
-            p = m["properties"]
-            agg["booked"] += 1
-            agg["completed"] += int(p.get("hs_outcome_completed_count") or 0)
-            agg["noshow"] += int(p.get("hs_outcome_no_show_count") or 0)
-            agg["canceled"] += int(p.get("hs_outcome_canceled_count") or 0)
-    return agg
-
-
-def enrich(data):
-    """Fusionne les objectifs et les métriques qui ne viennent pas des emails."""
-    objectives = load_objectives()
-    for s in data["sequences"]:
-        cfg = objectives.get(s["id"])
-        if not cfg:
-            continue
-        s["objective"] = {k: v for k, v in cfg.items() if k != "tracked_link"}
-
-        link = cfg.get("tracked_link")
-        if link:
-            s["tracked_link"] = link
-            if link.get("contact_property"):
-                s["link_clicks_unique"] = count_link_clicks(link["contact_property"])
-
-        # RDV : nécessite la liste des contacts enrôlés.
-        # À brancher quand la propriété d'enrôlement existe (cf. README).
-        # m = count_meetings(enrolled_contact_ids(s["id"]))
-        # s.update(meetings_booked=m["booked"], meetings_completed=m["completed"],
-        #          meetings_noshow=m["noshow"], meetings_canceled=m["canceled"])
-    return data
 
 
 # ============================================================================
