@@ -338,49 +338,79 @@ def emails_by_step(sequence_id):
     return totals, [dict(order=i + 1, subject=k, **v) for i, (k, v) in enumerate(ordered)]
 
 
+def _count_paginated(body_fn):
+    """Compte les objets renvoyés par une recherche, pagination incluse."""
+    n, after = 0, None
+    while True:
+        body = body_fn(after)
+        d = post(body["_path"], {k: v for k, v in body.items() if k != "_path"})
+        n += len(d.get("results", []))
+        after = (d.get("paging") or {}).get("next", {}).get("after")
+        if not after:
+            return n
+
+
+def _split_by_owner(contact_ids, count_fn):
+    """Répartition par propriétaire de contact.
+
+    On NE lit PAS le champ `associations` des résultats de recherche : l'API
+    CRM Search ne le renvoie pas, ce qui donnait un décompte toujours vide.
+    À la place on partitionne les contacts par propriétaire et on lance une
+    recherche par partition — le volume de chaque recherche EST le décompte.
+
+    Effet de bord assumé : un RDV associé à deux contacts de propriétaires
+    différents est compté une fois par propriétaire. La somme des parts peut
+    donc légèrement dépasser le total, qui reste calculé sur l'ensemble.
+    """
+    groups = {}
+    for cid, owner in contact_ids:
+        groups.setdefault(owner, []).append(cid)
+    return {owner: count_fn(ids) for owner, ids in groups.items()}
+
+
 def meetings_for(contact_ids, since_ms):
-    """RDV par propriétaire de contact. Fenêtre = date d'envoi de la cohorte."""
-    owner_of = dict(contact_ids)
+    """RDV créés après l'envoi de la cohorte, total et par propriétaire."""
+    def count(ids):
+        n = 0
+        for i in range(0, len(ids), 100):
+            chunk = ids[i:i + 100]
+            n += _count_paginated(lambda after: {
+                "_path": "/crm/v3/objects/meetings/search",
+                "filterGroups": [{"filters": [
+                    {"propertyName": "associations.contact", "operator": "IN", "values": chunk},
+                    {"propertyName": "hs_createdate", "operator": "GTE", "value": str(since_ms)},
+                ]}],
+                "properties": ["hs_createdate"],
+                "limit": 200,
+                **({"after": after} if after else {}),
+            })
+        return n
+
     ids = [c for c, _ in contact_ids]
-    per_owner, total = {}, 0
-    for i in range(0, len(ids), 100):
-        body = {
-            "filterGroups": [{"filters": [
-                {"propertyName": "associations.contact", "operator": "IN", "values": ids[i:i + 100]},
-                {"propertyName": "hs_createdate", "operator": "GTE", "value": str(since_ms)},
-            ]}],
-            "properties": ["hs_outcome_completed_count", "hs_outcome_no_show_count"],
-            "limit": 200,
-        }
-        for m in post("/crm/v3/objects/meetings/search", body).get("results", []):
-            total += 1
-            for cid in (m.get("associations", {}).get("contacts", {}).get("results") or []):
-                o = owner_of.get(cid.get("id"))
-                per_owner[o] = per_owner.get(o, 0) + 1
-    return total, per_owner
+    return count(ids), _split_by_owner(contact_ids, count)
 
 
 def deals_ae_for(contact_ids, pipeline_id, since_ms):
-    """Transactions du pipe courtage AE associées aux contacts de la cohorte."""
-    owner_of = dict(contact_ids)
+    """Simulations du pipe courtage AE, total et par propriétaire de contact."""
+    def count(ids):
+        n = 0
+        for i in range(0, len(ids), 100):
+            chunk = ids[i:i + 100]
+            n += _count_paginated(lambda after: {
+                "_path": "/crm/v3/objects/deals/search",
+                "filterGroups": [{"filters": [
+                    {"propertyName": "pipeline", "operator": "EQ", "value": pipeline_id},
+                    {"propertyName": "associations.contact", "operator": "IN", "values": chunk},
+                    {"propertyName": "createdate", "operator": "GTE", "value": str(since_ms)},
+                ]}],
+                "properties": ["dealstage"],   # jamais dealname : contient nom + email
+                "limit": 200,
+                **({"after": after} if after else {}),
+            })
+        return n
+
     ids = [c for c, _ in contact_ids]
-    per_owner, total = {}, 0
-    for i in range(0, len(ids), 100):
-        body = {
-            "filterGroups": [{"filters": [
-                {"propertyName": "pipeline", "operator": "EQ", "value": pipeline_id},
-                {"propertyName": "associations.contact", "operator": "IN", "values": ids[i:i + 100]},
-                {"propertyName": "createdate", "operator": "GTE", "value": str(since_ms)},
-            ]}],
-            "properties": ["dealstage"],       # jamais dealname : contient nom + email
-            "limit": 200,
-        }
-        for d in post("/crm/v3/objects/deals/search", body).get("results", []):
-            total += 1
-            for cid in (d.get("associations", {}).get("contacts", {}).get("results") or []):
-                o = owner_of.get(cid.get("id"))
-                per_owner[o] = per_owner.get(o, 0) + 1
-    return total, per_owner
+    return count(ids), _split_by_owner(contact_ids, count)
 
 
 def build_cohorts():
@@ -399,7 +429,7 @@ def build_cohorts():
             n_meet, m_owner = meetings_for(members, since_ms) if members else (0, {})
             n_deal, d_owner = deals_ae_for(members, pipeline_id, since_ms) if members else (0, {})
 
-            oids = set(m_owner) | set(d_owner)
+            oids = set(m_owner) | set(d_owner) | {o for _, o in members}
             cells.append(dict(
                 list_id=c.get("list_id"), list_name=c.get("list_name"),
                 sequence_id=c["sequence_id"], audience=c["audience"], version=c["version"],
