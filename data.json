@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-10T13:47:24.206900+00:00",
+  "generated_at": "2026-08-11T08:40:37.643930+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -26,11 +26,11 @@
      "enrolled": 249,
      "sent": 492,
      "bounced": 1,
-     "opens": 255,
+     "opens": 256,
      "clicks": 5,
-     "replies": 7,
-     "meetings": 8,
-     "deals_ae": 1,
+     "replies": 8,
+     "meetings": 11,
+     "deals_ae": 3,
      "steps": [
       {
        "order": 1,
@@ -44,9 +44,9 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 243,
-       "opens": 117,
+       "opens": 118,
        "clicks": 1,
-       "replies": 4
+       "replies": 5
       }
      ],
      "by_owner": [
@@ -59,13 +59,13 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 4,
-       "deals_ae": 0
+       "meetings": 6,
+       "deals_ae": 2
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 4,
+       "meetings": 5,
        "deals_ae": 1
       }
      ]
@@ -80,7 +80,7 @@
      "enrolled": 255,
      "sent": 501,
      "bounced": 3,
-     "opens": 253,
+     "opens": 258,
      "clicks": 10,
      "replies": 9,
      "meetings": 6,
@@ -98,7 +98,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 246,
-       "opens": 123,
+       "opens": 128,
        "clicks": 8,
        "replies": 6
       }
@@ -134,7 +134,7 @@
      "enrolled": 50,
      "sent": 99,
      "bounced": 0,
-     "opens": 52,
+     "opens": 53,
      "clicks": 2,
      "replies": 0,
      "meetings": 2,
@@ -152,7 +152,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 49,
-       "opens": 22,
+       "opens": 23,
        "clicks": 1,
        "replies": 0
       }
@@ -182,10 +182,10 @@
      "enrolled": 46,
      "sent": 91,
      "bounced": 0,
-     "opens": 49,
+     "opens": 50,
      "clicks": 1,
      "replies": 2,
-     "meetings": 4,
+     "meetings": 5,
      "deals_ae": 4,
      "steps": [
       {
@@ -200,7 +200,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 45,
-       "opens": 26,
+       "opens": 27,
        "clicks": 1,
        "replies": 1
       }
@@ -209,7 +209,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 1,
+       "meetings": 2,
        "deals_ae": 1
       },
       {
@@ -242,7 +242,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-10T13:47:24.206920+00:00",
+  "snapshot_at": "2026-08-11T08:40:37.643951+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -251,7 +251,7 @@
     "probability": 10,
     "closed": false,
     "won": false,
-    "count": 12
+    "count": 14
    },
    {
     "id": "5363445963",
@@ -260,7 +260,7 @@
     "probability": 40,
     "closed": false,
     "won": false,
-    "count": 6
+    "count": 9
    },
    {
     "id": "simulation_completed",
@@ -296,7 +296,7 @@
     "probability": 80,
     "closed": false,
     "won": false,
-    "count": 2
+    "count": 1
    },
    {
     "id": "5363445967",
@@ -305,7 +305,7 @@
     "probability": 80,
     "closed": false,
     "won": false,
-    "count": 4
+    "count": 6
    },
    {
     "id": "process_completed",
@@ -326,32 +326,32 @@
     "count": 3
    }
   ],
-  "open_total": 25,
+  "open_total": 31,
   "won_total": 0,
   "lost_total": 3,
   "deals": [
    {
     "id": "504047926488",
     "stage": "5363445967",
-    "days_in_stage": 61,
+    "days_in_stage": 62,
     "is_test": false
    },
    {
     "id": "503790819516",
     "stage": "5363445966",
-    "days_in_stage": 67,
+    "days_in_stage": 68,
     "is_test": false
    },
    {
     "id": "505032662260",
     "stage": "5363445967",
-    "days_in_stage": 56,
+    "days_in_stage": 57,
     "is_test": false
    },
    {
     "id": "505110714589",
     "stage": "5363445963",
-    "days_in_stage": 63,
+    "days_in_stage": 64,
     "is_test": false
    },
    {
@@ -363,7 +363,7 @@
    {
     "id": "505439101166",
     "stage": "5363445963",
-    "days_in_stage": 65,
+    "days_in_stage": 66,
     "is_test": false
    },
    {
@@ -387,102 +387,138 @@
    {
     "id": "514041806017",
     "stage": "5363445965",
-    "days_in_stage": 5,
+    "days_in_stage": 6,
     "is_test": true
    },
    {
     "id": "515153770729",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515166673145",
     "stage": "5363445963",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515280460000",
     "stage": "5363445963",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515189616843",
     "stage": "5363445967",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515189616846",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515248622833",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515144621270",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515285620974",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515144621272",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515150114021",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515159195854",
     "stage": "5363445962",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
     "id": "515116114107",
-    "stage": "5363445966",
+    "stage": "5363445967",
     "days_in_stage": 0,
     "is_test": false
    },
    {
     "id": "515550867676",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "515598230772",
     "stage": "5363445967",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "515550867678",
     "stage": "5363445963",
+    "days_in_stage": 1,
+    "is_test": false
+   },
+   {
+    "id": "515625310448",
+    "stage": "5363445962",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "515628034280",
+    "stage": "5363445967",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "515474084069",
+    "stage": "5363445963",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "515584907454",
+    "stage": "5363445962",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "515497534701",
+    "stage": "5363445963",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "515829758150",
+    "stage": "5363445963",
     "days_in_stage": 0,
     "is_test": false
    }
   ],
-  "deals_loaded": 25,
-  "deals_expected": 25,
+  "deals_loaded": 31,
+  "deals_expected": 31,
   "anomalies": [
    {
     "level": "high",
@@ -497,7 +533,7 @@
    {
     "level": "med",
     "title": "Dossiers dormants",
-    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 67 jours."
+    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 68 jours."
    }
   ]
  }
