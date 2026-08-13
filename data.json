@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-13T09:46:50.904590+00:00",
+  "generated_at": "2026-08-13T12:56:44.794482+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -23,22 +23,22 @@
      "audience": "RP",
      "version": "A",
      "list_size": 263,
-     "enrolled": 634,
-     "sent": 877,
-     "bounced": 1,
-     "opens": 318,
-     "clicks": 5,
-     "replies": 8,
+     "enrolled": 805,
+     "sent": 1048,
+     "bounced": 2,
+     "opens": 461,
+     "clicks": 9,
+     "replies": 12,
      "meetings": 13,
      "deals_ae": 4,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 634,
-       "opens": 195,
-       "clicks": 4,
-       "replies": 3
+       "sent": 805,
+       "opens": 338,
+       "clicks": 8,
+       "replies": 7
       },
       {
        "order": 2,
@@ -80,7 +80,7 @@
      "enrolled": 255,
      "sent": 501,
      "bounced": 3,
-     "opens": 260,
+     "opens": 261,
      "clicks": 10,
      "replies": 10,
      "meetings": 6,
@@ -98,7 +98,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 246,
-       "opens": 130,
+       "opens": 131,
        "clicks": 8,
        "replies": 7
       }
@@ -131,22 +131,22 @@
      "audience": "LMNP",
      "version": "A",
      "list_size": 51,
-     "enrolled": 149,
-     "sent": 199,
+     "enrolled": 186,
+     "sent": 236,
      "bounced": 0,
-     "opens": 75,
-     "clicks": 2,
-     "replies": 0,
+     "opens": 120,
+     "clicks": 3,
+     "replies": 6,
      "meetings": 2,
      "deals_ae": 4,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 149,
-       "opens": 50,
-       "clicks": 1,
-       "replies": 0
+       "sent": 186,
+       "opens": 95,
+       "clicks": 2,
+       "replies": 6
       },
       {
        "order": 2,
@@ -250,7 +250,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-13T09:46:50.904607+00:00",
+  "snapshot_at": "2026-08-13T12:56:44.794503+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -365,7 +365,7 @@
    {
     "id": "505443557584",
     "stage": "5363445962",
-    "days_in_stage": 68,
+    "days_in_stage": 69,
     "is_test": false
    },
    {
@@ -521,7 +521,7 @@
    {
     "id": "515691708663",
     "stage": "5783848147",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
