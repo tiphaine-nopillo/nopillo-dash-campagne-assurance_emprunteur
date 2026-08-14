@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-14T07:42:08.230320+00:00",
+  "generated_at": "2026-08-14T09:40:07.847725+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -26,7 +26,7 @@
      "enrolled": 805,
      "sent": 1048,
      "bounced": 2,
-     "opens": 501,
+     "opens": 505,
      "clicks": 9,
      "replies": 13,
      "meetings": 13,
@@ -36,7 +36,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 805,
-       "opens": 378,
+       "opens": 381,
        "clicks": 8,
        "replies": 8
       },
@@ -44,7 +44,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 243,
-       "opens": 123,
+       "opens": 124,
        "clicks": 1,
        "replies": 5
       }
@@ -134,17 +134,17 @@
      "enrolled": 186,
      "sent": 236,
      "bounced": 0,
-     "opens": 131,
+     "opens": 132,
      "clicks": 5,
      "replies": 6,
-     "meetings": 2,
-     "deals_ae": 4,
+     "meetings": 3,
+     "deals_ae": 5,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 186,
-       "opens": 105,
+       "opens": 106,
        "clicks": 4,
        "replies": 6
       },
@@ -175,8 +175,8 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 1,
-       "deals_ae": 2
+       "meetings": 2,
+       "deals_ae": 3
       }
      ]
     },
@@ -250,7 +250,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-14T07:42:08.230338+00:00",
+  "snapshot_at": "2026-08-14T09:40:07.847746+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -268,7 +268,7 @@
     "probability": 40,
     "closed": false,
     "won": false,
-    "count": 10
+    "count": 11
    },
    {
     "id": "simulation_completed",
@@ -295,7 +295,7 @@
     "probability": 70,
     "closed": false,
     "won": false,
-    "count": 2
+    "count": 3
    },
    {
     "id": "5363445966",
@@ -334,7 +334,7 @@
     "count": 5
    }
   ],
-  "open_total": 39,
+  "open_total": 41,
   "won_total": 0,
   "lost_total": 5,
   "deals": [
@@ -347,7 +347,7 @@
    {
     "id": "503790819516",
     "stage": "5363445966",
-    "days_in_stage": 70,
+    "days_in_stage": 71,
     "is_test": false
    },
    {
@@ -377,7 +377,7 @@
    {
     "id": "505443816648",
     "stage": "5363445963",
-    "days_in_stage": 66,
+    "days_in_stage": 67,
     "is_test": false
    },
    {
@@ -395,7 +395,7 @@
    {
     "id": "514041806017",
     "stage": "5363445965",
-    "days_in_stage": 8,
+    "days_in_stage": 9,
     "is_test": true
    },
    {
@@ -479,7 +479,7 @@
    {
     "id": "515550867678",
     "stage": "5363445963",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
@@ -520,8 +520,8 @@
    },
    {
     "id": "515691708663",
-    "stage": "5783848147",
-    "days_in_stage": 1,
+    "stage": "5363445965",
+    "days_in_stage": 0,
     "is_test": false
    },
    {
@@ -577,10 +577,16 @@
     "stage": "5363445962",
     "days_in_stage": 1,
     "is_test": false
+   },
+   {
+    "id": "516772281547",
+    "stage": "5363445963",
+    "days_in_stage": 0,
+    "is_test": false
    }
   ],
-  "deals_loaded": 40,
-  "deals_expected": 39,
+  "deals_loaded": 41,
+  "deals_expected": 41,
   "anomalies": [
    {
     "level": "high",
@@ -595,7 +601,7 @@
    {
     "level": "med",
     "title": "Dossiers dormants",
-    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 70 jours."
+    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 71 jours."
    }
   ]
  }
