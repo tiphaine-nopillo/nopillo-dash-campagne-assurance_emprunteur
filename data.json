@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-14T09:40:07.847725+00:00",
+  "generated_at": "2026-08-14T14:21:44.410355+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -26,7 +26,7 @@
      "enrolled": 805,
      "sent": 1048,
      "bounced": 2,
-     "opens": 505,
+     "opens": 509,
      "clicks": 9,
      "replies": 13,
      "meetings": 13,
@@ -36,7 +36,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 805,
-       "opens": 381,
+       "opens": 385,
        "clicks": 8,
        "replies": 8
       },
@@ -80,11 +80,11 @@
      "enrolled": 255,
      "sent": 501,
      "bounced": 3,
-     "opens": 262,
+     "opens": 263,
      "clicks": 10,
      "replies": 10,
      "meetings": 6,
-     "deals_ae": 2,
+     "deals_ae": 3,
      "steps": [
       {
        "order": 1,
@@ -98,7 +98,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 246,
-       "opens": 131,
+       "opens": 132,
        "clicks": 8,
        "replies": 7
       }
@@ -108,7 +108,7 @@
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
        "meetings": 0,
-       "deals_ae": 1
+       "deals_ae": 2
       },
       {
        "owner_id": "650299108",
@@ -134,7 +134,7 @@
      "enrolled": 186,
      "sent": 236,
      "bounced": 0,
-     "opens": 132,
+     "opens": 133,
      "clicks": 5,
      "replies": 6,
      "meetings": 3,
@@ -144,7 +144,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 186,
-       "opens": 106,
+       "opens": 107,
        "clicks": 4,
        "replies": 6
       },
@@ -250,7 +250,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-14T09:40:07.847746+00:00",
+  "snapshot_at": "2026-08-14T14:21:44.410373+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -259,7 +259,7 @@
     "probability": 10,
     "closed": false,
     "won": false,
-    "count": 18
+    "count": 17
    },
    {
     "id": "5363445963",
@@ -268,7 +268,7 @@
     "probability": 40,
     "closed": false,
     "won": false,
-    "count": 11
+    "count": 12
    },
    {
     "id": "simulation_completed",
@@ -313,7 +313,7 @@
     "probability": 80,
     "closed": false,
     "won": false,
-    "count": 8
+    "count": 7
    },
    {
     "id": "process_completed",
@@ -334,7 +334,7 @@
     "count": 5
    }
   ],
-  "open_total": 41,
+  "open_total": 40,
   "won_total": 0,
   "lost_total": 5,
   "deals": [
@@ -365,7 +365,7 @@
    {
     "id": "505443557584",
     "stage": "5363445962",
-    "days_in_stage": 69,
+    "days_in_stage": 70,
     "is_test": false
    },
    {
@@ -383,13 +383,13 @@
    {
     "id": "505440151774",
     "stage": "5363445962",
-    "days_in_stage": 69,
+    "days_in_stage": 70,
     "is_test": false
    },
    {
     "id": "505438796993",
     "stage": "5363445962",
-    "days_in_stage": 69,
+    "days_in_stage": 70,
     "is_test": false
    },
    {
@@ -532,8 +532,8 @@
    },
    {
     "id": "516113352922",
-    "stage": "5363445962",
-    "days_in_stage": 2,
+    "stage": "5363445964",
+    "days_in_stage": 0,
     "is_test": false
    },
    {
@@ -556,8 +556,8 @@
    },
    {
     "id": "516476918998",
-    "stage": "5363445967",
-    "days_in_stage": 1,
+    "stage": "5363445964",
+    "days_in_stage": 0,
     "is_test": false
    },
    {
@@ -583,10 +583,22 @@
     "stage": "5363445963",
     "days_in_stage": 0,
     "is_test": false
+   },
+   {
+    "id": "516593909992",
+    "stage": "5363445963",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
+    "id": "516594639077",
+    "stage": "5363445964",
+    "days_in_stage": 0,
+    "is_test": false
    }
   ],
-  "deals_loaded": 41,
-  "deals_expected": 41,
+  "deals_loaded": 43,
+  "deals_expected": 40,
   "anomalies": [
    {
     "level": "high",
