@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-13T12:56:44.794482+00:00",
+  "generated_at": "2026-08-14T07:42:08.230320+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -26,19 +26,19 @@
      "enrolled": 805,
      "sent": 1048,
      "bounced": 2,
-     "opens": 461,
+     "opens": 501,
      "clicks": 9,
-     "replies": 12,
+     "replies": 13,
      "meetings": 13,
-     "deals_ae": 4,
+     "deals_ae": 5,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 805,
-       "opens": 338,
+       "opens": 378,
        "clicks": 8,
-       "replies": 7
+       "replies": 8
       },
       {
        "order": 2,
@@ -60,7 +60,7 @@
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
        "meetings": 7,
-       "deals_ae": 2
+       "deals_ae": 3
       },
       {
        "owner_id": "75453551",
@@ -80,7 +80,7 @@
      "enrolled": 255,
      "sent": 501,
      "bounced": 3,
-     "opens": 261,
+     "opens": 262,
      "clicks": 10,
      "replies": 10,
      "meetings": 6,
@@ -90,7 +90,7 @@
        "order": 1,
        "subject": "L’économie que les propriétaires immobiliers ignorent",
        "sent": 255,
-       "opens": 130,
+       "opens": 131,
        "clicks": 2,
        "replies": 3
       },
@@ -134,8 +134,8 @@
      "enrolled": 186,
      "sent": 236,
      "bounced": 0,
-     "opens": 120,
-     "clicks": 3,
+     "opens": 131,
+     "clicks": 5,
      "replies": 6,
      "meetings": 2,
      "deals_ae": 4,
@@ -144,8 +144,8 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 186,
-       "opens": 95,
-       "clicks": 2,
+       "opens": 105,
+       "clicks": 4,
        "replies": 6
       },
       {
@@ -160,7 +160,7 @@
        "order": 3,
        "subject": "Re : Rapide point sur votre assurance emprunteur",
        "sent": 1,
-       "opens": 0,
+       "opens": 1,
        "clicks": 0,
        "replies": 0
       }
@@ -193,7 +193,7 @@
      "opens": 50,
      "clicks": 1,
      "replies": 3,
-     "meetings": 8,
+     "meetings": 9,
      "deals_ae": 7,
      "steps": [
       {
@@ -223,7 +223,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 6,
+       "meetings": 7,
        "deals_ae": 5
       },
       {
@@ -250,7 +250,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-13T12:56:44.794503+00:00",
+  "snapshot_at": "2026-08-14T07:42:08.230338+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -295,7 +295,7 @@
     "probability": 70,
     "closed": false,
     "won": false,
-    "count": 1
+    "count": 2
    },
    {
     "id": "5363445966",
@@ -334,14 +334,14 @@
     "count": 5
    }
   ],
-  "open_total": 38,
+  "open_total": 39,
   "won_total": 0,
   "lost_total": 5,
   "deals": [
    {
     "id": "504047926488",
     "stage": "5363445967",
-    "days_in_stage": 64,
+    "days_in_stage": 65,
     "is_test": false
    },
    {
@@ -353,13 +353,13 @@
    {
     "id": "505032662260",
     "stage": "5363445967",
-    "days_in_stage": 59,
+    "days_in_stage": 60,
     "is_test": false
    },
    {
     "id": "505110714589",
     "stage": "5363445963",
-    "days_in_stage": 66,
+    "days_in_stage": 67,
     "is_test": false
    },
    {
@@ -371,7 +371,7 @@
    {
     "id": "505439101166",
     "stage": "5363445963",
-    "days_in_stage": 68,
+    "days_in_stage": 69,
     "is_test": false
    },
    {
@@ -383,13 +383,13 @@
    {
     "id": "505440151774",
     "stage": "5363445962",
-    "days_in_stage": 68,
+    "days_in_stage": 69,
     "is_test": false
    },
    {
     "id": "505438796993",
     "stage": "5363445962",
-    "days_in_stage": 68,
+    "days_in_stage": 69,
     "is_test": false
    },
    {
@@ -401,79 +401,79 @@
    {
     "id": "515166673145",
     "stage": "5363445963",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515280460000",
     "stage": "5363445963",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515189616843",
     "stage": "5363445967",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515189616846",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515248622833",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515144621270",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515285620974",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515144621272",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515150114021",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515159195854",
     "stage": "5363445962",
-    "days_in_stage": 6,
+    "days_in_stage": 7,
     "is_test": false
    },
    {
     "id": "515116114107",
     "stage": "5363445967",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
     "id": "515550867676",
     "stage": "5363445963",
-    "days_in_stage": 1,
+    "days_in_stage": 2,
     "is_test": false
    },
    {
     "id": "515598230772",
     "stage": "5363445967",
-    "days_in_stage": 3,
+    "days_in_stage": 4,
     "is_test": false
    },
    {
@@ -485,37 +485,37 @@
    {
     "id": "515625310448",
     "stage": "5363445962",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
     "id": "515628034280",
     "stage": "5363445967",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "515474084069",
     "stage": "5363445963",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
     "id": "515584907454",
     "stage": "5363445962",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
     "id": "515497534701",
     "stage": "5363445963",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
     "id": "515829758150",
     "stage": "5363445963",
-    "days_in_stage": 2,
+    "days_in_stage": 3,
     "is_test": false
    },
    {
@@ -525,56 +525,62 @@
     "is_test": false
    },
    {
+    "id": "516590947548",
+    "stage": "5363445965",
+    "days_in_stage": 0,
+    "is_test": false
+   },
+   {
     "id": "516113352922",
     "stage": "5363445962",
-    "days_in_stage": 1,
+    "days_in_stage": 2,
     "is_test": false
    },
    {
     "id": "516312719608",
     "stage": "5363445967",
-    "days_in_stage": 1,
+    "days_in_stage": 2,
     "is_test": false
    },
    {
     "id": "516467964137",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "516522352859",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "516476918998",
     "stage": "5363445967",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "516455348443",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "516464353511",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    },
    {
     "id": "516457162951",
     "stage": "5363445962",
-    "days_in_stage": 0,
+    "days_in_stage": 1,
     "is_test": false
    }
   ],
-  "deals_loaded": 39,
-  "deals_expected": 38,
+  "deals_loaded": 40,
+  "deals_expected": 39,
   "anomalies": [
    {
     "level": "high",
