@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-08-17T07:48:00.307687+00:00",
+  "generated_at": "2026-08-17T08:07:12.973959+00:00",
   "period": "1 cohorte(s)",
   "source": "HubSpot · listes statiques + EMAIL.hs_sequence_id + MEETING_EVENT + DEAL",
   "mode": "LIVE",
@@ -26,7 +26,7 @@
      "enrolled": 805,
      "sent": 1279,
      "bounced": 2,
-     "opens": 618,
+     "opens": 619,
      "clicks": 10,
      "replies": 18,
      "meetings": 16,
@@ -36,7 +36,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 805,
-       "opens": 397,
+       "opens": 398,
        "clicks": 9,
        "replies": 8
       },
@@ -80,7 +80,7 @@
      "enrolled": 255,
      "sent": 734,
      "bounced": 4,
-     "opens": 350,
+     "opens": 351,
      "clicks": 17,
      "replies": 15,
      "meetings": 12,
@@ -106,7 +106,7 @@
        "order": 3,
        "subject": "Dernière chance pour renégocier votre assurance emprunteur",
        "sent": 233,
-       "opens": 85,
+       "opens": 86,
        "clicks": 7,
        "replies": 5
       }
@@ -266,7 +266,7 @@
   "id": "3817233652",
   "key": "pipe_courtage_ae",
   "label": "Pipeline courtage AE",
-  "snapshot_at": "2026-08-17T07:48:00.307708+00:00",
+  "snapshot_at": "2026-08-17T08:07:12.973976+00:00",
   "stages": [
    {
     "id": "5363445962",
@@ -363,7 +363,7 @@
    {
     "id": "503790819516",
     "stage": "5363445966",
-    "days_in_stage": 73,
+    "days_in_stage": 74,
     "is_test": false
    },
    {
@@ -629,7 +629,7 @@
    {
     "level": "med",
     "title": "Dossiers dormants",
-    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 73 jours."
+    "body": "9 dossier(s) sans changement d'étape depuis plus de 30 jours. Le plus ancien : 74 jours."
    }
   ]
  }
