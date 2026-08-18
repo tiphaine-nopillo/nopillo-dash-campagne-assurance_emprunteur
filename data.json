@@ -1,0 +1,180 @@
+{
+ "meta": {
+  "campaign": "Assurance emprunteur · cross-sell bailleurs",
+  "generated_at": "2026-08-18T08:31:55.751936+00:00",
+  "collected": true,
+  "primary_axis": "cohort",
+  "primary_kpi": "deals_ae",
+  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT · DEAL pipeline 3817233652",
+  "attribution_note": "RDV et simulations rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
+  "overlap_note": "Aucun recoupement entre les cohortes.",
+  "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
+ },
+ "kpis": [
+  {
+   "key": "sent",
+   "label": "Envois",
+   "source": "email",
+   "base": "enrolled"
+  },
+  {
+   "key": "opens",
+   "label": "Ouvertures",
+   "source": "contact",
+   "base": "enrolled",
+   "note": "Contacts uniques, via hs_sales_email_last_opened postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
+  },
+  {
+   "key": "clicks",
+   "label": "Clics",
+   "source": "contact",
+   "base": "enrolled",
+   "note": "Contacts uniques, via hs_sales_email_last_clicked postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
+  },
+  {
+   "key": "replies",
+   "label": "Réponses",
+   "source": "reply",
+   "base": "enrolled"
+  },
+  {
+   "key": "meetings",
+   "label": "RDV",
+   "source": "meeting",
+   "base": "enrolled"
+  },
+  {
+   "key": "deals_ae",
+   "label": "Simulations",
+   "source": "deal",
+   "base": "enrolled",
+   "note": "Transactions du pipe_courtage_ae associées au contact. Matérialise un parcours de simulateur engagé sur la plateforme."
+  }
+ ],
+ "audience_labels": {
+  "RP": "Résidence principale",
+  "LMNP": "LMNP"
+ },
+ "stats_config": {
+  "min_n_for_rate": 100,
+  "alpha": 0.05,
+  "power": 0.8
+ },
+ "dedup": {
+  "contacts": 254
+ },
+ "cohorts": [
+  {
+   "id": "2026-08-05",
+   "label": "Batch du 5 août 2026",
+   "sent_at": "2026-08-05T08:31:00Z",
+   "status": "EN_COURS",
+   "active": 254,
+   "status_note": "254 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "ab_test": true,
+   "ab_note": null,
+   "cells": [
+    {
+     "list_id": "14334",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026",
+     "sequence_id": "841303268",
+     "audience": "RP",
+     "version": "B",
+     "enrolled": 254,
+     "active": 254,
+     "status": "EN_COURS",
+     "sent": 0,
+     "bounced": 0,
+     "opens": 176,
+     "clicks": 14,
+     "opens_emails": 0,
+     "clicks_emails": 0,
+     "replies": 15,
+     "meetings": 12,
+     "deals_ae": 0,
+     "steps": [],
+     "by_owner": [
+      {
+       "owner_id": "o1",
+       "owner": "Testeur",
+       "meetings": 12,
+       "deals_ae": 0
+      }
+     ]
+    }
+   ],
+   "reply_curve": [
+    {
+     "day": 0,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 1,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 2,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 3,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 4,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 5,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 6,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 7,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 8,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 9,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 10,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 11,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 12,
+     "count": 15,
+     "share": 5.91
+    },
+    {
+     "day": 13,
+     "count": 15,
+     "share": 5.91
+    }
+   ]
+  }
+ ]
+}
