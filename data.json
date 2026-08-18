@@ -1,0 +1,207 @@
+{
+ "meta": {
+  "campaign": "Assurance emprunteur · cross-sell bailleurs",
+  "generated_at": "2026-08-17T14:30:00Z",
+  "collected": false,
+  "primary_axis": "cohort",
+  "primary_kpi": "deals_ae",
+  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT · DEAL 3817233652",
+  "attribution_note": "RDV et simulations rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
+  "overlap_note": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée.",
+  "fix_note": "ATTENTION — les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 sert le RP du 5 août ET du 13 août. L'attribution des e-mails passe donc obligatoirement par l'appartenance aux listes, JAMAIS par hs_sequence_id. La version précédente du collecteur attribuait par séquence et surévaluait le batch du 5 août.",
+  "seed_note": "Photo partielle : effectifs, état d'envoi et réponses du 13 août mesurés le 17/08. Les métriques e-mail, RDV et simulations sont volontairement vides — elles doivent être recollectées avec la nouvelle attribution par liste, l'ancienne étant faussée par le partage de séquence entre batchs."
+ },
+ "kpis": [
+  {
+   "key": "sent",
+   "label": "Envois",
+   "source": "email",
+   "base": "enrolled"
+  },
+  {
+   "key": "opens",
+   "label": "Ouvertures",
+   "source": "email",
+   "base": "sent"
+  },
+  {
+   "key": "clicks",
+   "label": "Clics",
+   "source": "email",
+   "base": "sent"
+  },
+  {
+   "key": "replies",
+   "label": "Réponses",
+   "source": "reply",
+   "base": "enrolled"
+  },
+  {
+   "key": "meetings",
+   "label": "RDV",
+   "source": "meeting",
+   "base": "enrolled"
+  },
+  {
+   "key": "deals_ae",
+   "label": "Simulations",
+   "source": "deal",
+   "base": "enrolled",
+   "note": "Transactions du pipe_courtage_ae associées au contact. Matérialise un parcours de simulateur engagé sur la plateforme."
+  }
+ ],
+ "audience_labels": {
+  "RP": "Résidence principale",
+  "LMNP": "LMNP"
+ },
+ "stats_config": {
+  "min_n_for_rate": 100,
+  "alpha": 0.05,
+  "power": 0.8
+ },
+ "dedup": {
+  "contacts": 1299
+ },
+ "cohorts": [
+  {
+   "id": "2026-08-05",
+   "label": "Batch du 5 août 2026",
+   "sent_at": "2026-08-05T08:31:00Z",
+   "status": "PARTIEL",
+   "active": 4,
+   "status_note": "4 contact(s) encore en séquence sur cette cohorte, mais la cellule RP a fini d'envoyer et alimente déjà la référence.",
+   "ab_test": true,
+   "ab_note": null,
+   "cells": [
+    {
+     "list_id": "14319",
+     "list_name": "OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A",
+     "sequence_id": "841303267",
+     "audience": "RP",
+     "version": "A",
+     "enrolled": 250,
+     "active": 4,
+     "status": "EN_COURS",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": null,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    },
+    {
+     "list_id": "14334",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026",
+     "sequence_id": "841303268",
+     "audience": "RP",
+     "version": "B",
+     "enrolled": 254,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": null,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    },
+    {
+     "list_id": "14336",
+     "list_name": "OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A",
+     "sequence_id": "841303243",
+     "audience": "LMNP",
+     "version": "A",
+     "enrolled": 51,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": null,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    },
+    {
+     "list_id": "14337",
+     "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B",
+     "sequence_id": "841252078",
+     "audience": "LMNP",
+     "version": "B",
+     "enrolled": 46,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": null,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    }
+   ],
+   "reply_curve": []
+  },
+  {
+   "id": "2026-08-13",
+   "label": "Batch du 13 août 2026",
+   "sent_at": "2026-08-13T09:31:00Z",
+   "status": "EN_COURS",
+   "active": 666,
+   "status_note": "666 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "ab_test": false,
+   "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
+   "cells": [
+    {
+     "list_id": "14412",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026",
+     "sequence_id": "841303267",
+     "audience": "RP",
+     "version": "A",
+     "enrolled": 560,
+     "active": 541,
+     "status": "EN_COURS",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": 12,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    },
+    {
+     "list_id": "14413",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026",
+     "sequence_id": "841303243",
+     "audience": "LMNP",
+     "version": "A",
+     "enrolled": 140,
+     "active": 125,
+     "status": "EN_COURS",
+     "sent": null,
+     "bounced": null,
+     "opens": null,
+     "clicks": null,
+     "replies": 11,
+     "meetings": null,
+     "deals_ae": null,
+     "steps": [],
+     "by_owner": []
+    }
+   ],
+   "reply_curve": []
+  }
+ ]
+}
