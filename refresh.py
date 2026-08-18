@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """
-Suivi campagne Assurance Emprunteur · refresh.py
+Suivi campagne CGP · refresh.py
 Alimente data.json depuis HubSpot.
 
-CORRECTIF CENTRAL DE CETTE VERSION
-----------------------------------
-Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
-du 5 août puis celui du 13 août. La version précédente comptait les e-mails par
-hs_sequence_id, sans filtrer les contacts : les envois du 13 août étaient donc
-imputés au batch du 5 août, qui se retrouvait surévalué.
+Principe
+--------
+Tout repose sur l'appartenance à des listes. Une cellule de cohorte = une liste
+statique. Un KPI documentaire = une liste de documents reçus. Le chiffre cherché
+est l'INTERSECTION des deux, et HubSpot sait la calculer côté serveur : deux
+filtres sur ilsListIds dans le même filterGroup sont combinés en ET.
 
-Ici toute métrique est attribuée par APPARTENANCE À LA LISTE de la cellule.
-La séquence ne sert plus qu'à restreindre le périmètre des e-mails collectés.
+On ne récupère donc jamais les enregistrements, seulement le `total` de la
+recherche. Aucune donnée personnelle ne transite ni n'est écrite.
+
+Les cohortes se chevauchent : un contact a pu être ciblé dans plusieurs batchs.
+Le total campagne est mesuré par UNION dédupliquée (opérateur IN sur toutes les
+listes de cohorte), jamais par addition des cellules.
 
 Prérequis
   export HUBSPOT_TOKEN="pat-eu1-..."
   pip install requests
 
 Portées de l'application privée — LECTURE SEULE
-  crm.objects.contacts.read     membres des listes
-  crm.lists.read                filtre d'appartenance
-  sales-email-read              objets EMAIL
-  crm.objects.meetings.read     RDV  (couvert par sales-email-read sur ce portail)
-  crm.objects.deals.read        simulations
+  crm.objects.contacts.read
+  crm.lists.read
 """
 import os
 import json
@@ -34,14 +35,9 @@ import requests
 TOKEN = os.environ["HUBSPOT_TOKEN"]
 BASE = "https://api.hubapi.com"
 H = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
-CONTACTS = "/crm/v3/objects/contacts/search"
-EMAILS = "/crm/v3/objects/emails/search"
-MEETINGS = "/crm/v3/objects/meetings/search"
-DEALS = "/crm/v3/objects/deals/search"
-CHUNK = 100          # taille de lot pour les filtres associations.contact
+SEARCH = "/crm/v3/objects/contacts/search"
 
 
-# ---------------------------------------------------------------- utilitaires
 def post(path, body):
     """POST avec retente exponentielle sur les limites de débit HubSpot."""
     for attempt in range(5):
@@ -54,12 +50,92 @@ def post(path, body):
     r.raise_for_status()
 
 
-def num(v):
-    """Entier tolérant : HubSpot renvoie parfois '1.0' là où on attend 1."""
-    try:
-        return int(float(v))
-    except (TypeError, ValueError):
-        return 0
+def count_active(list_id):
+    """Contacts d'une liste encore activement enrôlés dans une séquence.
+
+    C'est ce compteur qui donne le statut : une cellule dont plus aucun contact
+    n'est enrôlé a fini d'envoyer. Le statut est donc DÉRIVÉ de HubSpot, plus
+    saisi à la main — la saisie manuelle avait déjà produit une erreur.
+
+    Réserve : hs_sequences_is_enrolled vaut vrai pour n'importe quelle séquence,
+    pas seulement celles de la campagne. Un contact réenrôlé ailleurs maintient
+    donc artificiellement la cellule en cours. Sur des listes de campagne
+    dédiées, le cas reste marginal.
+    """
+    body = {"filterGroups": [{"filters": [
+                {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                 "values": [str(list_id)]},
+                {"propertyName": "hs_sequences_is_enrolled", "operator": "EQ",
+                 "value": "true"},
+            ]}],
+            "properties": ["hs_object_id"],
+            "limit": 1}
+    return post(SEARCH, body).get("total", 0)
+
+
+def count_lists(list_ids, also_in=None):
+    """Nombre de contacts appartenant à l'UNE des list_ids, et le cas échéant
+    présents aussi dans `also_in`.
+
+    Deux filtres sur la même propriété dans un seul filterGroup = ET.
+    `limit: 1` suffit : seul `total` nous intéresse, et ça évite de faire
+    transiter des fiches contact.
+    """
+    filters = [{"propertyName": "hs_crm_search.ilsListIds",
+                "operator": "IN",
+                "values": [str(x) for x in list_ids]}]
+    if also_in:
+        filters.append({"propertyName": "hs_crm_search.ilsListIds",
+                        "operator": "IN",
+                        "values": [str(also_in)]})
+    body = {"filterGroups": [{"filters": filters}],
+            "properties": ["hs_object_id"],
+            "limit": 1}
+    return post(SEARCH, body).get("total", 0)
+
+
+def reply_stats(list_id, send_iso):
+    """Réponses d'une cellule, total et délai après l'envoi du batch.
+
+    Source : contact.hs_sales_email_last_replied, filtré à partir de la date
+    d'envoi du batch pour ne pas compter un échange antérieur à la campagne.
+
+    LIMITE ASSUMÉE : cette propriété porte la date de la DERNIÈRE réponse, pas
+    de la première. Un contact ayant répondu à J+1 puis à J+6 est compté à J+6.
+    La courbe est donc biaisée vers le tard : elle décrit la période d'activité
+    de la conversation, pas le délai de première réaction. HubSpot n'expose pas
+    d'équivalent « première réponse » sur les e-mails commerciaux.
+
+    On ne demande QUE la date : aucun nom, aucun e-mail ne transite.
+    """
+    send = dt.datetime.fromisoformat(send_iso.replace("Z", "+00:00"))
+    delays, after = [], None
+    while True:
+        body = {
+            "filterGroups": [{"filters": [
+                {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                 "values": [str(list_id)]},
+                # HubSpot attend des MILLISECONDES epoch pour filtrer une propriété
+                # de type date. Passer "2026-07-25" ne matche rien, silencieusement :
+                # c'est ce qui affichait 0 réponse partout.
+                {"propertyName": "hs_sales_email_last_replied", "operator": "GTE",
+                 "value": str(int(send.timestamp() * 1000))},
+            ]}],
+            "properties": ["hs_sales_email_last_replied"],
+            "limit": 100,
+        }
+        if after:
+            body["after"] = after
+        d = post(SEARCH, body)
+        for r in d.get("results", []):
+            v = r["properties"].get("hs_sales_email_last_replied")
+            when = to_dt(v)
+            if when:
+                delays.append(max(0, (when - send).days))
+        after = (d.get("paging") or {}).get("next", {}).get("after")
+        if not after:
+            break
+    return len(delays), delays
 
 
 def to_dt(v):
@@ -77,280 +153,113 @@ def to_dt(v):
         return None
 
 
-def count_lists(list_ids, extra=None):
-    """Contacts appartenant à l'une des listes, avec un filtre additionnel."""
-    filters = [{"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
-                "values": [str(x) for x in list_ids]}]
-    if extra:
-        filters.append(extra)
-    body = {"filterGroups": [{"filters": filters}],
-            "properties": ["hs_object_id"], "limit": 1}
-    return post(CONTACTS, body).get("total", 0)
-
-
-def list_members(list_id):
-    """IDs des contacts d'une liste, avec leur propriétaire.
-
-    On ne demande que l'ID et le propriétaire : aucun nom, aucun e-mail,
-    aucun téléphone ne transite ni n'est écrit dans data.json.
-    """
-    out, after = [], None
-    while True:
-        body = {
-            "filterGroups": [{"filters": [
-                {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
-                 "values": [str(list_id)]},
-            ]}],
-            "properties": ["hubspot_owner_id", "hs_sales_email_last_replied"],
-            "limit": CHUNK,
-        }
-        if after:
-            body["after"] = after
-        d = post(CONTACTS, body)
-        for r in d.get("results", []):
-            p = r["properties"]
-            out.append((r["id"], p.get("hubspot_owner_id"),
-                        p.get("hs_sales_email_last_replied")))
-        after = (d.get("paging") or {}).get("next", {}).get("after")
-        if not after:
-            return out
-
-
-def owners_map():
-    r = requests.get(BASE + "/crm/v3/owners/", headers=H,
-                     params={"limit": 200}, timeout=30)
-    r.raise_for_status()
-    return {o["id"]: (f'{o.get("firstName","")} {o.get("lastName","")}'.strip()
-                      or o.get("email", "?"))
-            for o in r.json().get("results", [])}
-
-
-# ------------------------------------------------------------------- e-mails
-def emails_for(contact_ids, sequence_ids, since_ms):
-    """Envois, ouvertures, clics et réponses des e-mails de séquence reçus par
-    ces contacts précisément.
-
-    Le double filtre est ce qui corrige le bug : hs_sequence_id restreint aux
-    séquences de la campagne, associations.contact restreint aux contacts de la
-    cellule. Sans le second, un batch ultérieur partageant la séquence viendrait
-    gonfler les chiffres.
-
-    Compteurs bornés à 1 par e-mail pour obtenir de l'unique plutôt que le
-    cumul brut renvoyé par HubSpot.
-    """
-    agg = dict(sent=0, bounced=0, opens=0, clicks=0)
-    steps = {}
-    for i in range(0, len(contact_ids), CHUNK):
-        chunk = contact_ids[i:i + CHUNK]
-        after = None
-        while True:
-            body = {
-                "filterGroups": [{"filters": [
-                    {"propertyName": "hs_sequence_id", "operator": "IN",
-                     "values": [str(s) for s in sequence_ids]},
-                    {"propertyName": "associations.contact", "operator": "IN",
-                     "values": chunk},
-                    {"propertyName": "hs_timestamp", "operator": "GTE",
-                     "value": str(since_ms)},
-                ]}],
-                "properties": ["hs_email_status", "hs_email_subject",
-                               "hs_email_open_count", "hs_email_click_count",
-                               "hs_timestamp"],
-                "limit": 200,
-            }
-            if after:
-                body["after"] = after
-            d = post(EMAILS, body)
-            for e in d.get("results", []):
-                p = e["properties"]
-                status = (p.get("hs_email_status") or "").upper()
-                if status not in ("SENT", "BOUNCED"):
-                    continue
-                agg["sent"] += 1
-                subj = p.get("hs_email_subject") or "(sans objet)"
-                st = steps.setdefault(subj, dict(sent=0, opens=0, clicks=0))
-                st["sent"] += 1
-                if status == "BOUNCED":
-                    agg["bounced"] += 1
-                    continue
-                op = 1 if num(p.get("hs_email_open_count")) > 0 else 0
-                cl = 1 if num(p.get("hs_email_click_count")) > 0 else 0
-                agg["opens"] += op
-                agg["clicks"] += cl
-                st["opens"] += op
-                st["clicks"] += cl
-            after = (d.get("paging") or {}).get("next", {}).get("after")
-            if not after:
-                break
-    ordered = sorted(steps.items(), key=lambda x: -x[1]["sent"])
-    return agg, [dict(order=i + 1, subject=k, **v)
-                 for i, (k, v) in enumerate(ordered)]
-
-
-# ------------------------------------------------------- RDV et simulations
-def _count_assoc(path, contact_ids, extra_filters):
-    """Objets associés à ces contacts, pagination incluse."""
-    n = 0
-    for i in range(0, len(contact_ids), CHUNK):
-        chunk = contact_ids[i:i + CHUNK]
-        after = None
-        while True:
-            filters = [{"propertyName": "associations.contact",
-                        "operator": "IN", "values": chunk}] + extra_filters
-            body = {"filterGroups": [{"filters": filters}],
-                    "properties": ["hs_object_id"], "limit": 200}
-            if after:
-                body["after"] = after
-            d = post(path, body)
-            n += len(d.get("results", []))
-            after = (d.get("paging") or {}).get("next", {}).get("after")
-            if not after:
-                break
-    return n
-
-
-def split_by_owner(members, counter):
-    """Répartition par propriétaire de contact.
-
-    On NE lit PAS le champ `associations` des résultats de recherche : l'API
-    CRM Search ne le renvoie pas, ce qui donnait un décompte toujours vide.
-    On partitionne les contacts par propriétaire et on compte par partition.
-    """
-    groups = {}
-    for cid, owner, _ in members:
-        groups.setdefault(owner, []).append(cid)
-    return {owner: counter(ids) for owner, ids in groups.items()}
-
-
-# -------------------------------------------------------------------- build
-def load_config():
-    with open("cohorts.json", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def cumulative_curve(delays, horizon=21):
-    """Part des répondants ayant répondu au plus tard à J+n."""
+    """Courbe cumulée : part des répondants ayant répondu au plus tard à J+n."""
     if not delays:
         return []
     n = len(delays)
     return [dict(day=j, count=sum(1 for x in delays if x <= j),
                  share=round(100 * sum(1 for x in delays if x <= j) / n, 1))
-            for j in range(horizon + 1)]
+            for j in range(0, horizon + 1)]
+
+
+def load_config():
+    with open("campaign.json", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def build():
     cfg = load_config()
-    owners = owners_map()
-    pipeline = cfg["deal_pipeline"]
-    all_lists = [c["list_id"] for co in cfg["cohorts"] for c in co["cells"]]
+    doc_kpis = [k for k in cfg["kpis"] if k.get("list")]
+    all_cohort_lists = [c["list_id"] for co in cfg["cohorts"] for c in co["cells"]]
 
     cohorts = []
     for co in cfg["cohorts"]:
-        send = dt.datetime.fromisoformat(co["sent_at"].replace("Z", "+00:00"))
-        since_ms = int(send.timestamp() * 1000)
-        forced = (co.get("status") or "AUTO").upper()
-        cells, all_delays = [], []
-
+        cells = []
         for c in co["cells"]:
-            members = list_members(c["list_id"])
-            ids = [m[0] for m in members]
-
-            agg, steps = emails_for(ids, [c["sequence_id"]], since_ms)
-
-            # réponses : date de dernière réponse postérieure à l'envoi du batch
-            delays = []
-            for _, _, rep in members:
-                when = to_dt(rep)
-                if when and when >= send:
-                    delays.append((when - send).days)
-            all_delays += delays
-
-            meet_f = [{"propertyName": "hs_createdate", "operator": "GTE",
-                       "value": str(since_ms)}]
-            deal_f = [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline},
-                      {"propertyName": "createdate", "operator": "GTE",
-                       "value": str(since_ms)}]
-            n_meet = _count_assoc(MEETINGS, ids, meet_f)
-            n_deal = _count_assoc(DEALS, ids, deal_f)
-            m_own = split_by_owner(members, lambda x: _count_assoc(MEETINGS, x, meet_f))
-            d_own = split_by_owner(members, lambda x: _count_assoc(DEALS, x, deal_f))
-
-            active = count_lists([c["list_id"]],
-                                 {"propertyName": "hs_sequences_is_enrolled",
-                                  "operator": "EQ", "value": "true"})
-            oids = set(m_own) | set(d_own) | {o for _, o, _ in members}
-
-            cells.append(dict(
-                list_id=c["list_id"], list_name=c.get("list_name"),
-                sequence_id=c["sequence_id"], audience=c["audience"],
-                version=c.get("version"),
-                enrolled=len(members), active=active,
-                status=(forced if forced in ("TERMINE", "EN_COURS")
-                        else ("EN_COURS" if active > 0 else "TERMINE")),
-                sent=agg["sent"], bounced=agg["bounced"],
-                opens=agg["opens"], clicks=agg["clicks"],
-                replies=len(delays), meetings=n_meet, deals_ae=n_deal,
-                steps=steps,
-                by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
-                               meetings=m_own.get(o, 0), deals_ae=d_own.get(o, 0))
-                          for o in sorted(oids, key=lambda x: str(x))],
-            ))
-
+            cell = dict(list_id=c["list_id"], list_name=c.get("list_name"),
+                        audience=c["audience"], version=c.get("version"),
+                        enrolled=count_lists([c["list_id"]]),
+                        active=count_active(c["list_id"]))
+            n_rep, delays = reply_stats(c["list_id"], co["sent_at"])
+            cell["replies"] = n_rep
+            cell["reply_delays"] = delays
+            for k in doc_kpis:
+                cell[k["key"]] = count_lists([c["list_id"]], also_in=k["list"])
+            cell["docs"] = sum(cell[k["key"]] for k in doc_kpis)
+            # Statut au niveau CELLULE : une cohorte peut avoir une cellule finie
+            # et une autre encore en envoi, comme le batch du 1er août.
+            forced = (co.get("status") or "AUTO").upper()
+            cell["status"] = (forced if forced in ("TERMINE", "EN_COURS")
+                              else ("EN_COURS" if cell["active"] > 0 else "TERMINE"))
+            cells.append(cell)
         n_act = sum(c["active"] for c in cells)
         done = [c for c in cells if c["status"] == "TERMINE"]
         status = ("TERMINE" if n_act == 0 else ("PARTIEL" if done else "EN_COURS"))
         note = None if n_act == 0 else (
             f"{n_act} contact(s) encore en séquence sur cette cohorte"
             + (f", mais la cellule {done[0]['audience']} a fini d'envoyer "
-               f"et alimente déjà la référence." if done
-               else ". Les chiffres vont encore monter."))
-        cohorts.append(dict(id=co["id"], label=co["label"], sent_at=co["sent_at"],
-                            status=status, active=n_act, status_note=note,
-                            ab_test=co.get("ab_test", True), ab_note=co.get("ab_note"),
-                            cells=cells,
+               f"et alimente déjà la référence."
+               if done else ". Les chiffres vont encore monter."))
+        all_delays = [x for c in cells for x in c["reply_delays"]]
+        for c in cells:
+            c.pop("reply_delays", None)          # détail inutile côté dashboard
+        cohorts.append(dict(id=co["id"], label=co["label"], status=status,
+                            active=n_act, status_note=note,
+                            sequences=co.get("sequences", []), cells=cells,
+                            replies=sum(c["replies"] for c in cells),
                             reply_curve=cumulative_curve(all_delays)))
     cohorts.sort(key=lambda x: x["id"])
 
-    # Union dédupliquée : les cohortes peuvent se recouper
-    dedup = dict(contacts=count_lists(all_lists))
-    somme = sum(c["enrolled"] for co in cohorts for c in co["cells"])
-    ecart = somme - dedup["contacts"]
+    # Union dédupliquée sur l'ensemble des listes de cohorte
+    dedup = dict(contacts=count_lists(all_cohort_lists),
+                 replies=sum(co["replies"] for co in cohorts))
+    for k in doc_kpis:
+        dedup[k["key"]] = count_lists(all_cohort_lists, also_in=k["list"])
+
+    # Totaux portefeuille, tous canaux confondus
+    portfolio = {k["key"]: count_lists([k["list"]]) for k in doc_kpis}
+
+    docs = sum(dedup[k["key"]] for k in doc_kpis)
+    somme_cellules = sum(c["docs"] for co in cohorts for c in co["cells"])
+    ecart = somme_cellules - docs
+
+    target = next((k.get("target") for k in cfg["kpis"] if k.get("target")), None)
 
     data = dict(
         meta=dict(
             campaign=cfg["campaign"],
             generated_at=dt.datetime.now(dt.timezone.utc).isoformat(),
             collected=True,
+            source="HubSpot · appartenance aux listes statiques, intersections calculées côté portail",
             primary_axis=cfg.get("primary_axis", "cohort"),
-            primary_kpi=cfg.get("primary_kpi"),
-            source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
-                    "· MEETING_EVENT · DEAL pipeline " + pipeline),
+            status_source=("Statut dérivé automatiquement de contact.hs_sequences_is_enrolled, "
+                           "par cellule. Aucune saisie manuelle."),
             attribution_note=cfg["notes"]["attribution"],
             overlap_note=(
-                f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
-                f"plusieurs batchs. Le niveau 1 utilise l'union dédupliquée."
-                if ecart > 0 else "Aucun recoupement entre les cohortes."),
-            fix_note=("Attribution par appartenance aux listes. Les séquences étant "
-                      "réutilisées d'un batch à l'autre, une attribution par "
-                      "hs_sequence_id imputerait les envois d'un batch au précédent."),
+                f"Les cohortes se chevauchent : un même contact a pu être ciblé dans "
+                f"plusieurs batchs. La somme des cellules dépasse l'union réelle de "
+                f"{ecart} documents, soit {100 * ecart / docs:.1f} %. "
+                f"Le niveau 1 utilise l'union dédupliquée, jamais la somme."
+                if docs and ecart > 0 else
+                "Aucun chevauchement détecté entre les cohortes."),
         ),
         kpis=cfg["kpis"],
-        audience_labels=cfg["audience_labels"],
-        stats_config=cfg["stats"],
         dedup=dedup,
+        portfolio=portfolio,
+        target=target,
+        target_initial=cfg.get("target_initial"),
         cohorts=cohorts,
     )
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
 
     n_cells = sum(len(c["cells"]) for c in cohorts)
-    tot = {k["key"]: sum(c[k["key"]] for co in cohorts for c in co["cells"])
-           for k in cfg["kpis"]}
     print(f"OK · {len(cohorts)} cohortes · {n_cells} cellules · "
-          f"{dedup['contacts']} contacts ciblés")
-    print("   " + " · ".join(f"{k['label']} {tot[k['key']]}" for k in cfg["kpis"]))
+          f"{dedup['contacts']} contacts ciblés · {docs} documents"
+          + (f" · {100 * docs / target:.0f} % de l'objectif" if target else ""))
     if ecart > 0:
-        print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
+        print(f"   chevauchement : somme des cellules {somme_cellules} vs union {docs}")
 
 
 if __name__ == "__main__":
