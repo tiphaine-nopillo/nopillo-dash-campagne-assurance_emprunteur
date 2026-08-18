@@ -1,153 +1,80 @@
-# [OPS] Suivi performance campagne Assurance Emprunteur (Août 2026)
+# Suivi de performance — campagne Assurance Emprunteur
 
-Dashboard statique de suivi de la performance des campagnes d'emails envoyées via les séquences HubSpot. Hébergé sur GitHub Pages, sans backend.
-
-## Architecture
+Dashboard statique hébergé sur GitHub Pages, sans backend.
 
 ```
-index.html       ← la vue (statique, jamais régénérée)
-cohorts.json     ← définition des cohortes (audience, version, listes, séquences)
-objectives.json  ← les objectifs métier par campagne (édité à la main)
-data.json        ← la donnée (seul fichier réécrit à chaque refresh)
-refresh.py       ← le collecteur HubSpot → data.json
+index.html      ← la vue (statique, jamais régénérée)
+cohorts.json    ← la config métier : batchs, audiences, versions, KPI
+data.json       ← la donnée (seul fichier réécrit par le workflow)
+refresh.py      ← le collecteur HubSpot
 ```
 
-Les campagnes n'ont pas le même objectif. Une seule vue globale serait donc fausse : chaque campagne est jugée sur **sa** métrique, déclarée dans `objectives.json`. Changer une cible = une ligne de JSON, sans toucher au collecteur ni au dashboard.
+## Le correctif majeur de la V2
 
-Métriques disponibles comme objectif primaire : `meetings`, `link_clicks`, `replies`, `completions`.
+**Les séquences sont réutilisées d'un batch à l'autre.** `841303267` a servi le RP du 5 août, puis celui du 13 août.
 
-Une campagne dont l'objectif n'est pas encore instrumenté s'affiche en **carte grise pointillée**, pas à zéro. La distinction est volontaire : « pas mesuré » et « mesuré à zéro » ne déclenchent pas la même action.
+La V1 comptait les e-mails par `hs_sequence_id` sans filtrer les contacts : les envois du 13 août étaient imputés au batch du 5 août, qui se retrouvait surévalué.
 
+La V2 applique un **double filtre** : la séquence restreint le périmètre des e-mails, l'appartenance à la liste statique isole le batch. C'est vérifié par un test hors ligne — sans le second filtre, le 5 août afficherait 810 envois au lieu de 250.
 
-## Cohortes
+**Conséquence pratique :** ne compare pas les chiffres de la V1 à ceux de la V2. Les premiers étaient contaminés.
 
-Une **cohorte** = une date d'envoi. Une **cellule** = une liste statique + la séquence qui lui a été envoyée. Les cellules portent l'audience et la version.
+## Ajouter un batch
 
+Un bloc dans `cohorts.json`, rien d'autre :
+
+```json
+{
+ "id": "2026-09-02",
+ "label": "Batch du 2 septembre 2026",
+ "sent_at": "2026-09-02T09:00:00Z",
+ "status": "AUTO",
+ "ab_test": false,
+ "cells": [
+  {"list_id": "14XXX", "sequence_id": "8XXXXXXXX", "audience": "RP", "version": "A",
+   "list_name": "..."}
+ ]
+}
 ```
-cohorts.json     ← définition des cohortes (mapping explicite listId + sequenceId)
-```
 
-Mapping explicite, pas de regex sur les titres : les 4 listes de la cohorte du 05/08 utilisent 4 ordres de tokens différents, avec « AssEmp » vs « Assurance Emprunteur » et « Batch 5 août » vs « Batch du 5 août ». Un parseur casserait à la cohorte suivante.
+Trois règles impératives :
 
-Pour les prochaines cohortes, adopte un format fixe — `AE | 2026-09-02 | LMNP | A` — et le mapping devient trivial.
+- **`list_id` obligatoire** sur chaque cellule. Sans liste, aucune attribution possible.
+- **La liste doit être statique.** Une liste active se recalcule : le dénominateur dériverait.
+- **`sent_at` exact.** Il sert à dater les RDV, les simulations et la courbe de réponse. Un décalage fausse tout.
 
-### Séparation des rôles
+`status: "AUTO"` suffit : le statut est dérivé de `hs_sequences_is_enrolled`, cellule par cellule. Tu n'as jamais à passer un batch en terminé à la main.
 
-| Question | Source |
+## Changer les KPI
+
+Le bloc `kpis` déclare ce qui est mesuré, avec la source et le dénominateur :
+
+| `source` | Origine |
 |---|---|
-| Qui était ciblé (dénominateur) | Liste **statique** — figée, donc stable dans le temps |
-| Ce qui a réellement été envoyé et engagé | Objets `EMAIL` via `hs_sequence_id` |
-| RDV | `MEETING_EVENT` associé aux contacts de la liste, après la date d'envoi |
-| Transactions | `DEAL` où `pipeline = 3817233652`, associé aux contacts de la liste |
-| Répartition | `contact.hubspot_owner_id` — celui de la transaction est vide, n8n les crée sans propriétaire |
+| `email` | objets EMAIL ∩ appartenance à la liste |
+| `reply` | `contact.hs_sales_email_last_replied` |
+| `meeting` | MEETING_EVENT associé au contact |
+| `deal` | DEAL du pipeline déclaré dans `deal_pipeline` |
 
-`hs_latest_sequence_enrolled` n'est **jamais** utilisé : cette propriété ne conserve que la dernière séquence. Mesuré sur un cas réel du portail : 160 enrôlés réels contre 124 visibles, soit 22 % de perte.
+`primary_kpi` désigne la métrique qui pilote le classement des batchs — ici les simulations.
 
-## Garde-fous statistiques
+## Mise en ligne
 
-Le dashboard refuse de conclure au-delà de ce que les effectifs permettent.
+1. Dépôt GitHub **public** — Pages n'est pas disponible sur dépôt privé en plan gratuit, et le site publié reste public dans tous les cas
+2. Envoyer les fichiers, en créant `.github/workflows/refresh.yml` via **Add file → Create new file** pour préserver le chemin
+3. `Settings` → `Pages` → branche `main`, dossier `/ (root)`
+4. `Settings` → `Secrets and variables` → `Actions` → secret `HUBSPOT_TOKEN`
 
-- **Aucun taux affiché** sous 100 contacts par cellule — seuls les volumes absolus.
-- **Aucun gagnant désigné** sans test de proportions bilatéral significatif à 5 %.
-- La colonne « seuil détectable » affiche l'écart minimum décelable à 80 % de puissance. Sur l'audience LMNP (n≈48 par bras), ce seuil vaut ±11 à ±18 pt : autrement dit, aucun apprentissage possible.
-- La comparaison entre cohortes est étiquetée comme confondue avec le temps et la composition d'audience. Ce n'est pas un test causal.
+## Portées de l'application privée
 
-### Recommandation de design d'expérience
+`crm.objects.contacts.read` · `crm.lists.read` · `sales-email-read` · `crm.objects.deals.read`
 
-**Arrête de splitter LMNP.** 96 contacts coupés en deux ne produisent rien. Envoie une version unique à toute l'audience LMNP et compare d'une cohorte à l'autre. Le split A/B garde du sens sur RP (~250 par bras), et seulement sur les métriques de haut de funnel.
+**Lecture seule, aucune écriture.**
 
-## Confidentialité
+## Limites assumées
 
-`dealname` contient nom et email du client (« Courtage AE – prenom.nom@domaine.fr NOM »). Les requêtes contacts renvoient noms, emails et téléphones.
-
-**`refresh.py` n'écrit dans `data.json` que des agrégats et des identifiants.** Aucun nom, aucun email, aucun téléphone. C'est le garde-fou qui autorise le repo public — si quelqu'un ajoute un champ nominatif pour améliorer la lisibilité, le repo doit passer en privé le jour même.
-
-## Compter les clics sur un lien précis
-
-L'objet `EMAIL` ne porte aucune propriété d'URL cliquée — `hs_email_click_count` est un total, tous liens confondus. Le comptage par lien passe donc par une **page relais** :
-
-1. Créer `nopillo.com/go/<campagne>` : page portant le script de tracking HubSpot, qui redirige en JS vers la destination.
-2. Workflow contact, déclencheur « a visité une page dont l'URL contient `/go/<campagne>` », action : définir une propriété date (ex. `ae_clic_lien_date`).
-3. Déclarer cette propriété dans `objectives.json` → `tracked_link.contact_property`.
-
-La page relais est **obligatoire si la destination est un domaine partenaire** : le tracking HubSpot ne tourne pas sur un site tiers, donc sans relais aucun clic n'est enregistré. Elle a un bénéfice secondaire : le dashboard compte des **contacts** et non des clics, donc du dédupliqué et de l'attribuable.
-
-## RDV pris vs RDV honoré
-
-`MEETING_EVENT` porte `hs_outcome_completed_count`, `hs_outcome_no_show_count` et `hs_outcome_canceled_count`. Les deux volumes sont affichés séparément : un no-show compte dans « RDV pris » mais ne génère aucun revenu. Au-delà de 15 % de no-show, le problème est le message de confirmation ou le délai de prise de RDV — pas la séquence.
-
-Choix assumé : **la donnée est découplée du HTML.** Le dashboard Lighthouse régénère son HTML à chaque refresh ; ici `index.html` fetch `data.json`. Conséquence : un refresh = un fichier de 30 ko modifié au lieu de 270 ko, l'historique git reste lisible, et le refresh peut tourner dans une GitHub Action sans jamais toucher au code.
-
-## Mise en route
-
-```bash
-# 1. repo
-git init && git add . && git commit -m "init Signal"
-gh repo create nopillo-signal --public --source=. --push
-
-# 2. GitHub Pages : Settings → Pages → Source = branch main, dossier /(root)
-#    → https://<ton-user>.github.io/nopillo-signal/
-
-# 3. données réelles
-export HUBSPOT_TOKEN="pat-eu1-..."
-pip install requests
-python3 refresh.py && git commit -am "refresh" && git push
-```
-
-Tant que `data.json` porte `"mode": "DEMO"`, un bandeau jaune l'affiche explicitement. Aucun risque de présenter des chiffres de démo en comité par erreur.
-
-## Private app HubSpot · scopes
-
-| Scope | Pourquoi |
-|---|---|
-| `sales-email-read` | objets EMAIL = toutes les métriques |
-| `crm.objects.owners.read` | résoudre les senders |
-| `crm.objects.contacts.read` | rapprochement contact ↔ enrôlement |
-| `crm.objects.meetings.read` | suivi des RDV (optionnel) |
-
-Toutes en **lecture seule** : n'accorde aucune écriture. Le script ne fait que lire ; un token en lecture ne peut ni modifier ni supprimer de données CRM.
-
-L'API Sequences n'est pas utilisée — `cohorts.json` déclare les identifiants — donc aucun siège Sales Hub n'est requis, et aucun `HUBSPOT_USER_ID`.
-
-## Refresh automatique
-
-Deux options.
-
-**A · GitHub Actions** (recommandé : pas de machine à laisser allumée)
-
-`.github/workflows/refresh.yml`
-```yaml
-name: refresh
-on:
-  schedule: [{cron: "0 6 * * 1-5"}]   # 6h UTC, lundi→vendredi
-  workflow_dispatch:
-permissions: {contents: write}
-jobs:
-  refresh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: "3.12"}
-      - run: pip install requests
-      - run: python3 refresh.py
-        env:
-          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
-
-      - run: |
-          git config user.name "signal-bot"
-          git config user.email "bot@nopillo.com"
-          git commit -am "refresh $(date -u +%F)" || exit 0
-          git push
-```
-Le token vit dans Settings → Secrets → Actions. Il ne passe jamais par le repo.
-
-**B · cron local** — `0 7 * * 1-5 cd ~/signal && python3 refresh.py && git commit -am refresh && git push`
-
-## Limites connues
-
-- **Enrôlés** : l'API ne permet pas de lister les enrôlements d'une séquence (seulement l'état d'un contact donné). `refresh.py` approxime les enrôlés par le volume du 1er step. Pour de l'exact : un workflow HubSpot qui horodate une propriété contact à l'enrôlement, puis lecture de cette propriété.
-- **Steps** : les emails d'engagement ne portent pas le numéro de step. Le regroupement se fait par objet d'email. Deux steps au même objet fusionnent — à éviter côté template.
-- **CRM Search** plafonne à 10 000 résultats par requête. Au-delà, découper la fenêtre par tranches de dates.
-- **Open rate** dégradé par Apple Mail Privacy Protection. Ne pas en faire un indicateur de pilotage.
-- **Repo public** : `data.json` ne contient que des agrégats, aucun email ni nom de contact. Vérifier que ça reste vrai à chaque évolution du script — sinon passer le repo en privé (Pages privé requiert GitHub Enterprise) ou basculer sur Cloudflare Pages avec Access.
+- **Attribution temporelle, non causale.** Un contact qui aurait pris rendez-vous de toute façon est compté.
+- **Réponses : dernière, pas première.** `hs_sales_email_last_replied` décale la courbe de délai vers le tard.
+- **Ouvertures non fiables** depuis Apple Mail Privacy Protection.
+- **Étapes regroupées par objet d'e-mail** : les engagements ne portent pas le numéro d'étape.
+- **Pas de clic par lien** : `hs_email_click_count` est un total tous liens confondus.
