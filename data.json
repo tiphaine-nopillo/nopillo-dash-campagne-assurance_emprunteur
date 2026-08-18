@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-18T11:01:37.086606+00:00",
+  "generated_at": "2026-08-18T14:08:20.242650+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -208,7 +208,7 @@
      "clicks_emails": 2,
      "replies": 3,
      "meetings": 3,
-     "deals_ae": 5,
+     "deals_ae": 6,
      "steps": [
       {
        "order": 1,
@@ -237,7 +237,7 @@
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
        "meetings": 2,
-       "deals_ae": 2
+       "deals_ae": 3
       },
       {
        "owner_id": "75453551",
@@ -358,23 +358,23 @@
     },
     {
      "day": 9,
-     "count": 35,
-     "share": 5.6
+     "count": 34,
+     "share": 5.44
     },
     {
      "day": 10,
-     "count": 48,
-     "share": 7.68
+     "count": 47,
+     "share": 7.52
     },
     {
      "day": 11,
-     "count": 52,
-     "share": 8.32
+     "count": 51,
+     "share": 8.16
     },
     {
      "day": 12,
-     "count": 57,
-     "share": 9.12
+     "count": 56,
+     "share": 8.96
     },
     {
      "day": 13,
@@ -404,19 +404,19 @@
      "status": "EN_COURS",
      "sent": 556,
      "bounced": 1,
-     "opens": 268,
+     "opens": 269,
      "clicks": 5,
-     "opens_emails": 262,
+     "opens_emails": 263,
      "clicks_emails": 5,
      "replies": 13,
      "meetings": 11,
-     "deals_ae": 6,
+     "deals_ae": 8,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 556,
-       "opens": 262,
+       "opens": 263,
        "clicks": 5
       }
      ],
@@ -425,7 +425,7 @@
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
        "meetings": 3,
-       "deals_ae": 2
+       "deals_ae": 3
       },
       {
        "owner_id": "650299108",
@@ -437,7 +437,7 @@
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
        "meetings": 2,
-       "deals_ae": 1
+       "deals_ae": 2
       }
      ]
     },
@@ -452,19 +452,19 @@
      "status": "EN_COURS",
      "sent": 136,
      "bounced": 0,
-     "opens": 85,
+     "opens": 86,
      "clicks": 5,
-     "opens_emails": 84,
+     "opens_emails": 85,
      "clicks_emails": 4,
      "replies": 11,
-     "meetings": 5,
-     "deals_ae": 1,
+     "meetings": 6,
+     "deals_ae": 2,
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
-       "opens": 84,
+       "opens": 85,
        "clicks": 4
       }
      ],
@@ -484,8 +484,8 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 4,
-       "deals_ae": 1
+       "meetings": 5,
+       "deals_ae": 2
       }
      ]
     }
@@ -513,8 +513,8 @@
     },
     {
      "day": 4,
-     "count": 24,
-     "share": 3.43
+     "count": 23,
+     "share": 3.29
     },
     {
      "day": 5,
