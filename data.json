@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T09:06:57.515786+00:00",
+  "generated_at": "2026-08-19T11:00:45.846588+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -385,8 +385,8 @@
     },
     {
      "day": 13,
-     "count": 60,
-     "share": 9.6
+     "count": 59,
+     "share": 9.44
     },
     {
      "day": 14,
@@ -400,8 +400,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 663,
-   "status_note": "663 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 662,
+   "status_note": "662 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -460,16 +460,16 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 124,
+     "active": 123,
      "status": "EN_COURS",
      "sent": 136,
      "bounced": 0,
      "opens": 86,
-     "clicks": 5,
+     "clicks": 6,
      "opens_emails": 85,
-     "clicks_emails": 4,
+     "clicks_emails": 5,
      "replies": 11,
-     "meetings": 6,
+     "meetings": 7,
      "deals_ae": 2,
      "steps": [
       {
@@ -477,7 +477,7 @@
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
        "opens": 85,
-       "clicks": 4
+       "clicks": 5
       }
      ],
      "by_owner": [
@@ -496,7 +496,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 5,
+       "meetings": 6,
        "deals_ae": 2
       }
      ]
@@ -530,6 +530,11 @@
     },
     {
      "day": 5,
+     "count": 25,
+     "share": 3.57
+    },
+    {
+     "day": 6,
      "count": 26,
      "share": 3.71
     }
