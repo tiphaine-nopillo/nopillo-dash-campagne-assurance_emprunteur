@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T11:59:28.455022+00:00",
+  "generated_at": "2026-08-19T14:09:39.170726+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -263,7 +263,7 @@
      "opens_emails": 68,
      "clicks_emails": 2,
      "replies": 7,
-     "meetings": 9,
+     "meetings": 10,
      "deals_ae": 7,
      "steps": [
       {
@@ -311,7 +311,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 1,
+       "meetings": 2,
        "deals_ae": 0
       }
      ]
@@ -380,13 +380,13 @@
     },
     {
      "day": 12,
-     "count": 54,
-     "share": 8.64
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 13,
-     "count": 58,
-     "share": 9.28
+     "count": 57,
+     "share": 9.12
     },
     {
      "day": 14,
@@ -421,7 +421,7 @@
      "opens_emails": 263,
      "clicks_emails": 5,
      "replies": 16,
-     "meetings": 11,
+     "meetings": 12,
      "deals_ae": 8,
      "steps": [
       {
@@ -448,7 +448,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 2,
+       "meetings": 3,
        "deals_ae": 2
       }
      ]
