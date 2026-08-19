@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T11:00:45.846588+00:00",
+  "generated_at": "2026-08-19T11:59:28.455022+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -385,8 +385,8 @@
     },
     {
      "day": 13,
-     "count": 59,
-     "share": 9.44
+     "count": 58,
+     "share": 9.28
     },
     {
      "day": 14,
@@ -420,7 +420,7 @@
      "clicks": 5,
      "opens_emails": 263,
      "clicks_emails": 5,
-     "replies": 15,
+     "replies": 16,
      "meetings": 11,
      "deals_ae": 8,
      "steps": [
@@ -535,8 +535,8 @@
     },
     {
      "day": 6,
-     "count": 26,
-     "share": 3.71
+     "count": 27,
+     "share": 3.86
     }
    ]
   }
