@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T06:02:32.550071+00:00",
+  "generated_at": "2026-08-19T09:06:57.515786+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -145,8 +145,8 @@
      "opens_emails": 351,
      "clicks_emails": 16,
      "replies": 24,
-     "meetings": 12,
-     "deals_ae": 6,
+     "meetings": 13,
+     "deals_ae": 7,
      "steps": [
       {
        "order": 1,
@@ -186,8 +186,8 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 7,
-       "deals_ae": 2
+       "meetings": 8,
+       "deals_ae": 3
       }
      ]
     },
@@ -360,31 +360,36 @@
     },
     {
      "day": 8,
+     "count": 31,
+     "share": 4.96
+    },
+    {
+     "day": 9,
      "count": 32,
      "share": 5.12
     },
     {
-     "day": 9,
-     "count": 33,
-     "share": 5.28
-    },
-    {
      "day": 10,
-     "count": 46,
-     "share": 7.36
+     "count": 45,
+     "share": 7.2
     },
     {
      "day": 11,
-     "count": 50,
-     "share": 8.0
+     "count": 49,
+     "share": 7.84
     },
     {
      "day": 12,
-     "count": 55,
-     "share": 8.8
+     "count": 54,
+     "share": 8.64
     },
     {
      "day": 13,
+     "count": 60,
+     "share": 9.6
+    },
+    {
+     "day": 14,
      "count": 60,
      "share": 9.6
     }
@@ -520,8 +525,8 @@
     },
     {
      "day": 4,
-     "count": 23,
-     "share": 3.29
+     "count": 22,
+     "share": 3.14
     },
     {
      "day": 5,
