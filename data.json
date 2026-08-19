@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T17:55:58.879969+00:00",
+  "generated_at": "2026-08-19T19:13:28.473767+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -416,9 +416,9 @@
      "status": "EN_COURS",
      "sent": 556,
      "bounced": 1,
-     "opens": 270,
+     "opens": 271,
      "clicks": 5,
-     "opens_emails": 263,
+     "opens_emails": 264,
      "clicks_emails": 5,
      "replies": 16,
      "meetings": 12,
@@ -428,7 +428,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 556,
-       "opens": 263,
+       "opens": 264,
        "clicks": 5
       }
      ],
