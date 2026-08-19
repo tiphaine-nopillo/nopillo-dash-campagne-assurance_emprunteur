@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T14:09:39.170726+00:00",
+  "generated_at": "2026-08-19T16:03:16.516161+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -146,7 +146,7 @@
      "clicks_emails": 16,
      "replies": 24,
      "meetings": 13,
-     "deals_ae": 7,
+     "deals_ae": 8,
      "steps": [
       {
        "order": 1,
@@ -181,7 +181,7 @@
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
        "meetings": 4,
-       "deals_ae": 1
+       "deals_ae": 2
       },
       {
        "owner_id": "75453551",
@@ -263,8 +263,8 @@
      "opens_emails": 68,
      "clicks_emails": 2,
      "replies": 7,
-     "meetings": 10,
-     "deals_ae": 7,
+     "meetings": 11,
+     "deals_ae": 8,
      "steps": [
       {
        "order": 1,
@@ -299,7 +299,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 3,
+       "meetings": 4,
        "deals_ae": 2
       },
       {
@@ -312,7 +312,7 @@
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
        "meetings": 2,
-       "deals_ae": 0
+       "deals_ae": 1
       }
      ]
     }
@@ -370,23 +370,23 @@
     },
     {
      "day": 10,
-     "count": 45,
-     "share": 7.2
+     "count": 44,
+     "share": 7.04
     },
     {
      "day": 11,
-     "count": 49,
-     "share": 7.84
+     "count": 48,
+     "share": 7.68
     },
     {
      "day": 12,
-     "count": 53,
-     "share": 8.48
+     "count": 52,
+     "share": 8.32
     },
     {
      "day": 13,
-     "count": 57,
-     "share": 9.12
+     "count": 56,
+     "share": 8.96
     },
     {
      "day": 14,
