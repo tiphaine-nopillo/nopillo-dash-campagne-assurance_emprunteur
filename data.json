@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-20T14:11:19.158766+00:00",
+  "generated_at": "2026-08-20T16:05:21.592073+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -90,7 +90,7 @@
      "opens_emails": 371,
      "clicks_emails": 5,
      "replies": 27,
-     "meetings": 19,
+     "meetings": 18,
      "deals_ae": 11,
      "steps": [
       {
@@ -118,7 +118,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 11,
+       "meetings": 10,
        "deals_ae": 5
       },
       {
@@ -142,7 +142,7 @@
      "bounced": 4,
      "opens": 177,
      "clicks": 14,
-     "opens_emails": 351,
+     "opens_emails": 352,
      "clicks_emails": 16,
      "replies": 25,
      "meetings": 14,
@@ -166,7 +166,7 @@
        "order": 3,
        "subject": "Dernière chance pour renégocier votre assurance emprunteur",
        "sent": 233,
-       "opens": 87,
+       "opens": 88,
        "clicks": 7
       }
      ],
@@ -421,11 +421,11 @@
      "status": "EN_COURS",
      "sent": 556,
      "bounced": 1,
-     "opens": 273,
+     "opens": 274,
      "clicks": 5,
      "opens_emails": 266,
      "clicks_emails": 5,
-     "replies": 17,
+     "replies": 18,
      "meetings": 13,
      "deals_ae": 8,
      "steps": [
@@ -545,8 +545,8 @@
     },
     {
      "day": 7,
-     "count": 29,
-     "share": 4.14
+     "count": 30,
+     "share": 4.29
     }
    ]
   }
