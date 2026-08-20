@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-19T19:13:28.473767+00:00",
+  "generated_at": "2026-08-20T06:02:43.675590+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
@@ -87,7 +87,7 @@
      "bounced": 1,
      "opens": 173,
      "clicks": 4,
-     "opens_emails": 369,
+     "opens_emails": 370,
      "clicks_emails": 5,
      "replies": 26,
      "meetings": 18,
@@ -97,7 +97,7 @@
        "order": 1,
        "subject": "Renégociation assurance emprunteur",
        "sent": 474,
-       "opens": 230,
+       "opens": 231,
        "clicks": 1
       },
       {
@@ -416,9 +416,9 @@
      "status": "EN_COURS",
      "sent": 556,
      "bounced": 1,
-     "opens": 271,
+     "opens": 272,
      "clicks": 5,
-     "opens_emails": 264,
+     "opens_emails": 265,
      "clicks_emails": 5,
      "replies": 16,
      "meetings": 12,
@@ -428,7 +428,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 556,
-       "opens": 264,
+       "opens": 265,
        "clicks": 5
       }
      ],
@@ -464,9 +464,9 @@
      "status": "EN_COURS",
      "sent": 136,
      "bounced": 0,
-     "opens": 86,
+     "opens": 88,
      "clicks": 6,
-     "opens_emails": 85,
+     "opens_emails": 87,
      "clicks_emails": 5,
      "replies": 12,
      "meetings": 7,
@@ -476,7 +476,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
-       "opens": 85,
+       "opens": 87,
        "clicks": 5
       }
      ],
