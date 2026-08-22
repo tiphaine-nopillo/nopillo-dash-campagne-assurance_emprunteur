@@ -5,13 +5,30 @@ Alimente data.json depuis HubSpot.
 
 CORRECTIF CENTRAL DE CETTE VERSION
 ----------------------------------
-Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
-du 5 août puis celui du 13 août. La version précédente comptait les e-mails par
-hs_sequence_id, sans filtrer les contacts : les envois du 13 août étaient donc
-imputés au batch du 5 août, qui se retrouvait surévalué.
+Le KPI principal devient l'ENGAGEMENT : union dédupliquée des contacts ayant
+un dossier dans le pipe courtage AE et de ceux ayant pris un RDV. Trois
+changements de fond par rapport à la version précédente :
 
-Ici toute métrique est attribuée par APPARTENANCE À LA LISTE de la cellule.
-La séquence ne sert plus qu'à restreindre le périmètre des e-mails collectés.
+1. Aucun filtre sur les étapes du pipe. n8n crée les transactions directement
+   au statut rapporté par le partenaire et saute des étapes : une étape absente
+   ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la seule
+   présence d'une transaction atteste l'entrée du client dans le flow.
+
+2. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi
+   sont comptés. Sur la seule date de création, une réactivation est invisible
+   — et cet angle mort grandit à mesure que la base mûrit.
+
+3. RDV et dossiers se comptent en CONTACTS UNIQUES, plus en objets. 62 objets
+   MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage
+   puis un RDV devis. Même correction d'unité que celle déjà appliquée aux
+   ouvertures et aux clics.
+
+CORRECTIF DE LA VERSION PRÉCÉDENTE, TOUJOURS VALABLE
+----------------------------------------------------
+Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
+du 5 août puis celui du 13 août. Toute métrique est attribuée par APPARTENANCE
+À LA LISTE de la cellule. La séquence ne sert qu'à restreindre le périmètre
+des e-mails collectés.
 
 Prérequis
   export HUBSPOT_TOKEN="pat-eu1-..."
@@ -22,7 +39,7 @@ Portées de l'application privée — LECTURE SEULE
   crm.lists.read                filtre d'appartenance
   sales-email-read              objets EMAIL
   crm.objects.meetings.read     RDV  (couvert par sales-email-read sur ce portail)
-  crm.objects.deals.read        simulations
+  crm.objects.deals.read        dossiers courtage
 """
 import os
 import json
@@ -39,6 +56,24 @@ EMAILS = "/crm/v3/objects/emails/search"
 MEETINGS = "/crm/v3/objects/meetings/search"
 DEALS = "/crm/v3/objects/deals/search"
 CHUNK = 100          # taille de lot pour les filtres associations.contact
+
+# ---------------------------------------------------------------- engagement
+# Fenêtre d'attribution. Sans borne de fin, un cumul ouvert monte à chaque
+# rafraîchissement et deux cohortes d'âge différent cessent d'être comparables.
+ATTRIB_DAYS = 21
+
+# Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
+# contacts enrôlés et contacts jamais touchés par une séquence. Import
+# d'antériorité, pas de l'activité. 4 concernent des contacts de cohorte.
+BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z")]
+
+# Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
+# PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
+# interchangeables. Filtre sans effet au 22/08 (62 RDV sur 62 leur
+# appartiennent) : c'est un garde-fou pour les cohortes suivantes.
+AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
+                     "75453551",    # Lilian Maudet
+                     "650299108"]   # Mathieu d'Ornellas
 
 
 # ---------------------------------------------------------------- utilitaires
@@ -211,10 +246,16 @@ def emails_for(contact_ids, sequence_ids, since_ms):
                  for i, (k, v) in enumerate(ordered)]
 
 
-# ------------------------------------------------------- RDV et simulations
-def _count_assoc(path, contact_ids, extra_filters):
-    """Objets associés à ces contacts, pagination incluse."""
-    n = 0
+# ------------------------------------------------------- RDV et engagement
+def _objects_assoc(path, contact_ids, extra_filters, props):
+    """Objets associés à ces contacts, AVEC leurs propriétés.
+
+    On a besoin des propriétés pour appliquer la règle d'engagement, et des
+    IDs pour remonter au contact — d'où le retour d'objets plutôt qu'un
+    simple compteur. Déduplication par ID : un même objet peut ressortir
+    dans deux lots de contacts.
+    """
+    out = {}
     for i in range(0, len(contact_ids), CHUNK):
         chunk = contact_ids[i:i + CHUNK]
         after = None
@@ -222,28 +263,87 @@ def _count_assoc(path, contact_ids, extra_filters):
             filters = [{"propertyName": "associations.contact",
                         "operator": "IN", "values": chunk}] + extra_filters
             body = {"filterGroups": [{"filters": filters}],
-                    "properties": ["hs_object_id"], "limit": 200}
+                    "properties": props, "limit": 200}
             if after:
                 body["after"] = after
             d = post(path, body)
-            n += len(d.get("results", []))
+            for r in d.get("results", []):
+                out[r["id"]] = r["properties"]
             after = (d.get("paging") or {}).get("next", {}).get("after")
             if not after:
                 break
-    return n
+    return out
 
 
-def split_by_owner(members, counter):
-    """Répartition par propriétaire de contact.
+def _contacts_of(object_type, object_ids):
+    """Contacts associés à chaque objet, via l'API associations v4.
 
-    On NE lit PAS le champ `associations` des résultats de recherche : l'API
-    CRM Search ne le renvoie pas, ce qui donnait un décompte toujours vide.
-    On partitionne les contacts par propriétaire et on compte par partition.
+    L'API CRM Search ne renvoie pas les associations : il faut ce second
+    appel. C'est le même constat qui avait vidé le décompte par propriétaire
+    dans la version précédente.
     """
-    groups = {}
-    for cid, owner, *_ in members:
-        groups.setdefault(owner, []).append(cid)
-    return {owner: counter(ids) for owner, ids in groups.items()}
+    m = {}
+    ids = list(object_ids)
+    for i in range(0, len(ids), CHUNK):
+        d = post(f"/crm/v4/associations/{object_type}/contacts/batch/read",
+                 {"inputs": [{"id": o} for o in ids[i:i + CHUNK]]})
+        for r in d.get("results", []):
+            m[r["from"]["id"]] = [str(t["toObjectId"]) for t in r["to"]]
+    return m
+
+
+def deal_engages(props, send):
+    """La transaction matérialise-t-elle une entrée dans le flow après l'envoi ?
+
+    AUCUN filtre sur dealstage, volontairement. n8n crée les transactions
+    directement au statut rapporté par le partenaire et saute des étapes :
+    une étape absente ne prouve rien. Le pipe n'étant alimenté que par le
+    partenaire, la présence de la transaction atteste l'entrée dans le flow.
+
+    Deux bornes, en OU :
+      - createdate : dossier ouvert pendant la fenêtre ;
+      - hs_v2_date_entered_current_stage : dernier mouvement d'étape, ce qui
+        rattrape les dossiers ouverts AVANT la campagne mais réactivés par
+        elle. Un dossier de janvier réentré en simulation le 21/08 est ainsi
+        correctement attribué au batch du 13 — sur createdate seul, il était
+        invisible.
+
+    Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
+    déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
+    """
+    created = to_dt(props.get("createdate"))
+    if created and any(to_dt(a) <= created < to_dt(b) for a, b in BACKFILL):
+        return False
+    end = send + dt.timedelta(days=ATTRIB_DAYS)
+    for key in ("createdate", "hs_v2_date_entered_current_stage"):
+        d = to_dt(props.get(key))
+        if d and send <= d <= end:
+            return True
+    return False
+
+
+def engagement_sets(ids, send, pipeline, meet_f):
+    """Contacts de la cellule ayant un dossier, et ceux ayant un RDV.
+
+    Retourne deux ENSEMBLES de contacts, jamais des compteurs d'objets :
+    62 réunions correspondent à 51 contacts, certains ayant un RDV courtage
+    puis un RDV devis. L'unité de mesure est le contact.
+    """
+    keep = set(ids)
+
+    deals = _objects_assoc(
+        DEALS, ids,
+        [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
+        ["createdate", "dealstage", "hs_v2_date_entered_current_stage"])
+    ok = [i for i, p in deals.items() if deal_engages(p, send)]
+    dmap = _contacts_of("deals", ok)
+    dset = {c for i in ok for c in dmap.get(i, []) if c in keep}
+
+    meets = _objects_assoc(MEETINGS, ids, meet_f, ["hs_object_id"])
+    mmap = _contacts_of("meetings", meets)
+    mset = {c for i in meets for c in mmap.get(i, []) if c in keep}
+
+    return dset, mset
 
 
 # -------------------------------------------------------------------- build
@@ -312,18 +412,33 @@ def build():
             all_delays += delays
 
             meet_f = [{"propertyName": "hs_createdate", "operator": "GTE",
-                       "value": str(since_ms)}]
+                       "value": str(since_ms)},
+                      {"propertyName": "hubspot_owner_id", "operator": "IN",
+                       "values": AE_MEETING_OWNERS}]
             mf = cfg.get("meeting_filter")
             if mf:
                 meet_f.append({"propertyName": mf["property"],
                                "operator": mf["operator"], "value": mf["value"]})
-            deal_f = [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline},
-                      {"propertyName": "createdate", "operator": "GTE",
-                       "value": str(since_ms)}]
-            n_meet = _count_assoc(MEETINGS, ids, meet_f)
-            n_deal = _count_assoc(DEALS, ids, deal_f)
-            m_own = split_by_owner(members, lambda x: _count_assoc(MEETINGS, x, meet_f))
-            d_own = split_by_owner(members, lambda x: _count_assoc(DEALS, x, deal_f))
+
+            # Le filtre createdate côté transactions est retiré : il excluait
+            # les dossiers ouverts AVANT la campagne mais réactivés par elle.
+            # La règle temporelle est appliquée dans deal_engages().
+            dset, mset = engagement_sets(ids, send, pipeline, meet_f)
+            split = dict(both=len(dset & mset), meet_only=len(mset - dset),
+                         deal_only=len(dset - mset), engaged=len(dset | mset))
+            n_meet, n_deal = len(mset), len(dset)
+
+            # Répartition par propriétaire déduite des ensembles plutôt que
+            # recomptée : trois propriétaires × deux objets × six cellules
+            # faisaient autant de requêtes chunkées pour un résultat déjà connu.
+            own_of = {m[0]: m[1] for m in members}
+            m_own, d_own = {}, {}
+            for cid in mset:
+                k = own_of.get(cid)
+                m_own[k] = m_own.get(k, 0) + 1
+            for cid in dset:
+                k = own_of.get(cid)
+                d_own[k] = d_own.get(k, 0) + 1
 
             active = count_active(c["list_id"], [c["sequence_id"]])
             oids = set(m_own) | set(d_own) | {m[1] for m in members}
@@ -339,6 +454,7 @@ def build():
                 opens=n_open, clicks=n_click,
                 opens_emails=agg["opens"], clicks_emails=agg["clicks"],
                 replies=len(delays), meetings=n_meet, deals_ae=n_deal,
+                engaged=split["engaged"], split=split,
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=m_own.get(o, 0), deals_ae=d_own.get(o, 0))
@@ -374,7 +490,8 @@ def build():
             primary_axis=cfg.get("primary_axis", "cohort"),
             primary_kpi=cfg.get("primary_kpi"),
             source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
-                    "· MEETING_EVENT · DEAL pipeline " + pipeline),
+                    "· MEETING_EVENT ∪ DEAL pipeline " + pipeline
+                    + f" · contacts uniques, fenêtre J+{ATTRIB_DAYS}"),
             attribution_note=cfg["notes"]["attribution"],
             overlap_note=(
                 f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
@@ -399,6 +516,12 @@ def build():
     print(f"OK · {len(cohorts)} cohortes · {n_cells} cellules · "
           f"{dedup['contacts']} contacts ciblés")
     print("   " + " · ".join(f"{k['label']} {tot[k['key']]}" for k in cfg["kpis"]))
+    for co in cohorts:
+        for c in co["cells"]:
+            s = c["split"]
+            print(f"   {co['id']} {c['audience']}-{c['version']} "
+                  f"n={c['enrolled']} · both {s['both']} · rdv seul {s['meet_only']} "
+                  f"· dossier seul {s['deal_only']} · engagés {s['engaged']}")
     if ecart > 0:
         print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
 
