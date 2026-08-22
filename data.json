@@ -1,12 +1,12 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-21T19:50:49.781023+00:00",
+  "generated_at": "2026-08-22T10:10:18.749367+00:00",
   "collected": true,
   "primary_axis": "cohort",
-  "primary_kpi": "deals_ae",
-  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT · DEAL pipeline 3817233652",
-  "attribution_note": "RDV et simulations rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
+  "primary_kpi": "engaged",
+  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21",
+  "attribution_note": "RDV et dossiers rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve forte en faveur de la causalité : sur les 599 contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi.",
   "overlap_note": "Recoupement entre cohortes : 2 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
@@ -41,14 +41,22 @@
    "key": "meetings",
    "label": "RDV",
    "source": "meeting",
-   "base": "enrolled"
+   "base": "enrolled",
+   "note": "Contacts uniques, et non réunions : 62 objets MEETING_EVENT correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu."
   },
   {
    "key": "deals_ae",
-   "label": "Simulations",
+   "label": "Dossiers courtage",
    "source": "deal",
    "base": "enrolled",
-   "note": "Transactions du pipe_courtage_ae associées au contact. Matérialise un parcours de simulateur engagé sur la plateforme."
+   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : n8n crée les transactions directement au statut rapporté par le partenaire et saute des étapes, une étape absente ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la présence de la transaction atteste l'entrée dans le flow."
+  },
+  {
+   "key": "engaged",
+   "label": "Contacts engagés",
+   "source": "union",
+   "base": "enrolled",
+   "note": "Union dédupliquée des contacts avec dossier et des contacts avec RDV. Jamais la somme : 23 contacts du batch du 5 août ont les deux, les additionner surestimerait de 55 %."
   }
  ],
  "audience_labels": {
@@ -90,8 +98,15 @@
      "opens_emails": 371,
      "clicks_emails": 5,
      "replies": 29,
-     "meetings": 18,
+     "meetings": 13,
      "deals_ae": 11,
+     "engaged": 15,
+     "split": {
+      "both": 9,
+      "meet_only": 4,
+      "deal_only": 2,
+      "engaged": 15
+     },
      "steps": [
       {
        "order": 1,
@@ -118,13 +133,13 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 10,
+       "meetings": 7,
        "deals_ae": 5
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 5,
+       "meetings": 3,
        "deals_ae": 2
       }
      ]
@@ -142,11 +157,18 @@
      "bounced": 4,
      "opens": 177,
      "clicks": 14,
-     "opens_emails": 354,
+     "opens_emails": 356,
      "clicks_emails": 16,
      "replies": 27,
-     "meetings": 14,
-     "deals_ae": 9,
+     "meetings": 11,
+     "deals_ae": 8,
+     "engaged": 13,
+     "split": {
+      "both": 6,
+      "meet_only": 5,
+      "deal_only": 2,
+      "engaged": 13
+     },
      "steps": [
       {
        "order": 1,
@@ -166,7 +188,7 @@
        "order": 3,
        "subject": "Dernière chance pour renégocier votre assurance emprunteur",
        "sent": 233,
-       "opens": 90,
+       "opens": 92,
        "clicks": 7
       }
      ],
@@ -180,14 +202,14 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 4,
+       "meetings": 3,
        "deals_ae": 2
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 9,
-       "deals_ae": 4
+       "meetings": 7,
+       "deals_ae": 3
       }
      ]
     },
@@ -209,6 +231,13 @@
      "replies": 3,
      "meetings": 3,
      "deals_ae": 6,
+     "engaged": 6,
+     "split": {
+      "both": 3,
+      "meet_only": 0,
+      "deal_only": 3,
+      "engaged": 6
+     },
      "steps": [
       {
        "order": 1,
@@ -263,8 +292,15 @@
      "opens_emails": 68,
      "clicks_emails": 2,
      "replies": 8,
-     "meetings": 12,
-     "deals_ae": 9,
+     "meetings": 8,
+     "deals_ae": 6,
+     "engaged": 9,
+     "split": {
+      "both": 5,
+      "meet_only": 3,
+      "deal_only": 1,
+      "engaged": 9
+     },
      "steps": [
       {
        "order": 1,
@@ -299,19 +335,19 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 4,
-       "deals_ae": 3
+       "meetings": 3,
+       "deals_ae": 2
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 6,
-       "deals_ae": 5
+       "meetings": 4,
+       "deals_ae": 3
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 2,
+       "meetings": 1,
        "deals_ae": 1
       }
      ]
@@ -402,6 +438,11 @@
      "day": 16,
      "count": 67,
      "share": 10.72
+    },
+    {
+     "day": 17,
+     "count": 67,
+     "share": 10.72
     }
    ]
   },
@@ -431,8 +472,15 @@
      "opens_emails": 266,
      "clicks_emails": 5,
      "replies": 21,
-     "meetings": 14,
+     "meetings": 10,
      "deals_ae": 8,
+     "engaged": 11,
+     "split": {
+      "both": 7,
+      "meet_only": 3,
+      "deal_only": 1,
+      "engaged": 11
+     },
      "steps": [
       {
        "order": 1,
@@ -452,19 +500,19 @@
       {
        "owner_id": "29982026",
        "owner": "Antonio Masetti",
-       "meetings": 2,
+       "meetings": 1,
        "deals_ae": 1
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 5,
+       "meetings": 3,
        "deals_ae": 2
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 3,
+       "meetings": 2,
        "deals_ae": 2
       }
      ]
@@ -485,8 +533,15 @@
      "opens_emails": 87,
      "clicks_emails": 5,
      "replies": 12,
-     "meetings": 9,
+     "meetings": 5,
      "deals_ae": 4,
+     "engaged": 5,
+     "split": {
+      "both": 4,
+      "meet_only": 1,
+      "deal_only": 0,
+      "engaged": 5
+     },
      "steps": [
       {
        "order": 1,
@@ -512,7 +567,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 8,
+       "meetings": 4,
        "deals_ae": 4
       }
      ]
@@ -561,6 +616,11 @@
     },
     {
      "day": 8,
+     "count": 33,
+     "share": 4.71
+    },
+    {
+     "day": 9,
      "count": 33,
      "share": 4.71
     }
