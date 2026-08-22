@@ -36,17 +36,26 @@
    "key": "meetings",
    "label": "RDV",
    "source": "meeting",
-   "base": "enrolled"
+   "base": "enrolled",
+   "note": "Contacts uniques, et non réunions : 62 objets MEETING_EVENT correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu."
   },
   {
    "key": "deals_ae",
-   "label": "Simulations",
+   "label": "Dossiers courtage",
    "source": "deal",
    "base": "enrolled",
-   "note": "Transactions du pipe_courtage_ae associées au contact. Matérialise un parcours de simulateur engagé sur la plateforme."
+   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : n8n crée les transactions directement au statut rapporté par le partenaire et saute des étapes, une étape absente ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la présence de la transaction atteste l'entrée dans le flow."
+  },
+  {
+   "key": "engaged",
+   "label": "Contacts engagés",
+   "source": "union",
+   "base": "enrolled",
+   "note": "Union dédupliquée des contacts avec dossier et des contacts avec RDV. Jamais la somme : 23 contacts du batch du 5 août ont les deux, les additionner surestimerait de 55 %."
   }
  ],
- "primary_kpi": "deals_ae",
+ "primary_kpi": "engaged",
+ "attribution_window_days": 21,
  "cohorts": [
   {
    "id": "2026-08-05",
@@ -119,13 +128,15 @@
   "power": 0.8
  },
  "notes": {
-  "attribution": "RDV et simulations rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
-  "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée."
+  "attribution": "RDV et dossiers rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve forte en faveur de la causalité : sur les 599 contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi.",
+  "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour.",
+  "baseline": "Sur la même période, 12 contacts hors campagne ont ouvert un dossier dans le pipe courtage AE, et 25 des 51 contacts avec un RDV « emprunteur » n'appartiennent à aucune des 6 listes. Un vrai groupe témoin est impossible — la population ciblée est sélectionnée sur critères, pas tirée au hasard — ces chiffres sont un ordre de grandeur, pas une preuve causale."
  },
  "meeting_filter": {
   "property": "hs_meeting_title",
   "operator": "CONTAINS_TOKEN",
   "value": "emprunteur",
-  "_note": "Filtre sur l'intitulé du RDV. Trois intitulés coexistent pour un même créneau de 15 min : « Rendez-vous courtage Assurance Emprunteur avec Nopillo » (11), « Devis assurance emprunteur Nopillo » (1) et « Nopillo » (1). Le jeton « emprunteur » attrape les deux premiers et manque le troisième. Problème de nommage à la source : normaliser le lien de réservation supprimerait le besoin de filtre."
+  "_note": "Filtre sur l'intitulé du RDV. Trois intitulés coexistent pour un même créneau de 15 min : « Rendez-vous courtage Assurance Emprunteur avec Nopillo » (11), « Devis assurance emprunteur Nopillo » (1) et « Nopillo » (1). Le jeton « emprunteur » attrape les deux premiers et manque le troisième. Problème de nommage à la source : normaliser le lien de réservation supprimerait le besoin de filtre.",
+  "_owners": "Le collecteur restreint en plus aux réunions posées par Clara Baekelandt (1722214870), Lilian Maudet (75453551) et Mathieu d'Ornellas (650299108) — voir AE_MEETING_OWNERS dans refresh.py. Sans effet au 22/08 : les 62 RDV leur appartiennent déjà. Attention, il s'agit du propriétaire de la RÉUNION, alors que le graphe du niveau 3 utilise celui du CONTACT : les deux vues peuvent diverger."
  }
 }
