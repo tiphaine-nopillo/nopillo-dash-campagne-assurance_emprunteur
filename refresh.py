@@ -82,6 +82,9 @@ AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
                      "75453551",    # Lilian Maudet
                      "650299108"]   # Mathieu d'Ornellas
 
+# Portail HubSpot, pour les liens de vérification imprimés dans les logs.
+PORTAL = "26173790"
+
 
 # ---------------------------------------------------------------- utilitaires
 def post(path, body):
@@ -474,6 +477,10 @@ def build():
                 opens_emails=agg["opens"], clicks_emails=agg["clicks"],
                 replies=len(delays), meetings=n_meet, deals_ae=n_deal,
                 engaged=split["engaged"], split=split,
+                # Détail par contact, RETIRÉ avant l'écriture de data.json :
+                # ce fichier est servi publiquement par GitHub Pages.
+                _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
+                          deal_only=sorted(dset - mset)),
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=n)
@@ -526,6 +533,28 @@ def build():
         dedup=dedup,
         cohorts=cohorts,
     )
+    # Détail nominatif : dans les logs du run, JAMAIS dans data.json.
+    # Le fichier est servi publiquement ; les logs supposent un accès au dépôt.
+    # IDs de contact uniquement, aucun nom ni e-mail : sans accès au portail,
+    # un ID ne désigne personne.
+    # Le pop() ci-dessous est ce qui garantit que _ids ne fuite pas dans le
+    # JSON — ne pas le déplacer après json.dump.
+    print("\n--- détail des contacts engagés ---")
+    for co in cohorts:
+        for c in co["cells"]:
+            ids = c.pop("_ids")
+            print(f"\n{co['id']} · {c['audience']}-{c['version']} "
+                  f"· {c['split']['engaged']} engagés sur {c['enrolled']} ciblés")
+            for cat, label in (("both", "RDV + dossier"),
+                               ("meet_only", "RDV seul"),
+                               ("deal_only", "dossier seul")):
+                if ids[cat]:
+                    print(f"  {label} ({len(ids[cat])})")
+                    for cid in ids[cat]:
+                        print(f"    https://app-eu1.hubspot.com/contacts/"
+                              f"{PORTAL}/contact/{cid}")
+    print("--- fin du détail ---\n")
+
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
 
