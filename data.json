@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-22T10:23:46.932271+00:00",
+  "generated_at": "2026-08-22T10:34:44.234499+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -127,20 +127,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 3,
-       "deals_ae": 4
+       "meetings": 3
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 7,
-       "deals_ae": 5
+       "meetings": 7
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 3,
-       "deals_ae": 2
+       "meetings": 3
       }
      ]
     },
@@ -196,20 +193,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 1,
-       "deals_ae": 3
+       "meetings": 1
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 3,
-       "deals_ae": 2
+       "meetings": 3
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 7,
-       "deals_ae": 3
+       "meetings": 7
       }
      ]
     },
@@ -265,14 +259,12 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 2,
-       "deals_ae": 3
+       "meetings": 2
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 1,
-       "deals_ae": 3
+       "meetings": 1
       }
      ]
     },
@@ -335,20 +327,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 3,
-       "deals_ae": 2
+       "meetings": 2
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 4,
-       "deals_ae": 3
+       "meetings": 5
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 1,
-       "deals_ae": 1
+       "meetings": 1
       }
      ]
     }
@@ -494,26 +483,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 4,
-       "deals_ae": 3
-      },
-      {
-       "owner_id": "29982026",
-       "owner": "Antonio Masetti",
-       "meetings": 1,
-       "deals_ae": 1
+       "meetings": 5
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 3,
-       "deals_ae": 2
+       "meetings": 3
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 2,
-       "deals_ae": 2
+       "meetings": 2
       }
      ]
     },
@@ -555,20 +535,12 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 1,
-       "deals_ae": 0
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 0,
-       "deals_ae": 0
+       "meetings": 1
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 4,
-       "deals_ae": 4
+       "meetings": 4
       }
      ]
     }
