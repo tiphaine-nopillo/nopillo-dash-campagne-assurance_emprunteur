@@ -1,12 +1,12 @@
 {
  "meta": {
-  "campaign": "Assurance emprunteur · cross-sell bailleurs",
-  "generated_at": "2026-08-22T10:41:49.903487+00:00",
+  "campaign": "Assurance emprunteur · cross-sell",
+  "generated_at": "2026-08-22T10:57:04.215932+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
   "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21",
-  "attribution_note": "RDV et dossiers rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve forte en faveur de la causalité : sur les 599 contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi.",
+  "attribution_note": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
   "overlap_note": "Recoupement entre cohortes : 2 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
@@ -46,10 +46,10 @@
   },
   {
    "key": "deals_ae",
-   "label": "Dossiers courtage",
+   "label": "Deals courtage AE créés",
    "source": "deal",
    "base": "enrolled",
-   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : n8n crée les transactions directement au statut rapporté par le partenaire et saute des étapes, une étape absente ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la présence de la transaction atteste l'entrée dans le flow."
+   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : les transactions remontées par n8n sautent des étapes, une étape absente ne prouve rien. Aucun filtre sur la source non plus, mais c'est un arbitrage non tranché : au 22/08, sur 77 transactions du pipe, 40 sont créées à la main dans HubSpot, 34 par n8n et 3 par automatisation. Une transaction manuelle atteste qu'un commercial a ouvert une fiche, pas qu'un client a parcouru le simulateur. La répartition par source est affichée dans le bloc Origine des deals."
   },
   {
    "key": "engaged",
@@ -105,7 +105,10 @@
       "both": 9,
       "meet_only": 4,
       "deal_only": 2,
-      "engaged": 15
+      "engaged": 15,
+      "deal_n8n": 2,
+      "deal_manual": 9,
+      "deal_only_manual": 1
      },
      "steps": [
       {
@@ -164,7 +167,10 @@
       "both": 6,
       "meet_only": 5,
       "deal_only": 2,
-      "engaged": 13
+      "engaged": 13,
+      "deal_n8n": 1,
+      "deal_manual": 7,
+      "deal_only_manual": 1
      },
      "steps": [
       {
@@ -230,7 +236,10 @@
       "both": 3,
       "meet_only": 0,
       "deal_only": 3,
-      "engaged": 6
+      "engaged": 6,
+      "deal_n8n": 4,
+      "deal_manual": 2,
+      "deal_only_manual": 0
      },
      "steps": [
       {
@@ -291,7 +300,10 @@
       "both": 5,
       "meet_only": 3,
       "deal_only": 1,
-      "engaged": 9
+      "engaged": 9,
+      "deal_n8n": 3,
+      "deal_manual": 3,
+      "deal_only_manual": 0
      },
      "steps": [
       {
@@ -468,7 +480,10 @@
       "both": 7,
       "meet_only": 3,
       "deal_only": 1,
-      "engaged": 11
+      "engaged": 11,
+      "deal_n8n": 0,
+      "deal_manual": 8,
+      "deal_only_manual": 1
      },
      "steps": [
       {
@@ -520,7 +535,10 @@
       "both": 4,
       "meet_only": 1,
       "deal_only": 0,
-      "engaged": 5
+      "engaged": 5,
+      "deal_n8n": 1,
+      "deal_manual": 3,
+      "deal_only_manual": 0
      },
      "steps": [
       {
