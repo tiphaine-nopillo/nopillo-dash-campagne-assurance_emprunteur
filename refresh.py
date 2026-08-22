@@ -9,10 +9,15 @@ Le KPI principal devient l'ENGAGEMENT : union dédupliquée des contacts ayant
 un dossier dans le pipe courtage AE et de ceux ayant pris un RDV. Quatre
 changements de fond par rapport à la version précédente :
 
-1. Aucun filtre sur les étapes du pipe. n8n crée les transactions directement
-   au statut rapporté par le partenaire et saute des étapes : une étape absente
-   ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la seule
-   présence d'une transaction atteste l'entrée du client dans le flow.
+1. Aucun filtre sur les étapes du pipe. Les transactions remontées par n8n
+   portent le statut rapporté par le partenaire et sautent des étapes : une
+   étape absente ne prouve rien.
+   ATTENTION : le pipe n'est PAS alimenté uniquement par le partenaire.
+   Au 22/08, sur 77 transactions : 40 créées à la main dans HubSpot (CRM_UI),
+   34 par n8n (INTEGRATION), 3 par automatisation. Une transaction manuelle
+   atteste qu'un commercial a créé une fiche, pas qu'un client a simulé.
+   Le KPI ne filtre pas sur la source — arbitrage volontairement non tranché
+   — mais la répartition est collectée et affichée pour le rendre visible.
 
 2. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi
    sont comptés. Sur la seule date de création, une réactivation est invisible
@@ -305,10 +310,14 @@ def _contacts_of(object_type, object_ids):
 def deal_engages(props, send):
     """La transaction matérialise-t-elle une entrée dans le flow après l'envoi ?
 
-    AUCUN filtre sur dealstage, volontairement. n8n crée les transactions
-    directement au statut rapporté par le partenaire et saute des étapes :
-    une étape absente ne prouve rien. Le pipe n'étant alimenté que par le
-    partenaire, la présence de la transaction atteste l'entrée dans le flow.
+    AUCUN filtre sur dealstage, volontairement : les transactions remontées
+    par n8n sautent des étapes, une étape absente ne prouve donc rien.
+
+    AUCUN filtre sur la source non plus, mais pour une autre raison — c'est un
+    arbitrage non tranché, pas une certitude. 40 transactions sur 77 sont
+    créées à la main : elles attestent qu'un commercial a ouvert une fiche,
+    pas qu'un client a parcouru le simulateur. La répartition par source est
+    collectée pour rendre l'arbitrage visible (cf. engagement_sets).
 
     Deux bornes, en OU :
       - createdate : dossier ouvert pendant la fenêtre ;
@@ -349,10 +358,20 @@ def engagement_sets(ids, send, pipeline, meet_f):
     deals = _objects_assoc(
         DEALS, ids,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
-        ["createdate", "dealstage", "hs_v2_date_entered_current_stage"])
+        ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
+         "hs_object_source_label"])
     ok = [i for i, p in deals.items() if deal_engages(p, send)]
     dmap = _contacts_of("deals", ok)
-    dset = {c for i in ok for c in dmap.get(i, []) if c in keep}
+    dset, d_auto = set(), set()
+    for i in ok:
+        for c in dmap.get(i, []):
+            if c in keep:
+                dset.add(c)
+                # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
+                # transactions est automatique : c'est le signal le plus fort
+                # dont on dispose sur un parcours réellement produit.
+                if deals[i].get("hs_object_source_label") != "CRM_UI":
+                    d_auto.add(c)
 
     meets = _objects_assoc(MEETINGS, ids, meet_f,
                            ["hubspot_owner_id", "hs_timestamp"])
@@ -366,7 +385,7 @@ def engagement_sets(ids, send, pipeline, meet_f):
                 mset.add(c)
                 m_owner.setdefault(c, p.get("hubspot_owner_id"))
 
-    return dset, mset, m_owner
+    return dset, mset, m_owner, d_auto
 
 
 # -------------------------------------------------------------------- build
@@ -446,9 +465,18 @@ def build():
             # Le filtre createdate côté transactions est retiré : il excluait
             # les dossiers ouverts AVANT la campagne mais réactivés par elle.
             # La règle temporelle est appliquée dans deal_engages().
-            dset, mset, m_owner = engagement_sets(ids, send, pipeline, meet_f)
+            dset, mset, m_owner, d_auto = engagement_sets(
+                ids, send, pipeline, meet_f)
+            # Origine des transactions. Le pipe n'est PAS alimenté uniquement
+            # par le partenaire : une transaction créée à la main atteste
+            # qu'un commercial a ouvert une fiche, pas qu'un client a simulé.
+            # deal_only_manual est la ligne à surveiller : elle prétend
+            # mesurer du self-service alors qu'elle peut ne mesurer que de la
+            # saisie commerciale sans RDV tracé.
             split = dict(both=len(dset & mset), meet_only=len(mset - dset),
-                         deal_only=len(dset - mset), engaged=len(dset | mset))
+                         deal_only=len(dset - mset), engaged=len(dset | mset),
+                         deal_n8n=len(d_auto), deal_manual=len(dset - d_auto),
+                         deal_only_manual=len((dset - mset) - d_auto))
             n_meet, n_deal = len(mset), len(dset)
 
             # RDV attribués au propriétaire de la RÉUNION : c'est le seul champ
@@ -569,7 +597,9 @@ def build():
             s = c["split"]
             print(f"   {co['id']} {c['audience']}-{c['version']} "
                   f"n={c['enrolled']} · both {s['both']} · rdv seul {s['meet_only']} "
-                  f"· dossier seul {s['deal_only']} · engagés {s['engaged']}")
+                  f"· deal seul {s['deal_only']} · engagés {s['engaged']} "
+                  f"| deals n8n {s['deal_n8n']} · manuels {s['deal_manual']} "
+                  f"· deal seul manuel {s['deal_only_manual']}")
     if ecart > 0:
         print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
 
