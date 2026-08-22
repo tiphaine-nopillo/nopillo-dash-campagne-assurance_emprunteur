@@ -2,7 +2,7 @@
  "_doc": "Config de la campagne Assurance Emprunteur. Une cellule = une liste STATIQUE + son audience et sa version. Mapping explicite volontaire. Ajouter un batch = ajouter un bloc ici, aucune ligne de code à toucher.",
  "_attribution": "ATTENTION — les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 sert le RP du 5 août ET du 13 août. L'attribution des e-mails passe donc obligatoirement par l'appartenance aux listes, JAMAIS par hs_sequence_id. La version précédente du collecteur attribuait par séquence et surévaluait le batch du 5 août.",
  "_statut": "status: \"AUTO\" = dérivé de HubSpot via contact.hs_sequences_is_enrolled, au niveau de chaque CELLULE. Une cellule sans contact encore enrôlé passe en TERMINE et alimente le taux de référence.",
- "campaign": "Assurance emprunteur · cross-sell bailleurs",
+ "campaign": "Assurance emprunteur · cross-sell",
  "primary_axis": "cohort",
  "deal_pipeline": "3817233652",
  "kpis": [
