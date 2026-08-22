@@ -6,7 +6,7 @@ Alimente data.json depuis HubSpot.
 CORRECTIF CENTRAL DE CETTE VERSION
 ----------------------------------
 Le KPI principal devient l'ENGAGEMENT : union dédupliquée des contacts ayant
-un dossier dans le pipe courtage AE et de ceux ayant pris un RDV. Trois
+un dossier dans le pipe courtage AE et de ceux ayant pris un RDV. Quatre
 changements de fond par rapport à la version précédente :
 
 1. Aucun filtre sur les étapes du pipe. n8n crée les transactions directement
@@ -22,6 +22,13 @@ changements de fond par rapport à la version précédente :
    MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage
    puis un RDV devis. Même correction d'unité que celle déjà appliquée aux
    ouvertures et aux clics.
+
+4. Les RDV sont attribués au propriétaire de la RÉUNION, plus à celui du
+   CONTACT. L'ancienne répartition faisait apparaître des commerciaux qui
+   n'avaient posé aucun rendez-vous, simplement parce qu'ils possédaient les
+   fiches. Les dossiers ne sont plus répartis du tout : créés par n8n, ils
+   n'ont pas de propriétaire, et passer par celui du contact reproduirait la
+   même confusion.
 
 CORRECTIF DE LA VERSION PRÉCÉDENTE, TOUJOURS VALABLE
 ----------------------------------------------------
@@ -323,11 +330,16 @@ def deal_engages(props, send):
 
 
 def engagement_sets(ids, send, pipeline, meet_f):
-    """Contacts de la cellule ayant un dossier, et ceux ayant un RDV.
+    """Contacts ayant un dossier, contacts ayant un RDV, et qui a posé ce RDV.
 
     Retourne deux ENSEMBLES de contacts, jamais des compteurs d'objets :
     62 réunions correspondent à 51 contacts, certains ayant un RDV courtage
     puis un RDV devis. L'unité de mesure est le contact.
+
+    Le troisième retour associe chaque contact au propriétaire de la RÉUNION,
+    pour la répartition par commercial. Le propriétaire du CONTACT ne convient
+    pas : il fait apparaître des commerciaux qui n'ont posé aucun rendez-vous,
+    simplement parce qu'ils possèdent les fiches.
     """
     keep = set(ids)
 
@@ -339,11 +351,19 @@ def engagement_sets(ids, send, pipeline, meet_f):
     dmap = _contacts_of("deals", ok)
     dset = {c for i in ok for c in dmap.get(i, []) if c in keep}
 
-    meets = _objects_assoc(MEETINGS, ids, meet_f, ["hs_object_id"])
+    meets = _objects_assoc(MEETINGS, ids, meet_f,
+                           ["hubspot_owner_id", "hs_timestamp"])
     mmap = _contacts_of("meetings", meets)
-    mset = {c for i in meets for c in mmap.get(i, []) if c in keep}
+    mset, m_owner = set(), {}
+    # Tri chronologique : un contact ayant plusieurs RDV est attribué au
+    # propriétaire du PREMIER, celui qui a converti.
+    for mid, p in sorted(meets.items(), key=lambda x: x[1].get("hs_timestamp") or ""):
+        for c in mmap.get(mid, []):
+            if c in keep:
+                mset.add(c)
+                m_owner.setdefault(c, p.get("hubspot_owner_id"))
 
-    return dset, mset
+    return dset, mset, m_owner
 
 
 # -------------------------------------------------------------------- build
@@ -423,25 +443,24 @@ def build():
             # Le filtre createdate côté transactions est retiré : il excluait
             # les dossiers ouverts AVANT la campagne mais réactivés par elle.
             # La règle temporelle est appliquée dans deal_engages().
-            dset, mset = engagement_sets(ids, send, pipeline, meet_f)
+            dset, mset, m_owner = engagement_sets(ids, send, pipeline, meet_f)
             split = dict(both=len(dset & mset), meet_only=len(mset - dset),
                          deal_only=len(dset - mset), engaged=len(dset | mset))
             n_meet, n_deal = len(mset), len(dset)
 
-            # Répartition par propriétaire déduite des ensembles plutôt que
-            # recomptée : trois propriétaires × deux objets × six cellules
-            # faisaient autant de requêtes chunkées pour un résultat déjà connu.
-            own_of = {m[0]: m[1] for m in members}
-            m_own, d_own = {}, {}
+            # RDV attribués au propriétaire de la RÉUNION : c'est le seul champ
+            # qui dit qui a réellement pris le rendez-vous. Le propriétaire du
+            # CONTACT faisait apparaître des commerciaux sans aucun RDV posé,
+            # simplement parce qu'ils possédaient les fiches.
+            # Les dossiers ne sont PAS répartis : créés par n8n, ils n'ont pas
+            # de propriétaire, et passer par celui du contact reproduirait
+            # exactement la confusion qu'on vient de corriger.
+            m_own = {}
             for cid in mset:
-                k = own_of.get(cid)
+                k = m_owner.get(cid)
                 m_own[k] = m_own.get(k, 0) + 1
-            for cid in dset:
-                k = own_of.get(cid)
-                d_own[k] = d_own.get(k, 0) + 1
 
             active = count_active(c["list_id"], [c["sequence_id"]])
-            oids = set(m_own) | set(d_own) | {m[1] for m in members}
 
             cells.append(dict(
                 list_id=c["list_id"], list_name=c.get("list_name"),
@@ -457,8 +476,8 @@ def build():
                 engaged=split["engaged"], split=split,
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
-                               meetings=m_own.get(o, 0), deals_ae=d_own.get(o, 0))
-                          for o in sorted(oids, key=lambda x: str(x))],
+                               meetings=n)
+                          for o, n in sorted(m_own.items(), key=lambda x: str(x[0]))],
             ))
 
         n_act = sum(c["active"] for c in cells)
