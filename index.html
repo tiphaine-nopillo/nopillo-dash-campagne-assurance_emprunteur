@@ -223,13 +223,30 @@
       </div></div>
       <div class="twrap"><table id="tCohorts">
         <thead><tr><th class="left">Cohorte</th><th class="left">Statut</th><th>Contacts</th>
-          <th>Encore en séquence</th><th id="thK2"></th><th>Taux de simulation</th></tr></thead>
+          <th>Encore en séquence</th><th id="thK2"></th><th>Taux d'engagement</th></tr></thead>
         <tbody></tbody></table></div>
     </div>
+
+    <div class="block">
+      <div class="bhead"><div>
+        <h3 class="btitle">Nature de l'engagement<span class="src">DEAL ∩ MEETING_EVENT</span></h3>
+        <div class="bsub">
+          Trois sous-ensembles disjoints, en contacts uniques. <strong>RDV seul</strong> mesure une
+          fuite commerciale : le rendez-vous n'a produit aucun dossier. <strong>Dossier seul</strong>
+          mesure un parcours self-service, sans intervention commerciale.
+        </div>
+      </div></div>
+      <div class="twrap"><table id="tMatrix">
+        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
+          <th>RDV + dossier</th><th>RDV seul</th><th>Dossier seul</th>
+          <th>Engagés</th><th>Taux</th></tr></thead>
+        <tbody></tbody></table></div>
+    </div>
+
     <div class="two">
       <div class="block">
-        <div class="bhead"><div><h3 class="btitle">Taux de simulation par cohorte</h3>
-          <div class="bsub">Simulations engagées / contacts ciblés. La cohorte en cours est hachurée.</div></div></div>
+        <div class="bhead"><div><h3 class="btitle">Taux d'engagement par cohorte</h3>
+          <div class="bsub">Contacts engagés / contacts ciblés. La cohorte en cours est hachurée.</div></div></div>
         <div class="chart sm" id="wrapCoh"><canvas id="chCoh"></canvas></div>
       </div>
       <div class="block">
@@ -250,7 +267,7 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Répartition par propriétaire de contact<span class="src">contact.hubspot_owner_id</span></h3>
-        <div class="bsub">RDV et simulations attribués au propriétaire du contact, pas de la transaction : celles créées par n8n n'ont pas de propriétaire.</div>
+        <div class="bsub">RDV et dossiers attribués au propriétaire du contact, pas de la transaction : celles créées par n8n n'ont pas de propriétaire. À ne pas confondre avec le filtre de périmètre des RDV, qui porte sur le propriétaire de la réunion.</div>
       </div></div>
       <div class="chart sm" id="wrapOwner"><canvas id="chOwner"></canvas></div>
     </div>
@@ -269,10 +286,12 @@
           <td>Double filtre : la séquence restreint le périmètre, l'appartenance à la liste isole le batch. Compteurs bornés à 1 par e-mail pour de l'unique.</td></tr>
         <tr><td>Réponses</td><td>contact.hs_sales_email_last_replied</td>
           <td>Filtré à partir de la date d'envoi du batch. Date de dernière réponse, pas de la première.</td></tr>
-        <tr><td>RDV</td><td>MEETING_EVENT</td>
-          <td>Associé aux contacts de la liste, créé après l'envoi.</td></tr>
-        <tr><td>Simulations</td><td>DEAL · pipeline 3817233652</td>
-          <td>Transactions du pipe courtage AE. Matérialise un parcours de simulateur engagé.</td></tr>
+        <tr><td>RDV</td><td>MEETING_EVENT · owner ∈ {Clara, Lilian, Mathieu}</td>
+          <td>Associé aux contacts de la liste, postérieur à l'envoi, intitulé contenant « emprunteur ». Propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
+        <tr><td>Dossiers courtage</td><td>DEAL · pipeline 3817233652</td>
+          <td>Le pipe est alimenté par le partenaire, jamais par les commerciaux : la seule présence d'une transaction atteste l'entrée du client dans le flow. Aucun filtre sur les étapes.</td></tr>
+        <tr><td>Engagement</td><td>DEAL ∪ MEETING_EVENT</td>
+          <td>Union en contacts uniques. Un contact avec RDV et dossier compte une fois.</td></tr>
         <tr><td>Statut du batch</td><td>contact.hs_sequences_is_enrolled</td>
           <td>Dérivé, jamais saisi. Une cellule sans contact encore enrôlé a fini d'envoyer.</td></tr>
       </tbody></table></div>
@@ -297,12 +316,22 @@
           <td>Unité = le contact. Un seul contact peut générer 13 clics bruts : la dédup est indispensable. Vérifié : 14 contre 13.</td></tr>
         <tr><td>Réponses</td><td>contacts dont <code>hs_sales_email_last_replied</code> ≥ date d'envoi</td>
           <td>Exact : 15 contre 15. Date de la <strong>dernière</strong> réponse, pas de la première.</td></tr>
-        <tr><td>RDV</td><td>MEETING_EVENT créés après l'envoi, intitulé contenant « emprunteur »</td>
-          <td>Filtre nécessaire car toute réunion des contacts ciblés serait sinon comptée. Trois intitulés coexistent pour un même créneau : le filtre en écarte un.</td></tr>
-        <tr><td>Simulations</td><td>DEAL du pipeline 3817233652 créés après l'envoi</td>
-          <td>Associés aux contacts de la liste. Un dossier ouvert, pas une conversion.</td></tr>
-        <tr><td>Taux de simulation<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">graphe niveau 2</span></td>
-          <td>simulations ÷ contacts de la cohorte</td>
+        <tr><td>RDV</td><td>MEETING_EVENT après l'envoi, intitulé contenant « emprunteur », owner ∈ {Clara, Lilian, Mathieu}</td>
+          <td>Unité = le contact, et non la réunion : 62 objets correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Le filtre d'intitulé est nécessaire, sinon toute réunion des contacts ciblés serait comptée. Le filtre par propriétaire est sans effet au 22/08 — les 62 RDV leur appartiennent déjà — c'est un garde-fou : un RDV posé par quelqu'un d'autre sortira silencieusement du périmètre.</td></tr>
+        <tr><td>Dossiers courtage</td><td>DEAL du pipe créés après l'envoi <strong>OU</strong> déplacés d'étape après l'envoi</td>
+          <td>Unité = le contact. Le second terme ne filtre pas les étapes, il capte le mouvement : il rattrape les dossiers antérieurs réactivés par la campagne, invisibles sur la seule date de création. Un dossier de janvier réentré en simulation le 21/08 est correctement attribué au batch du 13.</td></tr>
+        <tr><td>Engagement<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
+          <td>union dédupliquée : contacts avec dossier ∪ contacts avec RDV</td>
+          <td>Jamais la somme. 34 contacts sur les deux cohortes ont les deux : les additionner surestimerait de plus de moitié.</td></tr>
+        <tr><td>RDV + dossier · RDV seul · dossier seul</td>
+          <td>intersection et différences des deux ensembles</td>
+          <td>Trois sous-ensembles disjoints dont la somme fait l'engagement. « RDV seul » mesure une fuite commerciale, « dossier seul » un parcours self-service.</td></tr>
+        <tr><td>Rattrapage exclu</td><td>DEAL créés entre 15:25 et 15:26 le 06/08</td>
+          <td>10 transactions en 20 secondes, mêlant contacts enrôlés et contacts jamais touchés par une séquence : import d'antériorité, pas de l'activité.</td></tr>
+        <tr><td>Fenêtre d'attribution</td><td>J+21 après l'horodatage d'envoi</td>
+          <td>Sans borne de fin, un cumul ouvert monte à chaque rafraîchissement et deux cohortes d'âge différent cessent d'être comparables. Comparaison à l'horodatage exact, pas à la journée : trois dossiers créés le 13/08 à 06:30 sont antérieurs à l'envoi de 09:31 et ne sont pas comptés.</td></tr>
+        <tr><td>Taux d'engagement<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">graphe niveau 2</span></td>
+          <td>contacts engagés ÷ contacts de la cohorte</td>
           <td>Dénominateur = effectif ciblé du batch, jamais les envois.</td></tr>
         <tr><td>Courbe de réponse</td><td>contacts ayant répondu à J+n ÷ contacts de la cohorte</td>
           <td>Plafonne sur le taux de réponse réel, pas à 100 %. Horizon borné aux jours écoulés depuis l'envoi.</td></tr>
@@ -316,7 +345,7 @@
         <tr><td>Statut de la cohorte</td><td>contacts encore enrôlés dont la date d'enrôlement tombe dans les 48 h suivant l'envoi</td>
           <td>Dérivé, jamais saisi. La fenêtre de date évite de compter un contact actif dans une autre séquence.</td></tr>
         <tr><td>Répartition par propriétaire</td><td>partition des contacts par propriétaire, un décompte par partition</td>
-          <td>L'API CRM Search ne renvoie pas les associations : lire le champ donnait un décompte vide.</td></tr>
+          <td>L'API CRM Search ne renvoie pas les associations : lire le champ donnait un décompte vide. Attention, il s'agit du propriétaire du <strong>contact</strong>, alors que le périmètre des RDV filtre sur celui de la <strong>réunion</strong> : les deux vues peuvent diverger.</td></tr>
       </tbody></table></div>
     </div>
 
@@ -331,13 +360,44 @@
     </div>
 
     <div class="block">
+      <h3 class="btitle">Journal des définitions</h3>
+      <div class="bsub">
+        Tout changement de définition crée une rupture de série : un chiffre d'après n'est pas
+        comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
+      </div>
+      <div class="twrap"><table class="dt"><tbody>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
+          <td>simulations → engagement</td>
+          <td><strong>Rupture.</strong> L'ancien KPI filtrait sur des étapes que n8n n'alimente pas : il affichait un chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. Aucune comparaison possible avec les valeurs antérieures au 22/08.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
+          <td>réunions → contacts uniques</td>
+          <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures et aux clics.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
+          <td>cumul ouvert → fenêtre J+21</td>
+          <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Matrice</span></td>
+          <td>—  →  RDV × dossier</td>
+          <td>Nouveau. Sépare la fuite commerciale du parcours self-service.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre RDV</span></td>
+          <td>—  →  3 propriétaires habilités</td>
+          <td>Sans effet sur les chiffres actuels : les 62 RDV leur appartiennent déjà. Garde-fou pour les cohortes suivantes.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre</span></td>
+          <td>1 cohorte → 2 cohortes</td>
+          <td>Le batch du 13 août existait mais n'était pas déclaré : le dashboard affichait environ la moitié de la production réelle du courtage AE.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="block">
       <h3 class="btitle">Ce que ce dashboard refuse de faire</h3>
       <div class="bsub">
         · <strong>Attribuer les e-mails par séquence.</strong> Les séquences sont réutilisées entre batchs.<br>
         · <strong>Additionner les cohortes</strong> sans vérifier leur recoupement.<br>
+        · <strong>Additionner RDV et dossiers.</strong> L'engagement est une union, jamais une somme.<br>
+        · <strong>Filtrer sur les étapes du pipe courtage.</strong> Elles ne sont pas traversées.<br>
         · <strong>Comparer un batch en cours à un batch terminé.</strong><br>
         · <strong>Désigner un gagnant A/B</strong> sans test de proportions significatif à 5 %.<br>
         · <strong>Cumuler les « Version A » entre batchs.</strong> Rien ne garantit le même message.<br>
+        · <strong>Afficher une cohorte sans <code>list_id</code>.</strong> Elle produirait des zéros trompeurs.<br>
         · <strong>Écrire un nom, un e-mail ou un téléphone</strong> dans <code>data.json</code>.
       </div>
     </div>
@@ -352,7 +412,7 @@
   "primary_axis": "cohort",
   "primary_kpi": "deals_ae",
   "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT · DEAL pipeline 3817233652",
-  "attribution_note": "RDV et simulations rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
+  "attribution_note": "RDV et dossiers rattachés par appartenance aux listes statiques, sur les objets créés après l'horodatage d'envoi du batch. Attribution temporelle, non causale.",
   "overlap_note": "Aucun recoupement entre les cohortes.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
@@ -391,10 +451,10 @@
   },
   {
    "key": "deals_ae",
-   "label": "Simulations",
+   "label": "Dossiers courtage",
    "source": "deal",
    "base": "enrolled",
-   "note": "Transactions du pipe_courtage_ae associées au contact. Matérialise un parcours de simulateur engagé sur la plateforme."
+   "note": "Transactions du pipe_courtage_ae associées au contact."
   }
  ],
  "audience_labels": {
@@ -438,6 +498,8 @@
      "replies": 15,
      "meetings": 12,
      "deals_ae": 0,
+     "engaged": 12,
+     "split": {"both": 0, "meet_only": 12, "deal_only": 0, "engaged": 12},
      "steps": [],
      "by_owner": [
       {
@@ -449,78 +511,7 @@
      ]
     }
    ],
-   "reply_curve": [
-    {
-     "day": 0,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 1,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 2,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 3,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 4,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 5,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 6,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 7,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 8,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 9,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 10,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 11,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 12,
-     "count": 15,
-     "share": 5.91
-    },
-    {
-     "day": 13,
-     "count": 15,
-     "share": 5.91
-    }
-   ]
+   "reply_curve": []
   }
  ]
 }</script>
@@ -674,12 +665,34 @@ function render(){
       ${K2.map(k=>`<td>${fmt(T(k.key))}</td>`).join('')}
       <td>${pct(T(PK),nAll)}</td></tr>`;
 
+  /* matrice d'engagement : RDV × dossier, en contacts uniques.
+     La ligne TOTAL additionne les cellules : juste tant que les cohortes
+     ne se recoupent pas. À revérifier à chaque nouvelle cohorte. */
+  const S=c=>c.split||{};
+  document.querySelector('#tMatrix tbody').innerHTML=
+    D.cohorts.map(co=>co.cells.map((c,i)=>
+      `<tr><td class="left">${i===0?'<strong>'+co.label+'</strong>':''}</td>
+        <td class="left">${AL[c.audience]||c.audience}${c.version?' · '+c.version:''}</td>
+        <td>${fmt(c.enrolled)}</td>
+        <td class="g">${fmt(S(c).both)}</td>
+        <td class="o">${fmt(S(c).meet_only)}</td>
+        <td class="m">${fmt(S(c).deal_only)}</td>
+        <td><strong>${fmt(S(c).engaged)}</strong></td>
+        <td>${pct(S(c).engaged,c.enrolled)}</td></tr>`).join('')).join('')
+    +`<tr class="totrow"><td class="left">TOTAL</td><td class="left m">—</td>
+      <td>${fmt(nAll)}</td>
+      <td>${fmt(sum(allCells,c=>S(c).both))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).meet_only))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).deal_only))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).engaged))}</td>
+      <td>${pct(sum(allCells,c=>S(c).engaged),nAll)}</td></tr>`;
+
   let o=opts(); o.scales.y.ticks.callback=v=>v+'%';
   o.scales.y.title={display:true,text:'% des contacts ciblés',color:C.muted,font:F};
   o.plugins.valueLabels={fmt:pctFmt};
   CH.push(new Chart('chCoh',{type:'bar',
     data:{labels:rows.map(r=>r.co.label.replace('Batch du ','')),datasets:[
-      {label:'Taux de simulation',data:rows.map(r=>+r.rate.toFixed(2)),
+      {label:'Taux d\'engagement',data:rows.map(r=>+r.rate.toFixed(2)),
         backgroundColor:rows.map(r=>r.wip?alpha(C.yellow,.35):alpha(C.indigo,.55)),
         borderColor:rows.map(r=>r.wip?C.yellow:C.indigo),borderWidth:1.5,borderRadius:4}
     ]},options:o}));
@@ -796,19 +809,19 @@ function render(){
       `<div style="height:100%;display:flex;align-items:center;justify-content:center;
         border:1px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center">
         <div class="ab" style="max-width:340px">${T('meetings')||T(PK)
-          ?'<strong style="color:var(--raspberry)">Incohérence :</strong> '+fmt(T('meetings'))+' RDV et '+fmt(T(PK))+' simulations comptés, mais aucun rattaché à un propriétaire.'
+          ?'<strong style="color:var(--raspberry)">Incohérence :</strong> '+fmt(T('meetings'))+' RDV et '+fmt(T(PK))+' engagements comptés, mais aucun rattaché à un propriétaire.'
           :'Répartition non collectée.'}</div></div>`;
   }else{
     let oo=withLegend(opts()); oo.scales.y.ticks.stepSize=1;
     CH.push(new Chart('chOwner',{type:'bar',data:{labels:ow.map(x=>x[0]),datasets:[
       {label:'RDV',data:ow.map(x=>x[1].meetings),backgroundColor:alpha(C.yellow,.6),
         borderColor:C.yellow,borderWidth:1.5,borderRadius:4},
-      {label:'Simulations',data:ow.map(x=>x[1].deals_ae),backgroundColor:alpha(C.greenS,.55),
+      {label:'Dossiers courtage',data:ow.map(x=>x[1].deals_ae),backgroundColor:alpha(C.greenS,.55),
         borderColor:C.greenS,borderWidth:1.5,borderRadius:4}
     ]},options:oo}));
     const idle=all.length-ow.length;
     if(idle)document.getElementById('wrapOwner').insertAdjacentHTML('afterend',
-      `<div class="ab" style="margin-top:9px">${idle} propriétaire${idle>1?'s':''} sans aucun RDV ni simulation, masqué${idle>1?'s':''}.</div>`);
+      `<div class="ab" style="margin-top:9px">${idle} propriétaire${idle>1?'s':''} sans aucun RDV ni dossier, masqué${idle>1?'s':''}.</div>`);
   }
 
   /* ---------- Méthodo ---------- */
@@ -824,11 +837,51 @@ function render(){
     {level:'med',title:'Union dédupliquée au niveau global',
      body:`Les batchs peuvent se recouper. Le niveau 1 mesure l'union côté HubSpot `
        +`plutôt que d'additionner les cellules.`},
+    {level:'high',title:'KPI principal : engagement, plus « simulations »',
+     body:`L'ancien KPI s'appuyait sur des étapes que n8n n'alimente pas — il affichait un `
+       +`chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. `
+       +`Le pipe étant alimenté par le partenaire, la seule présence d'une transaction atteste `
+       +`l'entrée dans le flow. Plus aucun filtre sur les étapes.`},
+    {level:'high',title:'RDV comptés en contacts, plus en réunions',
+     body:`62 objets MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage `
+       +`puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures `
+       +`et aux clics.`},
+    {level:'high',title:'Réactivations rattrapées',
+     body:`Un dossier ouvert avant la campagne mais déplacé après l'envoi est désormais compté. `
+       +`Sur la seule date de création il était invisible — et cet angle mort grandit à mesure `
+       +`que la base mûrit et que les clients ont déjà un dossier ouvert.`},
+    {level:'high',title:'Jointure liste × transaction refaite en deux temps',
+     body:`Combiner <code>hs_crm_search.ilsListIds</code> et un filtre <code>DEAL.*</code> dans `
+       +`la même requête fait sauter le filtre de liste <strong>sans lever d'erreur</strong> : `
+       +`deux listes différentes renvoyaient le même résultat. La jointure se fait désormais `
+       +`dans le code, après deux appels séparés.`},
+    {level:'med',title:'Cohorte du 13 août déclarée',
+     body:`Le batch existait dans le portail mais n'était rattaché à aucune liste connue. `
+       +`Ses 700 contacts et ses engagements n'apparaissaient nulle part : le dashboard `
+       +`affichait environ la moitié de la production réelle.`},
   ].map(a=>`<div class="anom"><span class="abadge ${a.level}">CORRIGÉ</span>
     <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
+    {level:'high',title:'Le pipe est un miroir, pas un parcours',
+     body:`n8n crée chaque transaction directement au statut rapporté par le partenaire : `
+       +`un dossier peut apparaître en <code>process_started</code> sans jamais être passé par `
+       +`<code>simulation_started</code>. Une étape absente ne prouve rien. Aucun KPI ne doit `
+       +`filtrer sur les étapes de ce pipe.`},
+    {level:'med',title:'Seul le dernier mouvement d\'étape est connu',
+     body:`<code>hs_v2_date_entered_current_stage</code> ne garde que l'entrée dans l'étape `
+       +`actuelle. Un dossier déplacé le 15/08 puis le 25/08 n'expose que le 25/08 : hors `
+       +`fenêtre J+21, il sort du comptage.`},
+    {level:'med',title:'createdate est une date de synchronisation',
+     body:`Les transactions sont créées par un batch n8n à 06:30 chaque matin : décalage jusqu'à `
+       +`24 h avec l'action réelle du client. Le batch du 6 août à 15:25 est un rattrapage `
+       +`d'antériorité, exclu du comptage.`},
+    {level:'med',title:'Doublons de contacts',
+     body:`Un même client peut exister en double avec deux e-mails : le dossier sur une fiche, `
+       +`le RDV sur l'autre. Il apparaît alors en « dossier seul » alors qu'il a pris rendez-vous. `
+       +`Un cas identifié sur la cohorte du 13 août. La colonne « dossier seul » est donc `
+       +`légèrement surestimée.`},
     {level:'med',title:'Réponses : dernière, pas première',
      body:`<code>hs_sales_email_last_replied</code> porte la date de la <strong>dernière</strong> `
        +`réponse. Un contact ayant répondu à J+1 puis à J+6 est compté à J+6, ce qui décale la `
@@ -837,12 +890,16 @@ function render(){
     {level:'med',title:'Ouvertures non fiables',
      body:`Apple Mail Privacy Protection précharge les images et gonfle le compteur. `
        +`Ne pas piloter dessus.`},
+    {level:'low',title:'Maturité inégale entre cohortes',
+     body:`Le batch du 13 août a 9 jours d'ancienneté contre 17 pour celui du 5. `
+       +`Les taux ne sont pas comparables avant J+21 sur les deux.`},
     {level:'low',title:'Étapes de séquence regroupées par objet',
      body:`Les engagements ne portent pas le numéro d'étape : le regroupement se fait par objet `
        +`d'e-mail. Deux étapes au même objet fusionneraient.`},
     {level:'low',title:'Pas de clic par lien',
      body:`L'objet EMAIL ne porte aucune URL cliquée. <code>hs_email_click_count</code> est un `
-       +`total tous liens confondus.`},
+       +`total tous liens confondus. Isoler les clics sur un lien précis suppose une page relais `
+       +`suivie côté HubSpot, à instrumenter avant l'envoi — donc jamais rétroactif.`},
   ].map(a=>`<div class="anom"><span class="abadge ${a.level}">${
       {high:'CRITIQUE',med:'À SAVOIR',low:'MINEUR'}[a.level]}</span>
     <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
