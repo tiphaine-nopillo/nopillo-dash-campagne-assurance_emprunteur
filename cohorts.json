@@ -41,10 +41,10 @@
   },
   {
    "key": "deals_ae",
-   "label": "Dossiers courtage",
+   "label": "Deals courtage AE créés",
    "source": "deal",
    "base": "enrolled",
-   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : n8n crée les transactions directement au statut rapporté par le partenaire et saute des étapes, une étape absente ne prouve rien. Le pipe n'étant alimenté que par le partenaire, la présence de la transaction atteste l'entrée dans le flow."
+   "note": "Contacts associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. Aucun filtre sur les étapes : les transactions remontées par n8n sautent des étapes, une étape absente ne prouve rien. Aucun filtre sur la source non plus, mais c'est un arbitrage non tranché : au 22/08, sur 77 transactions du pipe, 40 sont créées à la main dans HubSpot, 34 par n8n et 3 par automatisation. Une transaction manuelle atteste qu'un commercial a ouvert une fiche, pas qu'un client a parcouru le simulateur. La répartition par source est affichée dans le bloc Origine des deals."
   },
   {
    "key": "engaged",
@@ -128,7 +128,7 @@
   "power": 0.8
  },
  "notes": {
-  "attribution": "RDV et dossiers rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve forte en faveur de la causalité : sur les 599 contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi.",
+  "attribution": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
   "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour.",
   "baseline": "Sur la même période, 12 contacts hors campagne ont ouvert un dossier dans le pipe courtage AE, et 25 des 51 contacts avec un RDV « emprunteur » n'appartiennent à aucune des 6 listes. Un vrai groupe témoin est impossible — la population ciblée est sélectionnée sur critères, pas tirée au hasard — ces chiffres sont un ordre de grandeur, pas une preuve causale."
  },
