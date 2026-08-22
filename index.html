@@ -232,14 +232,33 @@
         <h3 class="btitle">Nature de l'engagement<span class="src">DEAL ∩ MEETING_EVENT</span></h3>
         <div class="bsub">
           Trois sous-ensembles disjoints, en contacts uniques. <strong>RDV seul</strong> mesure une
-          fuite commerciale : le rendez-vous n'a produit aucun dossier. <strong>Dossier seul</strong>
+          fuite commerciale : le rendez-vous n'a produit aucun dossier. <strong>Deal seul</strong>
           mesure un parcours self-service, sans intervention commerciale.
         </div>
       </div></div>
       <div class="twrap"><table id="tMatrix">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
-          <th>RDV + dossier</th><th>RDV seul</th><th>Dossier seul</th>
+          <th>RDV + deal</th><th>RDV seul</th><th>Deal seul</th>
           <th>Engagés</th><th>Taux</th></tr></thead>
+        <tbody></tbody></table></div>
+    </div>
+
+    <div class="block">
+      <div class="bhead"><div>
+        <h3 class="btitle">Origine des deals<span class="src">hs_object_source_label</span></h3>
+        <div class="bsub">
+          Qui a créé la transaction. <strong>n8n</strong> remonte le statut rapporté par le
+          partenaire : le client est réellement entré dans le parcours.
+          <strong>À la main</strong> signifie qu'un commercial a ouvert une fiche dans HubSpot —
+          ça peut refléter un client qui a simulé, ou seulement un dossier suivi manuellement.
+          La dernière colonne est celle à surveiller : un « deal seul » créé à la main ne mesure
+          pas du self-service, mais de la saisie commerciale sans RDV tracé.
+        </div>
+      </div></div>
+      <div class="twrap"><table id="tSource">
+        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Deals</th>
+          <th>via n8n</th><th>à la main</th><th>Part n8n</th>
+          <th>dont « deal seul » manuel</th></tr></thead>
         <tbody></tbody></table></div>
     </div>
 
@@ -267,7 +286,7 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">RDV par propriétaire de la réunion<span class="src">meeting.hubspot_owner_id</span></h3>
-        <div class="bsub">Qui a <strong>posé</strong> le rendez-vous, et non à qui appartient le contact. Un contact avec plusieurs RDV est attribué au propriétaire du premier. Les dossiers courtage ne sont pas répartis : créés par n8n, ils n'ont pas de propriétaire.</div>
+        <div class="bsub">Qui a <strong>posé</strong> le rendez-vous, et non à qui appartient le contact. Un contact avec plusieurs RDV est attribué au propriétaire du premier. Les deals courtage AE ne sont pas répartis : créés par n8n, ils n'ont pas de propriétaire.</div>
       </div></div>
       <div class="chart sm" id="wrapOwner"><canvas id="chOwner"></canvas></div>
     </div>
@@ -288,8 +307,8 @@
           <td>Filtré à partir de la date d'envoi du batch. Date de dernière réponse, pas de la première.</td></tr>
         <tr><td>RDV</td><td>MEETING_EVENT · owner ∈ {Clara, Lilian, Mathieu}</td>
           <td>Associé aux contacts de la liste, postérieur à l'envoi, intitulé contenant « emprunteur ». Propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
-        <tr><td>Dossiers courtage</td><td>DEAL · pipeline 3817233652</td>
-          <td>Le pipe est alimenté par le partenaire, jamais par les commerciaux : la seule présence d'une transaction atteste l'entrée du client dans le flow. Aucun filtre sur les étapes.</td></tr>
+        <tr><td>Deals courtage AE créés</td><td>DEAL · pipeline 3817233652</td>
+          <td>Le pipe est alimenté de <strong>deux</strong> façons : n8n remonte les statuts du partenaire, et les commerciaux créent des fiches à la main. Au 22/08, sur 77 transactions : 40 manuelles, 34 via n8n, 3 par automatisation. La seule présence d'une transaction n'atteste donc pas à elle seule un parcours produit — voir le bloc « Origine des deals ».</td></tr>
         <tr><td>Engagement</td><td>DEAL ∪ MEETING_EVENT</td>
           <td>Union en contacts uniques. Un contact avec RDV et dossier compte une fois.</td></tr>
         <tr><td>Statut du batch</td><td>contact.hs_sequences_is_enrolled</td>
@@ -318,14 +337,14 @@
           <td>Exact : 15 contre 15. Date de la <strong>dernière</strong> réponse, pas de la première.</td></tr>
         <tr><td>RDV</td><td>MEETING_EVENT après l'envoi, intitulé contenant « emprunteur », owner ∈ {Clara, Lilian, Mathieu}</td>
           <td>Unité = le contact, et non la réunion : 62 objets correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Le filtre d'intitulé est nécessaire, sinon toute réunion des contacts ciblés serait comptée. Le filtre par propriétaire est sans effet au 22/08 — les 62 RDV leur appartiennent déjà — c'est un garde-fou : un RDV posé par quelqu'un d'autre sortira silencieusement du périmètre.</td></tr>
-        <tr><td>Dossiers courtage</td><td>DEAL du pipe créés après l'envoi <strong>OU</strong> déplacés d'étape après l'envoi</td>
+        <tr><td>Deals courtage AE créés</td><td>DEAL du pipe créés après l'envoi <strong>OU</strong> déplacés d'étape après l'envoi, toutes sources confondues</td>
           <td>Unité = le contact. Le second terme ne filtre pas les étapes, il capte le mouvement : il rattrape les dossiers antérieurs réactivés par la campagne, invisibles sur la seule date de création. Un dossier de janvier réentré en simulation le 21/08 est correctement attribué au batch du 13.</td></tr>
         <tr><td>Engagement<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
           <td>union dédupliquée : contacts avec dossier ∪ contacts avec RDV</td>
           <td>Jamais la somme. 34 contacts sur les deux cohortes ont les deux : les additionner surestimerait de plus de moitié.</td></tr>
-        <tr><td>RDV + dossier · RDV seul · dossier seul</td>
+        <tr><td>RDV + deal · RDV seul · deal seul</td>
           <td>intersection et différences des deux ensembles</td>
-          <td>Trois sous-ensembles disjoints dont la somme fait l'engagement. « RDV seul » mesure une fuite commerciale, « dossier seul » un parcours self-service.</td></tr>
+          <td>Trois sous-ensembles disjoints dont la somme fait l'engagement. « RDV seul » mesure une fuite commerciale, « deal seul » un parcours self-service.</td></tr>
         <tr><td>Rattrapage exclu</td><td>DEAL créés entre 15:25 et 15:26 le 06/08</td>
           <td>10 transactions en 20 secondes, mêlant contacts enrôlés et contacts jamais touchés par une séquence : import d'antériorité, pas de l'activité.</td></tr>
         <tr><td>Fenêtre d'attribution</td><td>J+21 après l'horodatage d'envoi</td>
@@ -372,9 +391,12 @@
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
           <td>réunions → contacts uniques</td>
           <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures et aux clics.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Origine des deals</span></td>
+          <td>affirmation retirée → source affichée</td>
+          <td><strong>Correction d'une erreur de méthodo.</strong> Ce dashboard affirmait que le pipe courtage n'était alimenté que par le partenaire, jamais par les commerciaux. C'est faux : 40 transactions sur 77 sont créées à la main dans HubSpot. L'affirmation est retirée et la répartition par source est désormais affichée. Le KPI, lui, est inchangé — il ne filtrait déjà pas sur la source.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Répartition</span></td>
           <td>propriétaire du contact → de la réunion</td>
-          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous, simplement parce qu'ils possédaient les fiches. Les dossiers ne sont plus répartis du tout — créés par n8n, ils n'ont pas de propriétaire.</td></tr>
+          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous, simplement parce qu'ils possédaient les fiches. Les deals ne sont plus répartis du tout — créés par n8n, ils n'ont pas de propriétaire.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
           <td>cumul ouvert → fenêtre J+21</td>
           <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre.</td></tr>
@@ -409,7 +431,7 @@
 
 <script type="application/json" id="seed">{
  "meta": {
-  "campaign": "Assurance emprunteur · cross-sell bailleurs",
+  "campaign": "Assurance emprunteur · cross-sell",
   "generated_at": "2026-08-18T08:31:55.751936+00:00",
   "collected": true,
   "primary_axis": "cohort",
@@ -454,7 +476,7 @@
   },
   {
    "key": "deals_ae",
-   "label": "Dossiers courtage",
+   "label": "Deals courtage AE créés",
    "source": "deal",
    "base": "enrolled",
    "note": "Transactions du pipe_courtage_ae associées au contact."
@@ -690,6 +712,26 @@ function render(){
       <td>${fmt(sum(allCells,c=>S(c).engaged))}</td>
       <td>${pct(sum(allCells,c=>S(c).engaged),nAll)}</td></tr>`;
 
+  /* origine des deals : n8n contre création manuelle. Un contact est classé
+     « n8n » dès qu'au moins un de ses deals est automatique. */
+  document.querySelector('#tSource tbody').innerHTML=
+    D.cohorts.map(co=>co.cells.map((c,i)=>{
+      const s=S(c), tot=(s.deal_n8n||0)+(s.deal_manual||0);
+      return `<tr><td class="left">${i===0?'<strong>'+co.label+'</strong>':''}</td>
+        <td class="left">${AL[c.audience]||c.audience}${c.version?' · '+c.version:''}</td>
+        <td>${fmt(tot)}</td>
+        <td class="g">${fmt(s.deal_n8n)}</td>
+        <td class="o">${fmt(s.deal_manual)}</td>
+        <td>${pct(s.deal_n8n,tot)}</td>
+        <td class="${s.deal_only_manual?'r':'m'}">${fmt(s.deal_only_manual)}</td></tr>`;
+    }).join('')).join('')
+    +`<tr class="totrow"><td class="left">TOTAL</td><td class="left m">—</td>
+      <td>${fmt(sum(allCells,c=>(S(c).deal_n8n||0)+(S(c).deal_manual||0)))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).deal_n8n))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).deal_manual))}</td>
+      <td>${pct(sum(allCells,c=>S(c).deal_n8n),sum(allCells,c=>(S(c).deal_n8n||0)+(S(c).deal_manual||0)))}</td>
+      <td>${fmt(sum(allCells,c=>S(c).deal_only_manual))}</td></tr>`;
+
   let o=opts(); o.scales.y.ticks.callback=v=>v+'%';
   o.scales.y.title={display:true,text:'% des contacts ciblés',color:C.muted,font:F};
   o.plugins.valueLabels={fmt:pctFmt};
@@ -840,13 +882,14 @@ function render(){
     {level:'high',title:'KPI principal : engagement, plus « simulations »',
      body:`L'ancien KPI s'appuyait sur des étapes que n8n n'alimente pas — il affichait un `
        +`chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. `
-       +`Le pipe étant alimenté par le partenaire, la seule présence d'une transaction atteste `
-       +`l'entrée dans le flow. Plus aucun filtre sur les étapes.`},
+       +`Le nouveau ne filtre plus sur les étapes : celles remontées par n8n sont sautées, `
+       +`une étape absente ne prouve rien. Il ne filtre pas non plus sur la source, mais `
+       +`c'est un arbitrage ouvert — voir la limite « un deal ne prouve pas un parcours ».`},
     {level:'high',title:'RDV attribués au propriétaire de la réunion',
      body:`Le graphe de répartition utilisait <code>contact.hubspot_owner_id</code> : `
        +`un commercial y apparaissait dès qu'il possédait des fiches, même sans avoir `
        +`posé un seul rendez-vous. Il utilise désormais le propriétaire de la RÉUNION. `
-       +`Les dossiers ne sont plus répartis : créés par n8n, ils n'ont pas de propriétaire.`},
+       +`Les deals ne sont plus répartis : créés par n8n, ils n'ont pas de propriétaire.`},
     {level:'high',title:'RDV comptés en contacts, plus en réunions',
      body:`62 objets MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage `
        +`puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures `
@@ -869,11 +912,19 @@ function render(){
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
-    {level:'high',title:'Le pipe est un miroir, pas un parcours',
-     body:`n8n crée chaque transaction directement au statut rapporté par le partenaire : `
-       +`un dossier peut apparaître en <code>process_started</code> sans jamais être passé par `
-       +`<code>simulation_started</code>. Une étape absente ne prouve rien. Aucun KPI ne doit `
-       +`filtrer sur les étapes de ce pipe.`},
+    {level:'high',title:'Un deal ne prouve pas un parcours produit',
+     body:`Le pipe est alimenté de deux façons. n8n remonte les statuts du partenaire `
+       +`(<code>INTEGRATION</code>) : là, le client est réellement entré dans le parcours. `
+       +`Mais <strong>40 transactions sur 77 sont créées à la main</strong> `
+       +`(<code>CRM_UI</code>) : elles attestent qu'un commercial a ouvert une fiche, pas `
+       +`qu'un client a simulé. Le KPI ne filtre pas sur la source — arbitrage non tranché, `
+       +`rendu visible par le bloc « Origine des deals ». La question à poser aux commerciaux : `
+       +`dans quel cas créent-ils un deal à la main ?`},
+    {level:'high',title:'Les étapes du pipe ne sont pas traversées',
+     body:`Les transactions remontées par n8n portent directement le statut rapporté par le `
+       +`partenaire : un dossier peut apparaître en <code>process_started</code> sans jamais `
+       +`être passé par <code>simulation_started</code>. Une étape absente ne prouve rien. `
+       +`Aucun KPI ne doit filtrer sur les étapes de ce pipe.`},
     {level:'med',title:'Seul le dernier mouvement d\'étape est connu',
      body:`<code>hs_v2_date_entered_current_stage</code> ne garde que l'entrée dans l'étape `
        +`actuelle. Un dossier déplacé le 15/08 puis le 25/08 n'expose que le 25/08 : hors `
@@ -884,8 +935,8 @@ function render(){
        +`d'antériorité, exclu du comptage.`},
     {level:'med',title:'Doublons de contacts',
      body:`Un même client peut exister en double avec deux e-mails : le dossier sur une fiche, `
-       +`le RDV sur l'autre. Il apparaît alors en « dossier seul » alors qu'il a pris rendez-vous. `
-       +`Un cas identifié sur la cohorte du 13 août. La colonne « dossier seul » est donc `
+       +`le RDV sur l'autre. Il apparaît alors en « deal seul » alors qu'il a pris rendez-vous. `
+       +`Un cas identifié sur la cohorte du 13 août. La colonne « deal seul » est donc `
        +`légèrement surestimée.`},
     {level:'med',title:'Réponses : dernière, pas première',
      body:`<code>hs_sales_email_last_replied</code> porte la date de la <strong>dernière</strong> `
