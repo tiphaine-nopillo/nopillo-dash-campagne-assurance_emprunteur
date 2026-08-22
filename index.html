@@ -266,8 +266,8 @@
 
     <div class="block">
       <div class="bhead"><div>
-        <h3 class="btitle">Répartition par propriétaire de contact<span class="src">contact.hubspot_owner_id</span></h3>
-        <div class="bsub">RDV et dossiers attribués au propriétaire du contact, pas de la transaction : celles créées par n8n n'ont pas de propriétaire. À ne pas confondre avec le filtre de périmètre des RDV, qui porte sur le propriétaire de la réunion.</div>
+        <h3 class="btitle">RDV par propriétaire de la réunion<span class="src">meeting.hubspot_owner_id</span></h3>
+        <div class="bsub">Qui a <strong>posé</strong> le rendez-vous, et non à qui appartient le contact. Un contact avec plusieurs RDV est attribué au propriétaire du premier. Les dossiers courtage ne sont pas répartis : créés par n8n, ils n'ont pas de propriétaire.</div>
       </div></div>
       <div class="chart sm" id="wrapOwner"><canvas id="chOwner"></canvas></div>
     </div>
@@ -372,6 +372,9 @@
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
           <td>réunions → contacts uniques</td>
           <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures et aux clics.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Répartition</span></td>
+          <td>propriétaire du contact → de la réunion</td>
+          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous, simplement parce qu'ils possédaient les fiches. Les dossiers ne sont plus répartis du tout — créés par n8n, ils n'ont pas de propriétaire.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
           <td>cumul ouvert → fenêtre J+21</td>
           <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre.</td></tr>
@@ -800,28 +803,25 @@ function render(){
   /* propriétaires */
   const own={};
   allCells.forEach(c=>(c.by_owner||[]).forEach(w=>{
-    const e=own[w.owner]=own[w.owner]||{meetings:0,deals_ae:0};
-    e.meetings+=w.meetings; e.deals_ae+=w.deals_ae;}));
-  const all=Object.entries(own).sort((a,b)=>(b[1].meetings+b[1].deals_ae)-(a[1].meetings+a[1].deals_ae));
-  const ow=all.filter(x=>x[1].meetings+x[1].deals_ae>0);
+    own[w.owner]=(own[w.owner]||0)+(w.meetings||0);}));
+  const all=Object.entries(own).sort((a,b)=>b[1]-a[1]);
+  const ow=all.filter(x=>x[1]>0);
   if(!ow.length){
     document.getElementById('wrapOwner').innerHTML=
       `<div style="height:100%;display:flex;align-items:center;justify-content:center;
         border:1px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center">
         <div class="ab" style="max-width:340px">${T('meetings')||T(PK)
-          ?'<strong style="color:var(--raspberry)">Incohérence :</strong> '+fmt(T('meetings'))+' RDV et '+fmt(T(PK))+' engagements comptés, mais aucun rattaché à un propriétaire.'
+          ?'<strong style="color:var(--raspberry)">Incohérence :</strong> '+fmt(T('meetings'))+' RDV comptés, mais aucun rattaché à un propriétaire de réunion.'
           :'Répartition non collectée.'}</div></div>`;
   }else{
     let oo=withLegend(opts()); oo.scales.y.ticks.stepSize=1;
     CH.push(new Chart('chOwner',{type:'bar',data:{labels:ow.map(x=>x[0]),datasets:[
-      {label:'RDV',data:ow.map(x=>x[1].meetings),backgroundColor:alpha(C.yellow,.6),
-        borderColor:C.yellow,borderWidth:1.5,borderRadius:4},
-      {label:'Dossiers courtage',data:ow.map(x=>x[1].deals_ae),backgroundColor:alpha(C.greenS,.55),
-        borderColor:C.greenS,borderWidth:1.5,borderRadius:4}
+      {label:'RDV pris',data:ow.map(x=>x[1]),backgroundColor:alpha(C.yellow,.6),
+        borderColor:C.yellow,borderWidth:1.5,borderRadius:4}
     ]},options:oo}));
     const idle=all.length-ow.length;
     if(idle)document.getElementById('wrapOwner').insertAdjacentHTML('afterend',
-      `<div class="ab" style="margin-top:9px">${idle} propriétaire${idle>1?'s':''} sans aucun RDV ni dossier, masqué${idle>1?'s':''}.</div>`);
+      `<div class="ab" style="margin-top:9px">${idle} propriétaire${idle>1?'s':''} sans aucun RDV posé, masqué${idle>1?'s':''}.</div>`);
   }
 
   /* ---------- Méthodo ---------- */
@@ -842,6 +842,11 @@ function render(){
        +`chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. `
        +`Le pipe étant alimenté par le partenaire, la seule présence d'une transaction atteste `
        +`l'entrée dans le flow. Plus aucun filtre sur les étapes.`},
+    {level:'high',title:'RDV attribués au propriétaire de la réunion',
+     body:`Le graphe de répartition utilisait <code>contact.hubspot_owner_id</code> : `
+       +`un commercial y apparaissait dès qu'il possédait des fiches, même sans avoir `
+       +`posé un seul rendez-vous. Il utilise désormais le propriétaire de la RÉUNION. `
+       +`Les dossiers ne sont plus répartis : créés par n8n, ils n'ont pas de propriétaire.`},
     {level:'high',title:'RDV comptés en contacts, plus en réunions',
      body:`62 objets MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage `
        +`puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures `
