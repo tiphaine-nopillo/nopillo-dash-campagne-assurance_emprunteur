@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-24T12:01:18.823736+00:00",
+  "generated_at": "2026-08-24T15:22:20.335837+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -93,9 +93,9 @@
      "status": "TERMINE",
      "sent": 723,
      "bounced": 1,
-     "opens": 175,
+     "opens": 176,
      "clicks": 5,
-     "opens_emails": 374,
+     "opens_emails": 376,
      "clicks_emails": 5,
      "replies": 30,
      "meetings": 14,
@@ -115,7 +115,7 @@
        "order": 1,
        "subject": "Renégociation assurance emprunteur",
        "sent": 474,
-       "opens": 233,
+       "opens": 235,
        "clicks": 1
       },
       {
@@ -157,7 +157,7 @@
      "bounced": 4,
      "opens": 177,
      "clicks": 14,
-     "opens_emails": 356,
+     "opens_emails": 357,
      "clicks_emails": 16,
      "replies": 27,
      "meetings": 11,
@@ -177,7 +177,7 @@
        "order": 1,
        "subject": "L’économie que les propriétaires immobiliers ignorent",
        "sent": 254,
-       "opens": 130,
+       "opens": 131,
        "clicks": 1
       },
       {
@@ -427,28 +427,28 @@
     },
     {
      "day": 14,
-     "count": 56,
-     "share": 8.96
+     "count": 55,
+     "share": 8.8
     },
     {
      "day": 15,
-     "count": 61,
-     "share": 9.76
+     "count": 60,
+     "share": 9.6
     },
     {
      "day": 16,
-     "count": 66,
-     "share": 10.56
+     "count": 65,
+     "share": 10.4
     },
     {
      "day": 17,
-     "count": 66,
-     "share": 10.56
+     "count": 65,
+     "share": 10.4
     },
     {
      "day": 18,
-     "count": 66,
-     "share": 10.56
+     "count": 65,
+     "share": 10.4
     },
     {
      "day": 19,
@@ -462,8 +462,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 660,
-   "status_note": "660 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 655,
+   "status_note": "655 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -474,23 +474,23 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 537,
+     "active": 533,
      "status": "EN_COURS",
-     "sent": 1069,
+     "sent": 1090,
      "bounced": 1,
-     "opens": 299,
-     "clicks": 5,
-     "opens_emails": 380,
-     "clicks_emails": 6,
-     "replies": 22,
-     "meetings": 11,
+     "opens": 324,
+     "clicks": 6,
+     "opens_emails": 473,
+     "clicks_emails": 7,
+     "replies": 25,
+     "meetings": 13,
      "deals_ae": 8,
-     "engaged": 12,
+     "engaged": 14,
      "split": {
       "both": 7,
-      "meet_only": 4,
+      "meet_only": 6,
       "deal_only": 1,
-      "engaged": 12,
+      "engaged": 14,
       "deal_n8n": 0,
       "deal_manual": 8,
       "deal_only_manual": 1
@@ -506,9 +506,9 @@
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 513,
-       "opens": 114,
-       "clicks": 1
+       "sent": 534,
+       "opens": 207,
+       "clicks": 2
       }
      ],
      "by_owner": [
@@ -525,7 +525,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 2
+       "meetings": 4
       }
      ]
     },
@@ -536,15 +536,15 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 123,
+     "active": 122,
      "status": "EN_COURS",
-     "sent": 255,
+     "sent": 259,
      "bounced": 0,
-     "opens": 95,
+     "opens": 98,
      "clicks": 6,
-     "opens_emails": 124,
+     "opens_emails": 144,
      "clicks_emails": 5,
-     "replies": 12,
+     "replies": 13,
      "meetings": 5,
      "deals_ae": 4,
      "engaged": 5,
@@ -568,8 +568,8 @@
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 119,
-       "opens": 36,
+       "sent": 123,
+       "opens": 56,
        "clicks": 0
       }
      ],
@@ -640,13 +640,13 @@
     },
     {
      "day": 10,
-     "count": 33,
-     "share": 4.71
+     "count": 32,
+     "share": 4.57
     },
     {
      "day": 11,
-     "count": 34,
-     "share": 4.86
+     "count": 38,
+     "share": 5.43
     }
    ]
   }
