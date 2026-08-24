@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-22T10:57:04.215932+00:00",
+  "generated_at": "2026-08-24T08:04:24.578245+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -93,9 +93,9 @@
      "status": "TERMINE",
      "sent": 723,
      "bounced": 1,
-     "opens": 174,
+     "opens": 175,
      "clicks": 5,
-     "opens_emails": 371,
+     "opens_emails": 373,
      "clicks_emails": 5,
      "replies": 29,
      "meetings": 13,
@@ -115,14 +115,14 @@
        "order": 1,
        "subject": "Renégociation assurance emprunteur",
        "sent": 474,
-       "opens": 231,
+       "opens": 232,
        "clicks": 1
       },
       {
        "order": 2,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 249,
-       "opens": 140,
+       "opens": 141,
        "clicks": 4
       }
      ],
@@ -444,6 +444,11 @@
      "day": 17,
      "count": 67,
      "share": 10.72
+    },
+    {
+     "day": 18,
+     "count": 67,
+     "share": 10.72
     }
    ]
   },
@@ -466,11 +471,11 @@
      "enrolled": 560,
      "active": 539,
      "status": "EN_COURS",
-     "sent": 556,
+     "sent": 574,
      "bounced": 1,
-     "opens": 275,
+     "opens": 278,
      "clicks": 5,
-     "opens_emails": 266,
+     "opens_emails": 271,
      "clicks_emails": 5,
      "replies": 21,
      "meetings": 10,
@@ -492,6 +497,13 @@
        "sent": 556,
        "opens": 266,
        "clicks": 5
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 18,
+       "opens": 5,
+       "clicks": 0
       }
      ],
      "by_owner": [
@@ -521,11 +533,11 @@
      "enrolled": 140,
      "active": 123,
      "status": "EN_COURS",
-     "sent": 136,
+     "sent": 142,
      "bounced": 0,
-     "opens": 88,
+     "opens": 89,
      "clicks": 6,
-     "opens_emails": 87,
+     "opens_emails": 91,
      "clicks_emails": 5,
      "replies": 12,
      "meetings": 5,
@@ -545,8 +557,15 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
-       "opens": 87,
+       "opens": 88,
        "clicks": 5
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 6,
+       "opens": 3,
+       "clicks": 0
       }
      ],
      "by_owner": [
@@ -566,51 +585,56 @@
    "reply_curve": [
     {
      "day": 0,
-     "count": 11,
-     "share": 1.57
+     "count": 10,
+     "share": 1.43
     },
     {
      "day": 1,
+     "count": 13,
+     "share": 1.86
+    },
+    {
+     "day": 2,
      "count": 14,
      "share": 2.0
     },
     {
-     "day": 2,
+     "day": 3,
      "count": 15,
      "share": 2.14
     },
     {
-     "day": 3,
-     "count": 16,
-     "share": 2.29
-    },
-    {
      "day": 4,
-     "count": 19,
-     "share": 2.71
+     "count": 17,
+     "share": 2.43
     },
     {
      "day": 5,
-     "count": 22,
-     "share": 3.14
+     "count": 20,
+     "share": 2.86
     },
     {
      "day": 6,
-     "count": 25,
-     "share": 3.57
+     "count": 23,
+     "share": 3.29
     },
     {
      "day": 7,
-     "count": 29,
-     "share": 4.14
+     "count": 27,
+     "share": 3.86
     },
     {
      "day": 8,
-     "count": 33,
-     "share": 4.71
+     "count": 31,
+     "share": 4.43
     },
     {
      "day": 9,
+     "count": 31,
+     "share": 4.43
+    },
+    {
+     "day": 10,
      "count": 33,
      "share": 4.71
     }
