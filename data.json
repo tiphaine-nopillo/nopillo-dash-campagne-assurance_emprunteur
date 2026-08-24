@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-24T10:59:33.164067+00:00",
+  "generated_at": "2026-08-24T12:01:18.823736+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -95,17 +95,17 @@
      "bounced": 1,
      "opens": 175,
      "clicks": 5,
-     "opens_emails": 373,
+     "opens_emails": 374,
      "clicks_emails": 5,
      "replies": 30,
-     "meetings": 13,
+     "meetings": 14,
      "deals_ae": 12,
-     "engaged": 15,
+     "engaged": 16,
      "split": {
       "both": 10,
-      "meet_only": 3,
+      "meet_only": 4,
       "deal_only": 2,
-      "engaged": 15,
+      "engaged": 16,
       "deal_n8n": 2,
       "deal_manual": 10,
       "deal_only_manual": 1
@@ -115,7 +115,7 @@
        "order": 1,
        "subject": "Renégociation assurance emprunteur",
        "sent": 474,
-       "opens": 232,
+       "opens": 233,
        "clicks": 1
       },
       {
@@ -135,7 +135,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 7
+       "meetings": 8
       },
       {
        "owner_id": "75453551",
@@ -462,8 +462,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 662,
-   "status_note": "662 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 660,
+   "status_note": "660 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -474,23 +474,23 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 539,
+     "active": 537,
      "status": "EN_COURS",
-     "sent": 667,
+     "sent": 1069,
      "bounced": 1,
-     "opens": 285,
+     "opens": 299,
      "clicks": 5,
-     "opens_emails": 310,
-     "clicks_emails": 5,
-     "replies": 21,
-     "meetings": 10,
+     "opens_emails": 380,
+     "clicks_emails": 6,
+     "replies": 22,
+     "meetings": 11,
      "deals_ae": 8,
-     "engaged": 11,
+     "engaged": 12,
      "split": {
       "both": 7,
-      "meet_only": 3,
+      "meet_only": 4,
       "deal_only": 1,
-      "engaged": 11,
+      "engaged": 12,
       "deal_n8n": 0,
       "deal_manual": 8,
       "deal_only_manual": 1
@@ -506,16 +506,16 @@
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 111,
-       "opens": 44,
-       "clicks": 0
+       "sent": 513,
+       "opens": 114,
+       "clicks": 1
       }
      ],
      "by_owner": [
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 5
+       "meetings": 6
       },
       {
        "owner_id": "650299108",
@@ -538,11 +538,11 @@
      "enrolled": 140,
      "active": 123,
      "status": "EN_COURS",
-     "sent": 170,
+     "sent": 255,
      "bounced": 0,
-     "opens": 91,
+     "opens": 95,
      "clicks": 6,
-     "opens_emails": 107,
+     "opens_emails": 124,
      "clicks_emails": 5,
      "replies": 12,
      "meetings": 5,
@@ -568,8 +568,8 @@
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 34,
-       "opens": 19,
+       "sent": 119,
+       "opens": 36,
        "clicks": 0
       }
      ],
@@ -645,8 +645,8 @@
     },
     {
      "day": 11,
-     "count": 33,
-     "share": 4.71
+     "count": 34,
+     "share": 4.86
     }
    ]
   }
