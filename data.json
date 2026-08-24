@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-24T17:48:34.755393+00:00",
+  "generated_at": "2026-08-24T19:45:25.216384+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -462,8 +462,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 654,
-   "status_note": "654 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 653,
+   "status_note": "653 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -474,15 +474,15 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 533,
+     "active": 532,
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 330,
+     "opens": 333,
      "clicks": 6,
-     "opens_emails": 489,
+     "opens_emails": 499,
      "clicks_emails": 7,
-     "replies": 25,
+     "replies": 26,
      "meetings": 13,
      "deals_ae": 8,
      "engaged": 14,
@@ -507,7 +507,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 223,
+       "opens": 233,
        "clicks": 2
       }
      ],
@@ -542,7 +542,7 @@
      "bounced": 0,
      "opens": 98,
      "clicks": 6,
-     "opens_emails": 146,
+     "opens_emails": 147,
      "clicks_emails": 5,
      "replies": 14,
      "meetings": 5,
@@ -569,7 +569,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 123,
-       "opens": 58,
+       "opens": 59,
        "clicks": 0
       }
      ],
@@ -645,8 +645,8 @@
     },
     {
      "day": 11,
-     "count": 39,
-     "share": 5.57
+     "count": 40,
+     "share": 5.71
     }
    ]
   }
