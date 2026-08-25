@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-24T19:45:25.216384+00:00",
+  "generated_at": "2026-08-25T06:03:55.528048+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -292,7 +292,7 @@
      "clicks": 1,
      "opens_emails": 68,
      "clicks_emails": 2,
-     "replies": 8,
+     "replies": 9,
      "meetings": 8,
      "deals_ae": 6,
      "engaged": 9,
@@ -452,8 +452,8 @@
     },
     {
      "day": 19,
-     "count": 69,
-     "share": 11.04
+     "count": 70,
+     "share": 11.2
     }
    ]
   },
@@ -462,8 +462,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 653,
-   "status_note": "653 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 652,
+   "status_note": "652 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -474,15 +474,15 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 532,
+     "active": 531,
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 333,
+     "opens": 335,
      "clicks": 6,
-     "opens_emails": 499,
+     "opens_emails": 504,
      "clicks_emails": 7,
-     "replies": 26,
+     "replies": 27,
      "meetings": 13,
      "deals_ae": 8,
      "engaged": 14,
@@ -507,7 +507,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 233,
+       "opens": 238,
        "clicks": 2
       }
      ],
@@ -540,9 +540,9 @@
      "status": "EN_COURS",
      "sent": 259,
      "bounced": 0,
-     "opens": 98,
+     "opens": 99,
      "clicks": 6,
-     "opens_emails": 147,
+     "opens_emails": 151,
      "clicks_emails": 5,
      "replies": 14,
      "meetings": 5,
@@ -569,7 +569,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 123,
-       "opens": 59,
+       "opens": 63,
        "clicks": 0
       }
      ],
@@ -645,8 +645,8 @@
     },
     {
      "day": 11,
-     "count": 40,
-     "share": 5.71
+     "count": 41,
+     "share": 5.86
     }
    ]
   }
