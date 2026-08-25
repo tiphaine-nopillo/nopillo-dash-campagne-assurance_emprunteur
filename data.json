@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-25T06:03:55.528048+00:00",
+  "generated_at": "2026-08-25T09:10:56.003446+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -95,17 +95,17 @@
      "bounced": 1,
      "opens": 176,
      "clicks": 5,
-     "opens_emails": 376,
+     "opens_emails": 377,
      "clicks_emails": 5,
      "replies": 30,
-     "meetings": 14,
+     "meetings": 15,
      "deals_ae": 12,
-     "engaged": 16,
+     "engaged": 17,
      "split": {
       "both": 10,
-      "meet_only": 4,
+      "meet_only": 5,
       "deal_only": 2,
-      "engaged": 16,
+      "engaged": 17,
       "deal_n8n": 2,
       "deal_manual": 10,
       "deal_only_manual": 1
@@ -122,7 +122,7 @@
        "order": 2,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 249,
-       "opens": 141,
+       "opens": 142,
        "clicks": 4
       }
      ],
@@ -135,7 +135,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 8
+       "meetings": 9
       },
       {
        "owner_id": "75453551",
@@ -454,6 +454,11 @@
      "day": 19,
      "count": 70,
      "share": 11.2
+    },
+    {
+     "day": 20,
+     "count": 70,
+     "share": 11.2
     }
    ]
   },
@@ -478,9 +483,9 @@
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 335,
+     "opens": 337,
      "clicks": 6,
-     "opens_emails": 504,
+     "opens_emails": 509,
      "clicks_emails": 7,
      "replies": 27,
      "meetings": 13,
@@ -507,7 +512,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 238,
+       "opens": 243,
        "clicks": 2
       }
      ],
@@ -542,7 +547,7 @@
      "bounced": 0,
      "opens": 99,
      "clicks": 6,
-     "opens_emails": 151,
+     "opens_emails": 153,
      "clicks_emails": 5,
      "replies": 14,
      "meetings": 5,
@@ -562,14 +567,14 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
-       "opens": 88,
+       "opens": 89,
        "clicks": 5
       },
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 123,
-       "opens": 63,
+       "opens": 64,
        "clicks": 0
       }
      ],
