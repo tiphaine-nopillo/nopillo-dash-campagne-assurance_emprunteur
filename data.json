@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-25T17:05:46.488020+00:00",
+  "generated_at": "2026-08-25T19:47:05.997137+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -467,8 +467,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 650,
-   "status_note": "650 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 649,
+   "status_note": "649 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -479,13 +479,13 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 531,
+     "active": 530,
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
      "opens": 341,
      "clicks": 6,
-     "opens_emails": 519,
+     "opens_emails": 521,
      "clicks_emails": 7,
      "replies": 27,
      "meetings": 13,
@@ -512,7 +512,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 253,
+       "opens": 255,
        "clicks": 2
       }
      ],
@@ -625,33 +625,33 @@
     },
     {
      "day": 6,
-     "count": 23,
-     "share": 3.29
+     "count": 22,
+     "share": 3.14
     },
     {
      "day": 7,
-     "count": 26,
-     "share": 3.71
+     "count": 25,
+     "share": 3.57
     },
     {
      "day": 8,
-     "count": 30,
-     "share": 4.29
+     "count": 29,
+     "share": 4.14
     },
     {
      "day": 9,
-     "count": 30,
-     "share": 4.29
+     "count": 29,
+     "share": 4.14
     },
     {
      "day": 10,
-     "count": 30,
-     "share": 4.29
+     "count": 29,
+     "share": 4.14
     },
     {
      "day": 11,
-     "count": 38,
-     "share": 5.43
+     "count": 37,
+     "share": 5.29
     },
     {
      "day": 12,
