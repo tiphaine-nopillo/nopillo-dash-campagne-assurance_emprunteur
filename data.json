@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-25T11:04:48.109280+00:00",
+  "generated_at": "2026-08-25T14:29:35.298398+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -452,8 +452,8 @@
     },
     {
      "day": 19,
-     "count": 70,
-     "share": 11.2
+     "count": 69,
+     "share": 11.04
     },
     {
      "day": 20,
@@ -467,8 +467,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 652,
-   "status_note": "652 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 650,
+   "status_note": "650 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -483,9 +483,9 @@
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 340,
+     "opens": 341,
      "clicks": 6,
-     "opens_emails": 514,
+     "opens_emails": 516,
      "clicks_emails": 7,
      "replies": 27,
      "meetings": 13,
@@ -512,7 +512,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 248,
+       "opens": 250,
        "clicks": 2
       }
      ],
@@ -541,26 +541,26 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 121,
+     "active": 119,
      "status": "EN_COURS",
      "sent": 259,
      "bounced": 0,
      "opens": 99,
      "clicks": 6,
-     "opens_emails": 153,
+     "opens_emails": 154,
      "clicks_emails": 5,
-     "replies": 14,
+     "replies": 17,
      "meetings": 5,
-     "deals_ae": 4,
-     "engaged": 5,
+     "deals_ae": 5,
+     "engaged": 6,
      "split": {
       "both": 4,
       "meet_only": 1,
-      "deal_only": 0,
-      "engaged": 5,
+      "deal_only": 1,
+      "engaged": 6,
       "deal_n8n": 1,
-      "deal_manual": 3,
-      "deal_only_manual": 0
+      "deal_manual": 4,
+      "deal_only_manual": 1
      },
      "steps": [
       {
@@ -574,7 +574,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 123,
-       "opens": 64,
+       "opens": 65,
        "clicks": 0
       }
      ],
@@ -630,33 +630,33 @@
     },
     {
      "day": 7,
-     "count": 27,
-     "share": 3.86
+     "count": 26,
+     "share": 3.71
     },
     {
      "day": 8,
-     "count": 31,
-     "share": 4.43
+     "count": 30,
+     "share": 4.29
     },
     {
      "day": 9,
-     "count": 31,
-     "share": 4.43
+     "count": 30,
+     "share": 4.29
     },
     {
      "day": 10,
-     "count": 31,
-     "share": 4.43
+     "count": 30,
+     "share": 4.29
     },
     {
      "day": 11,
-     "count": 41,
-     "share": 5.86
+     "count": 40,
+     "share": 5.71
     },
     {
      "day": 12,
-     "count": 41,
-     "share": 5.86
+     "count": 44,
+     "share": 6.29
     }
    ]
   }
