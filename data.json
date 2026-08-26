@@ -1,0 +1,690 @@
+{
+ "meta": {
+  "campaign": "Assurance emprunteur · cross-sell",
+  "generated_at": "2026-08-25T06:03:55.528048+00:00",
+  "collected": true,
+  "primary_axis": "cohort",
+  "primary_kpi": "engaged",
+  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21",
+  "attribution_note": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
+  "overlap_note": "Recoupement entre cohortes : 2 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
+  "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
+ },
+ "kpis": [
+  {
+   "key": "sent",
+   "label": "Envois",
+   "source": "email",
+   "base": "enrolled"
+  },
+  {
+   "key": "opens",
+   "label": "Ouvertures",
+   "source": "contact",
+   "base": "enrolled",
+   "note": "Contacts uniques, via hs_sales_email_last_opened postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
+  },
+  {
+   "key": "clicks",
+   "label": "Clics",
+   "source": "contact",
+   "base": "enrolled",
+   "note": "Contacts uniques, via hs_sales_email_last_clicked postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
+  },
+  {
+   "key": "replies",
+   "label": "Réponses",
+   "source": "reply",
+   "base": "enrolled"
+  },
+  {
+   "key": "meetings",
+   "label": "RDV pris",
+   "source": "meeting",
+   "base": "enrolled",
+   "note": "Contacts uniques ayant pris un rendez-vous, et non réunions : 62 objets MEETING_EVENT correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu."
+  },
+  {
+   "key": "deals_ae",
+   "label": "Simulations entamées",
+   "source": "deal",
+   "base": "enrolled",
+   "note": "Contacts uniques associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. LIBELLÉ IMPRÉCIS ASSUMÉ : le pipe est alimenté à la fois par n8n, qui remonte un parcours réel sur le simulateur, et à la main par les commerciaux. Au 25/08, sur les 44 contacts comptés, 33 le sont via une transaction créée à la main — elle atteste qu'un commercial a ouvert une fiche, pas qu'un client a simulé. « Simulation entamée » ne vaut strictement que pour la part n8n, affichée partout à côté du total. Aucun filtre sur les étapes : les transactions remontées par n8n sautent des étapes, une étape absente ne prouve rien."
+  },
+  {
+   "key": "engaged",
+   "label": "Clients activés",
+   "source": "union",
+   "base": "enrolled",
+   "note": "Union dédupliquée des contacts avec RDV et des contacts avec dossier courtage AE : RDV seul, simulation seule, ou les deux. Jamais la somme — 35 contacts ont les deux, les additionner surestimerait de 56 %. Calculé au niveau campagne sur les identifiants de contact, pas par addition des cellules."
+  }
+ ],
+ "audience_labels": {
+  "RP": "Résidence principale",
+  "LMNP": "LMNP"
+ },
+ "stats_config": {
+  "min_n_for_rate": 100,
+  "alpha": 0.05,
+  "power": 0.8
+ },
+ "dedup": {
+  "contacts": 1323,
+  "activation": {
+   "meet": 54,
+   "deal": 44,
+   "both": 35,
+   "meet_only": 19,
+   "deal_only": 9,
+   "activated": 63,
+   "deal_auto": 11,
+   "deal_manual": 33,
+   "deal_only_manual": 3,
+   "sum_cells": 63,
+   "overlap": 0,
+   "_derived": "Dérivé de la somme des cellules, en attente du prochain run de refresh.py qui recalculera ce bloc par union d'identifiants de contact."
+  }
+ },
+ "cohorts": [
+  {
+   "id": "2026-08-05",
+   "label": "Batch du 5 août 2026",
+   "sent_at": "2026-08-05T08:31:00Z",
+   "status": "TERMINE",
+   "active": 0,
+   "status_note": null,
+   "ab_test": true,
+   "ab_note": null,
+   "cells": [
+    {
+     "list_id": "14319",
+     "list_name": "OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A",
+     "sequence_id": "841303267",
+     "audience": "RP",
+     "version": "A",
+     "enrolled": 263,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": 723,
+     "bounced": 1,
+     "opens": 176,
+     "clicks": 5,
+     "opens_emails": 376,
+     "clicks_emails": 5,
+     "replies": 30,
+     "meetings": 14,
+     "deals_ae": 12,
+     "engaged": 16,
+     "split": {
+      "both": 10,
+      "meet_only": 4,
+      "deal_only": 2,
+      "engaged": 16,
+      "deal_n8n": 2,
+      "deal_manual": 10,
+      "deal_only_manual": 1
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 474,
+       "opens": 235,
+       "clicks": 1
+      },
+      {
+       "order": 2,
+       "subject": "Rapide point sur votre assurance emprunteur",
+       "sent": 249,
+       "opens": 141,
+       "clicks": 4
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 3
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 8
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 3
+      }
+     ]
+    },
+    {
+     "list_id": "14334",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026",
+     "sequence_id": "841303268",
+     "audience": "RP",
+     "version": "B",
+     "enrolled": 264,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": 733,
+     "bounced": 4,
+     "opens": 178,
+     "clicks": 14,
+     "opens_emails": 357,
+     "clicks_emails": 16,
+     "replies": 28,
+     "meetings": 11,
+     "deals_ae": 8,
+     "engaged": 13,
+     "split": {
+      "both": 6,
+      "meet_only": 5,
+      "deal_only": 2,
+      "engaged": 13,
+      "deal_n8n": 1,
+      "deal_manual": 7,
+      "deal_only_manual": 1
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "L’économie que les propriétaires immobiliers ignorent",
+       "sent": 254,
+       "opens": 131,
+       "clicks": 1
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 246,
+       "opens": 134,
+       "clicks": 8
+      },
+      {
+       "order": 3,
+       "subject": "Dernière chance pour renégocier votre assurance emprunteur",
+       "sent": 233,
+       "opens": 92,
+       "clicks": 7
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 3
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 7
+      }
+     ]
+    },
+    {
+     "list_id": "14336",
+     "list_name": "OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A",
+     "sequence_id": "841303243",
+     "audience": "LMNP",
+     "version": "A",
+     "enrolled": 51,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": 146,
+     "bounced": 0,
+     "opens": 38,
+     "clicks": 2,
+     "opens_emails": 85,
+     "clicks_emails": 2,
+     "replies": 3,
+     "meetings": 3,
+     "deals_ae": 6,
+     "engaged": 6,
+     "split": {
+      "both": 3,
+      "meet_only": 0,
+      "deal_only": 3,
+      "engaged": 6,
+      "deal_n8n": 4,
+      "deal_manual": 2,
+      "deal_only_manual": 0
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 95,
+       "opens": 53,
+       "clicks": 1
+      },
+      {
+       "order": 2,
+       "subject": "Rapide point sur votre assurance emprunteur",
+       "sent": 50,
+       "opens": 31,
+       "clicks": 1
+      },
+      {
+       "order": 3,
+       "subject": "Re : Rapide point sur votre assurance emprunteur",
+       "sent": 1,
+       "opens": 1,
+       "clicks": 0
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 2
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 1
+      }
+     ]
+    },
+    {
+     "list_id": "14337",
+     "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B",
+     "sequence_id": "841252078",
+     "audience": "LMNP",
+     "version": "B",
+     "enrolled": 47,
+     "active": 0,
+     "status": "TERMINE",
+     "sent": 129,
+     "bounced": 0,
+     "opens": 37,
+     "clicks": 1,
+     "opens_emails": 68,
+     "clicks_emails": 2,
+     "replies": 9,
+     "meetings": 8,
+     "deals_ae": 6,
+     "engaged": 9,
+     "split": {
+      "both": 5,
+      "meet_only": 3,
+      "deal_only": 1,
+      "engaged": 9,
+      "deal_n8n": 3,
+      "deal_manual": 3,
+      "deal_only_manual": 0
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Economisez jusqu’à 5000€ sur votre assurance emprunteur",
+       "sent": 46,
+       "opens": 23,
+       "clicks": 0
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 45,
+       "opens": 27,
+       "clicks": 1
+      },
+      {
+       "order": 3,
+       "subject": "Dernière chance pour renégocier votre assurance emprunteur",
+       "sent": 37,
+       "opens": 17,
+       "clicks": 1
+      },
+      {
+       "order": 4,
+       "subject": "Re : Renégociation assurance emprunteur",
+       "sent": 1,
+       "opens": 1,
+       "clicks": 0
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 2
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 5
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 1
+      }
+     ]
+    }
+   ],
+   "reply_curve": [
+    {
+     "day": 0,
+     "count": 6,
+     "share": 0.96
+    },
+    {
+     "day": 1,
+     "count": 12,
+     "share": 1.92
+    },
+    {
+     "day": 2,
+     "count": 14,
+     "share": 2.24
+    },
+    {
+     "day": 3,
+     "count": 14,
+     "share": 2.24
+    },
+    {
+     "day": 4,
+     "count": 20,
+     "share": 3.2
+    },
+    {
+     "day": 5,
+     "count": 23,
+     "share": 3.68
+    },
+    {
+     "day": 6,
+     "count": 24,
+     "share": 3.84
+    },
+    {
+     "day": 7,
+     "count": 27,
+     "share": 4.32
+    },
+    {
+     "day": 8,
+     "count": 30,
+     "share": 4.8
+    },
+    {
+     "day": 9,
+     "count": 31,
+     "share": 4.96
+    },
+    {
+     "day": 10,
+     "count": 42,
+     "share": 6.72
+    },
+    {
+     "day": 11,
+     "count": 46,
+     "share": 7.36
+    },
+    {
+     "day": 12,
+     "count": 50,
+     "share": 8.0
+    },
+    {
+     "day": 13,
+     "count": 54,
+     "share": 8.64
+    },
+    {
+     "day": 14,
+     "count": 55,
+     "share": 8.8
+    },
+    {
+     "day": 15,
+     "count": 60,
+     "share": 9.6
+    },
+    {
+     "day": 16,
+     "count": 65,
+     "share": 10.4
+    },
+    {
+     "day": 17,
+     "count": 65,
+     "share": 10.4
+    },
+    {
+     "day": 18,
+     "count": 65,
+     "share": 10.4
+    },
+    {
+     "day": 19,
+     "count": 70,
+     "share": 11.2
+    }
+   ],
+   "activation": {
+    "meet": 36,
+    "deal": 32,
+    "both": 24,
+    "meet_only": 12,
+    "deal_only": 8,
+    "activated": 44,
+    "deal_auto": 10,
+    "deal_manual": 22,
+    "deal_only_manual": 2
+   }
+  },
+  {
+   "id": "2026-08-13",
+   "label": "Batch du 13 août 2026",
+   "sent_at": "2026-08-13T09:31:00Z",
+   "status": "EN_COURS",
+   "active": 652,
+   "status_note": "652 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "ab_test": false,
+   "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
+   "cells": [
+    {
+     "list_id": "14412",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026",
+     "sequence_id": "841303267",
+     "audience": "RP",
+     "version": "A",
+     "enrolled": 560,
+     "active": 531,
+     "status": "EN_COURS",
+     "sent": 1095,
+     "bounced": 1,
+     "opens": 335,
+     "clicks": 6,
+     "opens_emails": 504,
+     "clicks_emails": 7,
+     "replies": 27,
+     "meetings": 13,
+     "deals_ae": 8,
+     "engaged": 14,
+     "split": {
+      "both": 7,
+      "meet_only": 6,
+      "deal_only": 1,
+      "engaged": 14,
+      "deal_n8n": 0,
+      "deal_manual": 8,
+      "deal_only_manual": 1
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Rapide point sur votre assurance emprunteur",
+       "sent": 556,
+       "opens": 266,
+       "clicks": 5
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 539,
+       "opens": 238,
+       "clicks": 2
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 6
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 3
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4
+      }
+     ]
+    },
+    {
+     "list_id": "14413",
+     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026",
+     "sequence_id": "841303243",
+     "audience": "LMNP",
+     "version": "A",
+     "enrolled": 140,
+     "active": 121,
+     "status": "EN_COURS",
+     "sent": 259,
+     "bounced": 0,
+     "opens": 99,
+     "clicks": 6,
+     "opens_emails": 151,
+     "clicks_emails": 5,
+     "replies": 14,
+     "meetings": 5,
+     "deals_ae": 4,
+     "engaged": 5,
+     "split": {
+      "both": 4,
+      "meet_only": 1,
+      "deal_only": 0,
+      "engaged": 5,
+      "deal_n8n": 1,
+      "deal_manual": 3,
+      "deal_only_manual": 0
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Rapide point sur votre assurance emprunteur",
+       "sent": 136,
+       "opens": 88,
+       "clicks": 5
+      },
+      {
+       "order": 2,
+       "subject": "Renégociation assurance emprunteur",
+       "sent": 123,
+       "opens": 63,
+       "clicks": 0
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 1
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4
+      }
+     ]
+    }
+   ],
+   "reply_curve": [
+    {
+     "day": 0,
+     "count": 10,
+     "share": 1.43
+    },
+    {
+     "day": 1,
+     "count": 13,
+     "share": 1.86
+    },
+    {
+     "day": 2,
+     "count": 14,
+     "share": 2.0
+    },
+    {
+     "day": 3,
+     "count": 15,
+     "share": 2.14
+    },
+    {
+     "day": 4,
+     "count": 17,
+     "share": 2.43
+    },
+    {
+     "day": 5,
+     "count": 20,
+     "share": 2.86
+    },
+    {
+     "day": 6,
+     "count": 23,
+     "share": 3.29
+    },
+    {
+     "day": 7,
+     "count": 27,
+     "share": 3.86
+    },
+    {
+     "day": 8,
+     "count": 31,
+     "share": 4.43
+    },
+    {
+     "day": 9,
+     "count": 31,
+     "share": 4.43
+    },
+    {
+     "day": 10,
+     "count": 31,
+     "share": 4.43
+    },
+    {
+     "day": 11,
+     "count": 41,
+     "share": 5.86
+    }
+   ],
+   "activation": {
+    "meet": 18,
+    "deal": 12,
+    "both": 11,
+    "meet_only": 7,
+    "deal_only": 1,
+    "activated": 19,
+    "deal_auto": 1,
+    "deal_manual": 11,
+    "deal_only_manual": 1
+   }
+  }
+ ]
+}
