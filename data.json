@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-26T07:34:39.780188+00:00",
+  "generated_at": "2026-08-26T10:06:54.756556+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -99,15 +99,15 @@
      "clicks_emails": 5,
      "replies": 30,
      "meetings": 15,
-     "deals_ae": 12,
+     "deals_ae": 13,
      "engaged": 17,
      "split": {
-      "both": 10,
-      "meet_only": 5,
+      "both": 11,
+      "meet_only": 4,
       "deal_only": 2,
       "engaged": 17,
       "deal_n8n": 2,
-      "deal_manual": 10,
+      "deal_manual": 11,
       "deal_only_manual": 1
      },
      "steps": [
@@ -412,51 +412,56 @@
     },
     {
      "day": 11,
-     "count": 46,
-     "share": 7.36
+     "count": 45,
+     "share": 7.2
     },
     {
      "day": 12,
-     "count": 50,
-     "share": 8.0
+     "count": 49,
+     "share": 7.84
     },
     {
      "day": 13,
-     "count": 54,
-     "share": 8.64
+     "count": 52,
+     "share": 8.32
     },
     {
      "day": 14,
-     "count": 55,
-     "share": 8.8
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 15,
-     "count": 60,
-     "share": 9.6
+     "count": 58,
+     "share": 9.28
     },
     {
      "day": 16,
-     "count": 65,
-     "share": 10.4
+     "count": 63,
+     "share": 10.08
     },
     {
      "day": 17,
-     "count": 65,
-     "share": 10.4
+     "count": 63,
+     "share": 10.08
     },
     {
      "day": 18,
-     "count": 65,
-     "share": 10.4
+     "count": 63,
+     "share": 10.08
     },
     {
      "day": 19,
-     "count": 69,
-     "share": 11.04
+     "count": 67,
+     "share": 10.72
     },
     {
      "day": 20,
+     "count": 70,
+     "share": 11.2
+    },
+    {
+     "day": 21,
      "count": 70,
      "share": 11.2
     }
@@ -485,7 +490,7 @@
      "bounced": 1,
      "opens": 341,
      "clicks": 6,
-     "opens_emails": 521,
+     "opens_emails": 522,
      "clicks_emails": 7,
      "replies": 27,
      "meetings": 13,
@@ -512,7 +517,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 255,
+       "opens": 256,
        "clicks": 2
       }
      ],
@@ -655,6 +660,11 @@
     },
     {
      "day": 12,
+     "count": 44,
+     "share": 6.29
+    },
+    {
+     "day": 13,
      "count": 44,
      "share": 6.29
     }
