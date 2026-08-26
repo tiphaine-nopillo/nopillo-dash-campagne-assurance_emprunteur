@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-26T10:06:54.756556+00:00",
+  "generated_at": "2026-08-26T12:02:43.271986+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -362,103 +362,103 @@
     },
     {
      "day": 1,
-     "count": 12,
-     "share": 1.92
+     "count": 11,
+     "share": 1.76
     },
     {
      "day": 2,
-     "count": 14,
-     "share": 2.24
+     "count": 13,
+     "share": 2.08
     },
     {
      "day": 3,
-     "count": 14,
-     "share": 2.24
+     "count": 13,
+     "share": 2.08
     },
     {
      "day": 4,
-     "count": 20,
-     "share": 3.2
+     "count": 19,
+     "share": 3.04
     },
     {
      "day": 5,
+     "count": 22,
+     "share": 3.52
+    },
+    {
+     "day": 6,
      "count": 23,
      "share": 3.68
     },
     {
-     "day": 6,
-     "count": 24,
-     "share": 3.84
-    },
-    {
      "day": 7,
-     "count": 27,
-     "share": 4.32
+     "count": 26,
+     "share": 4.16
     },
     {
      "day": 8,
+     "count": 29,
+     "share": 4.64
+    },
+    {
+     "day": 9,
      "count": 30,
      "share": 4.8
     },
     {
-     "day": 9,
-     "count": 31,
-     "share": 4.96
-    },
-    {
      "day": 10,
-     "count": 42,
-     "share": 6.72
+     "count": 41,
+     "share": 6.56
     },
     {
      "day": 11,
-     "count": 45,
-     "share": 7.2
+     "count": 44,
+     "share": 7.04
     },
     {
      "day": 12,
-     "count": 49,
-     "share": 7.84
+     "count": 48,
+     "share": 7.68
     },
     {
      "day": 13,
+     "count": 51,
+     "share": 8.16
+    },
+    {
+     "day": 14,
      "count": 52,
      "share": 8.32
     },
     {
-     "day": 14,
-     "count": 53,
-     "share": 8.48
-    },
-    {
      "day": 15,
-     "count": 58,
-     "share": 9.28
+     "count": 57,
+     "share": 9.12
     },
     {
      "day": 16,
-     "count": 63,
-     "share": 10.08
+     "count": 62,
+     "share": 9.92
     },
     {
      "day": 17,
-     "count": 63,
-     "share": 10.08
+     "count": 62,
+     "share": 9.92
     },
     {
      "day": 18,
-     "count": 63,
-     "share": 10.08
+     "count": 62,
+     "share": 9.92
     },
     {
      "day": 19,
-     "count": 67,
-     "share": 10.72
+     "count": 66,
+     "share": 10.56
     },
     {
      "day": 20,
-     "count": 70,
-     "share": 11.2
+     "count": 69,
+     "share": 11.04
     },
     {
      "day": 21,
@@ -488,11 +488,11 @@
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 341,
+     "opens": 342,
      "clicks": 6,
-     "opens_emails": 522,
+     "opens_emails": 523,
      "clicks_emails": 7,
-     "replies": 27,
+     "replies": 28,
      "meetings": 13,
      "deals_ae": 8,
      "engaged": 14,
@@ -517,7 +517,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 256,
+       "opens": 257,
        "clicks": 2
       }
      ],
@@ -665,8 +665,8 @@
     },
     {
      "day": 13,
-     "count": 44,
-     "share": 6.29
+     "count": 45,
+     "share": 6.43
     }
    ]
   }
