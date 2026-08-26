@@ -78,3 +78,4 @@ Le bloc `kpis` déclare ce qui est mesuré, avec la source et le dénominateur :
 - **Ouvertures non fiables** depuis Apple Mail Privacy Protection.
 - **Étapes regroupées par objet d'e-mail** : les engagements ne portent pas le numéro d'étape.
 - **Pas de clic par lien** : `hs_email_click_count` est un total tous liens confondus.
+
