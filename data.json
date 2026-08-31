@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-31T15:09:11.934312+00:00",
+  "generated_at": "2026-08-31T16:09:07.147634+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,13 +72,13 @@
   "contacts": 1323,
   "activation": {
    "meet": 56,
-   "deal": 53,
-   "both": 40,
-   "meet_only": 16,
+   "deal": 54,
+   "both": 41,
+   "meet_only": 15,
    "deal_only": 13,
    "activated": 69,
    "deal_auto": 11,
-   "deal_manual": 42,
+   "deal_manual": 43,
    "deal_only_manual": 7,
    "sum_cells": 69,
    "overlap": 0
@@ -518,15 +518,15 @@
      "clicks_emails": 7,
      "replies": 31,
      "meetings": 13,
-     "deals_ae": 11,
+     "deals_ae": 12,
      "engaged": 15,
      "split": {
-      "both": 9,
-      "meet_only": 4,
+      "both": 10,
+      "meet_only": 3,
       "deal_only": 2,
       "engaged": 15,
       "deal_n8n": 0,
-      "deal_manual": 11,
+      "deal_manual": 12,
       "deal_only_manual": 2
      },
      "steps": [
@@ -623,13 +623,13 @@
    ],
    "activation": {
     "meet": 19,
-    "deal": 19,
-    "both": 14,
-    "meet_only": 5,
+    "deal": 20,
+    "both": 15,
+    "meet_only": 4,
     "deal_only": 5,
     "activated": 24,
     "deal_auto": 1,
-    "deal_manual": 18,
+    "deal_manual": 19,
     "deal_only_manual": 5
    },
    "reply_curve": [
