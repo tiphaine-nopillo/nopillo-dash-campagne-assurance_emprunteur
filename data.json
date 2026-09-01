@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-01T12:22:07.827976+00:00",
+  "generated_at": "2026-09-01T13:16:47.202118+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -89,9 +89,9 @@
    "id": "2026-08-05",
    "label": "Batch du 5 août 2026",
    "sent_at": "2026-08-05T08:31:00Z",
-   "status": "PARTIEL",
-   "active": 1,
-   "status_note": "1 contact(s) encore en séquence sur cette cohorte, mais la cellule RP a fini d'envoyer et alimente déjà la référence.",
+   "status": "TERMINE",
+   "active": 0,
+   "status_note": null,
    "ab_test": true,
    "ab_note": null,
    "cells": [
@@ -164,8 +164,8 @@
      "audience": "RP",
      "version": "B",
      "enrolled": 264,
-     "active": 1,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
      "opens": 182,
