@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-01T06:21:36.834574+00:00",
+  "generated_at": "2026-09-01T07:16:19.172840+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -71,16 +71,16 @@
  "dedup": {
   "contacts": 1323,
   "activation": {
-   "meet": 56,
+   "meet": 57,
    "deal": 54,
    "both": 41,
-   "meet_only": 15,
+   "meet_only": 16,
    "deal_only": 13,
-   "activated": 69,
+   "activated": 70,
    "deal_auto": 11,
    "deal_manual": 43,
    "deal_only_manual": 7,
-   "sum_cells": 69,
+   "sum_cells": 70,
    "overlap": 0
   }
  },
@@ -305,15 +305,15 @@
      "clicks": 1,
      "opens_emails": 69,
      "clicks_emails": 2,
-     "replies": 10,
-     "meetings": 8,
+     "replies": 11,
+     "meetings": 9,
      "deals_ae": 6,
-     "engaged": 9,
+     "engaged": 10,
      "split": {
       "both": 5,
-      "meet_only": 3,
+      "meet_only": 4,
       "deal_only": 1,
-      "engaged": 9,
+      "engaged": 10,
       "deal_n8n": 3,
       "deal_manual": 3,
       "deal_only_manual": 0
@@ -357,7 +357,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 5
+       "meetings": 6
       },
       {
        "owner_id": "75453551",
@@ -368,12 +368,12 @@
     }
    ],
    "activation": {
-    "meet": 37,
+    "meet": 38,
     "deal": 34,
     "both": 26,
-    "meet_only": 11,
+    "meet_only": 12,
     "deal_only": 8,
-    "activated": 45,
+    "activated": 46,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
