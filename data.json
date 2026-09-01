@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-01T18:19:14.335895+00:00",
+  "generated_at": "2026-09-01T19:14:37.745938+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -168,7 +168,7 @@
      "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
-     "opens": 182,
+     "opens": 183,
      "clicks": 15,
      "opens_emails": 357,
      "clicks_emails": 16,
