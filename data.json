@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-01T14:17:16.375578+00:00",
+  "generated_at": "2026-09-01T15:24:30.050828+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -516,7 +516,7 @@
      "clicks": 6,
      "opens_emails": 534,
      "clicks_emails": 7,
-     "replies": 32,
+     "replies": 33,
      "meetings": 13,
      "deals_ae": 12,
      "engaged": 15,
@@ -640,98 +640,98 @@
     },
     {
      "day": 1,
+     "count": 12,
+     "share": 1.71
+    },
+    {
+     "day": 2,
      "count": 13,
      "share": 1.86
     },
     {
-     "day": 2,
+     "day": 3,
      "count": 14,
      "share": 2.0
     },
     {
-     "day": 3,
+     "day": 4,
      "count": 15,
      "share": 2.14
     },
     {
-     "day": 4,
-     "count": 16,
-     "share": 2.29
-    },
-    {
      "day": 5,
-     "count": 18,
-     "share": 2.57
+     "count": 17,
+     "share": 2.43
     },
     {
      "day": 6,
-     "count": 20,
-     "share": 2.86
+     "count": 19,
+     "share": 2.71
     },
     {
      "day": 7,
-     "count": 22,
-     "share": 3.14
+     "count": 21,
+     "share": 3.0
     },
     {
      "day": 8,
-     "count": 26,
-     "share": 3.71
+     "count": 25,
+     "share": 3.57
     },
     {
      "day": 9,
-     "count": 26,
-     "share": 3.71
+     "count": 25,
+     "share": 3.57
     },
     {
      "day": 10,
-     "count": 26,
-     "share": 3.71
+     "count": 25,
+     "share": 3.57
     },
     {
      "day": 11,
-     "count": 32,
-     "share": 4.57
+     "count": 31,
+     "share": 4.43
     },
     {
      "day": 12,
-     "count": 38,
-     "share": 5.43
+     "count": 37,
+     "share": 5.29
     },
     {
      "day": 13,
-     "count": 40,
-     "share": 5.71
+     "count": 39,
+     "share": 5.57
     },
     {
      "day": 14,
-     "count": 44,
-     "share": 6.29
+     "count": 43,
+     "share": 6.14
     },
     {
      "day": 15,
+     "count": 47,
+     "share": 6.71
+    },
+    {
+     "day": 16,
      "count": 48,
      "share": 6.86
     },
     {
-     "day": 16,
-     "count": 49,
-     "share": 7.0
-    },
-    {
      "day": 17,
-     "count": 49,
-     "share": 7.0
+     "count": 48,
+     "share": 6.86
     },
     {
      "day": 18,
-     "count": 52,
-     "share": 7.43
+     "count": 51,
+     "share": 7.29
     },
     {
      "day": 19,
-     "count": 55,
-     "share": 7.86
+     "count": 56,
+     "share": 8.0
     }
    ]
   }
