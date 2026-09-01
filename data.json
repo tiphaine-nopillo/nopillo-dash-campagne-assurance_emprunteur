@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-01T09:16:52.674657+00:00",
+  "generated_at": "2026-09-01T10:17:26.659998+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -89,9 +89,9 @@
    "id": "2026-08-05",
    "label": "Batch du 5 août 2026",
    "sent_at": "2026-08-05T08:31:00Z",
-   "status": "TERMINE",
-   "active": 0,
-   "status_note": null,
+   "status": "PARTIEL",
+   "active": 1,
+   "status_note": "1 contact(s) encore en séquence sur cette cohorte, mais la cellule RP a fini d'envoyer et alimente déjà la référence.",
    "ab_test": true,
    "ab_note": null,
    "cells": [
@@ -164,8 +164,8 @@
      "audience": "RP",
      "version": "B",
      "enrolled": 264,
-     "active": 0,
-     "status": "TERMINE",
+     "active": 1,
+     "status": "EN_COURS",
      "sent": 733,
      "bounced": 4,
      "opens": 182,
@@ -514,7 +514,7 @@
      "bounced": 1,
      "opens": 349,
      "clicks": 6,
-     "opens_emails": 533,
+     "opens_emails": 534,
      "clicks_emails": 7,
      "replies": 31,
      "meetings": 13,
@@ -541,7 +541,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
-       "opens": 266,
+       "opens": 267,
        "clicks": 2
       }
      ],
@@ -725,6 +725,11 @@
     },
     {
      "day": 18,
+     "count": 54,
+     "share": 7.71
+    },
+    {
+     "day": 19,
      "count": 54,
      "share": 7.71
     }
