@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-02T05:15:07.703192+00:00",
+  "generated_at": "2026-09-02T06:26:30.921455+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -496,8 +496,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 647,
-   "status_note": "647 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 646,
+   "status_note": "646 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -508,7 +508,7 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 530,
+     "active": 529,
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
