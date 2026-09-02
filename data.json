@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-02T07:16:58.124372+00:00",
+  "generated_at": "2026-09-02T08:18:25.881874+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -705,28 +705,28 @@
     },
     {
      "day": 14,
-     "count": 43,
-     "share": 6.14
+     "count": 42,
+     "share": 6.0
     },
     {
      "day": 15,
+     "count": 46,
+     "share": 6.57
+    },
+    {
+     "day": 16,
      "count": 47,
      "share": 6.71
     },
     {
-     "day": 16,
-     "count": 48,
-     "share": 6.86
-    },
-    {
      "day": 17,
-     "count": 48,
-     "share": 6.86
+     "count": 47,
+     "share": 6.71
     },
     {
      "day": 18,
-     "count": 51,
-     "share": 7.29
+     "count": 50,
+     "share": 7.14
     },
     {
      "day": 19,
