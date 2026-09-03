@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-03T11:15:50.432913+00:00",
+  "generated_at": "2026-09-03T12:22:42.849219+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -578,7 +578,7 @@
      "clicks": 6,
      "opens_emails": 158,
      "clicks_emails": 5,
-     "replies": 23,
+     "replies": 24,
      "meetings": 6,
      "deals_ae": 8,
      "engaged": 9,
@@ -740,8 +740,8 @@
     },
     {
      "day": 21,
-     "count": 58,
-     "share": 8.29
+     "count": 59,
+     "share": 8.43
     }
    ]
   }
