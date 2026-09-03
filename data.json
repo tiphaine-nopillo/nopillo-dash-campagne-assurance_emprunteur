@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-03T08:18:20.091079+00:00",
+  "generated_at": "2026-09-03T09:17:26.006801+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -496,8 +496,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 644,
-   "status_note": "644 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 643,
+   "status_note": "643 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -570,7 +570,7 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 117,
+     "active": 116,
      "status": "EN_COURS",
      "sent": 259,
      "bounced": 0,
