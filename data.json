@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-07T16:17:11.938437+00:00",
+  "generated_at": "2026-09-07T17:15:37.756449+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -496,8 +496,8 @@
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
    "status": "EN_COURS",
-   "active": 642,
-   "status_note": "642 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 641,
+   "status_note": "641 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -508,13 +508,13 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 527,
+     "active": 526,
      "status": "EN_COURS",
      "sent": 1095,
      "bounced": 1,
-     "opens": 357,
-     "clicks": 8,
-     "opens_emails": 538,
+     "opens": 358,
+     "clicks": 9,
+     "opens_emails": 539,
      "clicks_emails": 7,
      "replies": 41,
      "meetings": 14,
@@ -534,7 +534,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 556,
-       "opens": 267,
+       "opens": 268,
        "clicks": 5
       },
       {
@@ -725,23 +725,23 @@
     },
     {
      "day": 18,
-     "count": 48,
-     "share": 6.86
+     "count": 47,
+     "share": 6.71
     },
     {
      "day": 19,
-     "count": 53,
-     "share": 7.57
+     "count": 52,
+     "share": 7.43
     },
     {
      "day": 20,
-     "count": 56,
-     "share": 8.0
+     "count": 55,
+     "share": 7.86
     },
     {
      "day": 21,
-     "count": 60,
-     "share": 8.57
+     "count": 59,
+     "share": 8.43
     }
    ]
   }
