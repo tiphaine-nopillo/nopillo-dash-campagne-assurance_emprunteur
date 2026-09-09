@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-09T09:17:14.380732+00:00",
+  "generated_at": "2026-09-09T10:17:54.577340+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -71,16 +71,16 @@
  "dedup": {
   "contacts": 1323,
   "activation": {
-   "meet": 59,
+   "meet": 60,
    "deal": 55,
    "both": 41,
-   "meet_only": 18,
+   "meet_only": 19,
    "deal_only": 14,
-   "activated": 73,
+   "activated": 74,
    "deal_auto": 12,
    "deal_manual": 43,
    "deal_only_manual": 7,
-   "sum_cells": 73,
+   "sum_cells": 74,
    "overlap": 0
   }
  },
@@ -173,14 +173,14 @@
      "opens_emails": 359,
      "clicks_emails": 16,
      "replies": 41,
-     "meetings": 12,
+     "meetings": 13,
      "deals_ae": 9,
-     "engaged": 14,
+     "engaged": 15,
      "split": {
       "both": 7,
-      "meet_only": 5,
+      "meet_only": 6,
       "deal_only": 2,
-      "engaged": 14,
+      "engaged": 15,
       "deal_n8n": 1,
       "deal_manual": 8,
       "deal_only_manual": 1
@@ -222,7 +222,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 7
+       "meetings": 8
       }
      ]
     },
@@ -368,12 +368,12 @@
     }
    ],
    "activation": {
-    "meet": 39,
+    "meet": 40,
     "deal": 34,
     "both": 26,
-    "meet_only": 13,
+    "meet_only": 14,
     "deal_only": 8,
-    "activated": 47,
+    "activated": 48,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
