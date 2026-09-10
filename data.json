@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-10T09:32:31.618949+00:00",
+  "generated_at": "2026-09-10T12:51:25.719857+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -411,83 +411,83 @@
     },
     {
      "day": 6,
-     "count": 23,
-     "share": 3.68
+     "count": 22,
+     "share": 3.52
     },
     {
      "day": 7,
-     "count": 26,
-     "share": 4.16
+     "count": 25,
+     "share": 4.0
     },
     {
      "day": 8,
+     "count": 28,
+     "share": 4.48
+    },
+    {
+     "day": 9,
      "count": 29,
      "share": 4.64
     },
     {
-     "day": 9,
-     "count": 30,
-     "share": 4.8
-    },
-    {
      "day": 10,
-     "count": 41,
-     "share": 6.56
+     "count": 40,
+     "share": 6.4
     },
     {
      "day": 11,
-     "count": 43,
-     "share": 6.88
+     "count": 42,
+     "share": 6.72
     },
     {
      "day": 12,
-     "count": 47,
-     "share": 7.52
+     "count": 46,
+     "share": 7.36
     },
     {
      "day": 13,
+     "count": 48,
+     "share": 7.68
+    },
+    {
+     "day": 14,
      "count": 49,
      "share": 7.84
     },
     {
-     "day": 14,
-     "count": 50,
-     "share": 8.0
-    },
-    {
      "day": 15,
-     "count": 54,
-     "share": 8.64
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 16,
-     "count": 58,
-     "share": 9.28
+     "count": 57,
+     "share": 9.12
     },
     {
      "day": 17,
-     "count": 58,
-     "share": 9.28
+     "count": 57,
+     "share": 9.12
     },
     {
      "day": 18,
-     "count": 58,
-     "share": 9.28
+     "count": 57,
+     "share": 9.12
     },
     {
      "day": 19,
+     "count": 60,
+     "share": 9.6
+    },
+    {
+     "day": 20,
      "count": 61,
      "share": 9.76
     },
     {
-     "day": 20,
+     "day": 21,
      "count": 62,
      "share": 9.92
-    },
-    {
-     "day": 21,
-     "count": 63,
-     "share": 10.08
     }
    ]
   },
@@ -495,9 +495,9 @@
    "id": "2026-08-13",
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
-   "status": "EN_COURS",
-   "active": 639,
-   "status_note": "639 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "status": "TERMINE",
+   "active": 0,
+   "status_note": null,
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -508,15 +508,15 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 525,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 1095,
      "bounced": 1,
      "opens": 358,
      "clicks": 12,
      "opens_emails": 539,
      "clicks_emails": 7,
-     "replies": 43,
+     "replies": 44,
      "meetings": 14,
      "deals_ae": 13,
      "engaged": 17,
@@ -570,8 +570,8 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 114,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 259,
      "bounced": 0,
      "opens": 101,
