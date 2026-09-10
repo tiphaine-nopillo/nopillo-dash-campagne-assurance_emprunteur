@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-09T19:39:57.607557+00:00",
+  "generated_at": "2026-09-10T09:32:31.618949+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -168,9 +168,9 @@
      "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
-     "opens": 184,
+     "opens": 185,
      "clicks": 16,
-     "opens_emails": 359,
+     "opens_emails": 360,
      "clicks_emails": 16,
      "replies": 41,
      "meetings": 13,
@@ -204,7 +204,7 @@
        "order": 3,
        "subject": "Dernière chance pour renégocier votre assurance emprunteur",
        "sent": 233,
-       "opens": 93,
+       "opens": 94,
        "clicks": 7
       }
      ],
@@ -735,13 +735,13 @@
     },
     {
      "day": 20,
-     "count": 54,
-     "share": 7.71
+     "count": 53,
+     "share": 7.57
     },
     {
      "day": 21,
-     "count": 58,
-     "share": 8.29
+     "count": 57,
+     "share": 8.14
     }
    ]
   }
