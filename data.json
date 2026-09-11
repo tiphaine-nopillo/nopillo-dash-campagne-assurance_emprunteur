@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-11T07:32:51.925632+00:00",
+  "generated_at": "2026-09-11T07:54:26.790412+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,16 +72,16 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 72,
+   "meet": 75,
    "deal": 57,
    "both": 43,
-   "meet_only": 29,
+   "meet_only": 32,
    "deal_only": 14,
-   "activated": 86,
+   "activated": 89,
    "deal_auto": 12,
    "deal_manual": 45,
    "deal_only_manual": 7,
-   "sum_cells": 86,
+   "sum_cells": 89,
    "overlap": 0
   }
  },
@@ -90,9 +90,9 @@
    "id": "2026-08-05",
    "label": "Batch du 5 août 2026",
    "sent_at": "2026-08-05T08:31:00Z",
-   "status": "EN_COURS",
-   "active": 63,
-   "status_note": "63 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "status": "TERMINE",
+   "active": 0,
+   "status_note": null,
    "ab_test": true,
    "ab_note": null,
    "cells": [
@@ -103,11 +103,11 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 263,
-     "active": 17,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 723,
      "bounced": 1,
-     "opens": 184,
+     "opens": 186,
      "clicks": 5,
      "opens_emails": 379,
      "clicks_emails": 5,
@@ -165,15 +165,15 @@
      "audience": "RP",
      "version": "B",
      "enrolled": 264,
-     "active": 25,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
      "opens": 185,
      "clicks": 16,
      "opens_emails": 360,
      "clicks_emails": 16,
-     "replies": 41,
+     "replies": 42,
      "meetings": 13,
      "deals_ae": 9,
      "engaged": 15,
@@ -234,23 +234,23 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 51,
-     "active": 12,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 146,
      "bounced": 0,
-     "opens": 38,
+     "opens": 39,
      "clicks": 2,
      "opens_emails": 85,
      "clicks_emails": 2,
-     "replies": 5,
-     "meetings": 4,
+     "replies": 6,
+     "meetings": 5,
      "deals_ae": 6,
-     "engaged": 7,
+     "engaged": 8,
      "split": {
       "both": 3,
-      "meet_only": 1,
+      "meet_only": 2,
       "deal_only": 3,
-      "engaged": 7,
+      "engaged": 8,
       "deal_n8n": 4,
       "deal_manual": 2,
       "deal_only_manual": 0
@@ -287,7 +287,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 2
+       "meetings": 3
       }
      ]
     },
@@ -298,8 +298,8 @@
      "audience": "LMNP",
      "version": "B",
      "enrolled": 47,
-     "active": 9,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 129,
      "bounced": 0,
      "opens": 38,
@@ -369,12 +369,12 @@
     }
    ],
    "activation": {
-    "meet": 42,
+    "meet": 43,
     "deal": 34,
     "both": 26,
-    "meet_only": 16,
+    "meet_only": 17,
     "deal_only": 8,
-    "activated": 50,
+    "activated": 51,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
@@ -382,113 +382,113 @@
    "reply_curve": [
     {
      "day": 0,
-     "count": 6,
-     "share": 0.96
+     "count": 5,
+     "share": 0.8
     },
     {
      "day": 1,
-     "count": 11,
-     "share": 1.76
+     "count": 10,
+     "share": 1.6
     },
     {
      "day": 2,
-     "count": 13,
-     "share": 2.08
+     "count": 12,
+     "share": 1.92
     },
     {
      "day": 3,
-     "count": 13,
-     "share": 2.08
+     "count": 12,
+     "share": 1.92
     },
     {
      "day": 4,
-     "count": 19,
-     "share": 3.04
+     "count": 17,
+     "share": 2.72
     },
     {
      "day": 5,
-     "count": 22,
-     "share": 3.52
+     "count": 20,
+     "share": 3.2
     },
     {
      "day": 6,
-     "count": 22,
-     "share": 3.52
+     "count": 20,
+     "share": 3.2
     },
     {
      "day": 7,
-     "count": 25,
-     "share": 4.0
+     "count": 23,
+     "share": 3.68
     },
     {
      "day": 8,
-     "count": 28,
-     "share": 4.48
+     "count": 26,
+     "share": 4.16
     },
     {
      "day": 9,
-     "count": 29,
-     "share": 4.64
+     "count": 27,
+     "share": 4.32
     },
     {
      "day": 10,
+     "count": 38,
+     "share": 6.08
+    },
+    {
+     "day": 11,
      "count": 40,
      "share": 6.4
     },
     {
-     "day": 11,
-     "count": 42,
-     "share": 6.72
+     "day": 12,
+     "count": 44,
+     "share": 7.04
     },
     {
-     "day": 12,
+     "day": 13,
      "count": 46,
      "share": 7.36
     },
     {
-     "day": 13,
-     "count": 48,
-     "share": 7.68
-    },
-    {
      "day": 14,
-     "count": 49,
-     "share": 7.84
+     "count": 47,
+     "share": 7.52
     },
     {
      "day": 15,
-     "count": 53,
-     "share": 8.48
+     "count": 51,
+     "share": 8.16
     },
     {
      "day": 16,
-     "count": 57,
-     "share": 9.12
+     "count": 55,
+     "share": 8.8
     },
     {
      "day": 17,
-     "count": 57,
-     "share": 9.12
+     "count": 55,
+     "share": 8.8
     },
     {
      "day": 18,
-     "count": 57,
-     "share": 9.12
+     "count": 55,
+     "share": 8.8
     },
     {
      "day": 19,
-     "count": 60,
-     "share": 9.6
+     "count": 58,
+     "share": 9.28
     },
     {
      "day": 20,
-     "count": 61,
-     "share": 9.76
+     "count": 59,
+     "share": 9.44
     },
     {
      "day": 21,
-     "count": 62,
-     "share": 9.92
+     "count": 60,
+     "share": 9.6
     }
    ]
   },
@@ -496,9 +496,9 @@
    "id": "2026-08-13",
    "label": "Batch du 13 août 2026",
    "sent_at": "2026-08-13T09:31:00Z",
-   "status": "EN_COURS",
-   "active": 109,
-   "status_note": "109 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "status": "TERMINE",
+   "active": 0,
+   "status_note": null,
    "ab_test": false,
    "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
    "cells": [
@@ -509,23 +509,23 @@
      "audience": "RP",
      "version": "A",
      "enrolled": 560,
-     "active": 90,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 1095,
      "bounced": 1,
-     "opens": 358,
+     "opens": 361,
      "clicks": 12,
      "opens_emails": 539,
      "clicks_emails": 7,
-     "replies": 44,
-     "meetings": 14,
+     "replies": 46,
+     "meetings": 16,
      "deals_ae": 13,
-     "engaged": 17,
+     "engaged": 19,
      "split": {
       "both": 10,
-      "meet_only": 4,
+      "meet_only": 6,
       "deal_only": 3,
-      "engaged": 17,
+      "engaged": 19,
       "deal_n8n": 1,
       "deal_manual": 12,
       "deal_only_manual": 2
@@ -555,12 +555,12 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 3
+       "meetings": 4
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 4
+       "meetings": 5
       }
      ]
     },
@@ -571,11 +571,11 @@
      "audience": "LMNP",
      "version": "A",
      "enrolled": 140,
-     "active": 19,
-     "status": "EN_COURS",
+     "active": 0,
+     "status": "TERMINE",
      "sent": 259,
      "bounced": 0,
-     "opens": 101,
+     "opens": 102,
      "clicks": 7,
      "opens_emails": 158,
      "clicks_emails": 5,
@@ -623,12 +623,12 @@
     }
    ],
    "activation": {
-    "meet": 20,
+    "meet": 22,
     "deal": 21,
     "both": 15,
-    "meet_only": 5,
+    "meet_only": 7,
     "deal_only": 6,
-    "activated": 26,
+    "activated": 28,
     "deal_auto": 2,
     "deal_manual": 19,
     "deal_only_manual": 5
@@ -767,9 +767,9 @@
      "status": "EN_COURS",
      "sent": 613,
      "bounced": 0,
-     "opens": 302,
+     "opens": 303,
      "clicks": 10,
-     "opens_emails": 299,
+     "opens_emails": 300,
      "clicks_emails": 10,
      "replies": 7,
      "meetings": 10,
@@ -789,7 +789,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 299,
+       "opens": 300,
        "clicks": 10
       }
      ],
