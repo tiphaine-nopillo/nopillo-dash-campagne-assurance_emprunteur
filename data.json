@@ -1,13 +1,13 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-10T21:31:49.555240+00:00",
+  "generated_at": "2026-09-11T07:10:22.452678+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
   "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21",
   "attribution_note": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
-  "overlap_note": "Recoupement entre cohortes : 2 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
+  "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
  "kpis": [
@@ -61,7 +61,8 @@
  ],
  "audience_labels": {
   "RP": "Résidence principale",
-  "LMNP": "LMNP"
+  "LMNP": "LMNP",
+  "V3": "Clients V3 · score d'opportunité"
  },
  "stats_config": {
   "min_n_for_rate": 100,
@@ -69,18 +70,18 @@
   "power": 0.8
  },
  "dedup": {
-  "contacts": 1323,
+  "contacts": 2075,
   "activation": {
-   "meet": 62,
-   "deal": 55,
-   "both": 41,
-   "meet_only": 21,
+   "meet": 72,
+   "deal": 57,
+   "both": 43,
+   "meet_only": 29,
    "deal_only": 14,
-   "activated": 76,
+   "activated": 86,
    "deal_auto": 12,
-   "deal_manual": 43,
+   "deal_manual": 45,
    "deal_only_manual": 7,
-   "sum_cells": 76,
+   "sum_cells": 86,
    "overlap": 0
   }
  },
@@ -742,6 +743,91 @@
      "day": 21,
      "count": 57,
      "share": 8.14
+    }
+   ]
+  },
+  {
+   "id": "2026-09-10",
+   "label": "Batch du 10 septembre 2026",
+   "sent_at": "2026-09-10T09:00:00Z",
+   "status": "EN_COURS",
+   "active": 586,
+   "status_note": "586 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "ab_test": false,
+   "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur le score d'opportunité des clients V3, et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
+   "cells": [
+    {
+     "list_id": "14951",
+     "list_name": "Campagne Assurance Emprunteur - Nouveaux clients - Batch du 10/09/2026",
+     "sequence_id": "841303267",
+     "audience": "V3",
+     "version": "A",
+     "enrolled": 761,
+     "active": 586,
+     "status": "EN_COURS",
+     "sent": 613,
+     "bounced": 0,
+     "opens": 301,
+     "clicks": 10,
+     "opens_emails": 298,
+     "clicks_emails": 10,
+     "replies": 7,
+     "meetings": 10,
+     "deals_ae": 2,
+     "engaged": 10,
+     "split": {
+      "both": 2,
+      "meet_only": 8,
+      "deal_only": 0,
+      "engaged": 10,
+      "deal_n8n": 0,
+      "deal_manual": 2,
+      "deal_only_manual": 0
+     },
+     "steps": [
+      {
+       "order": 1,
+       "subject": "Rapide point sur votre assurance emprunteur",
+       "sent": 613,
+       "opens": 298,
+       "clicks": 10
+      }
+     ],
+     "by_owner": [
+      {
+       "owner_id": "1722214870",
+       "owner": "Clara Baekelandt",
+       "meetings": 3
+      },
+      {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 3
+      },
+      {
+       "owner_id": "75453551",
+       "owner": "Lilian Maudet",
+       "meetings": 4
+      }
+     ]
+    }
+   ],
+   "activation": {
+    "meet": 10,
+    "deal": 2,
+    "both": 2,
+    "meet_only": 8,
+    "deal_only": 0,
+    "activated": 10,
+    "deal_auto": 0,
+    "deal_manual": 2,
+    "deal_only_manual": 0
+   },
+   "reply_curve": [
+    {
+     "day": 0,
+     "count": 7,
+     "share": 0.92
     }
    ]
   }
