@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-11T07:54:26.790412+00:00",
+  "generated_at": "2026-09-11T09:30:01.642424+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,16 +72,16 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 75,
+   "meet": 85,
    "deal": 57,
    "both": 43,
-   "meet_only": 32,
+   "meet_only": 42,
    "deal_only": 14,
-   "activated": 89,
+   "activated": 99,
    "deal_auto": 12,
    "deal_manual": 45,
    "deal_only_manual": 7,
-   "sum_cells": 89,
+   "sum_cells": 99,
    "overlap": 0
   }
  },
@@ -107,11 +107,11 @@
      "status": "TERMINE",
      "sent": 723,
      "bounced": 1,
-     "opens": 186,
+     "opens": 192,
      "clicks": 5,
      "opens_emails": 379,
      "clicks_emails": 5,
-     "replies": 36,
+     "replies": 38,
      "meetings": 16,
      "deals_ae": 13,
      "engaged": 18,
@@ -169,19 +169,19 @@
      "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
-     "opens": 185,
-     "clicks": 16,
+     "opens": 187,
+     "clicks": 17,
      "opens_emails": 360,
      "clicks_emails": 16,
-     "replies": 42,
-     "meetings": 13,
+     "replies": 43,
+     "meetings": 15,
      "deals_ae": 9,
-     "engaged": 15,
+     "engaged": 17,
      "split": {
       "both": 7,
-      "meet_only": 6,
+      "meet_only": 8,
       "deal_only": 2,
-      "engaged": 15,
+      "engaged": 17,
       "deal_n8n": 1,
       "deal_manual": 8,
       "deal_only_manual": 1
@@ -218,12 +218,12 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 4
+       "meetings": 5
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 8
+       "meetings": 9
       }
      ]
     },
@@ -369,12 +369,12 @@
     }
    ],
    "activation": {
-    "meet": 43,
+    "meet": 45,
     "deal": 34,
     "both": 26,
-    "meet_only": 17,
+    "meet_only": 19,
     "deal_only": 8,
-    "activated": 51,
+    "activated": 53,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
@@ -513,19 +513,19 @@
      "status": "TERMINE",
      "sent": 1095,
      "bounced": 1,
-     "opens": 361,
-     "clicks": 12,
+     "opens": 373,
+     "clicks": 17,
      "opens_emails": 539,
      "clicks_emails": 7,
-     "replies": 46,
-     "meetings": 16,
+     "replies": 56,
+     "meetings": 23,
      "deals_ae": 13,
-     "engaged": 19,
+     "engaged": 26,
      "split": {
       "both": 10,
-      "meet_only": 6,
+      "meet_only": 13,
       "deal_only": 3,
-      "engaged": 19,
+      "engaged": 26,
       "deal_n8n": 1,
       "deal_manual": 12,
       "deal_only_manual": 2
@@ -550,17 +550,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 7
+       "meetings": 8
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 4
+       "meetings": 6
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 5
+       "meetings": 9
       }
      ]
     },
@@ -575,19 +575,19 @@
      "status": "TERMINE",
      "sent": 259,
      "bounced": 0,
-     "opens": 102,
+     "opens": 103,
      "clicks": 7,
      "opens_emails": 158,
      "clicks_emails": 5,
      "replies": 25,
-     "meetings": 6,
+     "meetings": 7,
      "deals_ae": 8,
-     "engaged": 9,
+     "engaged": 10,
      "split": {
       "both": 5,
-      "meet_only": 1,
+      "meet_only": 2,
       "deal_only": 3,
-      "engaged": 9,
+      "engaged": 10,
       "deal_n8n": 1,
       "deal_manual": 7,
       "deal_only_manual": 3
@@ -612,7 +612,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 2
+       "meetings": 3
       },
       {
        "owner_id": "75453551",
@@ -623,12 +623,12 @@
     }
    ],
    "activation": {
-    "meet": 22,
+    "meet": 30,
     "deal": 21,
     "both": 15,
-    "meet_only": 7,
+    "meet_only": 15,
     "deal_only": 6,
-    "activated": 28,
+    "activated": 36,
     "deal_auto": 2,
     "deal_manual": 19,
     "deal_only_manual": 5
@@ -716,33 +716,33 @@
     },
     {
      "day": 16,
-     "count": 44,
-     "share": 6.29
+     "count": 43,
+     "share": 6.14
     },
     {
      "day": 17,
-     "count": 44,
-     "share": 6.29
+     "count": 43,
+     "share": 6.14
     },
     {
      "day": 18,
-     "count": 46,
-     "share": 6.57
+     "count": 45,
+     "share": 6.43
     },
     {
      "day": 19,
-     "count": 51,
-     "share": 7.29
+     "count": 50,
+     "share": 7.14
     },
     {
      "day": 20,
-     "count": 53,
-     "share": 7.57
+     "count": 52,
+     "share": 7.43
     },
     {
      "day": 21,
-     "count": 57,
-     "share": 8.14
+     "count": 56,
+     "share": 8.0
     }
    ]
   },
@@ -767,9 +767,9 @@
      "status": "EN_COURS",
      "sent": 613,
      "bounced": 0,
-     "opens": 303,
+     "opens": 304,
      "clicks": 10,
-     "opens_emails": 300,
+     "opens_emails": 301,
      "clicks_emails": 10,
      "replies": 7,
      "meetings": 10,
@@ -789,7 +789,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 300,
+       "opens": 301,
        "clicks": 10
       }
      ],
@@ -826,6 +826,11 @@
    "reply_curve": [
     {
      "day": 0,
+     "count": 7,
+     "share": 0.92
+    },
+    {
+     "day": 1,
      "count": 7,
      "share": 0.92
     }
