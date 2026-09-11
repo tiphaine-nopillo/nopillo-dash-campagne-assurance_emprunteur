@@ -116,11 +116,29 @@
      "list_name": "OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026"
     }
    ]
+  },
+  {
+   "id": "2026-09-10",
+   "label": "Batch du 10 septembre 2026",
+   "sent_at": "2026-09-10T09:00:00Z",
+   "status": "AUTO",
+   "ab_test": false,
+   "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur le score d'opportunité des clients V3, et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
+   "cells": [
+    {
+     "list_id": "14951",
+     "sequence_id": "841303267",
+     "audience": "V3",
+     "version": "A",
+     "list_name": "Campagne Assurance Emprunteur - Nouveaux clients - Batch du 10/09/2026"
+    }
+   ]
   }
  ],
  "audience_labels": {
   "RP": "Résidence principale",
-  "LMNP": "LMNP"
+  "LMNP": "LMNP",
+  "V3": "Clients V3 · score d'opportunité"
  },
  "stats": {
   "min_n_for_rate": 100,
@@ -129,7 +147,7 @@
  },
  "notes": {
   "attribution": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
-  "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour.",
+  "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour. Batch du 10 septembre : la liste statique 14951 est construite avec trois exclusions de segments — « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ». Le recoupement avec les cohortes d'août devrait donc être nul. Réserve : la liste d'exclusion « Total shooté assurance » comptait 1 291 contacts au 04/09 alors que les six listes de cellules d'août en totalisent 1 323 en union dédupliquée. L'écart d'une trentaine de contacts n'est pas couvert par l'exclusion et peut apparaître dans dedup.activation.overlap.",
   "baseline": "Sur la même période, 12 contacts hors campagne ont ouvert un dossier dans le pipe courtage AE, et 25 des 51 contacts avec un RDV « emprunteur » n'appartiennent à aucune des 6 listes. Un vrai groupe témoin est impossible — la population ciblée est sélectionnée sur critères, pas tirée au hasard — ces chiffres sont un ordre de grandeur, pas une preuve causale.",
   "activation": "Définition métier retenue le 25/08/2026 : un client est ACTIVÉ s'il a pris un RDV, s'il a un dossier dans le pipe courtage AE, ou les deux. Trois lectures du même ensemble sont publiées : les deux totaux qui se recoupent (RDV, simulations), les trois sous-ensembles disjoints (les deux, RDV seul, simulation seule), et le total activé. L'équation à retenir : RDV + simulations − les deux = activés.",
   "activation_dedup": "Le total campagne est une union dédupliquée sur les identifiants de contact, calculée par refresh.py, jamais une somme des cellules. Au 25/08 les deux coïncident — aucun des 2 contacts ciblés dans deux batchs n'est activé — mais la coïncidence n'est pas une garantie : dedup.activation.overlap la surveille."
