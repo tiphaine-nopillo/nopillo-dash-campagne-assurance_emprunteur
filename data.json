@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-11T14:14:51.956768+00:00",
+  "generated_at": "2026-09-11T18:21:23.585600+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,16 +72,16 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 91,
+   "meet": 95,
    "deal": 60,
    "both": 46,
-   "meet_only": 45,
+   "meet_only": 49,
    "deal_only": 14,
-   "activated": 105,
+   "activated": 109,
    "deal_auto": 12,
    "deal_manual": 48,
    "deal_only_manual": 7,
-   "sum_cells": 105,
+   "sum_cells": 109,
    "overlap": 0
   }
  },
@@ -112,14 +112,14 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "replies": 38,
-     "meetings": 17,
+     "meetings": 18,
      "deals_ae": 13,
-     "engaged": 19,
+     "engaged": 20,
      "split": {
       "both": 11,
-      "meet_only": 6,
+      "meet_only": 7,
       "deal_only": 2,
-      "engaged": 19,
+      "engaged": 20,
       "deal_n8n": 2,
       "deal_manual": 11,
       "deal_only_manual": 1
@@ -154,7 +154,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 4
+       "meetings": 5
       }
      ]
     },
@@ -169,19 +169,19 @@
      "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
-     "opens": 189,
-     "clicks": 20,
+     "opens": 190,
+     "clicks": 22,
      "opens_emails": 360,
      "clicks_emails": 16,
      "replies": 44,
-     "meetings": 15,
+     "meetings": 17,
      "deals_ae": 9,
-     "engaged": 17,
+     "engaged": 19,
      "split": {
       "both": 7,
-      "meet_only": 8,
+      "meet_only": 10,
       "deal_only": 2,
-      "engaged": 17,
+      "engaged": 19,
       "deal_n8n": 1,
       "deal_manual": 8,
       "deal_only_manual": 1
@@ -218,12 +218,12 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 5
+       "meetings": 6
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 9
+       "meetings": 10
       }
      ]
     },
@@ -369,12 +369,12 @@
     }
    ],
    "activation": {
-    "meet": 46,
+    "meet": 49,
     "deal": 34,
     "both": 26,
-    "meet_only": 20,
+    "meet_only": 23,
     "deal_only": 8,
-    "activated": 54,
+    "activated": 57,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
@@ -513,19 +513,19 @@
      "status": "TERMINE",
      "sent": 1095,
      "bounced": 1,
-     "opens": 380,
-     "clicks": 18,
+     "opens": 381,
+     "clicks": 19,
      "opens_emails": 539,
      "clicks_emails": 7,
      "replies": 61,
-     "meetings": 25,
+     "meetings": 26,
      "deals_ae": 13,
-     "engaged": 28,
+     "engaged": 29,
      "split": {
       "both": 10,
-      "meet_only": 15,
+      "meet_only": 16,
       "deal_only": 3,
-      "engaged": 28,
+      "engaged": 29,
       "deal_n8n": 1,
       "deal_manual": 12,
       "deal_only_manual": 2
@@ -560,7 +560,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 10
+       "meetings": 11
       }
      ]
     },
@@ -623,12 +623,12 @@
     }
    ],
    "activation": {
-    "meet": 34,
+    "meet": 35,
     "deal": 21,
     "both": 15,
-    "meet_only": 19,
+    "meet_only": 20,
     "deal_only": 6,
-    "activated": 40,
+    "activated": 41,
     "deal_auto": 2,
     "deal_manual": 19,
     "deal_only_manual": 5
@@ -751,8 +751,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 584,
-   "status_note": "584 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 583,
+   "status_note": "583 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "cells": [
@@ -763,15 +763,15 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 584,
+     "active": 583,
      "status": "EN_COURS",
      "sent": 613,
      "bounced": 0,
-     "opens": 311,
+     "opens": 313,
      "clicks": 10,
-     "opens_emails": 308,
+     "opens_emails": 310,
      "clicks_emails": 10,
-     "replies": 9,
+     "replies": 11,
      "meetings": 11,
      "deals_ae": 5,
      "engaged": 11,
@@ -789,7 +789,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 308,
+       "opens": 310,
        "clicks": 10
       }
      ],
@@ -831,8 +831,8 @@
     },
     {
      "day": 1,
-     "count": 9,
-     "share": 1.18
+     "count": 11,
+     "share": 1.45
     }
    ]
   }
