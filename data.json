@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-11T18:21:23.585600+00:00",
+  "generated_at": "2026-09-11T21:39:31.679934+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -170,7 +170,7 @@
      "sent": 733,
      "bounced": 4,
      "opens": 190,
-     "clicks": 22,
+     "clicks": 23,
      "opens_emails": 360,
      "clicks_emails": 16,
      "replies": 44,
@@ -767,9 +767,9 @@
      "status": "EN_COURS",
      "sent": 613,
      "bounced": 0,
-     "opens": 313,
+     "opens": 314,
      "clicks": 10,
-     "opens_emails": 310,
+     "opens_emails": 311,
      "clicks_emails": 10,
      "replies": 11,
      "meetings": 11,
@@ -789,7 +789,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 310,
+       "opens": 311,
        "clicks": 10
       }
      ],
