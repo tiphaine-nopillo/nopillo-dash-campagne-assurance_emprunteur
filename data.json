@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-11T09:30:01.642424+00:00",
+  "generated_at": "2026-09-11T14:14:51.956768+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,16 +72,16 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 85,
-   "deal": 57,
-   "both": 43,
-   "meet_only": 42,
+   "meet": 91,
+   "deal": 60,
+   "both": 46,
+   "meet_only": 45,
    "deal_only": 14,
-   "activated": 99,
+   "activated": 105,
    "deal_auto": 12,
-   "deal_manual": 45,
+   "deal_manual": 48,
    "deal_only_manual": 7,
-   "sum_cells": 99,
+   "sum_cells": 105,
    "overlap": 0
   }
  },
@@ -112,14 +112,14 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "replies": 38,
-     "meetings": 16,
+     "meetings": 17,
      "deals_ae": 13,
-     "engaged": 18,
+     "engaged": 19,
      "split": {
       "both": 11,
-      "meet_only": 5,
+      "meet_only": 6,
       "deal_only": 2,
-      "engaged": 18,
+      "engaged": 19,
       "deal_n8n": 2,
       "deal_manual": 11,
       "deal_only_manual": 1
@@ -154,7 +154,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 3
+       "meetings": 4
       }
      ]
     },
@@ -169,11 +169,11 @@
      "status": "TERMINE",
      "sent": 733,
      "bounced": 4,
-     "opens": 187,
-     "clicks": 17,
+     "opens": 189,
+     "clicks": 20,
      "opens_emails": 360,
      "clicks_emails": 16,
-     "replies": 43,
+     "replies": 44,
      "meetings": 15,
      "deals_ae": 9,
      "engaged": 17,
@@ -369,12 +369,12 @@
     }
    ],
    "activation": {
-    "meet": 45,
+    "meet": 46,
     "deal": 34,
     "both": 26,
-    "meet_only": 19,
+    "meet_only": 20,
     "deal_only": 8,
-    "activated": 53,
+    "activated": 54,
     "deal_auto": 10,
     "deal_manual": 24,
     "deal_only_manual": 2
@@ -382,113 +382,113 @@
    "reply_curve": [
     {
      "day": 0,
-     "count": 5,
-     "share": 0.8
+     "count": 4,
+     "share": 0.64
     },
     {
      "day": 1,
-     "count": 10,
-     "share": 1.6
+     "count": 9,
+     "share": 1.44
     },
     {
      "day": 2,
-     "count": 12,
-     "share": 1.92
+     "count": 11,
+     "share": 1.76
     },
     {
      "day": 3,
-     "count": 12,
-     "share": 1.92
+     "count": 11,
+     "share": 1.76
     },
     {
      "day": 4,
-     "count": 17,
-     "share": 2.72
+     "count": 16,
+     "share": 2.56
     },
     {
      "day": 5,
-     "count": 20,
-     "share": 3.2
+     "count": 19,
+     "share": 3.04
     },
     {
      "day": 6,
-     "count": 20,
-     "share": 3.2
+     "count": 19,
+     "share": 3.04
     },
     {
      "day": 7,
-     "count": 23,
-     "share": 3.68
+     "count": 22,
+     "share": 3.52
     },
     {
      "day": 8,
+     "count": 25,
+     "share": 4.0
+    },
+    {
+     "day": 9,
      "count": 26,
      "share": 4.16
     },
     {
-     "day": 9,
-     "count": 27,
-     "share": 4.32
-    },
-    {
      "day": 10,
-     "count": 38,
-     "share": 6.08
+     "count": 37,
+     "share": 5.92
     },
     {
      "day": 11,
-     "count": 40,
-     "share": 6.4
+     "count": 39,
+     "share": 6.24
     },
     {
      "day": 12,
-     "count": 44,
-     "share": 7.04
+     "count": 43,
+     "share": 6.88
     },
     {
      "day": 13,
+     "count": 45,
+     "share": 7.2
+    },
+    {
+     "day": 14,
      "count": 46,
      "share": 7.36
     },
     {
-     "day": 14,
-     "count": 47,
-     "share": 7.52
-    },
-    {
      "day": 15,
-     "count": 51,
-     "share": 8.16
+     "count": 50,
+     "share": 8.0
     },
     {
      "day": 16,
-     "count": 55,
-     "share": 8.8
+     "count": 54,
+     "share": 8.64
     },
     {
      "day": 17,
-     "count": 55,
-     "share": 8.8
+     "count": 54,
+     "share": 8.64
     },
     {
      "day": 18,
-     "count": 55,
-     "share": 8.8
+     "count": 54,
+     "share": 8.64
     },
     {
      "day": 19,
+     "count": 57,
+     "share": 9.12
+    },
+    {
+     "day": 20,
      "count": 58,
      "share": 9.28
     },
     {
-     "day": 20,
+     "day": 21,
      "count": 59,
      "share": 9.44
-    },
-    {
-     "day": 21,
-     "count": 60,
-     "share": 9.6
     }
    ]
   },
@@ -513,19 +513,19 @@
      "status": "TERMINE",
      "sent": 1095,
      "bounced": 1,
-     "opens": 373,
-     "clicks": 17,
+     "opens": 380,
+     "clicks": 18,
      "opens_emails": 539,
      "clicks_emails": 7,
-     "replies": 56,
-     "meetings": 23,
+     "replies": 61,
+     "meetings": 25,
      "deals_ae": 13,
-     "engaged": 26,
+     "engaged": 28,
      "split": {
       "both": 10,
-      "meet_only": 13,
+      "meet_only": 15,
       "deal_only": 3,
-      "engaged": 26,
+      "engaged": 28,
       "deal_n8n": 1,
       "deal_manual": 12,
       "deal_only_manual": 2
@@ -555,12 +555,12 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 6
+       "meetings": 7
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 9
+       "meetings": 10
       }
      ]
     },
@@ -575,19 +575,19 @@
      "status": "TERMINE",
      "sent": 259,
      "bounced": 0,
-     "opens": 103,
-     "clicks": 7,
+     "opens": 105,
+     "clicks": 8,
      "opens_emails": 158,
      "clicks_emails": 5,
      "replies": 25,
-     "meetings": 7,
+     "meetings": 9,
      "deals_ae": 8,
-     "engaged": 10,
+     "engaged": 12,
      "split": {
       "both": 5,
-      "meet_only": 2,
+      "meet_only": 4,
       "deal_only": 3,
-      "engaged": 10,
+      "engaged": 12,
       "deal_n8n": 1,
       "deal_manual": 7,
       "deal_only_manual": 3
@@ -612,7 +612,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 3
+       "meetings": 5
       },
       {
        "owner_id": "75453551",
@@ -623,12 +623,12 @@
     }
    ],
    "activation": {
-    "meet": 30,
+    "meet": 34,
     "deal": 21,
     "both": 15,
-    "meet_only": 15,
+    "meet_only": 19,
     "deal_only": 6,
-    "activated": 36,
+    "activated": 40,
     "deal_auto": 2,
     "deal_manual": 19,
     "deal_only_manual": 5
@@ -751,8 +751,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 586,
-   "status_note": "586 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 584,
+   "status_note": "584 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "cells": [
@@ -763,25 +763,25 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 586,
+     "active": 584,
      "status": "EN_COURS",
      "sent": 613,
      "bounced": 0,
-     "opens": 304,
+     "opens": 311,
      "clicks": 10,
-     "opens_emails": 301,
+     "opens_emails": 308,
      "clicks_emails": 10,
-     "replies": 7,
-     "meetings": 10,
-     "deals_ae": 2,
-     "engaged": 10,
+     "replies": 9,
+     "meetings": 11,
+     "deals_ae": 5,
+     "engaged": 11,
      "split": {
-      "both": 2,
-      "meet_only": 8,
+      "both": 5,
+      "meet_only": 6,
       "deal_only": 0,
-      "engaged": 10,
+      "engaged": 11,
       "deal_n8n": 0,
-      "deal_manual": 2,
+      "deal_manual": 5,
       "deal_only_manual": 0
      },
      "steps": [
@@ -789,7 +789,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 301,
+       "opens": 308,
        "clicks": 10
       }
      ],
@@ -802,7 +802,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 3
+       "meetings": 4
       },
       {
        "owner_id": "75453551",
@@ -813,14 +813,14 @@
     }
    ],
    "activation": {
-    "meet": 10,
-    "deal": 2,
-    "both": 2,
-    "meet_only": 8,
+    "meet": 11,
+    "deal": 5,
+    "both": 5,
+    "meet_only": 6,
     "deal_only": 0,
-    "activated": 10,
+    "activated": 11,
     "deal_auto": 0,
-    "deal_manual": 2,
+    "deal_manual": 5,
     "deal_only_manual": 0
    },
    "reply_curve": [
@@ -831,8 +831,8 @@
     },
     {
      "day": 1,
-     "count": 7,
-     "share": 0.92
+     "count": 9,
+     "share": 1.18
     }
    ]
   }
