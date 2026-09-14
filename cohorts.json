@@ -151,7 +151,10 @@
   "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour. Batch du 10 septembre : la liste statique 14951 est construite avec trois exclusions de segments — « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ». Le recoupement avec les cohortes d'août devrait donc être nul. Réserve : la liste d'exclusion « Total shooté assurance » comptait 1 291 contacts au 04/09 alors que les six listes de cellules d'août en totalisent 1 323 en union dédupliquée. L'écart d'une trentaine de contacts n'est pas couvert par l'exclusion et peut apparaître dans dedup.activation.overlap.",
   "baseline": "Sur la même période, 12 contacts hors campagne ont ouvert un dossier dans le pipe courtage AE, et 25 des 51 contacts avec un RDV « emprunteur » n'appartiennent à aucune des 6 listes. Un vrai groupe témoin est impossible — la population ciblée est sélectionnée sur critères, pas tirée au hasard — ces chiffres sont un ordre de grandeur, pas une preuve causale.",
   "activation": "Définition métier retenue le 25/08/2026 : un client est ACTIVÉ s'il a pris un RDV, s'il a un dossier dans le pipe courtage AE, ou les deux. Trois lectures du même ensemble sont publiées : les deux totaux qui se recoupent (RDV, simulations), les trois sous-ensembles disjoints (les deux, RDV seul, simulation seule), et le total activé. L'équation à retenir : RDV + simulations − les deux = activés.",
-  "activation_dedup": "Le total campagne est une union dédupliquée sur les identifiants de contact, calculée par refresh.py, jamais une somme des cellules. Au 25/08 les deux coïncident — aucun des 2 contacts ciblés dans deux batchs n'est activé — mais la coïncidence n'est pas une garantie : dedup.activation.overlap la surveille."
+  "activation_dedup": "Le total campagne est une union dédupliquée sur les identifiants de contact, calculée par refresh.py, jamais une somme des cellules. Au 25/08 les deux coïncident — aucun des 2 contacts ciblés dans deux batchs n'est activé — mais la coïncidence n'est pas une garantie : dedup.activation.overlap la surveille.",
+  "relances": "Vague 2 du 11/09/2026 : 1 070 contacts relancés sur 4 listes, chacune avec sa propre séquence. RATTACHEMENT CALCULÉ, non déclaratif : refresh.py croise chaque contact relancé avec les listes de cellules pour retrouver sa cohorte d'origine. Un contact relancé n'est PAS une nouvelle cohorte — il est déjà dans le dénominateur de son batch, le compter deux fois ferait baisser tous les taux. FENÊTRE PAR CONTACT : un contact relancé dispose de deux fenêtres de 21 jours, celle de son batch initial et celle de sa relance. Un événement compte s'il tombe dans l'une ou l'autre, et il est étiqueté v1 ou v2. BIAIS DE SÉLECTION ASSUMÉ : les 4 listes ne contiennent QUE des contacts non activés. Le taux d'activation d'une relance n'est donc PAS comparable à celui d'un batch initial, dont le dénominateur incluait tout le monde. Toute activation issue d'une relance est un gain marginal pur. CONSÉQUENCE : les taux d'août déjà communiqués vont monter au fil des activations de vague 2.",
+  "meeting_window": "Depuis le 11/09, les RDV sont bornés à J+21 comme les dossiers. Avant ce correctif, meet_f n'avait qu'une borne basse : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — entre 9h55 et 11h30, soit dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09. La correction fait BAISSER les compteurs de RDV d'août par rapport à ce qui a été communiqué : c'est voulu, les RDV concernés sont réattribués à la vague 2.",
+  "attribution_window": "ATTRIB_DAYS = 21, hérité et non calibré. Les courbes de réponse cumulées du 11/09 montrent que les deux batchs d'août MONTAIENT ENCORE à J+21 (5 août : 9,28 → 9,44 → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus juste. Non modifié pour l'instant : changer la fenêtre réécrit rétroactivement tout l'historique publié."
  },
  "meeting_filter": {
   "property": "hs_meeting_title",
@@ -159,5 +162,75 @@
   "value": "emprunteur",
   "_note": "Filtre sur l'intitulé du RDV. Trois intitulés coexistent pour un même créneau de 15 min : « Rendez-vous courtage Assurance Emprunteur avec Nopillo » (11), « Devis assurance emprunteur Nopillo » (1) et « Nopillo » (1). Le jeton « emprunteur » attrape les deux premiers et manque le troisième. Problème de nommage à la source : normaliser le lien de réservation supprimerait le besoin de filtre.",
   "_owners": "Le collecteur restreint en plus aux réunions posées par Clara Baekelandt (1722214870), Lilian Maudet (75453551) et Mathieu d'Ornellas (650299108) — voir AE_MEETING_OWNERS dans refresh.py. Sans effet au 22/08 : les 62 RDV leur appartiennent déjà. Attention, il s'agit du propriétaire de la RÉUNION, alors que le graphe du niveau 3 utilise celui du CONTACT : les deux vues peuvent diverger."
+ },
+ "relances": [
+  {
+   "list_id": "14880",
+   "sequence_id": "859442418",
+   "sent_at": "2026-09-11T07:30:00Z",
+   "label": "Relance · toujours pas éligibles",
+   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Toujours pas éligibles"
+  },
+  {
+   "list_id": "14876",
+   "sequence_id": "858857721",
+   "sent_at": "2026-09-11T07:30:00Z",
+   "label": "Relance · déjà éligibles au batch précédent",
+   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Déjà éligible batch précédent"
+  },
+  {
+   "list_id": "14872",
+   "sequence_id": "859230400",
+   "sent_at": "2026-09-11T07:30:00Z",
+   "label": "Relance · page erreur, éligibles aujourd'hui",
+   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Page erreur - Eligibles auj"
+  },
+  {
+   "list_id": "14863",
+   "sequence_id": "860100852",
+   "sent_at": "2026-09-11T07:30:00Z",
+   "label": "Relance · campagne interrompue",
+   "list_name": "20260906 - Total shooté campagne AE interrompus"
+  }
+ ],
+ "frozen_metrics": {
+  "_doc": "Ouvertures et clics FIGÉS pour les cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked sont des propriétés « dernière fois » : elles ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial. Les 1 070 contacts relancés le 11/09 auraient donc fait basculer ces dates et pollué les compteurs d'août. La fenêtre d'août étant close depuis le 26/08 et le 03/09, ces valeurs ne doivent plus évoluer : elles sont écrites ici et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne, via workflow, pour ne plus dépendre d'une propriété sans mémoire.",
+  "_as_of": "2026-09-11T09:30:00Z",
+  "14319": {
+   "opens": 192,
+   "clicks": 5,
+   "opens_emails": 379,
+   "clicks_emails": 5
+  },
+  "14334": {
+   "opens": 187,
+   "clicks": 17,
+   "opens_emails": 360,
+   "clicks_emails": 16
+  },
+  "14336": {
+   "opens": 39,
+   "clicks": 2,
+   "opens_emails": 85,
+   "clicks_emails": 2
+  },
+  "14337": {
+   "opens": 38,
+   "clicks": 1,
+   "opens_emails": 70,
+   "clicks_emails": 2
+  },
+  "14412": {
+   "opens": 373,
+   "clicks": 17,
+   "opens_emails": 539,
+   "clicks_emails": 7
+  },
+  "14413": {
+   "opens": 103,
+   "clicks": 7,
+   "opens_emails": 158,
+   "clicks_emails": 5
+  }
  }
 }
