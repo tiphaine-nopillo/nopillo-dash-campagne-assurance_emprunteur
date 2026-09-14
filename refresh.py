@@ -3,44 +3,62 @@
 Suivi campagne Assurance Emprunteur · refresh.py
 Alimente data.json depuis HubSpot.
 
-CORRECTIF CENTRAL DE CETTE VERSION
-----------------------------------
-Le KPI principal devient l'ENGAGEMENT : union dédupliquée des contacts ayant
-un dossier dans le pipe courtage AE et de ceux ayant pris un RDV. Quatre
-changements de fond par rapport à la version précédente :
+CORRECTIF CENTRAL DE CETTE VERSION — VAGUES DE RELANCE
+------------------------------------------------------
+Le 11/09/2026, 1 070 contacts déjà shootés en août ont été relancés sur 4 listes
+et 4 nouvelles séquences. Trois défauts du collecteur sont apparus, mesurés en
+direct entre deux runs espacés de 95 minutes :
 
-1. Aucun filtre sur les étapes du pipe. Les transactions remontées par n8n
-   portent le statut rapporté par le partenaire et sautent des étapes : une
-   étape absente ne prouve rien.
-   ATTENTION : le pipe n'est PAS alimenté uniquement par le partenaire.
-   Au 22/08, sur 77 transactions : 40 créées à la main dans HubSpot (CRM_UI),
-   34 par n8n (INTEGRATION), 3 par automatisation. Une transaction manuelle
-   atteste qu'un commercial a créé une fiche, pas qu'un client a simulé.
-   Le KPI ne filtre pas sur la source — arbitrage volontairement non tranché
-   — mais la répartition est collectée et affichée pour le rendre visible.
+  * Les RDV n'avaient AUCUNE borne haute. Un RDV pris des mois après l'envoi
+    restait imputé au batch d'origine. Dans les 2 h suivant l'envoi des
+    relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était
+    close depuis le 03/09. CORRIGÉ : borne haute J+21, comme les dossiers.
 
-2. Les dossiers ouverts AVANT la campagne mais déplacés d'étape après l'envoi
-   sont comptés. Sur la seule date de création, une réactivation est invisible
-   — et cet angle mort grandit à mesure que la base mûrit.
+  * Les ouvertures et les clics reposent sur hs_sales_email_last_opened et
+    hs_sales_email_last_clicked, des propriétés « dernière fois » sans
+    mémoire. Une ouverture de relance écrase la date d'août et reste comptée
+    comme une ouverture d'août. Le total campagne est passé de 1 214 à 1 236
+    ouvertures en 95 minutes. CORRIGÉ : les valeurs d'août sont FIGÉES dans
+    cohorts.json (frozen_metrics) et ne sont plus recalculées.
 
-3. RDV et dossiers se comptent en CONTACTS UNIQUES, plus en objets. 62 objets
-   MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage
-   puis un RDV devis. Même correction d'unité que celle déjà appliquée aux
-   ouvertures et aux clics.
+  * Les dossiers de la relance étaient invisibles : seul deal_engages()
+    appliquait ATTRIB_DAYS, et les fenêtres d'août étaient fermées.
+    CORRIGÉ : fenêtre par contact, cf. ci-dessous.
 
-4. Les RDV sont attribués au propriétaire de la RÉUNION, plus à celui du
-   CONTACT. L'ancienne répartition faisait apparaître des commerciaux qui
-   n'avaient posé aucun rendez-vous, simplement parce qu'ils possédaient les
-   fiches. Les dossiers ne sont plus répartis du tout : créés par n8n, ils
-   n'ont pas de propriétaire, et passer par celui du contact reproduirait la
-   même confusion.
+MODÈLE DE FENÊTRE PAR CONTACT
+------------------------------
+Un contact relancé dispose de DEUX fenêtres de 21 jours : celle de son batch
+initial (v1) et celle de sa relance (v2). Un événement compte s'il tombe dans
+l'une OU l'autre, et il est étiqueté. Deux raisons de ne pas simplement
+décaler la fenêtre :
+
+  * une activation réelle d'août ne doit pas disparaître parce que le contact
+    a été relancé un mois plus tard ;
+  * fusionner les deux en une fenêtre unique de 58 jours détruirait la
+    comparabilité entre cohortes que ATTRIB_DAYS sert à garantir.
+
+Le rattachement d'un contact relancé à sa cohorte est CALCULÉ, pas déclaré :
+les listes de relance sont construites sur un statut de séquence, pas sur
+l'appartenance à un batch, et un mapping en dur serait faux pour une partie
+des contacts.
+
+Une relance n'est JAMAIS une cohorte. Ses contacts sont déjà dans le
+dénominateur de leur batch ; les compter deux fois ferait baisser tous les
+taux mécaniquement.
+
+BIAIS DE SÉLECTION À NE PAS OUBLIER
+------------------------------------
+Les 4 listes de relance ne contiennent QUE des contacts non activés. Le taux
+d'activation d'une vague 2 n'est donc pas comparable à celui d'un batch
+initial, dont le dénominateur incluait tout le monde. Toute activation de
+vague 2 est un gain marginal pur.
 
 CORRECTIF DE LA VERSION PRÉCÉDENTE, TOUJOURS VALABLE
 ----------------------------------------------------
 Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
-du 5 août puis celui du 13 août. Toute métrique est attribuée par APPARTENANCE
-À LA LISTE de la cellule. La séquence ne sert qu'à restreindre le périmètre
-des e-mails collectés.
+du 5 août, celui du 13 août puis le batch du 10 septembre. Toute métrique est
+attribuée par APPARTENANCE À LA LISTE de la cellule. La séquence ne sert qu'à
+restreindre le périmètre des e-mails collectés.
 
 Prérequis
   export HUBSPOT_TOKEN="pat-eu1-..."
@@ -72,6 +90,13 @@ CHUNK = 100          # taille de lot pour les filtres associations.contact
 # ---------------------------------------------------------------- engagement
 # Fenêtre d'attribution. Sans borne de fin, un cumul ouvert monte à chaque
 # rafraîchissement et deux cohortes d'âge différent cessent d'être comparables.
+#
+# NON CALIBRÉ. Les courbes de réponse cumulées relevées le 11/09 montrent que
+# les deux batchs d'août MONTAIENT ENCORE à J+21 (5 août : 9,28 → 9,44 → 9,60 % ;
+# 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupe en pleine pente et
+# sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
+# pour l'instant, car changer ce chiffre réécrit rétroactivement tout
+# l'historique déjà communiqué.
 ATTRIB_DAYS = 21
 
 # Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
@@ -81,8 +106,7 @@ BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z")]
 
 # Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
 # PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
-# interchangeables. Filtre sans effet au 22/08 (62 RDV sur 62 leur
-# appartiennent) : c'est un garde-fou pour les cohortes suivantes.
+# interchangeables.
 AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
                      "75453551",    # Lilian Maudet
                      "650299108"]   # Mathieu d'Ornellas
@@ -127,19 +151,23 @@ def to_dt(v):
         return None
 
 
+def iso(v):
+    """Chaîne ISO d'un champ sent_at de config."""
+    return dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+
+
 def count_active(list_id, sequence_ids):
     """Contacts encore activement enrôlés dans UNE SÉQUENCE DE LA CAMPAGNE.
 
     Le filtre sur hs_sequences_is_enrolled seul ne suffit pas : cette propriété
-    vaut vrai pour n'importe quelle séquence du portail. Mesuré sur le batch du
-    5 août, elle renvoyait 4 contacts « encore en séquence » qui étaient en
-    réalité dans la séquence audit patrimonial de mai, et l'un depuis 2024.
-    Le batch était donc marqué PARTIEL à tort, ce qui masquait son test A/B.
+    vaut vrai pour n'importe quelle séquence du portail.
 
-    On croise donc avec hs_latest_sequence_enrolled. Réserve : cette propriété
-    ne garde que la DERNIÈRE séquence — un contact encore dans la séquence de
-    campagne mais réenrôlé ailleurs depuis échappera au décompte. Le biais va
-    dans le sens de la prudence : on sous-estime les envois restants.
+    On croise donc avec hs_latest_sequence_enrolled. RÉSERVE AGGRAVÉE PAR LES
+    RELANCES : cette propriété ne garde que la DERNIÈRE séquence. Depuis le
+    11/09, les 1 070 contacts relancés pointent vers une séquence de relance,
+    donc leurs cellules d'origine basculent toutes en TERMINE. Pour août c'est
+    juste — les envois sont finis — mais le mécanisme est aveugle et non un
+    constat de fin réelle.
     """
     return count_lists([list_id], [
         {"propertyName": "hs_sequences_is_enrolled", "operator": "EQ", "value": "true"},
@@ -199,6 +227,58 @@ def owners_map():
             for o in r.json().get("results", [])}
 
 
+# ------------------------------------------------------------- vagues
+def build_relance_map(cfg):
+    """contact_id -> date du DERNIER envoi de relance qui l'a touché.
+
+    Rattachement CALCULÉ : on ne déclare nulle part qu'une liste de relance
+    appartient à telle cohorte. On collecte les contacts, et chacun est
+    retrouvé plus bas dans la cellule à laquelle il appartient déjà. Les
+    listes de relance sont construites sur un statut de séquence — « a fini
+    sa campagne », « a été interrompu » — et non sur l'appartenance à un
+    batch : un mapping en dur serait faux pour une partie des contacts.
+
+    Le max() protège le cas d'un contact présent dans deux listes de relance :
+    c'est le dernier envoi qui ouvre sa fenêtre.
+    """
+    out = {}
+    for r in cfg.get("relances", []):
+        when = iso(r["sent_at"])
+        for m in list_members(r["list_id"]):
+            cid = m[0]
+            if cid not in out or when > out[cid]:
+                out[cid] = when
+    return out
+
+
+def windows_for(cid, cohort_send, rmap):
+    """Fenêtres d'attribution d'un contact, de la plus ancienne à la plus récente.
+
+    [("v1", envoi du batch, +21j)] et, si le contact a été relancé,
+    [("v2", envoi de la relance, +21j)] en plus.
+
+    Deux fenêtres disjointes plutôt qu'une seule élargie : une activation
+    réelle d'août ne doit pas disparaître parce que le contact a été relancé,
+    et une fenêtre unique de 58 jours détruirait la comparabilité entre
+    cohortes.
+    """
+    w = [("v1", cohort_send, cohort_send + dt.timedelta(days=ATTRIB_DAYS))]
+    r = rmap.get(cid)
+    if r and r > cohort_send:
+        w.append(("v2", r, r + dt.timedelta(days=ATTRIB_DAYS)))
+    return w
+
+
+def in_windows(when, wins):
+    """Étiquette de la fenêtre contenant cette date, la plus récente d'abord."""
+    if not when:
+        return None
+    for tag, start, end in reversed(wins):
+        if start <= when <= end:
+            return tag
+    return None
+
+
 # ------------------------------------------------------------------- e-mails
 def emails_for(contact_ids, sequence_ids, since_ms):
     """Envois, ouvertures, clics et réponses des e-mails de séquence reçus par
@@ -208,12 +288,11 @@ def emails_for(contact_ids, sequence_ids, since_ms):
     séquences de la campagne, associations.contact restreint aux contacts de la
     cellule. Sans le second, un batch ultérieur partageant la séquence viendrait
     gonfler les chiffres.
-
-    Compteurs bornés à 1 par e-mail pour obtenir de l'unique plutôt que le
-    cumul brut renvoyé par HubSpot.
     """
     agg = dict(sent=0, bounced=0, opens=0, clicks=0)
     steps = {}
+    if not contact_ids:
+        return agg, []
     for i in range(0, len(contact_ids), CHUNK):
         chunk = contact_ids[i:i + CHUNK]
         after = None
@@ -263,13 +342,7 @@ def emails_for(contact_ids, sequence_ids, since_ms):
 
 # ------------------------------------------------------- RDV et engagement
 def _objects_assoc(path, contact_ids, extra_filters, props):
-    """Objets associés à ces contacts, AVEC leurs propriétés.
-
-    On a besoin des propriétés pour appliquer la règle d'engagement, et des
-    IDs pour remonter au contact — d'où le retour d'objets plutôt qu'un
-    simple compteur. Déduplication par ID : un même objet peut ressortir
-    dans deux lots de contacts.
-    """
+    """Objets associés à ces contacts, AVEC leurs propriétés."""
     out = {}
     for i in range(0, len(contact_ids), CHUNK):
         chunk = contact_ids[i:i + CHUNK]
@@ -291,12 +364,7 @@ def _objects_assoc(path, contact_ids, extra_filters, props):
 
 
 def _contacts_of(object_type, object_ids):
-    """Contacts associés à chaque objet, via l'API associations v4.
-
-    L'API CRM Search ne renvoie pas les associations : il faut ce second
-    appel. C'est le même constat qui avait vidé le décompte par propriétaire
-    dans la version précédente.
-    """
+    """Contacts associés à chaque objet, via l'API associations v4."""
     m = {}
     ids = list(object_ids)
     for i in range(0, len(ids), CHUNK):
@@ -307,85 +375,100 @@ def _contacts_of(object_type, object_ids):
     return m
 
 
-def deal_engages(props, send):
-    """La transaction matérialise-t-elle une entrée dans le flow après l'envoi ?
+def deal_engages(props, wins):
+    """Étiquette de vague si la transaction entre dans une fenêtre, sinon None.
 
     AUCUN filtre sur dealstage, volontairement : les transactions remontées
-    par n8n sautent des étapes, une étape absente ne prouve donc rien.
+    par n8n sautent des étapes, une étape absente ne prouve rien.
 
-    AUCUN filtre sur la source non plus, mais pour une autre raison — c'est un
-    arbitrage non tranché, pas une certitude. 40 transactions sur 77 sont
-    créées à la main : elles attestent qu'un commercial a ouvert une fiche,
-    pas qu'un client a parcouru le simulateur. La répartition par source est
-    collectée pour rendre l'arbitrage visible (cf. engagement_sets).
+    AUCUN filtre sur la source non plus, mais c'est un arbitrage non tranché :
+    une part importante des transactions est créée à la main et atteste qu'un
+    commercial a ouvert une fiche, pas qu'un client a simulé. La répartition
+    par source est collectée pour rendre l'arbitrage visible.
 
     Deux bornes, en OU :
       - createdate : dossier ouvert pendant la fenêtre ;
       - hs_v2_date_entered_current_stage : dernier mouvement d'étape, ce qui
-        rattrape les dossiers ouverts AVANT la campagne mais réactivés par
-        elle. Un dossier de janvier réentré en simulation le 21/08 est ainsi
-        correctement attribué au batch du 13 — sur createdate seul, il était
-        invisible.
+        rattrape les dossiers ouverts AVANT la campagne mais réactivés.
 
     Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
     déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
     """
     created = to_dt(props.get("createdate"))
     if created and any(to_dt(a) <= created < to_dt(b) for a, b in BACKFILL):
-        return False
-    end = send + dt.timedelta(days=ATTRIB_DAYS)
+        return None
     for key in ("createdate", "hs_v2_date_entered_current_stage"):
-        d = to_dt(props.get(key))
-        if d and send <= d <= end:
-            return True
-    return False
+        tag = in_windows(to_dt(props.get(key)), wins)
+        if tag:
+            return tag
+    return None
 
 
-def engagement_sets(ids, send, pipeline, meet_f):
-    """Contacts ayant un dossier, contacts ayant un RDV, et qui a posé ce RDV.
+def engagement_sets(ids, cohort_send, pipeline, meet_f, rmap):
+    """Contacts ayant un dossier, contacts ayant un RDV, qui a posé le RDV,
+    et l'étiquette de vague de chaque activation.
 
-    Retourne deux ENSEMBLES de contacts, jamais des compteurs d'objets :
-    62 réunions correspondent à 51 contacts, certains ayant un RDV courtage
-    puis un RDV devis. L'unité de mesure est le contact.
+    Retourne des ENSEMBLES de contacts, jamais des compteurs d'objets : un
+    même contact peut avoir un RDV courtage puis un RDV devis. L'unité de
+    mesure est le contact.
 
-    Le troisième retour associe chaque contact au propriétaire de la RÉUNION,
-    pour la répartition par commercial. Le propriétaire du CONTACT ne convient
-    pas : il fait apparaître des commerciaux qui n'ont posé aucun rendez-vous,
-    simplement parce qu'ils possèdent les fiches.
+    CHANGEMENT DE CETTE VERSION : l'appartenance à la fenêtre est évaluée
+    CONTACT PAR CONTACT, parce qu'un contact relancé a deux fenêtres. Avant,
+    une seule fenêtre valait pour toute la cellule — et les RDV n'en avaient
+    aucune en borne haute.
     """
     keep = set(ids)
+    wins = {c: windows_for(c, cohort_send, rmap) for c in keep}
 
+    # ---- dossiers courtage
     deals = _objects_assoc(
         DEALS, ids,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
          "hs_object_source_label"])
-    ok = [i for i, p in deals.items() if deal_engages(p, send)]
-    dmap = _contacts_of("deals", ok)
-    dset, d_auto = set(), set()
-    for i in ok:
-        for c in dmap.get(i, []):
-            if c in keep:
-                dset.add(c)
-                # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
-                # transactions est automatique : c'est le signal le plus fort
-                # dont on dispose sur un parcours réellement produit.
-                if deals[i].get("hs_object_source_label") != "CRM_UI":
-                    d_auto.add(c)
+    dmap = _contacts_of("deals", list(deals.keys()))
+    dset, d_auto, d_wave = set(), set(), {}
+    for did, props in deals.items():
+        for c in dmap.get(did, []):
+            if c not in keep:
+                continue
+            tag = deal_engages(props, wins[c])
+            if not tag:
+                continue
+            dset.add(c)
+            if d_wave.get(c) != "v2":
+                d_wave[c] = tag
+            # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
+            # transactions est automatique : c'est le signal le plus fort
+            # dont on dispose sur un parcours réellement produit.
+            if props.get("hs_object_source_label") != "CRM_UI":
+                d_auto.add(c)
 
+    # ---- rendez-vous
+    # La borne haute est appliquée ICI, côté client, parce qu'elle dépend du
+    # contact. Le filtre serveur meet_f ne porte que la borne basse, le
+    # propriétaire et l'intitulé.
     meets = _objects_assoc(MEETINGS, ids, meet_f,
-                           ["hubspot_owner_id", "hs_timestamp"])
-    mmap = _contacts_of("meetings", meets)
-    mset, m_owner = set(), {}
+                           ["hubspot_owner_id", "hs_timestamp", "hs_createdate"])
+    mmap = _contacts_of("meetings", list(meets.keys()))
+    mset, m_owner, m_wave = set(), {}, {}
     # Tri chronologique : un contact ayant plusieurs RDV est attribué au
     # propriétaire du PREMIER, celui qui a converti.
-    for mid, p in sorted(meets.items(), key=lambda x: x[1].get("hs_timestamp") or ""):
+    for mid, p in sorted(meets.items(),
+                         key=lambda x: x[1].get("hs_createdate") or ""):
+        booked = to_dt(p.get("hs_createdate")) or to_dt(p.get("hs_timestamp"))
         for c in mmap.get(mid, []):
-            if c in keep:
-                mset.add(c)
-                m_owner.setdefault(c, p.get("hubspot_owner_id"))
+            if c not in keep:
+                continue
+            tag = in_windows(booked, wins[c])
+            if not tag:
+                continue
+            mset.add(c)
+            m_owner.setdefault(c, p.get("hubspot_owner_id"))
+            if m_wave.get(c) != "v2":
+                m_wave[c] = tag
 
-    return dset, mset, m_owner, d_auto
+    return dset, mset, m_owner, d_auto, d_wave, m_wave
 
 
 # -------------------------------------------------------------------- build
@@ -399,11 +482,7 @@ def cumulative_curve(delays, enrolled, send, horizon_max=21):
 
     Le dénominateur est l'effectif ciblé, pas le nombre de répondants : une
     courbe rapportée aux répondants finit toujours à 100 %, ce qui se lit comme
-    « tout le monde a répondu » alors que c'est une tautologie. Ici la courbe
-    plafonne sur le vrai taux de réponse — on lit le rythme ET le niveau.
-
-    L'horizon est borné aux jours réellement écoulés depuis l'envoi : afficher
-    J+21 pour un batch parti il y a 5 jours dessinait un futur inexistant.
+    « tout le monde a répondu » alors que c'est une tautologie.
     """
     if not delays or not enrolled:
         return []
@@ -417,17 +496,9 @@ def cumulative_curve(delays, enrolled, send, horizon_max=21):
 def activation_split(mset, dset, auto):
     """Décomposition de l'activation, en CONTACTS uniques.
 
-    Un client est activé s'il a pris un RDV, s'il a un dossier courtage AE, ou
-    les deux. Trois façons de lire le même ensemble :
-
     - les deux totaux qui se recoupent : `meet` et `deal` ;
     - les trois sous-ensembles disjoints : `both`, `meet_only`, `deal_only` ;
     - le total : `activated` = meet + deal − both, JAMAIS meet + deal.
-
-    `deal_auto` est le garde-fou de lecture : un dossier créé à la main par un
-    commercial n'atteste pas qu'un client a ouvert le simulateur. Il compte
-    dans l'activation — un dossier ouvert reste un signal — mais le libellé
-    « simulation entamée » ne vaut que pour la part remontée par n8n.
     """
     return dict(
         meet=len(mset), deal=len(dset), both=len(mset & dset),
@@ -442,22 +513,25 @@ def build():
     cfg = load_config()
     owners = owners_map()
     pipeline = cfg["deal_pipeline"]
+    frozen = cfg.get("frozen_metrics", {})
     all_lists = [c["list_id"] for co in cfg["cohorts"] for c in co["cells"]]
 
-    # Ensembles d'activation au niveau CAMPAGNE, en identifiants de contact.
-    # Indispensable : la somme des cellules n'est pas l'union dédupliquée dès
-    # qu'un contact est ciblé par deux batchs. Tant qu'aucun contact recoupé
-    # n'était activé, somme et union coïncidaient — et le jour où l'une diverge
-    # de l'autre, un total sommé se met à surcompter en silence.
+    # Vagues de relance : contact -> date du dernier envoi qui l'a touché.
+    rmap = build_relance_map(cfg)
+    if rmap:
+        print(f"relances : {len(rmap)} contact(s) relancé(s) sur "
+              f"{len(cfg.get('relances', []))} liste(s)")
+
     camp_meet, camp_deal, camp_deal_auto = set(), set(), set()
+    camp_v2 = set()
 
     cohorts = []
     for co in cfg["cohorts"]:
-        send = dt.datetime.fromisoformat(co["sent_at"].replace("Z", "+00:00"))
+        send = iso(co["sent_at"])
         since_ms = int(send.timestamp() * 1000)
         forced = (co.get("status") or "AUTO").upper()
         cells, all_delays = [], []
-        coh_meet, coh_deal, coh_deal_auto = set(), set(), set()
+        coh_meet, coh_deal, coh_deal_auto, coh_v2 = set(), set(), set(), set()
 
         for c in co["cells"]:
             members = list_members(c["list_id"])
@@ -465,12 +539,7 @@ def build():
 
             agg, steps = emails_for(ids, [c["sequence_id"]], since_ms)
 
-            # réponses : date de dernière réponse postérieure à l'envoi du batch
-            # Ouvertures, clics et réponses au CONTACT, pas à l'e-mail : comptés
-            # par e-mail sur une séquence à 3 étapes, ils dépassaient 100 % des
-            # contacts (352 ouvertures pour 254 contacts). Vérifié contre HubSpot :
-            # 176 contre 172 réels, l'écart résiduel venant du fait que ces
-            # propriétés enregistrent tout e-mail commercial, pas seulement la campagne.
+            # Réponses, ouvertures et clics au CONTACT, pas à l'e-mail.
             delays = []
             n_open = n_click = 0
             for _, _, rep, op, cl in members:
@@ -485,6 +554,20 @@ def build():
                     n_click += 1
             all_delays += delays
 
+            # MÉTRIQUES GELÉES. hs_sales_email_last_opened et
+            # hs_sales_email_last_clicked sont des propriétés « dernière fois »
+            # sans mémoire : une ouverture de relance écrase la date d'août et
+            # reste comptée comme une ouverture d'août, puisque la comparaison
+            # est >= date d'envoi. Borner en haut ne réglerait rien — un vrai
+            # ouvreur d'août sortirait alors du compte. La donnée d'origine
+            # n'existe plus : on fige le dernier relevé propre.
+            fz = frozen.get(str(c["list_id"]))
+            if fz:
+                n_open = fz.get("opens", n_open)
+                n_click = fz.get("clicks", n_click)
+                agg["opens"] = fz.get("opens_emails", agg["opens"])
+                agg["clicks"] = fz.get("clicks_emails", agg["clicks"])
+
             meet_f = [{"propertyName": "hs_createdate", "operator": "GTE",
                        "value": str(since_ms)},
                       {"propertyName": "hubspot_owner_id", "operator": "IN",
@@ -494,34 +577,28 @@ def build():
                 meet_f.append({"propertyName": mf["property"],
                                "operator": mf["operator"], "value": mf["value"]})
 
-            # Le filtre createdate côté transactions est retiré : il excluait
-            # les dossiers ouverts AVANT la campagne mais réactivés par elle.
-            # La règle temporelle est appliquée dans deal_engages().
-            dset, mset, m_owner, d_auto = engagement_sets(
-                ids, send, pipeline, meet_f)
-            # Origine des transactions. Le pipe n'est PAS alimenté uniquement
-            # par le partenaire : une transaction créée à la main atteste
-            # qu'un commercial a ouvert une fiche, pas qu'un client a simulé.
-            # deal_only_manual est la ligne à surveiller : elle prétend
-            # mesurer du self-service alors qu'elle peut ne mesurer que de la
-            # saisie commerciale sans RDV tracé.
+            dset, mset, m_owner, d_auto, d_wave, m_wave = engagement_sets(
+                ids, send, pipeline, meet_f, rmap)
+
+            # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
+            # de relance, donc attribuable à la relance et non au batch.
+            v2 = {x for x, t in d_wave.items() if t == "v2"} | \
+                 {x for x, t in m_wave.items() if t == "v2"}
+            relanced = {x for x in ids if x in rmap}
+
             split = dict(both=len(dset & mset), meet_only=len(mset - dset),
                          deal_only=len(dset - mset), engaged=len(dset | mset),
                          deal_n8n=len(d_auto), deal_manual=len(dset - d_auto),
-                         deal_only_manual=len((dset - mset) - d_auto))
+                         deal_only_manual=len((dset - mset) - d_auto),
+                         relanced=len(relanced), engaged_v2=len(v2),
+                         engaged_v1=len((dset | mset) - v2))
             n_meet, n_deal = len(mset), len(dset)
 
             coh_meet |= mset
             coh_deal |= dset
             coh_deal_auto |= d_auto
+            coh_v2 |= v2
 
-            # RDV attribués au propriétaire de la RÉUNION : c'est le seul champ
-            # qui dit qui a réellement pris le rendez-vous. Le propriétaire du
-            # CONTACT faisait apparaître des commerciaux sans aucun RDV posé,
-            # simplement parce qu'ils possédaient les fiches.
-            # Les dossiers ne sont PAS répartis : créés par n8n, ils n'ont pas
-            # de propriétaire, et passer par celui du contact reproduirait
-            # exactement la confusion qu'on vient de corriger.
             m_own = {}
             for cid in mset:
                 k = m_owner.get(cid)
@@ -539,12 +616,13 @@ def build():
                 sent=agg["sent"], bounced=agg["bounced"],
                 opens=n_open, clicks=n_click,
                 opens_emails=agg["opens"], clicks_emails=agg["clicks"],
+                opens_frozen=bool(fz),
                 replies=len(delays), meetings=n_meet, deals_ae=n_deal,
                 engaged=split["engaged"], split=split,
                 # Détail par contact, RETIRÉ avant l'écriture de data.json :
                 # ce fichier est servi publiquement par GitHub Pages.
                 _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
-                          deal_only=sorted(dset - mset)),
+                          deal_only=sorted(dset - mset), v2=sorted(v2)),
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=n)
@@ -562,13 +640,18 @@ def build():
         camp_meet |= coh_meet
         camp_deal |= coh_deal
         camp_deal_auto |= coh_deal_auto
+        camp_v2 |= coh_v2
+
+        act = activation_split(coh_meet, coh_deal, coh_deal_auto)
+        act["activated_v2"] = len(coh_v2)
+        act["activated_v1"] = act["activated"] - len(coh_v2)
+        act["relanced"] = sum(c["split"]["relanced"] for c in cells)
 
         cohorts.append(dict(id=co["id"], label=co["label"], sent_at=co["sent_at"],
                             status=status, active=n_act, status_note=note,
                             ab_test=co.get("ab_test", True), ab_note=co.get("ab_note"),
-                            cells=cells,
-                            activation=activation_split(coh_meet, coh_deal,
-                                                        coh_deal_auto),
+                            targeting=co.get("targeting"),
+                            cells=cells, activation=act,
                             reply_curve=cumulative_curve(
                                 all_delays, sum(c["enrolled"] for c in cells), send)))
     cohorts.sort(key=lambda x: x["id"])
@@ -578,12 +661,14 @@ def build():
     somme = sum(c["enrolled"] for co in cohorts for c in co["cells"])
     ecart = somme - dedup["contacts"]
 
-    # Activation au niveau campagne, dédupliquée sur les identifiants de contact.
-    # Le niveau 1 lit CE bloc, plus jamais une somme de cellules.
     dedup["activation"] = activation_split(camp_meet, camp_deal, camp_deal_auto)
     somme_act = sum(c["split"]["engaged"] for co in cohorts for c in co["cells"])
     dedup["activation"]["sum_cells"] = somme_act
     dedup["activation"]["overlap"] = somme_act - dedup["activation"]["activated"]
+    dedup["activation"]["activated_v2"] = len(camp_v2)
+    dedup["activation"]["activated_v1"] = (dedup["activation"]["activated"]
+                                           - len(camp_v2))
+    dedup["relanced"] = len(rmap)
 
     data = dict(
         meta=dict(
@@ -594,8 +679,12 @@ def build():
             primary_kpi=cfg.get("primary_kpi"),
             source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
                     "· MEETING_EVENT ∪ DEAL pipeline " + pipeline
-                    + f" · contacts uniques, fenêtre J+{ATTRIB_DAYS}"),
+                    + f" · contacts uniques, fenêtre J+{ATTRIB_DAYS} par contact"),
             attribution_note=cfg["notes"]["attribution"],
+            relance_note=cfg["notes"].get("relances"),
+            meeting_window_note=cfg["notes"].get("meeting_window"),
+            attribution_window_note=cfg["notes"].get("attribution_window"),
+            frozen_note=cfg.get("frozen_metrics", {}).get("_doc"),
             overlap_note=(
                 f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
                 f"plusieurs batchs. Le niveau 1 utilise l'union dédupliquée."
@@ -607,19 +696,19 @@ def build():
         kpis=cfg["kpis"],
         audience_labels=cfg["audience_labels"],
         stats_config=cfg["stats"],
+        relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
         cohorts=cohorts,
     )
+
     # Détail nominatif : dans les logs du run, JAMAIS dans data.json.
-    # Le fichier est servi publiquement ; les logs supposent un accès au dépôt.
-    # IDs de contact uniquement, aucun nom ni e-mail : sans accès au portail,
-    # un ID ne désigne personne.
     # Le pop() ci-dessous est ce qui garantit que _ids ne fuite pas dans le
     # JSON — ne pas le déplacer après json.dump.
     print("\n--- détail des contacts engagés ---")
     for co in cohorts:
         for c in co["cells"]:
             ids = c.pop("_ids")
+            v2 = set(ids["v2"])
             print(f"\n{co['id']} · {c['audience']}-{c['version']} "
                   f"· {c['split']['engaged']} engagés sur {c['enrolled']} ciblés")
             for cat, label in (("both", "RDV + dossier"),
@@ -628,8 +717,9 @@ def build():
                 if ids[cat]:
                     print(f"  {label} ({len(ids[cat])})")
                     for cid in ids[cat]:
+                        flag = "  [vague 2]" if cid in v2 else ""
                         print(f"    https://app-eu1.hubspot.com/contacts/"
-                              f"{PORTAL}/contact/{cid}")
+                              f"{PORTAL}/contact/{cid}{flag}")
     print("--- fin du détail ---\n")
 
     with open("data.json", "w", encoding="utf-8") as f:
@@ -639,16 +729,19 @@ def build():
     tot = {k["key"]: sum(c[k["key"]] for co in cohorts for c in co["cells"])
            for k in cfg["kpis"]}
     print(f"OK · {len(cohorts)} cohortes · {n_cells} cellules · "
-          f"{dedup['contacts']} contacts ciblés")
+          f"{dedup['contacts']} contacts ciblés · {len(rmap)} relancés")
     print("   " + " · ".join(f"{k['label']} {tot[k['key']]}" for k in cfg["kpis"]))
     for co in cohorts:
         for c in co["cells"]:
             s = c["split"]
+            fz = " [ouvertures gelées]" if c.get("opens_frozen") else ""
             print(f"   {co['id']} {c['audience']}-{c['version']} "
                   f"n={c['enrolled']} · both {s['both']} · rdv seul {s['meet_only']} "
                   f"· deal seul {s['deal_only']} · engagés {s['engaged']} "
-                  f"| deals n8n {s['deal_n8n']} · manuels {s['deal_manual']} "
-                  f"· deal seul manuel {s['deal_only_manual']}")
+                  f"(v1 {s['engaged_v1']} · v2 {s['engaged_v2']} "
+                  f"sur {s['relanced']} relancés)"
+                  f" | deals n8n {s['deal_n8n']} · manuels {s['deal_manual']}"
+                  f"{fz}")
     if ecart > 0:
         print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
 
@@ -662,6 +755,14 @@ def build():
           f"   soit {100 * a['activated'] / dedup['contacts']:.2f} % des ciblés")
     print(f"   dont RDV seul {a['meet_only']} · dossier seul {a['deal_only']}"
           f" (dont {a['deal_only_manual']} créé(s) à la main)")
+    if rmap:
+        print(f"\n   vague 1 (envoi initial)   {a['activated_v1']:5d}")
+        print(f"   vague 2 (relance 11/09)   {a['activated_v2']:5d}"
+              f"   sur {len(rmap)} relancés"
+              f" · {100 * a['activated_v2'] / len(rmap):.2f} %")
+        print("   ATTENTION : les listes de relance ne contiennent QUE des")
+        print("   contacts non activés. Ce taux n'est PAS comparable à celui")
+        print("   d'un batch initial — c'est un gain marginal pur.")
     if a["overlap"]:
         print(f"   ⚠ somme des cellules {a['sum_cells']} vs union {a['activated']} :"
               f" {a['overlap']} contact(s) activé(s) ciblé(s) dans deux batchs")
