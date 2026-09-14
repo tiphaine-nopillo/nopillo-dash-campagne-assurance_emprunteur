@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-14T07:54:15.847751+00:00",
+  "generated_at": "2026-09-14T10:30:59.113667+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -107,18 +107,18 @@
   "contacts": 2075,
   "activation": {
    "meet": 94,
-   "deal": 64,
-   "both": 49,
-   "meet_only": 45,
-   "deal_only": 15,
-   "activated": 109,
+   "deal": 75,
+   "both": 50,
+   "meet_only": 44,
+   "deal_only": 25,
+   "activated": 119,
    "deal_auto": 12,
-   "deal_manual": 52,
-   "deal_only_manual": 8,
-   "sum_cells": 109,
+   "deal_manual": 63,
+   "deal_only_manual": 18,
+   "sum_cells": 119,
    "overlap": 0,
-   "activated_v2": 24,
-   "activated_v1": 85
+   "activated_v2": 29,
+   "activated_v1": 90
   },
   "relanced": 1070
  },
@@ -152,18 +152,18 @@
      "opens_frozen": true,
      "replies": 39,
      "meetings": 17,
-     "deals_ae": 15,
-     "engaged": 19,
+     "deals_ae": 17,
+     "engaged": 21,
      "split": {
       "both": 13,
       "meet_only": 4,
-      "deal_only": 2,
-      "engaged": 19,
+      "deal_only": 4,
+      "engaged": 21,
       "deal_n8n": 2,
-      "deal_manual": 13,
-      "deal_only_manual": 1,
+      "deal_manual": 15,
+      "deal_only_manual": 3,
       "relanced": 173,
-      "engaged_v2": 2,
+      "engaged_v2": 4,
       "engaged_v1": 17
      },
      "steps": [
@@ -218,18 +218,18 @@
      "opens_frozen": true,
      "replies": 44,
      "meetings": 15,
-     "deals_ae": 11,
-     "engaged": 18,
+     "deals_ae": 12,
+     "engaged": 19,
      "split": {
       "both": 8,
       "meet_only": 7,
-      "deal_only": 3,
-      "engaged": 18,
+      "deal_only": 4,
+      "engaged": 19,
       "deal_n8n": 1,
-      "deal_manual": 10,
-      "deal_only_manual": 2,
+      "deal_manual": 11,
+      "deal_only_manual": 3,
       "relanced": 165,
-      "engaged_v2": 5,
+      "engaged_v2": 6,
       "engaged_v1": 13
      },
      "steps": [
@@ -424,15 +424,15 @@
    ],
    "activation": {
     "meet": 44,
-    "deal": 38,
+    "deal": 41,
     "both": 29,
     "meet_only": 15,
-    "deal_only": 9,
-    "activated": 53,
+    "deal_only": 12,
+    "activated": 56,
     "deal_auto": 10,
-    "deal_manual": 28,
-    "deal_only_manual": 3,
-    "activated_v2": 8,
+    "deal_manual": 31,
+    "deal_only_manual": 6,
+    "activated_v2": 11,
     "activated_v1": 45,
     "relanced": 413
    },
@@ -576,20 +576,20 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies": 64,
+     "replies": 65,
      "meetings": 27,
-     "deals_ae": 13,
-     "engaged": 30,
+     "deals_ae": 15,
+     "engaged": 32,
      "split": {
       "both": 10,
       "meet_only": 17,
-      "deal_only": 3,
-      "engaged": 30,
+      "deal_only": 5,
+      "engaged": 32,
       "deal_n8n": 1,
-      "deal_manual": 12,
-      "deal_only_manual": 2,
+      "deal_manual": 14,
+      "deal_only_manual": 4,
       "relanced": 532,
-      "engaged_v2": 13,
+      "engaged_v2": 15,
       "engaged_v1": 17
      },
      "steps": [
@@ -690,15 +690,15 @@
    ],
    "activation": {
     "meet": 36,
-    "deal": 21,
+    "deal": 23,
     "both": 15,
     "meet_only": 21,
-    "deal_only": 6,
-    "activated": 42,
+    "deal_only": 8,
+    "activated": 44,
     "deal_auto": 2,
-    "deal_manual": 19,
-    "deal_only_manual": 5,
-    "activated_v2": 16,
+    "deal_manual": 21,
+    "deal_only_manual": 7,
+    "activated_v2": 18,
     "activated_v1": 26,
     "relanced": 657
    },
@@ -775,43 +775,43 @@
     },
     {
      "day": 14,
-     "count": 39,
-     "share": 5.57
+     "count": 38,
+     "share": 5.43
     },
     {
      "day": 15,
-     "count": 41,
-     "share": 5.86
+     "count": 40,
+     "share": 5.71
     },
     {
      "day": 16,
-     "count": 41,
-     "share": 5.86
+     "count": 40,
+     "share": 5.71
     },
     {
      "day": 17,
-     "count": 41,
-     "share": 5.86
+     "count": 40,
+     "share": 5.71
     },
     {
      "day": 18,
-     "count": 43,
-     "share": 6.14
+     "count": 42,
+     "share": 6.0
     },
     {
      "day": 19,
-     "count": 48,
-     "share": 6.86
+     "count": 47,
+     "share": 6.71
     },
     {
      "day": 20,
-     "count": 50,
-     "share": 7.14
+     "count": 49,
+     "share": 7.0
     },
     {
      "day": 21,
-     "count": 54,
-     "share": 7.71
+     "count": 53,
+     "share": 7.57
     }
    ]
   },
@@ -844,19 +844,19 @@
      "opens_frozen": false,
      "replies": 13,
      "meetings": 14,
-     "deals_ae": 5,
-     "engaged": 14,
+     "deals_ae": 11,
+     "engaged": 19,
      "split": {
-      "both": 5,
-      "meet_only": 9,
-      "deal_only": 0,
-      "engaged": 14,
+      "both": 6,
+      "meet_only": 8,
+      "deal_only": 5,
+      "engaged": 19,
       "deal_n8n": 0,
-      "deal_manual": 5,
-      "deal_only_manual": 0,
+      "deal_manual": 11,
+      "deal_only_manual": 5,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 14
+      "engaged_v1": 19
      },
      "steps": [
       {
@@ -888,16 +888,16 @@
    ],
    "activation": {
     "meet": 14,
-    "deal": 5,
-    "both": 5,
-    "meet_only": 9,
-    "deal_only": 0,
-    "activated": 14,
+    "deal": 11,
+    "both": 6,
+    "meet_only": 8,
+    "deal_only": 5,
+    "activated": 19,
     "deal_auto": 0,
-    "deal_manual": 5,
-    "deal_only_manual": 0,
+    "deal_manual": 11,
+    "deal_only_manual": 5,
     "activated_v2": 0,
-    "activated_v1": 14,
+    "activated_v1": 19,
     "relanced": 0
    },
    "reply_curve": [
@@ -908,16 +908,21 @@
     },
     {
      "day": 1,
+     "count": 10,
+     "share": 1.31
+    },
+    {
+     "day": 2,
      "count": 11,
      "share": 1.45
     },
     {
-     "day": 2,
+     "day": 3,
      "count": 12,
      "share": 1.58
     },
     {
-     "day": 3,
+     "day": 4,
      "count": 13,
      "share": 1.71
     }
