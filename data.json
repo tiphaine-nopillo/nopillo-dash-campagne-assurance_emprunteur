@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-15T10:30:52.668021+00:00",
+  "generated_at": "2026-09-15T14:50:57.761867+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -106,19 +106,19 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 95,
-   "deal": 90,
-   "both": 61,
-   "meet_only": 34,
-   "deal_only": 29,
-   "activated": 124,
+   "meet": 97,
+   "deal": 99,
+   "both": 65,
+   "meet_only": 32,
+   "deal_only": 34,
+   "activated": 131,
    "deal_auto": 12,
-   "deal_manual": 78,
-   "deal_only_manual": 22,
-   "sum_cells": 124,
+   "deal_manual": 87,
+   "deal_only_manual": 27,
+   "sum_cells": 131,
    "overlap": 0,
-   "activated_v2": 33,
-   "activated_v1": 91
+   "activated_v2": 37,
+   "activated_v1": 94
   },
   "relanced": 1070
  },
@@ -218,18 +218,18 @@
      "opens_frozen": true,
      "replies": 46,
      "meetings": 15,
-     "deals_ae": 15,
-     "engaged": 20,
+     "deals_ae": 17,
+     "engaged": 21,
      "split": {
-      "both": 10,
-      "meet_only": 5,
-      "deal_only": 5,
-      "engaged": 20,
+      "both": 11,
+      "meet_only": 4,
+      "deal_only": 6,
+      "engaged": 21,
       "deal_n8n": 1,
-      "deal_manual": 14,
-      "deal_only_manual": 4,
+      "deal_manual": 16,
+      "deal_only_manual": 5,
       "relanced": 165,
-      "engaged_v2": 7,
+      "engaged_v2": 8,
       "engaged_v1": 13
      },
      "steps": [
@@ -359,18 +359,18 @@
      "opens_frozen": true,
      "replies": 13,
      "meetings": 8,
-     "deals_ae": 6,
-     "engaged": 9,
+     "deals_ae": 7,
+     "engaged": 10,
      "split": {
       "both": 5,
       "meet_only": 3,
-      "deal_only": 1,
-      "engaged": 9,
+      "deal_only": 2,
+      "engaged": 10,
       "deal_n8n": 3,
-      "deal_manual": 3,
-      "deal_only_manual": 0,
+      "deal_manual": 4,
+      "deal_only_manual": 1,
       "relanced": 33,
-      "engaged_v2": 0,
+      "engaged_v2": 1,
       "engaged_v1": 9
      },
      "steps": [
@@ -424,15 +424,15 @@
    ],
    "activation": {
     "meet": 44,
-    "deal": 46,
-    "both": 31,
-    "meet_only": 13,
-    "deal_only": 15,
-    "activated": 59,
+    "deal": 49,
+    "both": 32,
+    "meet_only": 12,
+    "deal_only": 17,
+    "activated": 61,
     "deal_auto": 10,
-    "deal_manual": 36,
-    "deal_only_manual": 9,
-    "activated_v2": 14,
+    "deal_manual": 39,
+    "deal_only_manual": 11,
+    "activated_v2": 16,
     "activated_v1": 45,
     "relanced": 413
    },
@@ -464,88 +464,88 @@
     },
     {
      "day": 5,
-     "count": 19,
-     "share": 3.04
+     "count": 18,
+     "share": 2.88
     },
     {
      "day": 6,
-     "count": 19,
-     "share": 3.04
+     "count": 18,
+     "share": 2.88
     },
     {
      "day": 7,
-     "count": 22,
-     "share": 3.52
+     "count": 21,
+     "share": 3.36
     },
     {
      "day": 8,
+     "count": 24,
+     "share": 3.84
+    },
+    {
+     "day": 9,
      "count": 25,
      "share": 4.0
     },
     {
-     "day": 9,
-     "count": 26,
-     "share": 4.16
-    },
-    {
      "day": 10,
-     "count": 37,
-     "share": 5.92
+     "count": 36,
+     "share": 5.76
     },
     {
      "day": 11,
-     "count": 39,
-     "share": 6.24
+     "count": 38,
+     "share": 6.08
     },
     {
      "day": 12,
-     "count": 43,
-     "share": 6.88
+     "count": 42,
+     "share": 6.72
     },
     {
      "day": 13,
+     "count": 44,
+     "share": 7.04
+    },
+    {
+     "day": 14,
      "count": 45,
      "share": 7.2
     },
     {
-     "day": 14,
-     "count": 46,
-     "share": 7.36
-    },
-    {
      "day": 15,
-     "count": 50,
-     "share": 8.0
+     "count": 49,
+     "share": 7.84
     },
     {
      "day": 16,
-     "count": 54,
-     "share": 8.64
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 17,
-     "count": 54,
-     "share": 8.64
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 18,
-     "count": 54,
-     "share": 8.64
+     "count": 53,
+     "share": 8.48
     },
     {
      "day": 19,
+     "count": 56,
+     "share": 8.96
+    },
+    {
+     "day": 20,
      "count": 57,
      "share": 9.12
     },
     {
-     "day": 20,
+     "day": 21,
      "count": 58,
      "share": 9.28
-    },
-    {
-     "day": 21,
-     "count": 59,
-     "share": 9.44
     }
    ]
   },
@@ -578,18 +578,18 @@
      "opens_frozen": true,
      "replies": 68,
      "meetings": 27,
-     "deals_ae": 21,
-     "engaged": 33,
+     "deals_ae": 25,
+     "engaged": 35,
      "split": {
-      "both": 15,
-      "meet_only": 12,
-      "deal_only": 6,
-      "engaged": 33,
+      "both": 17,
+      "meet_only": 10,
+      "deal_only": 8,
+      "engaged": 35,
       "deal_n8n": 1,
-      "deal_manual": 20,
-      "deal_only_manual": 5,
+      "deal_manual": 24,
+      "deal_only_manual": 7,
       "relanced": 532,
-      "engaged_v2": 16,
+      "engaged_v2": 18,
       "engaged_v1": 17
      },
      "steps": [
@@ -690,15 +690,15 @@
    ],
    "activation": {
     "meet": 36,
-    "deal": 31,
-    "both": 22,
-    "meet_only": 14,
-    "deal_only": 9,
-    "activated": 45,
+    "deal": 35,
+    "both": 24,
+    "meet_only": 12,
+    "deal_only": 11,
+    "activated": 47,
     "deal_auto": 2,
-    "deal_manual": 29,
-    "deal_only_manual": 8,
-    "activated_v2": 19,
+    "deal_manual": 33,
+    "deal_only_manual": 10,
+    "activated_v2": 21,
     "activated_v1": 26,
     "relanced": 657
    },
@@ -820,8 +820,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 573,
-   "status_note": "573 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 562,
+   "status_note": "562 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
@@ -833,57 +833,57 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 573,
+     "active": 562,
      "status": "EN_COURS",
-     "sent": 921,
+     "sent": 1179,
      "bounced": 0,
-     "opens": 350,
-     "clicks": 11,
-     "opens_emails": 394,
-     "clicks_emails": 12,
+     "opens": 376,
+     "clicks": 12,
+     "opens_emails": 538,
+     "clicks_emails": 16,
      "opens_frozen": false,
-     "replies": 21,
-     "meetings": 15,
-     "deals_ae": 13,
-     "engaged": 20,
+     "replies": 31,
+     "meetings": 17,
+     "deals_ae": 15,
+     "engaged": 23,
      "split": {
-      "both": 8,
-      "meet_only": 7,
-      "deal_only": 5,
-      "engaged": 20,
+      "both": 9,
+      "meet_only": 8,
+      "deal_only": 6,
+      "engaged": 23,
       "deal_n8n": 0,
-      "deal_manual": 13,
-      "deal_only_manual": 5,
+      "deal_manual": 15,
+      "deal_only_manual": 6,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 20
+      "engaged_v1": 23
      },
      "steps": [
       {
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 613,
-       "opens": 324,
+       "opens": 325,
        "clicks": 11
       },
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 308,
-       "opens": 70,
-       "clicks": 1
+       "sent": 566,
+       "opens": 213,
+       "clicks": 5
       }
      ],
      "by_owner": [
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 4
+       "meetings": 5
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 7
+       "meetings": 8
       },
       {
        "owner_id": "75453551",
@@ -894,17 +894,17 @@
     }
    ],
    "activation": {
-    "meet": 15,
-    "deal": 13,
-    "both": 8,
-    "meet_only": 7,
-    "deal_only": 5,
-    "activated": 20,
+    "meet": 17,
+    "deal": 15,
+    "both": 9,
+    "meet_only": 8,
+    "deal_only": 6,
+    "activated": 23,
     "deal_auto": 0,
-    "deal_manual": 13,
-    "deal_only_manual": 5,
+    "deal_manual": 15,
+    "deal_only_manual": 6,
     "activated_v2": 0,
-    "activated_v1": 20,
+    "activated_v1": 23,
     "relanced": 0
    },
    "reply_curve": [
@@ -935,8 +935,8 @@
     },
     {
      "day": 5,
-     "count": 21,
-     "share": 2.76
+     "count": 31,
+     "share": 4.07
     }
    ]
   }
