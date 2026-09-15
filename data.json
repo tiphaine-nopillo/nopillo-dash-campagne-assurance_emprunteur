@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-15T09:31:45.196162+00:00",
+  "generated_at": "2026-09-15T09:58:39.448705+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -837,12 +837,12 @@
      "status": "EN_COURS",
      "sent": 916,
      "bounced": 0,
-     "opens": 347,
+     "opens": 350,
      "clicks": 11,
-     "opens_emails": 386,
+     "opens_emails": 391,
      "clicks_emails": 12,
      "opens_frozen": false,
-     "replies": 19,
+     "replies": 21,
      "meetings": 15,
      "deals_ae": 13,
      "engaged": 20,
@@ -870,7 +870,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 303,
-       "opens": 62,
+       "opens": 67,
        "clicks": 1
       }
      ],
@@ -935,8 +935,8 @@
     },
     {
      "day": 5,
-     "count": 19,
-     "share": 2.5
+     "count": 21,
+     "share": 2.76
     }
    ]
   }
