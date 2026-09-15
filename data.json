@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-15T18:52:02.615233+00:00",
+  "generated_at": "2026-09-15T22:04:13.445827+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -106,19 +106,19 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 97,
+   "meet": 98,
    "deal": 101,
    "both": 65,
-   "meet_only": 32,
+   "meet_only": 33,
    "deal_only": 36,
-   "activated": 133,
+   "activated": 134,
    "deal_auto": 12,
    "deal_manual": 89,
    "deal_only_manual": 29,
-   "sum_cells": 133,
+   "sum_cells": 134,
    "overlap": 0,
    "activated_v2": 39,
-   "activated_v1": 94
+   "activated_v1": 95
   },
   "relanced": 1070
  },
@@ -576,7 +576,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies": 68,
+     "replies": 69,
      "meetings": 27,
      "deals_ae": 27,
      "engaged": 37,
@@ -820,8 +820,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 561,
-   "status_note": "561 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 559,
+   "status_note": "559 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
@@ -833,30 +833,30 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 561,
+     "active": 559,
      "status": "EN_COURS",
      "sent": 1191,
      "bounced": 0,
-     "opens": 386,
-     "clicks": 12,
-     "opens_emails": 570,
-     "clicks_emails": 16,
+     "opens": 393,
+     "clicks": 13,
+     "opens_emails": 581,
+     "clicks_emails": 17,
      "opens_frozen": false,
-     "replies": 33,
-     "meetings": 17,
+     "replies": 34,
+     "meetings": 18,
      "deals_ae": 15,
-     "engaged": 23,
+     "engaged": 24,
      "split": {
       "both": 9,
-      "meet_only": 8,
+      "meet_only": 9,
       "deal_only": 6,
-      "engaged": 23,
+      "engaged": 24,
       "deal_n8n": 0,
       "deal_manual": 15,
       "deal_only_manual": 6,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 23
+      "engaged_v1": 24
      },
      "steps": [
       {
@@ -870,15 +870,15 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 245,
-       "clicks": 5
+       "opens": 256,
+       "clicks": 6
       }
      ],
      "by_owner": [
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 5
+       "meetings": 6
       },
       {
        "owner_id": "650299108",
@@ -894,17 +894,17 @@
     }
    ],
    "activation": {
-    "meet": 17,
+    "meet": 18,
     "deal": 15,
     "both": 9,
-    "meet_only": 8,
+    "meet_only": 9,
     "deal_only": 6,
-    "activated": 23,
+    "activated": 24,
     "deal_auto": 0,
     "deal_manual": 15,
     "deal_only_manual": 6,
     "activated_v2": 0,
-    "activated_v1": 23,
+    "activated_v1": 24,
     "relanced": 0
    },
    "reply_curve": [
@@ -935,8 +935,8 @@
     },
     {
      "day": 5,
-     "count": 33,
-     "share": 4.34
+     "count": 34,
+     "share": 4.47
     }
    ]
   }
