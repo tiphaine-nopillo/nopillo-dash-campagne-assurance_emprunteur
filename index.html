@@ -265,6 +265,11 @@
       <div class="recon" id="actRecon"></div>
       <div class="split-bar" id="actBar"></div>
       <div class="bsub" id="actNote" style="margin-top:12px"></div>
+      <div id="waveWrap" style="display:none">
+        <div class="rlab">Origine de l'activation — <strong>envoi initial contre relance</strong></div>
+        <div class="eq" id="waveEq"></div>
+        <div class="bsub" id="waveNote" style="margin-top:12px"></div>
+      </div>
     </div>
 
     <!-- NIVEAU 2 -->
@@ -322,6 +327,23 @@
         <tbody></tbody></table></div>
     </div>
 
+    <div class="block" id="relanceBlock" style="display:none">
+      <div class="bhead"><div>
+        <h3 class="btitle">Effet des relances, par cellule<span class="src">vague 2</span></h3>
+        <div class="bsub">
+          Une relance n'est <strong>pas une cohorte</strong> : les contacts relancés étaient déjà
+          dans le dénominateur de leur batch. Chacun dispose d'une seconde fenêtre d'attribution
+          de 21 jours, ouverte à la date de sa relance. Les colonnes vague 1 et vague 2 sont
+          <strong>disjointes</strong> et leur somme fait le total activé.
+        </div>
+      </div></div>
+      <div class="twrap"><table id="tRelance">
+        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
+          <th>Relancés</th><th>Activés vague 1</th><th>Activés vague 2</th>
+          <th>Total activés</th><th>Taux vague 2</th></tr></thead>
+        <tbody></tbody></table></div>
+    </div>
+
     <div class="two">
       <div class="block">
         <div class="bhead"><div><h3 class="btitle">Taux d'activation par cohorte</h3>
@@ -366,11 +388,13 @@
         <tr><td>Réponses</td><td>contact.hs_sales_email_last_replied</td>
           <td>Filtré à partir de la date d'envoi du batch. Date de dernière réponse, pas de la première.</td></tr>
         <tr><td>RDV</td><td>MEETING_EVENT · owner ∈ {Clara, Lilian, Mathieu}</td>
-          <td>Associé aux contacts de la liste, postérieur à l'envoi, intitulé contenant « emprunteur ». Propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
+          <td>Associé aux contacts de la liste, dans la fenêtre d'attribution, intitulé contenant « emprunteur ». Propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
         <tr><td>Simulations entamées</td><td>DEAL · pipeline 3817233652</td>
           <td><strong>Libellé imprécis, assumé.</strong> Le pipe est alimenté de <strong>deux</strong> façons : n8n remonte les statuts du partenaire — là, le client est réellement entré dans le simulateur — et les commerciaux créent des fiches à la main. Sur les 44 contacts comptés, 33 le sont via une transaction manuelle, qui atteste qu'un commercial a ouvert une fiche et non qu'un client a simulé. Le mot « simulation » ne vaut strictement que pour la part n8n, affichée partout à côté du total.</td></tr>
         <tr><td>Clients activés</td><td>MEETING_EVENT ∪ DEAL</td>
           <td>Union en contacts uniques : RDV seul, simulation seule, ou les deux. Un contact avec RDV et dossier compte une fois. Le total campagne est calculé sur des identifiants de contact par le collecteur, jamais par addition des cellules.</td></tr>
+        <tr><td>Vague d'activation</td><td>appartenance à une liste de relance</td>
+          <td>Un contact relancé dispose de deux fenêtres de 21 jours : celle de son batch initial et celle de sa relance. L'événement est étiqueté v1 ou v2 selon la fenêtre dans laquelle il tombe. Le rattachement d'un contact relancé à sa cohorte est <strong>calculé</strong> par croisement avec les listes de cellules, jamais déclaré en dur : les listes de relance sont construites sur un statut de séquence, pas sur l'appartenance à un batch.</td></tr>
         <tr><td>Statut du batch</td><td>contact.hs_sequences_is_enrolled</td>
           <td>Dérivé, jamais saisi. Une cellule sans contact encore enrôlé a fini d'envoyer.</td></tr>
       </tbody></table></div>
@@ -386,35 +410,41 @@
       <div class="twrap"><table class="dt"><tbody>
         <tr><td>Contacts ciblés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">niveau 1</span></td>
           <td>union dédupliquée des listes de cohorte</td>
-          <td>Pas la somme des cellules : un contact ciblé dans deux batchs ne compte qu'une fois.</td></tr>
+          <td>Pas la somme des cellules : un contact ciblé dans deux batchs ne compte qu'une fois. Les contacts relancés n'y sont <strong>pas</strong> ajoutés : ils y étaient déjà.</td></tr>
         <tr><td>Envois</td><td>objets EMAIL au statut SENT ou BOUNCED</td>
           <td>Unité = l'e-mail. Double filtre : la séquence restreint le périmètre, l'appartenance à la liste isole le batch. Une séquence sert plusieurs batchs.</td></tr>
         <tr><td>Ouvertures</td><td>contacts dont <code>hs_sales_email_last_opened</code> ≥ date d'envoi</td>
-          <td>Unité = le contact. Comptées par e-mail, elles dépassaient 100 % des contacts sur une séquence à 3 étapes. Vérifié : 176 contre 172 chez HubSpot.</td></tr>
+          <td>Unité = le contact. <strong>Figées pour les cellules d'août</strong> depuis le 11/09 : la propriété ne garde que la dernière ouverture, et les relances l'écrasaient.</td></tr>
         <tr><td>Clics</td><td>contacts dont <code>hs_sales_email_last_clicked</code> ≥ date d'envoi</td>
-          <td>Unité = le contact. Un seul contact peut générer 13 clics bruts : la dédup est indispensable. Vérifié : 14 contre 13.</td></tr>
+          <td>Unité = le contact. Même gel que les ouvertures sur les cellules d'août.</td></tr>
         <tr><td>Réponses</td><td>contacts dont <code>hs_sales_email_last_replied</code> ≥ date d'envoi</td>
-          <td>Exact : 15 contre 15. Date de la <strong>dernière</strong> réponse, pas de la première.</td></tr>
-        <tr><td>RDV pris</td><td>MEETING_EVENT après l'envoi, intitulé contenant « emprunteur », owner ∈ {Clara, Lilian, Mathieu}</td>
-          <td>Unité = le contact, et non la réunion : 62 objets correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Le filtre d'intitulé est nécessaire, sinon toute réunion des contacts ciblés serait comptée. Le filtre par propriétaire est sans effet au 22/08 — les 62 RDV leur appartiennent déjà — c'est un garde-fou : un RDV posé par quelqu'un d'autre sortira silencieusement du périmètre.</td></tr>
-        <tr><td>Simulations entamées</td><td>DEAL du pipe créés après l'envoi <strong>OU</strong> déplacés d'étape après l'envoi, toutes sources confondues</td>
-          <td>Unité = le contact. Le second terme ne filtre pas les étapes, il capte le mouvement : il rattrape les dossiers antérieurs réactivés par la campagne, invisibles sur la seule date de création. Un dossier de janvier réentré en simulation le 21/08 est correctement attribué au batch du 13.</td></tr>
+          <td>Date de la <strong>dernière</strong> réponse, pas de la première. <strong>Ni bornée ni figée</strong> : ce compteur subit encore l'effet des relances.</td></tr>
+        <tr><td>RDV pris</td><td>MEETING_EVENT dans la fenêtre d'attribution, intitulé contenant « emprunteur », owner ∈ {Clara, Lilian, Mathieu}</td>
+          <td>Unité = le contact, et non la réunion : un contact peut avoir un RDV courtage puis un RDV devis. Le filtre d'intitulé est nécessaire, sinon toute réunion des contacts ciblés serait comptée. <strong>Borne haute ajoutée le 11/09</strong> : avant, un RDV pris des mois après l'envoi restait imputé au batch.</td></tr>
+        <tr><td>Simulations entamées</td><td>DEAL du pipe créés dans la fenêtre <strong>OU</strong> déplacés d'étape dans la fenêtre, toutes sources confondues</td>
+          <td>Unité = le contact. Le second terme ne filtre pas les étapes, il capte le mouvement : il rattrape les dossiers antérieurs réactivés par la campagne, invisibles sur la seule date de création.</td></tr>
         <tr><td>Clients activés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal · niveau 1</span></td>
           <td>RDV seul + simulation seule + RDV et simulation<br>= union dédupliquée MEETING_EVENT ∪ DEAL</td>
-          <td><strong>Somme de trois ensembles disjoints</strong>, et non de deux totaux. C'est un choix de présentation délibéré : les cartes du niveau 1 affichent les trois cas exclusifs, jamais les totaux RDV et simulations, qui se recoupent sur 35 contacts et dont l'addition donnerait 98 activés au lieu de 63. Les totaux restent publiés dans la ligne de réconciliation et dans la matrice du niveau 2. Le collecteur calcule l'union sur les identifiants de contact au niveau de la campagne entière — une addition des six cellules resurcompterait tout contact activé ciblé par deux batchs.</td></tr>
+          <td><strong>Somme de trois ensembles disjoints</strong>, et non de deux totaux. Les cartes du niveau 1 affichent les trois cas exclusifs, jamais les totaux RDV et simulations, qui se recoupent. Les totaux restent publiés dans la ligne de réconciliation et dans la matrice du niveau 2. Le collecteur calcule l'union sur les identifiants de contact au niveau de la campagne entière.</td></tr>
+        <tr><td>Contacts relancés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">carte niveau 1</span></td>
+          <td>union des listes de relance</td>
+          <td><strong>Ne s'ajoute pas au dénominateur.</strong> Un contact relancé était déjà ciblé par son batch. L'ajouter ferait baisser tous les taux sans qu'aucune nouvelle personne n'ait été touchée.</td></tr>
+        <tr><td>Activés par la relance<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">vague 2</span></td>
+          <td>contacts dont l'activation tombe dans la fenêtre de relance ÷ contacts relancés</td>
+          <td><strong>Non comparable à un taux de batch.</strong> Les listes de relance ne contiennent que des contacts non activés : leur dénominateur est à 0 % d'activés par construction. C'est un gain marginal pur.</td></tr>
         <tr><td>Total RDV · Total simulations<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">second rang</span></td>
           <td>RDV seul + les deux · simulation seule + les deux</td>
-          <td>Les chiffres que l'équipe retrouvera en filtrant HubSpot elle-même : 54 RDV et 44 dossiers. Publiés sur un <strong>rang séparé</strong>, avec l'opérateur ∪ et non + : ils se recoupent sur 35 contacts et leur addition donnerait 98 activés. Sans eux, un commercial qui compte 54 RDV dans le CRM face à un chiffre de 19 conclut que le dashboard est faux — et cesse de s'en servir sans le signaler. Garde-fou d'adoption autant qu'indicateur.</td></tr>
+          <td>Les chiffres que l'équipe retrouvera en filtrant HubSpot elle-même. Publiés sur un <strong>rang séparé</strong>, avec l'opérateur ∪ et non + : ils se recoupent. Sans eux, un commercial qui compte les RDV dans le CRM face à un chiffre plus petit conclut que le dashboard est faux — et cesse de s'en servir sans le signaler. Garde-fou d'adoption autant qu'indicateur.</td></tr>
         <tr><td>RDV seul · Simulation seule · RDV et simulation<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">cartes niveau 1</span></td>
           <td>intersection et différences des deux ensembles</td>
-          <td>Sous-ensembles <strong>disjoints</strong> : leur somme fait le total activé, contrairement aux colonnes RDV et Simulations qui se recoupent. « RDV seul » mesure une fuite commerciale — le rendez-vous n'a produit aucun dossier. « Simulation seule » mesure un parcours self-service, sous réserve que la transaction ne soit pas une saisie manuelle : la colonne « deal seul manuel » isole ce cas.</td></tr>
+          <td>Sous-ensembles <strong>disjoints</strong> : leur somme fait le total activé, contrairement aux colonnes RDV et Simulations qui se recoupent. « RDV seul » mesure une fuite commerciale. « Simulation seule » mesure un parcours self-service, sous réserve que la transaction ne soit pas une saisie manuelle.</td></tr>
         <tr><td>Recoupement des cohortes<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">garde-fou</span></td>
           <td>somme des cellules − union des identifiants</td>
-          <td>Publié dans <code>dedup.activation.overlap</code> et affiché sous la décomposition dès qu'il est non nul. Nul au 25/08 : aucun des 2 contacts ciblés dans deux batchs n'est activé. La coïncidence entre somme et union n'est pas une garantie, elle est surveillée.</td></tr>
+          <td>Publié dans <code>dedup.activation.overlap</code> et affiché sous la décomposition dès qu'il est non nul. La coïncidence entre somme et union n'est pas une garantie, elle est surveillée.</td></tr>
         <tr><td>Rattrapage exclu</td><td>DEAL créés entre 15:25 et 15:26 le 06/08</td>
           <td>10 transactions en 20 secondes, mêlant contacts enrôlés et contacts jamais touchés par une séquence : import d'antériorité, pas de l'activité.</td></tr>
-        <tr><td>Fenêtre d'attribution</td><td>J+21 après l'horodatage d'envoi</td>
-          <td>Sans borne de fin, un cumul ouvert monte à chaque rafraîchissement et deux cohortes d'âge différent cessent d'être comparables. Comparaison à l'horodatage exact, pas à la journée : trois dossiers créés le 13/08 à 06:30 sont antérieurs à l'envoi de 09:31 et ne sont pas comptés.</td></tr>
+        <tr><td>Fenêtre d'attribution</td><td>J+21 après le dernier envoi touchant le contact</td>
+          <td>Sans borne de fin, un cumul ouvert monte à chaque rafraîchissement et deux cohortes d'âge différent cessent d'être comparables. Depuis le 11/09, la fenêtre est <strong>par contact</strong> : un contact relancé en a deux, disjointes.</td></tr>
         <tr><td>Taux d'activation<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">graphe niveau 2</span></td>
           <td>clients activés ÷ contacts de la cohorte</td>
           <td>Dénominateur = effectif ciblé du batch, jamais les envois.</td></tr>
@@ -422,15 +452,15 @@
           <td>Plafonne sur le taux de réponse réel, pas à 100 %. Horizon borné aux jours écoulés depuis l'envoi.</td></tr>
         <tr><td>Détail par étape<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">niveau 3</span></td>
           <td>regroupement par objet d'e-mail, compteur borné à 1 par e-mail</td>
-          <td>Seul endroit resté en unité e-mail, pour lire l'usure entre étapes. Colle aux taux HubSpot par étape à 1 point près.</td></tr>
+          <td>Seul endroit resté en unité e-mail, pour lire l'usure entre étapes.</td></tr>
         <tr><td>Verdict A/B</td><td>test z de proportions bilatéral, seuil 5 %</td>
           <td>Aucun gagnant désigné si p &gt; 0,05, quel que soit l'écart observé.</td></tr>
         <tr><td>Seuil détectable</td><td>2,80 × √(p̄(1−p̄)(1/n<sub>A</sub>+1/n<sub>B</sub>))</td>
           <td>Écart minimum décelable à 80 % de puissance. Tout écart inférieur est indistinguable du hasard.</td></tr>
-        <tr><td>Statut de la cohorte</td><td>contacts encore enrôlés dont la date d'enrôlement tombe dans les 48 h suivant l'envoi</td>
-          <td>Dérivé, jamais saisi. La fenêtre de date évite de compter un contact actif dans une autre séquence.</td></tr>
-        <tr><td>Répartition par propriétaire</td><td>partition des contacts par propriétaire, un décompte par partition</td>
-          <td>L'API CRM Search ne renvoie pas les associations : lire le champ donnait un décompte vide. Attention, il s'agit du propriétaire du <strong>contact</strong>, alors que le périmètre des RDV filtre sur celui de la <strong>réunion</strong> : les deux vues peuvent diverger.</td></tr>
+        <tr><td>Statut de la cohorte</td><td>contact.hs_sequences_is_enrolled ∩ hs_latest_sequence_enrolled</td>
+          <td>Dérivé, jamais saisi. <strong>Réserve depuis les relances</strong> : la propriété ne garde que la dernière séquence, donc un contact relancé sort du décompte de sa cellule d'origine.</td></tr>
+        <tr><td>Répartition par propriétaire</td><td>propriétaire de la réunion, premier RDV du contact</td>
+          <td>L'API CRM Search ne renvoie pas les associations : lire le champ donnait un décompte vide. Il s'agit du propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
       </tbody></table></div>
     </div>
 
@@ -451,39 +481,48 @@
         comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
       </div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre RDV</span></td>
+          <td>cumul ouvert → J+21</td>
+          <td><strong>Rupture.</strong> Le filtre des réunions n'avait qu'une borne de début : un RDV pris des mois après l'envoi restait imputé au batch d'origine, alors que les dossiers étaient bornés depuis le 22/08. Mesuré en direct — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09. Les compteurs de RDV d'août antérieurs à cette date ne sont pas comparables.</td></tr>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Vagues</span></td>
+          <td>— → v1 / v2</td>
+          <td><strong>Nouveau, sans rupture.</strong> Un contact relancé dispose d'une seconde fenêtre de 21 jours ouverte à la date de sa relance. Le total activé ne change pas de définition : seule sa décomposition par vague est ajoutée. Le dénominateur ne bouge pas — un contact relancé était déjà ciblé.</td></tr>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Ouvertures et clics</span></td>
+          <td>recalculés → figés pour août</td>
+          <td><strong>Gel.</strong> Les propriétés HubSpot ne gardent que la dernière ouverture, écrasée à chaque nouvel e-mail : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août à la hausse, sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Les six cellules d'août sont figées au relevé du 11/09 11h30. Ce relevé est postérieur de 2 h à l'envoi des relances : les valeurs sont surestimées d'une vingtaine d'ouvertures.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Vocabulaire</span></td>
           <td>engagement → activation</td>
-          <td><strong>Aucune rupture de série.</strong> Le calcul est identique au 22/08 : même union RDV ∪ dossier, mêmes sources, mêmes filtres. Seuls les libellés changent, pour tenir le langage retenu par l'équipe — « clients activés », « RDV pris », « simulations entamées ». Les valeurs d'avant et d'après sont comparables.</td></tr>
+          <td><strong>Aucune rupture de série.</strong> Le calcul est identique au 22/08 : même union RDV ∪ dossier, mêmes sources, mêmes filtres. Seuls les libellés changent, pour tenir le langage retenu par l'équipe.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Cartes niveau 1</span></td>
           <td>RDV · simulations  →  RDV seul · simu seule · les deux</td>
-          <td><strong>Rupture de lecture, aucune rupture de calcul.</strong> Les cartes affichaient deux totaux qui se recoupent (54 et 44) : côte à côte sur une grille de cartes plates, elles invitaient à une addition qui donnait 98 activés au lieu de 63. Les six chiffres d'activation sont désormais regroupés dans un bloc dédié, sur deux rangs : les trois cas <strong>exclusifs</strong> qui s'additionnent, puis les deux <strong>totaux</strong> qui se recoupent. La règle de lecture est portée par la structure et par les opérateurs, + contre ∪, plus par la mémoire de qui regarde. Attention en réunion : un chiffre nommé « RDV » vaut 54 ou 19 selon le rang — les deux sont publiés, jamais l'un sans l'autre.</td></tr>
+          <td><strong>Rupture de lecture, aucune rupture de calcul.</strong> Les cartes affichaient deux totaux qui se recoupent : côte à côte sur une grille de cartes plates, elles invitaient à une addition qui surestimait le total. Les six chiffres d'activation sont désormais regroupés dans un bloc dédié, sur deux rangs : les trois cas <strong>exclusifs</strong> qui s'additionnent, puis les deux <strong>totaux</strong> qui se recoupent.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Total campagne</span></td>
           <td>somme des cellules → union des identifiants</td>
-          <td><strong>Correction d'un mode de défaillance silencieux.</strong> Les totaux d'activation étaient obtenus en additionnant les six cellules — juste uniquement tant qu'aucun contact activé n'est ciblé par deux batchs. Le collecteur calcule maintenant l'union sur les identifiants de contact et publie l'écart. Aucun impact sur les valeurs au 25/08 : l'écart est nul.</td></tr>
+          <td><strong>Correction d'un mode de défaillance silencieux.</strong> Les totaux d'activation étaient obtenus en additionnant les cellules — juste uniquement tant qu'aucun contact activé n'est ciblé par deux batchs. Le collecteur calcule maintenant l'union sur les identifiants de contact et publie l'écart.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Données embarquées</span></td>
           <td>seed du 18/08 → seed du 25/08</td>
           <td><strong>Correction d'un mode de défaillance silencieux.</strong> La copie de secours intégrée à <code>index.html</code> datait du 18 août et portait encore l'ancien KPI principal. En cas d'échec de chargement de <code>data.json</code>, le dashboard affichait des chiffres périmés sans autre signal que la mention « données embarquées ».</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
           <td>simulations → engagement</td>
-          <td><strong>Rupture.</strong> L'ancien KPI filtrait sur des étapes que n8n n'alimente pas : il affichait un chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. Aucune comparaison possible avec les valeurs antérieures au 22/08.</td></tr>
+          <td><strong>Rupture.</strong> L'ancien KPI filtrait sur des étapes que n8n n'alimente pas : il affichait un chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
           <td>réunions → contacts uniques</td>
-          <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures et aux clics.</td></tr>
+          <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Origine des deals</span></td>
           <td>affirmation retirée → source affichée</td>
-          <td><strong>Correction d'une erreur de méthodo.</strong> Ce dashboard affirmait que le pipe courtage n'était alimenté que par le partenaire, jamais par les commerciaux. C'est faux : 40 transactions sur 77 sont créées à la main dans HubSpot. L'affirmation est retirée et la répartition par source est désormais affichée. Le KPI, lui, est inchangé — il ne filtrait déjà pas sur la source.</td></tr>
+          <td><strong>Correction d'une erreur de méthodo.</strong> Ce dashboard affirmait que le pipe courtage n'était alimenté que par le partenaire. C'est faux : 40 transactions sur 77 sont créées à la main dans HubSpot.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Répartition</span></td>
           <td>propriétaire du contact → de la réunion</td>
-          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous, simplement parce qu'ils possédaient les fiches. Les deals ne sont plus répartis du tout — créés par n8n, ils n'ont pas de propriétaire.</td></tr>
+          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
           <td>cumul ouvert → fenêtre J+21</td>
-          <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre.</td></tr>
+          <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre. Appliqué aux dossiers seulement : les RDV ont attendu le 11/09.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Matrice</span></td>
           <td>—  →  RDV × dossier</td>
           <td>Nouveau. Sépare la fuite commerciale du parcours self-service.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre RDV</span></td>
           <td>—  →  3 propriétaires habilités</td>
-          <td>Sans effet sur les chiffres actuels : les 62 RDV leur appartiennent déjà. Garde-fou pour les cohortes suivantes.</td></tr>
+          <td>Sans effet sur les chiffres du moment : les RDV leur appartiennent déjà. Garde-fou pour les cohortes suivantes.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre</span></td>
           <td>1 cohorte → 2 cohortes</td>
           <td>Le batch du 13 août existait mais n'était pas déclaré : le dashboard affichait environ la moitié de la production réelle du courtage AE.</td></tr>
@@ -494,6 +533,8 @@
       <h3 class="btitle">Ce que ce dashboard refuse de faire</h3>
       <div class="bsub">
         · <strong>Attribuer les e-mails par séquence.</strong> Les séquences sont réutilisées entre batchs.<br>
+        · <strong>Compter une relance comme une cohorte.</strong> Ses contacts sont déjà dans le dénominateur.<br>
+        · <strong>Comparer le taux d'une relance à celui d'un batch.</strong> La relance ne cible que des non-activés.<br>
         · <strong>Additionner les cohortes</strong> sans vérifier leur recoupement.<br>
         · <strong>Additionner RDV et simulations.</strong> L'activation est une union, jamais une somme.<br>
         · <strong>Additionner les cellules</strong> pour produire un total en contacts uniques.<br>
@@ -512,690 +553,116 @@
 <script type="application/json" id="seed">{
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-08-25T06:03:55.528048+00:00",
+  "generated_at": "2026-09-15T09:31:45.196162+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
-  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21",
+  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21 par contact",
   "attribution_note": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
-  "overlap_note": "Recoupement entre cohortes : 2 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
-  "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
+  "relance_note": "Vague 2 du 11/09/2026 : 1 070 contacts relancés sur 4 listes, chacune avec sa propre séquence. RATTACHEMENT CALCULÉ, non déclaratif. Un contact relancé n'est PAS une nouvelle cohorte — il est déjà dans le dénominateur de son batch. FENÊTRE PAR CONTACT : deux fenêtres de 21 jours, celle du batch initial et celle de la relance ; l'événement est étiqueté v1 ou v2. BIAIS DE SÉLECTION ASSUMÉ : les 4 listes ne contiennent QUE des contacts non activés, le taux de la vague 2 n'est donc PAS comparable à celui d'un batch initial.",
+  "meeting_window_note": "Depuis le 11/09, les RDV sont bornés à J+21 comme les dossiers. Avant ce correctif, le filtre n'avait qu'une borne basse : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09.",
+  "attribution_window_note": "ATTRIB_DAYS = 21, hérité et non calibré. Les courbes de réponse cumulées montaient encore à J+21 sur les deux batchs d'août. La fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus juste. Non modifié : changer la fenêtre réécrit rétroactivement tout l'historique publié.",
+  "frozen_note": "Ouvertures et clics FIGÉS pour les cellules d'août, relevés le 11/09/2026 à 11h30 Paris. Les propriétés HubSpot ne gardent que la dernière date, écrasée à chaque nouvel e-mail : les 1 070 relancés auraient fait dériver les compteurs d'août. RÉSERVE : relevé postérieur de 2 h à l'envoi des relances, donc surestimé d'une vingtaine d'ouvertures.",
+  "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
+  "fix_note": "COPIE DE SECOURS DU 15/09/2026. Si cette mention apparaît avec « données embarquées » dans l'en-tête, data.json n'a pas pu être chargé et les chiffres affichés sont figés à cette date."
  },
  "kpis": [
-  {
-   "key": "sent",
-   "label": "Envois",
-   "source": "email",
-   "base": "enrolled"
-  },
-  {
-   "key": "opens",
-   "label": "Ouvertures",
-   "source": "contact",
-   "base": "enrolled",
-   "note": "Contacts uniques, via hs_sales_email_last_opened postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
-  },
-  {
-   "key": "clicks",
-   "label": "Clics",
-   "source": "contact",
-   "base": "enrolled",
-   "note": "Contacts uniques, via hs_sales_email_last_clicked postérieur à l'envoi. Comptés par e-mail, ils dépassaient 100 % des contacts sur une séquence à 3 étapes."
-  },
-  {
-   "key": "replies",
-   "label": "Réponses",
-   "source": "reply",
-   "base": "enrolled"
-  },
-  {
-   "key": "meetings",
-   "label": "RDV pris",
-   "source": "meeting",
-   "base": "enrolled",
-   "note": "Contacts uniques ayant pris un rendez-vous, et non réunions : 62 objets MEETING_EVENT correspondent à 51 contacts, certains ayant un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu."
-  },
-  {
-   "key": "deals_ae",
-   "label": "Simulations entamées",
-   "source": "deal",
-   "base": "enrolled",
-   "note": "Contacts uniques associés à une transaction du pipe courtage AE créée après l'envoi, ou déplacée d'étape après l'envoi. LIBELLÉ IMPRÉCIS ASSUMÉ : le pipe est alimenté à la fois par n8n, qui remonte un parcours réel sur le simulateur, et à la main par les commerciaux. Au 25/08, sur les 44 contacts comptés, 33 le sont via une transaction créée à la main — elle atteste qu'un commercial a ouvert une fiche, pas qu'un client a simulé. « Simulation entamée » ne vaut strictement que pour la part n8n, affichée partout à côté du total. Aucun filtre sur les étapes : les transactions remontées par n8n sautent des étapes, une étape absente ne prouve rien."
-  },
-  {
-   "key": "engaged",
-   "label": "Clients activés",
-   "source": "union",
-   "base": "enrolled",
-   "note": "Union dédupliquée des contacts avec RDV et des contacts avec dossier courtage AE : RDV seul, simulation seule, ou les deux. Jamais la somme — 35 contacts ont les deux, les additionner surestimerait de 56 %. Calculé au niveau campagne sur les identifiants de contact, pas par addition des cellules."
-  }
+  {"key":"sent","label":"Envois","source":"email","base":"enrolled"},
+  {"key":"opens","label":"Ouvertures","source":"contact","base":"enrolled","note":"Contacts uniques, via hs_sales_email_last_opened postérieur à l'envoi. Figées pour les cellules d'août depuis le 11/09."},
+  {"key":"clicks","label":"Clics","source":"contact","base":"enrolled","note":"Contacts uniques, via hs_sales_email_last_clicked postérieur à l'envoi. Figés pour les cellules d'août depuis le 11/09."},
+  {"key":"replies","label":"Réponses","source":"reply","base":"enrolled"},
+  {"key":"meetings","label":"RDV pris","source":"meeting","base":"enrolled","note":"Contacts uniques ayant pris un rendez-vous, et non réunions : un contact peut avoir un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu, dans la fenêtre d'attribution du contact."},
+  {"key":"deals_ae","label":"Simulations entamées","source":"deal","base":"enrolled","note":"Contacts uniques associés à une transaction du pipe courtage AE créée ou déplacée d'étape dans la fenêtre. LIBELLÉ IMPRÉCIS ASSUMÉ : le pipe est alimenté à la fois par n8n, qui remonte un parcours réel, et à la main par les commerciaux. « Simulation entamée » ne vaut strictement que pour la part n8n, affichée partout à côté du total. Aucun filtre sur les étapes : les transactions remontées par n8n en sautent, une étape absente ne prouve rien."},
+  {"key":"engaged","label":"Clients activés","source":"union","base":"enrolled","note":"Union dédupliquée des contacts avec RDV et des contacts avec dossier courtage AE : RDV seul, simulation seule, ou les deux. Jamais la somme. Calculé au niveau campagne sur les identifiants de contact, pas par addition des cellules."}
  ],
- "audience_labels": {
-  "RP": "Résidence principale",
-  "LMNP": "LMNP"
- },
- "stats_config": {
-  "min_n_for_rate": 100,
-  "alpha": 0.05,
-  "power": 0.8
- },
+ "audience_labels": {"RP":"Résidence principale","LMNP":"LMNP","V3":"Clients V3 éligibles AE"},
+ "stats_config": {"min_n_for_rate":100,"alpha":0.05,"power":0.8},
+ "relances": [
+  {"list_id":"14880","sequence_id":"859442418","sent_at":"2026-09-11T07:30:00Z","label":"Relance · toujours pas éligibles","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Toujours pas éligibles"},
+  {"list_id":"14876","sequence_id":"858857721","sent_at":"2026-09-11T07:30:00Z","label":"Relance · déjà éligibles au batch précédent","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Déjà éligible batch précédent"},
+  {"list_id":"14872","sequence_id":"859230400","sent_at":"2026-09-11T07:30:00Z","label":"Relance · page erreur, éligibles aujourd'hui","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Page erreur - Eligibles auj"},
+  {"list_id":"14863","sequence_id":"860100852","sent_at":"2026-09-11T07:30:00Z","label":"Relance · campagne interrompue","list_name":"20260906 - Total shooté campagne AE interrompus"}
+ ],
  "dedup": {
-  "contacts": 1323,
-  "activation": {
-   "meet": 54,
-   "deal": 44,
-   "both": 35,
-   "meet_only": 19,
-   "deal_only": 9,
-   "activated": 63,
-   "deal_auto": 11,
-   "deal_manual": 33,
-   "deal_only_manual": 3,
-   "sum_cells": 63,
-   "overlap": 0,
-   "_derived": "Dérivé de la somme des cellules, en attente du prochain run de refresh.py qui recalculera ce bloc par union d'identifiants de contact."
-  }
+  "contacts": 2075,
+  "relanced": 1070,
+  "activation": {"meet":95,"deal":90,"both":61,"meet_only":34,"deal_only":29,"activated":124,"deal_auto":12,"deal_manual":78,"deal_only_manual":22,"sum_cells":124,"overlap":0,"activated_v2":33,"activated_v1":91}
  },
  "cohorts": [
   {
-   "id": "2026-08-05",
-   "label": "Batch du 5 août 2026",
-   "sent_at": "2026-08-05T08:31:00Z",
-   "status": "TERMINE",
-   "active": 0,
-   "status_note": null,
-   "ab_test": true,
-   "ab_note": null,
-   "cells": [
-    {
-     "list_id": "14319",
-     "list_name": "OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A",
-     "sequence_id": "841303267",
-     "audience": "RP",
-     "version": "A",
-     "enrolled": 263,
-     "active": 0,
-     "status": "TERMINE",
-     "sent": 723,
-     "bounced": 1,
-     "opens": 176,
-     "clicks": 5,
-     "opens_emails": 376,
-     "clicks_emails": 5,
-     "replies": 30,
-     "meetings": 14,
-     "deals_ae": 12,
-     "engaged": 16,
-     "split": {
-      "both": 10,
-      "meet_only": 4,
-      "deal_only": 2,
-      "engaged": 16,
-      "deal_n8n": 2,
-      "deal_manual": 10,
-      "deal_only_manual": 1
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 474,
-       "opens": 235,
-       "clicks": 1
-      },
-      {
-       "order": 2,
-       "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 249,
-       "opens": 141,
-       "clicks": 4
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 3
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 8
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 3
-      }
-     ]
-    },
-    {
-     "list_id": "14334",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026",
-     "sequence_id": "841303268",
-     "audience": "RP",
-     "version": "B",
-     "enrolled": 264,
-     "active": 0,
-     "status": "TERMINE",
-     "sent": 733,
-     "bounced": 4,
-     "opens": 178,
-     "clicks": 14,
-     "opens_emails": 357,
-     "clicks_emails": 16,
-     "replies": 28,
-     "meetings": 11,
-     "deals_ae": 8,
-     "engaged": 13,
-     "split": {
-      "both": 6,
-      "meet_only": 5,
-      "deal_only": 2,
-      "engaged": 13,
-      "deal_n8n": 1,
-      "deal_manual": 7,
-      "deal_only_manual": 1
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "L’économie que les propriétaires immobiliers ignorent",
-       "sent": 254,
-       "opens": 131,
-       "clicks": 1
-      },
-      {
-       "order": 2,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 246,
-       "opens": 134,
-       "clicks": 8
-      },
-      {
-       "order": 3,
-       "subject": "Dernière chance pour renégocier votre assurance emprunteur",
-       "sent": 233,
-       "opens": 92,
-       "clicks": 7
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 1
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 3
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 7
-      }
-     ]
-    },
-    {
-     "list_id": "14336",
-     "list_name": "OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A",
-     "sequence_id": "841303243",
-     "audience": "LMNP",
-     "version": "A",
-     "enrolled": 51,
-     "active": 0,
-     "status": "TERMINE",
-     "sent": 146,
-     "bounced": 0,
-     "opens": 38,
-     "clicks": 2,
-     "opens_emails": 85,
-     "clicks_emails": 2,
-     "replies": 3,
-     "meetings": 3,
-     "deals_ae": 6,
-     "engaged": 6,
-     "split": {
-      "both": 3,
-      "meet_only": 0,
-      "deal_only": 3,
-      "engaged": 6,
-      "deal_n8n": 4,
-      "deal_manual": 2,
-      "deal_only_manual": 0
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 95,
-       "opens": 53,
-       "clicks": 1
-      },
-      {
-       "order": 2,
-       "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 50,
-       "opens": 31,
-       "clicks": 1
-      },
-      {
-       "order": 3,
-       "subject": "Re : Rapide point sur votre assurance emprunteur",
-       "sent": 1,
-       "opens": 1,
-       "clicks": 0
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 2
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 1
-      }
-     ]
-    },
-    {
-     "list_id": "14337",
-     "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B",
-     "sequence_id": "841252078",
-     "audience": "LMNP",
-     "version": "B",
-     "enrolled": 47,
-     "active": 0,
-     "status": "TERMINE",
-     "sent": 129,
-     "bounced": 0,
-     "opens": 37,
-     "clicks": 1,
-     "opens_emails": 68,
-     "clicks_emails": 2,
-     "replies": 9,
-     "meetings": 8,
-     "deals_ae": 6,
-     "engaged": 9,
-     "split": {
-      "both": 5,
-      "meet_only": 3,
-      "deal_only": 1,
-      "engaged": 9,
-      "deal_n8n": 3,
-      "deal_manual": 3,
-      "deal_only_manual": 0
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Economisez jusqu’à 5000€ sur votre assurance emprunteur",
-       "sent": 46,
-       "opens": 23,
-       "clicks": 0
-      },
-      {
-       "order": 2,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 45,
-       "opens": 27,
-       "clicks": 1
-      },
-      {
-       "order": 3,
-       "subject": "Dernière chance pour renégocier votre assurance emprunteur",
-       "sent": 37,
-       "opens": 17,
-       "clicks": 1
-      },
-      {
-       "order": 4,
-       "subject": "Re : Renégociation assurance emprunteur",
-       "sent": 1,
-       "opens": 1,
-       "clicks": 0
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 2
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 5
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 1
-      }
-     ]
-    }
+   "id":"2026-08-05","label":"Batch du 5 août 2026","sent_at":"2026-08-05T08:31:00Z",
+   "status":"TERMINE","active":0,"status_note":null,"ab_test":true,"ab_note":null,"targeting":null,
+   "cells":[
+    {"list_id":"14319","list_name":"OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A","sequence_id":"841303267","audience":"RP","version":"A","enrolled":263,"active":0,"status":"TERMINE","sent":723,"bounced":1,"opens":192,"clicks":5,"opens_emails":379,"clicks_emails":5,"opens_frozen":true,"replies":40,"meetings":17,"deals_ae":19,"engaged":23,
+     "split":{"both":13,"meet_only":4,"deal_only":6,"engaged":23,"deal_n8n":2,"deal_manual":17,"deal_only_manual":5,"relanced":173,"engaged_v2":6,"engaged_v1":17},
+     "steps":[{"order":1,"subject":"Renégociation assurance emprunteur","sent":474,"opens":237,"clicks":1},{"order":2,"subject":"Rapide point sur votre assurance emprunteur","sent":249,"opens":143,"clicks":4}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":3},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":9},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":5}]},
+    {"list_id":"14334","list_name":"OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026","sequence_id":"841303268","audience":"RP","version":"B","enrolled":264,"active":0,"status":"TERMINE","sent":733,"bounced":4,"opens":187,"clicks":17,"opens_emails":360,"clicks_emails":16,"opens_frozen":true,"replies":46,"meetings":15,"deals_ae":15,"engaged":20,
+     "split":{"both":10,"meet_only":5,"deal_only":5,"engaged":20,"deal_n8n":1,"deal_manual":14,"deal_only_manual":4,"relanced":165,"engaged_v2":7,"engaged_v1":13},
+     "steps":[{"order":1,"subject":"L'économie que les propriétaires immobiliers ignorent","sent":254,"opens":131,"clicks":1},{"order":2,"subject":"Renégociation assurance emprunteur","sent":246,"opens":135,"clicks":8},{"order":3,"subject":"Dernière chance pour renégocier votre assurance emprunteur","sent":233,"opens":95,"clicks":7}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":1},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":9}]},
+    {"list_id":"14336","list_name":"OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A","sequence_id":"841303243","audience":"LMNP","version":"A","enrolled":51,"active":0,"status":"TERMINE","sent":146,"bounced":0,"opens":39,"clicks":2,"opens_emails":85,"clicks_emails":2,"opens_frozen":true,"replies":7,"meetings":4,"deals_ae":6,"engaged":7,
+     "split":{"both":3,"meet_only":1,"deal_only":3,"engaged":7,"deal_n8n":4,"deal_manual":2,"deal_only_manual":0,"relanced":42,"engaged_v2":1,"engaged_v1":6},
+     "steps":[{"order":1,"subject":"Renégociation assurance emprunteur","sent":95,"opens":53,"clicks":1},{"order":2,"subject":"Rapide point sur votre assurance emprunteur","sent":50,"opens":31,"clicks":1},{"order":3,"subject":"Re : Rapide point sur votre assurance emprunteur","sent":1,"opens":1,"clicks":0}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":2},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":2}]},
+    {"list_id":"14337","list_name":"OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B","sequence_id":"841252078","audience":"LMNP","version":"B","enrolled":47,"active":0,"status":"TERMINE","sent":129,"bounced":0,"opens":38,"clicks":1,"opens_emails":70,"clicks_emails":2,"opens_frozen":true,"replies":13,"meetings":8,"deals_ae":6,"engaged":9,
+     "split":{"both":5,"meet_only":3,"deal_only":1,"engaged":9,"deal_n8n":3,"deal_manual":3,"deal_only_manual":0,"relanced":33,"engaged_v2":0,"engaged_v1":9},
+     "steps":[{"order":1,"subject":"Economisez jusqu'à 5000€ sur votre assurance emprunteur","sent":46,"opens":24,"clicks":0},{"order":2,"subject":"Renégociation assurance emprunteur","sent":45,"opens":28,"clicks":1},{"order":3,"subject":"Dernière chance pour renégocier votre assurance emprunteur","sent":37,"opens":17,"clicks":1},{"order":4,"subject":"Re : Renégociation assurance emprunteur","sent":1,"opens":1,"clicks":0}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":2},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":1}]}
    ],
-   "reply_curve": [
-    {
-     "day": 0,
-     "count": 6,
-     "share": 0.96
-    },
-    {
-     "day": 1,
-     "count": 12,
-     "share": 1.92
-    },
-    {
-     "day": 2,
-     "count": 14,
-     "share": 2.24
-    },
-    {
-     "day": 3,
-     "count": 14,
-     "share": 2.24
-    },
-    {
-     "day": 4,
-     "count": 20,
-     "share": 3.2
-    },
-    {
-     "day": 5,
-     "count": 23,
-     "share": 3.68
-    },
-    {
-     "day": 6,
-     "count": 24,
-     "share": 3.84
-    },
-    {
-     "day": 7,
-     "count": 27,
-     "share": 4.32
-    },
-    {
-     "day": 8,
-     "count": 30,
-     "share": 4.8
-    },
-    {
-     "day": 9,
-     "count": 31,
-     "share": 4.96
-    },
-    {
-     "day": 10,
-     "count": 42,
-     "share": 6.72
-    },
-    {
-     "day": 11,
-     "count": 46,
-     "share": 7.36
-    },
-    {
-     "day": 12,
-     "count": 50,
-     "share": 8.0
-    },
-    {
-     "day": 13,
-     "count": 54,
-     "share": 8.64
-    },
-    {
-     "day": 14,
-     "count": 55,
-     "share": 8.8
-    },
-    {
-     "day": 15,
-     "count": 60,
-     "share": 9.6
-    },
-    {
-     "day": 16,
-     "count": 65,
-     "share": 10.4
-    },
-    {
-     "day": 17,
-     "count": 65,
-     "share": 10.4
-    },
-    {
-     "day": 18,
-     "count": 65,
-     "share": 10.4
-    },
-    {
-     "day": 19,
-     "count": 70,
-     "share": 11.2
-    }
-   ],
-   "activation": {
-    "meet": 36,
-    "deal": 32,
-    "both": 24,
-    "meet_only": 12,
-    "deal_only": 8,
-    "activated": 44,
-    "deal_auto": 10,
-    "deal_manual": 22,
-    "deal_only_manual": 2
-   }
+   "activation":{"meet":44,"deal":46,"both":31,"meet_only":13,"deal_only":15,"activated":59,"deal_auto":10,"deal_manual":36,"deal_only_manual":9,"activated_v2":14,"activated_v1":45,"relanced":413},
+   "reply_curve":[
+    {"day":0,"count":4,"share":0.64},{"day":1,"count":9,"share":1.44},{"day":2,"count":11,"share":1.76},{"day":3,"count":11,"share":1.76},
+    {"day":4,"count":16,"share":2.56},{"day":5,"count":19,"share":3.04},{"day":6,"count":19,"share":3.04},{"day":7,"count":22,"share":3.52},
+    {"day":8,"count":25,"share":4.0},{"day":9,"count":26,"share":4.16},{"day":10,"count":37,"share":5.92},{"day":11,"count":39,"share":6.24},
+    {"day":12,"count":43,"share":6.88},{"day":13,"count":45,"share":7.2},{"day":14,"count":46,"share":7.36},{"day":15,"count":50,"share":8.0},
+    {"day":16,"count":54,"share":8.64},{"day":17,"count":54,"share":8.64},{"day":18,"count":54,"share":8.64},{"day":19,"count":57,"share":9.12},
+    {"day":20,"count":58,"share":9.28},{"day":21,"count":59,"share":9.44}
+   ]
   },
   {
-   "id": "2026-08-13",
-   "label": "Batch du 13 août 2026",
-   "sent_at": "2026-08-13T09:31:00Z",
-   "status": "EN_COURS",
-   "active": 652,
-   "status_note": "652 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
-   "ab_test": false,
-   "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
-   "cells": [
-    {
-     "list_id": "14412",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026",
-     "sequence_id": "841303267",
-     "audience": "RP",
-     "version": "A",
-     "enrolled": 560,
-     "active": 531,
-     "status": "EN_COURS",
-     "sent": 1095,
-     "bounced": 1,
-     "opens": 335,
-     "clicks": 6,
-     "opens_emails": 504,
-     "clicks_emails": 7,
-     "replies": 27,
-     "meetings": 13,
-     "deals_ae": 8,
-     "engaged": 14,
-     "split": {
-      "both": 7,
-      "meet_only": 6,
-      "deal_only": 1,
-      "engaged": 14,
-      "deal_n8n": 0,
-      "deal_manual": 8,
-      "deal_only_manual": 1
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 556,
-       "opens": 266,
-       "clicks": 5
-      },
-      {
-       "order": 2,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 539,
-       "opens": 238,
-       "clicks": 2
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 6
-      },
-      {
-       "owner_id": "650299108",
-       "owner": "Mathieu d'Ornellas",
-       "meetings": 3
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 4
-      }
-     ]
-    },
-    {
-     "list_id": "14413",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026",
-     "sequence_id": "841303243",
-     "audience": "LMNP",
-     "version": "A",
-     "enrolled": 140,
-     "active": 121,
-     "status": "EN_COURS",
-     "sent": 259,
-     "bounced": 0,
-     "opens": 99,
-     "clicks": 6,
-     "opens_emails": 151,
-     "clicks_emails": 5,
-     "replies": 14,
-     "meetings": 5,
-     "deals_ae": 4,
-     "engaged": 5,
-     "split": {
-      "both": 4,
-      "meet_only": 1,
-      "deal_only": 0,
-      "engaged": 5,
-      "deal_n8n": 1,
-      "deal_manual": 3,
-      "deal_only_manual": 0
-     },
-     "steps": [
-      {
-       "order": 1,
-       "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 136,
-       "opens": 88,
-       "clicks": 5
-      },
-      {
-       "order": 2,
-       "subject": "Renégociation assurance emprunteur",
-       "sent": 123,
-       "opens": 63,
-       "clicks": 0
-      }
-     ],
-     "by_owner": [
-      {
-       "owner_id": "1722214870",
-       "owner": "Clara Baekelandt",
-       "meetings": 1
-      },
-      {
-       "owner_id": "75453551",
-       "owner": "Lilian Maudet",
-       "meetings": 4
-      }
-     ]
-    }
+   "id":"2026-08-13","label":"Batch du 13 août 2026","sent_at":"2026-08-13T09:31:00Z",
+   "status":"TERMINE","active":0,"status_note":null,"ab_test":false,
+   "ab_note":"Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
+   "targeting":null,
+   "cells":[
+    {"list_id":"14412","list_name":"OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026","sequence_id":"841303267","audience":"RP","version":"A","enrolled":560,"active":0,"status":"TERMINE","sent":1095,"bounced":1,"opens":373,"clicks":17,"opens_emails":539,"clicks_emails":7,"opens_frozen":true,"replies":68,"meetings":27,"deals_ae":21,"engaged":33,
+     "split":{"both":15,"meet_only":12,"deal_only":6,"engaged":33,"deal_n8n":1,"deal_manual":20,"deal_only_manual":5,"relanced":532,"engaged_v2":16,"engaged_v1":17},
+     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":556,"opens":268,"clicks":5},{"order":2,"subject":"Renégociation assurance emprunteur","sent":539,"opens":272,"clicks":2}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":9},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":7},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":11}]},
+    {"list_id":"14413","list_name":"OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026","sequence_id":"841303243","audience":"LMNP","version":"A","enrolled":140,"active":0,"status":"TERMINE","sent":259,"bounced":0,"opens":103,"clicks":7,"opens_emails":158,"clicks_emails":5,"opens_frozen":true,"replies":28,"meetings":9,"deals_ae":10,"engaged":12,
+     "split":{"both":7,"meet_only":2,"deal_only":3,"engaged":12,"deal_n8n":1,"deal_manual":9,"deal_only_manual":3,"relanced":125,"engaged_v2":3,"engaged_v1":9},
+     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":136,"opens":89,"clicks":5},{"order":2,"subject":"Renégociation assurance emprunteur","sent":123,"opens":69,"clicks":0}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":4}]}
    ],
-   "reply_curve": [
-    {
-     "day": 0,
-     "count": 10,
-     "share": 1.43
-    },
-    {
-     "day": 1,
-     "count": 13,
-     "share": 1.86
-    },
-    {
-     "day": 2,
-     "count": 14,
-     "share": 2.0
-    },
-    {
-     "day": 3,
-     "count": 15,
-     "share": 2.14
-    },
-    {
-     "day": 4,
-     "count": 17,
-     "share": 2.43
-    },
-    {
-     "day": 5,
-     "count": 20,
-     "share": 2.86
-    },
-    {
-     "day": 6,
-     "count": 23,
-     "share": 3.29
-    },
-    {
-     "day": 7,
-     "count": 27,
-     "share": 3.86
-    },
-    {
-     "day": 8,
-     "count": 31,
-     "share": 4.43
-    },
-    {
-     "day": 9,
-     "count": 31,
-     "share": 4.43
-    },
-    {
-     "day": 10,
-     "count": 31,
-     "share": 4.43
-    },
-    {
-     "day": 11,
-     "count": 41,
-     "share": 5.86
-    }
+   "activation":{"meet":36,"deal":31,"both":22,"meet_only":14,"deal_only":9,"activated":45,"deal_auto":2,"deal_manual":29,"deal_only_manual":8,"activated_v2":19,"activated_v1":26,"relanced":657},
+   "reply_curve":[
+    {"day":0,"count":10,"share":1.43},{"day":1,"count":12,"share":1.71},{"day":2,"count":13,"share":1.86},{"day":3,"count":14,"share":2.0},
+    {"day":4,"count":14,"share":2.0},{"day":5,"count":15,"share":2.14},{"day":6,"count":17,"share":2.43},{"day":7,"count":19,"share":2.71},
+    {"day":8,"count":23,"share":3.29},{"day":9,"count":23,"share":3.29},{"day":10,"count":23,"share":3.29},{"day":11,"count":29,"share":4.14},
+    {"day":12,"count":35,"share":5.0},{"day":13,"count":36,"share":5.14},{"day":14,"count":38,"share":5.43},{"day":15,"count":40,"share":5.71},
+    {"day":16,"count":40,"share":5.71},{"day":17,"count":40,"share":5.71},{"day":18,"count":42,"share":6.0},{"day":19,"count":47,"share":6.71},
+    {"day":20,"count":49,"share":7.0},{"day":21,"count":53,"share":7.57}
+   ]
+  },
+  {
+   "id":"2026-09-10","label":"Batch du 10 septembre 2026","sent_at":"2026-09-10T09:00:00Z",
+   "status":"EN_COURS","active":573,
+   "status_note":"573 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "ab_test":false,
+   "ab_note":"Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
+   "targeting":"Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
+   "cells":[
+    {"list_id":"14951","list_name":"Campagne Assurance Emprunteur - Nouveaux clients - Batch du 10/09/2026","sequence_id":"841303267","audience":"V3","version":"A","enrolled":761,"active":573,"status":"EN_COURS","sent":916,"bounced":0,"opens":347,"clicks":11,"opens_emails":386,"clicks_emails":12,"opens_frozen":false,"replies":19,"meetings":15,"deals_ae":13,"engaged":20,
+     "split":{"both":8,"meet_only":7,"deal_only":5,"engaged":20,"deal_n8n":0,"deal_manual":13,"deal_only_manual":5,"relanced":0,"engaged_v2":0,"engaged_v1":20},
+     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":613,"opens":324,"clicks":11},{"order":2,"subject":"Renégociation assurance emprunteur","sent":303,"opens":62,"clicks":1}],
+     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":4},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":7},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":4}]}
    ],
-   "activation": {
-    "meet": 18,
-    "deal": 12,
-    "both": 11,
-    "meet_only": 7,
-    "deal_only": 1,
-    "activated": 19,
-    "deal_auto": 1,
-    "deal_manual": 11,
-    "deal_only_manual": 1
-   }
+   "activation":{"meet":15,"deal":13,"both":8,"meet_only":7,"deal_only":5,"activated":20,"deal_auto":0,"deal_manual":13,"deal_only_manual":5,"activated_v2":0,"activated_v1":20,"relanced":0},
+   "reply_curve":[
+    {"day":0,"count":6,"share":0.79},{"day":1,"count":9,"share":1.18},{"day":2,"count":10,"share":1.31},
+    {"day":3,"count":11,"share":1.45},{"day":4,"count":19,"share":2.5},{"day":5,"count":19,"share":2.5}
+   ]
   }
  ]
 }</script>
@@ -1342,10 +809,17 @@ function render(){
     )).join('')+
     /* Les six chiffres d'activation vivent dans leur bloc dédié, où deux rangs
        séparés portent la règle de lecture. Sur une grille de cartes plates,
-       « Total RDV 54 » et « Total simulations 44 » côte à côte invitent à une
-       addition qui donne 98 activés au lieu de 63. */
+       deux totaux qui se recoupent invitent à une addition fausse. */
     kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
-      `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`);
+      `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`)+
+    /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
+       vague : un data.json d'avant le patch reste lisible sans rien casser. */
+    ((D.dedup||{}).relanced?
+      kpi('orange','Contacts relancés',(D.dedup||{}).relanced,
+        `${pct((D.dedup||{}).relanced,nAll)} des ciblés · déjà comptés dans leur batch`)+
+      kpi('yellow','Activés par la relance',ACT.activated_v2||0,
+        `${pct(ACT.activated_v2,(D.dedup||{}).relanced)} des relancés · gain marginal pur`)
+      :'');
 
   /* Décomposition de l'activation. Lit dedup.activation, qui est une union
      d'identifiants de contact calculée par le collecteur — et non une somme
@@ -1372,9 +846,9 @@ function render(){
       w>=11?l+' · '+v:(w>=5?v:'')}</div>`}).join('');
 
   /* Second rang : les totaux. Ce sont les chiffres que l'équipe retrouvera en
-     filtrant HubSpot elle-même. Sans eux, un commercial qui compte 54 RDV dans
-     le CRM face à une carte affichant 19 conclut que le dashboard est faux —
-     et cesse de s'en servir sans le signaler.
+     filtrant HubSpot elle-même. Sans eux, un commercial qui compte plus de RDV
+     dans le CRM que sur la carte conclut que le dashboard est faux — et cesse
+     de s'en servir sans le signaler.
      Rang séparé, opérateur « ∪ » et non « + » : la nature du lien entre les
      deux est portée par le signe. */
   document.getElementById('actTot').innerHTML=
@@ -1390,11 +864,11 @@ function render(){
   document.getElementById('actRecon').innerHTML=
     `<span class="rl">Comment le retrouver dans HubSpot</span>`+
     `<span><strong>${fmt(ACT.meet)}</strong> RDV — filtre intitulé « emprunteur », `+
-      `owner ∈ {Clara, Lilian, Mathieu}, postérieurs à l'envoi du batch</span>`+
+      `owner ∈ {Clara, Lilian, Mathieu}, dans la fenêtre d'attribution du contact</span>`+
     `<span><strong>${fmt(ACT.deal)}</strong> dossiers — pipe courtage AE, `+
-      `créés ou déplacés d'étape après l'envoi</span>`+
-    `<span class="m">Décomptes en contacts, pas en objets : 62 réunions correspondent à `+
-      `${fmt(ACT.meet)} contacts. Un écart avec un décompte d'objets est attendu.</span>`;
+      `créés ou déplacés d'étape dans la fenêtre</span>`+
+    `<span class="m">Décomptes en contacts, pas en objets. Un écart avec un décompte `+
+      `d'objets est attendu, tout comme avec un filtre HubSpot sans borne de fin.</span>`;
 
   document.getElementById('actNote').innerHTML=
     `Les trois segments sont <strong>disjoints</strong> et leur somme fait le total : `+
@@ -1411,6 +885,53 @@ function render(){
     (ACT.overlap?` <strong>Recoupement :</strong> la somme des cellules donne ${fmt(ACT.sum_cells)}, `+
       `l'union ${fmt(ACT.activated)} — ${fmt(ACT.overlap)} contact(s) activé(s) ciblé(s) dans deux `+
       `batchs. Le niveau 1 lit l'union.`:'');
+
+  /* ---------- VAGUES DE RELANCE ----------
+     Les contacts relancés sont DÉJÀ dans le dénominateur de leur cohorte : les
+     compter à part ferait baisser tous les taux sans qu'aucune nouvelle personne
+     n'ait été touchée. Une relance est une vague à l'intérieur d'une cohorte,
+     jamais une cohorte. Les blocs restent masqués tant que data.json ne porte
+     pas les clés de relance — un data.json d'avant le patch reste lisible. */
+  const REL=(D.dedup||{}).relanced||0;
+  if(REL>0&&ACT.activated_v2!=null){
+    const relDate=(D.relances&&D.relances[0])
+      ?new Date(D.relances[0].sent_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long'}):null;
+    document.getElementById('waveWrap').style.display='block';
+    document.getElementById('waveEq').innerHTML=
+      tile('','Vague 1 · envoi initial',ACT.activated_v1,
+        `${pct(ACT.activated_v1,ACT.activated)} des activés`)+
+      `<div class="eq-op">+</div>`+
+      tile('','Vague 2 · relance'+(relDate?' du '+relDate:''),ACT.activated_v2,
+        `${pct(ACT.activated_v2,REL)} des ${fmt(REL)} relancés`)+
+      `<div class="eq-op">=</div>`+
+      tile('res','Clients activés',ACT.activated,`${pct(ACT.activated,nAll)} des ciblés`);
+    document.getElementById('waveNote').innerHTML=
+      `<strong>${fmt(REL)} contacts relancés</strong>, soit ${pct(REL,nAll)} des ciblés. `+
+      `Le dénominateur de la campagne ne bouge pas : ces contacts y étaient déjà. `+
+      `<strong>Lecture :</strong> les listes de relance ne contiennent que des contacts `+
+      `non activés. Le taux de la vague 2 n'est donc <strong>pas comparable</strong> à celui `+
+      `d'un envoi initial, dont le dénominateur incluait tout le monde — c'est un gain `+
+      `marginal pur, à ne jamais mettre côte à côte avec un taux de batch.`;
+
+    document.getElementById('relanceBlock').style.display='block';
+    document.querySelector('#tRelance tbody').innerHTML=
+      D.cohorts.map(co=>co.cells.map((c,i)=>{
+        const s=S(c), r=s.relanced||0;
+        return `<tr><td class="left">${i===0?'<strong>'+co.label+'</strong>':''}</td>
+          <td class="left">${AL[c.audience]||c.audience}${c.version?' · '+c.version:''}</td>
+          <td>${fmt(c.enrolled)}</td>
+          <td class="${r?'o':'m'}">${r?fmt(r)+' <span class="m">('+pct(r,c.enrolled,0)+')</span>':'—'}</td>
+          <td>${fmt(s.engaged_v1)}</td>
+          <td class="${s.engaged_v2?'g':'m'}">${fmt(s.engaged_v2)}</td>
+          <td><strong>${fmt(s.engaged)}</strong></td>
+          <td class="${r?'':'m'}">${r?pct(s.engaged_v2,r):'—'}</td></tr>`;
+      }).join('')).join('')
+      +`<tr class="totrow"><td class="left">TOTAL CAMPAGNE</td>
+        <td class="left m">union dédupliquée</td>
+        <td>${fmt(nAll)}</td><td>${fmt(REL)}</td>
+        <td>${fmt(ACT.activated_v1)}</td><td>${fmt(ACT.activated_v2)}</td>
+        <td>${fmt(ACT.activated)}</td><td>${pct(ACT.activated_v2,REL)}</td></tr>`;
+  }
 
   /* ---------- NIVEAU 2 ---------- */
   const K2=KPI.filter(k=>['replies','meetings',PK].includes(k.key));
@@ -1430,7 +951,7 @@ function render(){
   document.querySelector('#tCohorts tbody').innerHTML=rows.map(r=>
     `<tr class="${r.wip?'wip':''}">
       <td class="left"><strong>${r.co.label}</strong><br>
-        <span class="m" style="font-family:var(--font-mono);font-size:10px">${r.co.cells.length} cellule${r.co.cells.length>1?'s':''}${r.co.ab_test===false?' · sans A/B':''}</span></td>
+        <span class="m" style="font-family:var(--font-mono);font-size:10px">${r.co.cells.length} cellule${r.co.cells.length>1?'s':''}${r.co.ab_test===false?' · sans A/B':''}${r.ca.relanced?' · '+fmt(r.ca.relanced)+' relancés':''}</span></td>
       <td class="left">${STATUS_PILL[r.co.status]||''}</td>
       <td>${fmt(r.n)}</td>
       <td class="${r.act?'o':'m'}">${r.act?fmt(r.act)+' ('+pct(r.act,r.n,0)+')':'—'}</td>
@@ -1534,7 +1055,7 @@ function render(){
         <td class="left">${STATUS_PILL[c.status]||''}</td>
         <td>${fmt(c.enrolled)}</td>
         <td class="${c.active?'o':'m'}">${c.active?fmt(c.active):'—'}</td>
-        ${KPI.map(k=>`<td>${fmt(c[k.key])} <span class="m">(${pct(c[k.key],k.base==='sent'?c.sent:c.enrolled)})</span></td>`).join('')}
+        ${KPI.map(k=>`<td>${fmt(c[k.key])}${c.opens_frozen&&(k.key==='opens'||k.key==='clicks')?' <span class="pill">gelé</span>':''} <span class="m">(${pct(c[k.key],k.base==='sent'?c.sent:c.enrolled)})</span></td>`).join('')}
       </tr>`).join('');
 
     const pairs=auds.map(a=>{
@@ -1580,12 +1101,19 @@ function render(){
     }else{
       verdict=`<div class="anom"><span class="abadge low">RIEN À COMPARER</span><div>
         <div class="at">Cellule unique</div>
-        <div class="ab">Ce batch ne se lit qu'en regard des précédents.</div></div></div>`;
+        <div class="ab">${co.ab_note||"Ce batch ne se lit qu'en regard des précédents."}</div></div></div>`;
     }
+
+    /* Ciblage : publié seulement si cohorts.json le déclare. Une cohorte dont
+       le ciblage n'est pas documenté n'affiche rien plutôt qu'un texte vide. */
+    const targeting=co.targeting?`<div class="anom"><span class="abadge low">CIBLAGE</span>
+      <div><div class="at">Comment cette cohorte a été construite</div>
+      <div class="ab">${co.targeting}</div></div></div>`:'';
 
     return `<div class="coh-block ${wip?'wip':''}">
       <div class="coh-head"><span class="coh-name">${co.label}</span>
         ${STATUS_PILL[co.status]||''}
+        ${co.activation&&co.activation.relanced?`<span class="pill wip">${fmt(co.activation.relanced)} relancés</span>`:''}
         ${[...new Set(cells.map(c=>c.sequence_id))].map(s=>`<span class="pill">séquence ${s}</span>`).join('')}
       </div>
       <div class="bsub">Listes : ${cells.map(c=>`<code>${c.list_id}</code>`).join(' · ')}</div>
@@ -1594,7 +1122,7 @@ function render(){
         <th>Contacts</th><th>Encore en séq.</th>
         ${KPI.map(k=>'<th>'+k.label+'</th>').join('')}</tr></thead>
         <tbody>${rowsC}</tbody></table></div>
-      ${verdict}</div>`;
+      ${targeting}${verdict}</div>`;
   }).join('');
 
   /* propriétaires */
@@ -1623,32 +1151,51 @@ function render(){
 
   /* ---------- Méthodo ---------- */
   document.getElementById('fixes').innerHTML=[
+    {level:'high',title:'Borne haute sur les RDV',
+     body:`Le filtre des réunions n'avait qu'une date de début : un RDV pris des mois après `
+       +`l'envoi restait imputé au batch d'origine, alors que les dossiers étaient bornés à `
+       +`J+21 depuis le 22/08. Mesuré le 11/09 — dans les 2 h suivant l'envoi des relances, le `
+       +`batch du 13 août a gagné <strong>7 RDV</strong> alors que sa fenêtre était close depuis `
+       +`le 03/09. Les deux signaux partagent désormais la même fenêtre.`},
+    {level:'high',title:'Fenêtre d\'attribution par contact',
+     body:`Un contact relancé dispose de <strong>deux</strong> fenêtres de 21 jours : celle de `
+       +`son batch initial et celle de sa relance. Un événement compte s'il tombe dans l'une ou `
+       +`l'autre, et il est étiqueté v1 ou v2. Deux fenêtres disjointes plutôt qu'une seule `
+       +`élargie : une activation réelle d'août ne doit pas disparaître parce que le contact a `
+       +`été relancé, et une fenêtre unique de 58 jours détruirait la comparabilité entre `
+       +`cohortes.`},
+    {level:'high',title:'Ouvertures et clics d\'août figés',
+     body:`<code>hs_sales_email_last_opened</code> et <code>hs_sales_email_last_clicked</code> `
+       +`ne gardent que la <strong>dernière</strong> date, écrasée à chaque nouvel e-mail. `
+       +`Une ouverture de relance restait comptée comme une ouverture d'août, puisque la `
+       +`comparaison est « ≥ date d'envoi ». Borner en haut ne réglait rien : un vrai ouvreur `
+       +`d'août serait alors sorti du compte. La donnée d'origine n'existe plus — les valeurs `
+       +`des six cellules d'août sont figées au relevé du 11/09 11h30 et ne sont plus `
+       +`recalculées. Correctif durable : horodater une propriété contact à chaque ouverture.`},
+    {level:'high',title:'Relances rattachées par calcul, pas par déclaration',
+     body:`Les listes de relance sont construites sur un statut de séquence — « a terminé sa `
+       +`campagne », « a été interrompu » — et non sur l'appartenance à un batch. Un mapping `
+       +`déclaré en dur aurait été faux pour une partie des contacts. Le collecteur croise `
+       +`chaque contact relancé avec les listes de cellules pour retrouver sa cohorte réelle.`},
     {level:'high',title:'Attribution des e-mails par séquence → par liste',
-     body:`La séquence <code>841303267</code> a servi le RP du 5 août <strong>puis</strong> celui `
-       +`du 13 août. L'ancienne version comptait par <code>hs_sequence_id</code> sans filtrer les `
-       +`contacts : les envois du 13 août étaient imputés au 5 août. Le double filtre `
-       +`séquence + appartenance à la liste isole désormais chaque batch.`},
-    {level:'med',title:'Statut du batch dérivé de HubSpot',
-     body:`Une cellule est TERMINÉ quand plus aucun de ses contacts n'est activement enrôlé. `
-       +`Plus de saisie manuelle, qui avait déjà produit une erreur sur l'autre dashboard.`},
-    {level:'med',title:'Union dédupliquée au niveau global',
-     body:`Les batchs peuvent se recouper. Le niveau 1 mesure l'union côté HubSpot `
-       +`plutôt que d'additionner les cellules.`},
-    {level:'high',title:'KPI principal : engagement, plus « simulations »',
+     body:`La séquence <code>841303267</code> a servi le RP du 5 août, <strong>puis</strong> `
+       +`celui du 13 août, <strong>puis</strong> le batch du 10 septembre. L'ancienne version `
+       +`comptait par <code>hs_sequence_id</code> sans filtrer les contacts : les envois d'un `
+       +`batch étaient imputés au précédent. Le double filtre séquence + appartenance à la liste `
+       +`isole désormais chaque batch.`},
+    {level:'high',title:'KPI principal : activation, plus « simulations »',
      body:`L'ancien KPI s'appuyait sur des étapes que n8n n'alimente pas — il affichait un `
        +`chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. `
        +`Le nouveau ne filtre plus sur les étapes : celles remontées par n8n sont sautées, `
-       +`une étape absente ne prouve rien. Il ne filtre pas non plus sur la source, mais `
-       +`c'est un arbitrage ouvert — voir la limite « un deal ne prouve pas un parcours ».`},
+       +`une étape absente ne prouve rien.`},
     {level:'high',title:'RDV attribués au propriétaire de la réunion',
      body:`Le graphe de répartition utilisait <code>contact.hubspot_owner_id</code> : `
        +`un commercial y apparaissait dès qu'il possédait des fiches, même sans avoir `
        +`posé un seul rendez-vous. Il utilise désormais le propriétaire de la RÉUNION. `
        +`Les deals ne sont plus répartis : créés par n8n, ils n'ont pas de propriétaire.`},
     {level:'high',title:'RDV comptés en contacts, plus en réunions',
-     body:`62 objets MEETING_EVENT correspondent à 51 contacts : certains ont un RDV courtage `
-       +`puis un RDV devis. Même correction d'unité que celle déjà appliquée aux ouvertures `
-       +`et aux clics.`},
+     body:`Un même contact peut avoir un RDV courtage puis un RDV devis. Même correction `
+       +`d'unité que celle déjà appliquée aux ouvertures et aux clics.`},
     {level:'high',title:'Réactivations rattrapées',
      body:`Un dossier ouvert avant la campagne mais déplacé après l'envoi est désormais compté. `
        +`Sur la seule date de création il était invisible — et cet angle mort grandit à mesure `
@@ -1659,50 +1206,71 @@ function render(){
        +`deux listes différentes renvoyaient le même résultat. La jointure se fait désormais `
        +`dans le code, après deux appels séparés.`},
     {level:'high',title:'Totaux d\'activation en union, plus en somme de cellules',
-     body:`Les totaux RDV, simulations et activés étaient obtenus en additionnant les six `
+     body:`Les totaux RDV, simulations et activés étaient obtenus en additionnant les `
        +`cellules — juste uniquement tant qu'aucun contact activé n'est ciblé par deux batchs. `
        +`Le collecteur calcule maintenant l'union sur les identifiants de contact au niveau `
-       +`campagne et publie l'écart avec la somme. Écart nul au 25/08 : la correction ne change `
-       +`aucune valeur, elle supprime un mode de défaillance silencieux.`},
-    {level:'med',title:'Données embarquées remises à jour',
-     body:`La copie de secours intégrée à <code>index.html</code> datait du 18 août et portait `
-       +`encore l'ancien KPI principal. En cas d'échec de chargement de <code>data.json</code>, `
-       +`le dashboard affichait des chiffres périmés sans autre signal que la mention `
-       +`« données embarquées » dans l'en-tête.`},
-    {level:'med',title:'Cohorte du 13 août déclarée',
-     body:`Le batch existait dans le portail mais n'était rattaché à aucune liste connue. `
-       +`Ses 700 contacts et ses engagements n'apparaissaient nulle part : le dashboard `
-       +`affichait environ la moitié de la production réelle.`},
+       +`campagne et publie l'écart avec la somme.`},
+    {level:'med',title:'Statut du batch dérivé de HubSpot',
+     body:`Une cellule est TERMINÉ quand plus aucun de ses contacts n'est activement enrôlé `
+       +`dans une séquence <strong>de la campagne</strong>. Plus de saisie manuelle.`},
+    {level:'med',title:'Cohortes déclarées au fil des batchs',
+     body:`Le batch du 13 août, puis celui du 10 septembre, existaient dans le portail sans `
+       +`être rattachés à une liste connue du dashboard. Leurs contacts et leurs activations `
+       +`n'apparaissaient nulle part.`},
   ].map(a=>`<div class="anom"><span class="abadge ${a.level}">CORRIGÉ</span>
     <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
+    {level:'high',title:'Le taux de la vague 2 n\'est pas un taux de campagne',
+     body:`Les listes de relance ne contiennent <strong>que</strong> des contacts non activés. `
+       +`Leur dénominateur est à 0 % d'activés par construction. Toute activation de vague 2 est `
+       +`un gain marginal pur, mais le taux affiché ne se compare à aucun taux de batch initial. `
+       +`Ne jamais les mettre côte à côte en comité.`},
     {level:'high',title:'Le libellé « simulations entamées » surpromet',
      body:`Ce chiffre compte les contacts ayant une transaction dans le pipe courtage AE. `
-       +`Il ne mesure un parcours sur le simulateur que pour la part remontée par n8n : `
-       +`<strong>11 contacts sur les 44 comptés</strong> au 25/08. Les 33 autres reposent sur une `
-       +`transaction créée à la main. Le total activé n'en souffre presque pas — 3 contacts `
-       +`seulement sont activés par une saisie manuelle sans RDV — mais le mot « simulation » `
-       +`ne doit pas être défendu tel quel en comité. Deux issues possibles : instrumenter `
-       +`le clic sur le lien de simulation, ou renommer le KPI en « dossiers ouverts ».`},
+       +`Il ne mesure un parcours sur le simulateur que pour la part remontée par n8n. `
+       +`Les autres reposent sur une transaction créée à la main, qui atteste qu'un commercial `
+       +`a ouvert une fiche. Le mot « simulation » ne doit pas être défendu tel quel en comité. `
+       +`Deux issues possibles : instrumenter le clic sur le lien de simulation, ou renommer le `
+       +`KPI en « dossiers ouverts ».`},
     {level:'high',title:'Un deal ne prouve pas un parcours produit',
      body:`Le pipe est alimenté de deux façons. n8n remonte les statuts du partenaire `
        +`(<code>INTEGRATION</code>) : là, le client est réellement entré dans le parcours. `
-       +`Mais <strong>40 transactions sur 77 sont créées à la main</strong> `
-       +`(<code>CRM_UI</code>) : elles attestent qu'un commercial a ouvert une fiche, pas `
-       +`qu'un client a simulé. Le KPI ne filtre pas sur la source — arbitrage non tranché, `
-       +`rendu visible par le bloc « Origine des deals ». La question à poser aux commerciaux : `
-       +`dans quel cas créent-ils un deal à la main ?`},
+       +`Mais une majorité de transactions est créée à la main (<code>CRM_UI</code>) : elles `
+       +`attestent qu'un commercial a ouvert une fiche, pas qu'un client a simulé. Le KPI ne `
+       +`filtre pas sur la source — arbitrage non tranché, rendu visible par le bloc « Origine `
+       +`des deals ». La question à poser aux commerciaux : dans quel cas créent-ils un deal à `
+       +`la main ?`},
     {level:'high',title:'Les étapes du pipe ne sont pas traversées',
      body:`Les transactions remontées par n8n portent directement le statut rapporté par le `
        +`partenaire : un dossier peut apparaître en <code>process_started</code> sans jamais `
        +`être passé par <code>simulation_started</code>. Une étape absente ne prouve rien. `
        +`Aucun KPI ne doit filtrer sur les étapes de ce pipe.`},
+    {level:'med',title:'Ouvertures d\'août figées après contamination partielle',
+     body:`Le relevé de gel date du 11/09 11h30, soit 2 h après l'envoi des relances : le total `
+       +`campagne était déjà passé de 1 214 à 1 236 ouvertures. Les valeurs figées sont donc `
+       +`surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un `
+       +`relevé propre.`},
+    {level:'med',title:'Les réponses ne sont ni bornées ni figées',
+     body:`<code>hs_sales_email_last_replied</code> souffre exactement du même défaut que les `
+       +`ouvertures, sans avoir reçu le même correctif. Le compteur est passé de 174 à 205 entre `
+       +`le 11 et le 14/09 : une partie vient des relances et alimente les compteurs d'août.`},
+    {level:'med',title:'La fenêtre de 21 jours n\'est pas calibrée',
+     body:`Les courbes de réponse cumulées <strong>montaient encore à J+21</strong> sur les deux `
+       +`batchs d'août — 5 août : 9,28 → 9,44 → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %. La `
+       +`fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus `
+       +`juste, mais changer ce chiffre réécrit rétroactivement tout l'historique publié. `
+       +`Arbitrage à porter en comité.`},
+    {level:'med',title:'Le statut « encore en séquence » est fragilisé par les relances',
+     body:`<code>hs_latest_sequence_enrolled</code> ne garde que la <strong>dernière</strong> `
+       +`séquence. Depuis le 11/09, les contacts relancés pointent vers une séquence de relance : `
+       +`leurs cellules d'origine basculent en TERMINÉ. Pour août c'est juste — les envois sont `
+       +`finis — mais le mécanisme est aveugle, pas un constat de fin réelle.`},
     {level:'med',title:'Seul le dernier mouvement d\'étape est connu',
      body:`<code>hs_v2_date_entered_current_stage</code> ne garde que l'entrée dans l'étape `
        +`actuelle. Un dossier déplacé le 15/08 puis le 25/08 n'expose que le 25/08 : hors `
-       +`fenêtre J+21, il sort du comptage.`},
+       +`fenêtre, il sort du comptage.`},
     {level:'med',title:'createdate est une date de synchronisation',
      body:`Les transactions sont créées par un batch n8n à 06:30 chaque matin : décalage jusqu'à `
        +`24 h avec l'action réelle du client. Le batch du 6 août à 15:25 est un rattrapage `
@@ -1710,8 +1278,7 @@ function render(){
     {level:'med',title:'Doublons de contacts',
      body:`Un même client peut exister en double avec deux e-mails : le dossier sur une fiche, `
        +`le RDV sur l'autre. Il apparaît alors en « deal seul » alors qu'il a pris rendez-vous. `
-       +`Un cas identifié sur la cohorte du 13 août. La colonne « deal seul » est donc `
-       +`légèrement surestimée.`},
+       +`La colonne « deal seul » est donc légèrement surestimée.`},
     {level:'med',title:'Réponses : dernière, pas première',
      body:`<code>hs_sales_email_last_replied</code> porte la date de la <strong>dernière</strong> `
        +`réponse. Un contact ayant répondu à J+1 puis à J+6 est compté à J+6, ce qui décale la `
@@ -1720,9 +1287,15 @@ function render(){
     {level:'med',title:'Ouvertures non fiables',
      body:`Apple Mail Privacy Protection précharge les images et gonfle le compteur. `
        +`Ne pas piloter dessus.`},
+    {level:'med',title:'Le filtre d\'intitulé des RDV dépend du nommage à la source',
+     body:`Plusieurs liens de réservation et plusieurs conventions coexistent pour un même type `
+       +`de rendez-vous, dont un lien générique « Rendez-vous téléphonique Nopillo » qui ne `
+       +`précise pas son objet. Vérification du 07 au 13/09 : sur 15 réunions génériques, 5 `
+       +`concernaient des contacts ciblés AE et <strong>aucune</strong> n'était du courtage `
+       +`assurance emprunteur. Le filtre tient sur ce périmètre, mais le correctif durable est `
+       +`un lien de réservation dédié avec un intitulé fixe.`},
     {level:'low',title:'Maturité inégale entre cohortes',
-     body:`Le batch du 13 août a 9 jours d'ancienneté contre 17 pour celui du 5. `
-       +`Les taux ne sont pas comparables avant J+21 sur les deux.`},
+     body:`Les taux ne sont pas comparables avant que toutes les cohortes aient atteint J+21.`},
     {level:'low',title:'Étapes de séquence regroupées par objet',
      body:`Les engagements ne portent pas le numéro d'étape : le regroupement se fait par objet `
        +`d'e-mail. Deux étapes au même objet fusionneraient.`},
