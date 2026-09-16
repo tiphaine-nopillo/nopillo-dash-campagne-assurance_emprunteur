@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-15T22:04:13.445827+00:00",
+  "generated_at": "2026-09-16T09:49:04.787292+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -106,19 +106,19 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 98,
-   "deal": 101,
-   "both": 65,
-   "meet_only": 33,
-   "deal_only": 36,
-   "activated": 134,
+   "meet": 99,
+   "deal": 108,
+   "both": 68,
+   "meet_only": 31,
+   "deal_only": 40,
+   "activated": 139,
    "deal_auto": 12,
-   "deal_manual": 89,
-   "deal_only_manual": 29,
-   "sum_cells": 134,
+   "deal_manual": 96,
+   "deal_only_manual": 33,
+   "sum_cells": 139,
    "overlap": 0,
-   "activated_v2": 39,
-   "activated_v1": 95
+   "activated_v2": 40,
+   "activated_v1": 99
   },
   "relanced": 1070
  },
@@ -150,20 +150,20 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies": 41,
-     "meetings": 17,
-     "deals_ae": 19,
-     "engaged": 23,
+     "replies": 42,
+     "meetings": 18,
+     "deals_ae": 20,
+     "engaged": 24,
      "split": {
-      "both": 13,
+      "both": 14,
       "meet_only": 4,
       "deal_only": 6,
-      "engaged": 23,
+      "engaged": 24,
       "deal_n8n": 2,
-      "deal_manual": 17,
+      "deal_manual": 18,
       "deal_only_manual": 5,
       "relanced": 173,
-      "engaged_v2": 6,
+      "engaged_v2": 7,
       "engaged_v1": 17
      },
      "steps": [
@@ -196,7 +196,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 5
+       "meetings": 6
       }
      ]
     },
@@ -423,16 +423,16 @@
     }
    ],
    "activation": {
-    "meet": 44,
-    "deal": 49,
-    "both": 32,
+    "meet": 45,
+    "deal": 50,
+    "both": 33,
     "meet_only": 12,
     "deal_only": 17,
-    "activated": 61,
+    "activated": 62,
     "deal_auto": 10,
-    "deal_manual": 39,
+    "deal_manual": 40,
     "deal_only_manual": 11,
-    "activated_v2": 16,
+    "activated_v2": 17,
     "activated_v1": 45,
     "relanced": 413
    },
@@ -479,73 +479,73 @@
     },
     {
      "day": 8,
+     "count": 23,
+     "share": 3.68
+    },
+    {
+     "day": 9,
      "count": 24,
      "share": 3.84
     },
     {
-     "day": 9,
-     "count": 25,
-     "share": 4.0
-    },
-    {
      "day": 10,
-     "count": 36,
-     "share": 5.76
+     "count": 35,
+     "share": 5.6
     },
     {
      "day": 11,
-     "count": 38,
-     "share": 6.08
+     "count": 37,
+     "share": 5.92
     },
     {
      "day": 12,
-     "count": 42,
-     "share": 6.72
+     "count": 41,
+     "share": 6.56
     },
     {
      "day": 13,
+     "count": 43,
+     "share": 6.88
+    },
+    {
+     "day": 14,
      "count": 44,
      "share": 7.04
     },
     {
-     "day": 14,
-     "count": 45,
-     "share": 7.2
-    },
-    {
      "day": 15,
-     "count": 49,
-     "share": 7.84
+     "count": 48,
+     "share": 7.68
     },
     {
      "day": 16,
-     "count": 53,
-     "share": 8.48
+     "count": 52,
+     "share": 8.32
     },
     {
      "day": 17,
-     "count": 53,
-     "share": 8.48
+     "count": 52,
+     "share": 8.32
     },
     {
      "day": 18,
-     "count": 53,
-     "share": 8.48
+     "count": 52,
+     "share": 8.32
     },
     {
      "day": 19,
+     "count": 55,
+     "share": 8.8
+    },
+    {
+     "day": 20,
      "count": 56,
      "share": 8.96
     },
     {
-     "day": 20,
+     "day": 21,
      "count": 57,
      "share": 9.12
-    },
-    {
-     "day": 21,
-     "count": 58,
-     "share": 9.28
     }
    ]
   },
@@ -578,15 +578,15 @@
      "opens_frozen": true,
      "replies": 69,
      "meetings": 27,
-     "deals_ae": 27,
+     "deals_ae": 28,
      "engaged": 37,
      "split": {
-      "both": 17,
-      "meet_only": 10,
+      "both": 18,
+      "meet_only": 9,
       "deal_only": 10,
       "engaged": 37,
       "deal_n8n": 1,
-      "deal_manual": 26,
+      "deal_manual": 27,
       "deal_only_manual": 9,
       "relanced": 532,
       "engaged_v2": 20,
@@ -690,13 +690,13 @@
    ],
    "activation": {
     "meet": 36,
-    "deal": 37,
-    "both": 24,
-    "meet_only": 12,
+    "deal": 38,
+    "both": 25,
+    "meet_only": 11,
     "deal_only": 13,
     "activated": 49,
     "deal_auto": 2,
-    "deal_manual": 35,
+    "deal_manual": 36,
     "deal_only_manual": 12,
     "activated_v2": 23,
     "activated_v1": 26,
@@ -820,8 +820,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 559,
-   "status_note": "559 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 558,
+   "status_note": "558 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
@@ -833,30 +833,30 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 559,
+     "active": 558,
      "status": "EN_COURS",
      "sent": 1191,
-     "bounced": 0,
-     "opens": 393,
+     "bounced": 1,
+     "opens": 395,
      "clicks": 13,
-     "opens_emails": 581,
+     "opens_emails": 589,
      "clicks_emails": 17,
      "opens_frozen": false,
      "replies": 34,
      "meetings": 18,
-     "deals_ae": 15,
-     "engaged": 24,
+     "deals_ae": 20,
+     "engaged": 28,
      "split": {
-      "both": 9,
-      "meet_only": 9,
-      "deal_only": 6,
-      "engaged": 24,
+      "both": 10,
+      "meet_only": 8,
+      "deal_only": 10,
+      "engaged": 28,
       "deal_n8n": 0,
-      "deal_manual": 15,
-      "deal_only_manual": 6,
+      "deal_manual": 20,
+      "deal_only_manual": 10,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 24
+      "engaged_v1": 28
      },
      "steps": [
       {
@@ -870,7 +870,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 256,
+       "opens": 264,
        "clicks": 6
       }
      ],
@@ -895,16 +895,16 @@
    ],
    "activation": {
     "meet": 18,
-    "deal": 15,
-    "both": 9,
-    "meet_only": 9,
-    "deal_only": 6,
-    "activated": 24,
+    "deal": 20,
+    "both": 10,
+    "meet_only": 8,
+    "deal_only": 10,
+    "activated": 28,
     "deal_auto": 0,
-    "deal_manual": 15,
-    "deal_only_manual": 6,
+    "deal_manual": 20,
+    "deal_only_manual": 10,
     "activated_v2": 0,
-    "activated_v1": 24,
+    "activated_v1": 28,
     "relanced": 0
    },
    "reply_curve": [
@@ -935,6 +935,11 @@
     },
     {
      "day": 5,
+     "count": 34,
+     "share": 4.47
+    },
+    {
+     "day": 6,
      "count": 34,
      "share": 4.47
     }
