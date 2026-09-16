@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-16T09:49:04.787292+00:00",
+  "generated_at": "2026-09-16T14:46:39.385710+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -106,19 +106,19 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 99,
-   "deal": 108,
-   "both": 68,
-   "meet_only": 31,
-   "deal_only": 40,
-   "activated": 139,
-   "deal_auto": 12,
-   "deal_manual": 96,
-   "deal_only_manual": 33,
-   "sum_cells": 139,
+   "meet": 101,
+   "deal": 209,
+   "both": 71,
+   "meet_only": 30,
+   "deal_only": 138,
+   "activated": 239,
+   "deal_auto": 108,
+   "deal_manual": 101,
+   "deal_only_manual": 37,
+   "sum_cells": 239,
    "overlap": 0,
-   "activated_v2": 40,
-   "activated_v1": 99
+   "activated_v2": 86,
+   "activated_v1": 153
   },
   "relanced": 1070
  },
@@ -152,18 +152,18 @@
      "opens_frozen": true,
      "replies": 42,
      "meetings": 18,
-     "deals_ae": 20,
-     "engaged": 24,
+     "deals_ae": 25,
+     "engaged": 29,
      "split": {
       "both": 14,
       "meet_only": 4,
-      "deal_only": 6,
-      "engaged": 24,
-      "deal_n8n": 2,
+      "deal_only": 11,
+      "engaged": 29,
+      "deal_n8n": 7,
       "deal_manual": 18,
       "deal_only_manual": 5,
       "relanced": 173,
-      "engaged_v2": 7,
+      "engaged_v2": 12,
       "engaged_v1": 17
      },
      "steps": [
@@ -218,18 +218,18 @@
      "opens_frozen": true,
      "replies": 46,
      "meetings": 15,
-     "deals_ae": 17,
-     "engaged": 21,
+     "deals_ae": 25,
+     "engaged": 29,
      "split": {
       "both": 11,
       "meet_only": 4,
-      "deal_only": 6,
-      "engaged": 21,
-      "deal_n8n": 1,
+      "deal_only": 14,
+      "engaged": 29,
+      "deal_n8n": 9,
       "deal_manual": 16,
       "deal_only_manual": 5,
       "relanced": 165,
-      "engaged_v2": 8,
+      "engaged_v2": 16,
       "engaged_v1": 13
      },
      "steps": [
@@ -424,15 +424,15 @@
    ],
    "activation": {
     "meet": 45,
-    "deal": 50,
+    "deal": 63,
     "both": 33,
     "meet_only": 12,
-    "deal_only": 17,
-    "activated": 62,
-    "deal_auto": 10,
+    "deal_only": 30,
+    "activated": 75,
+    "deal_auto": 23,
     "deal_manual": 40,
     "deal_only_manual": 11,
-    "activated_v2": 17,
+    "activated_v2": 30,
     "activated_v1": 45,
     "relanced": 413
    },
@@ -534,18 +534,18 @@
     },
     {
      "day": 19,
+     "count": 54,
+     "share": 8.64
+    },
+    {
+     "day": 20,
      "count": 55,
      "share": 8.8
     },
     {
-     "day": 20,
+     "day": 21,
      "count": 56,
      "share": 8.96
-    },
-    {
-     "day": 21,
-     "count": 57,
-     "share": 9.12
     }
    ]
   },
@@ -576,20 +576,20 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies": 69,
+     "replies": 70,
      "meetings": 27,
-     "deals_ae": 28,
-     "engaged": 37,
+     "deals_ae": 45,
+     "engaged": 54,
      "split": {
       "both": 18,
       "meet_only": 9,
-      "deal_only": 10,
-      "engaged": 37,
-      "deal_n8n": 1,
-      "deal_manual": 27,
-      "deal_only_manual": 9,
+      "deal_only": 27,
+      "engaged": 54,
+      "deal_n8n": 16,
+      "deal_manual": 29,
+      "deal_only_manual": 11,
       "relanced": 532,
-      "engaged_v2": 20,
+      "engaged_v2": 37,
       "engaged_v1": 17
      },
      "steps": [
@@ -643,19 +643,19 @@
      "clicks_emails": 5,
      "opens_frozen": true,
      "replies": 28,
-     "meetings": 9,
-     "deals_ae": 10,
-     "engaged": 12,
+     "meetings": 10,
+     "deals_ae": 26,
+     "engaged": 28,
      "split": {
-      "both": 7,
+      "both": 8,
       "meet_only": 2,
-      "deal_only": 3,
-      "engaged": 12,
-      "deal_n8n": 1,
-      "deal_manual": 9,
+      "deal_only": 18,
+      "engaged": 28,
+      "deal_n8n": 16,
+      "deal_manual": 10,
       "deal_only_manual": 3,
       "relanced": 125,
-      "engaged_v2": 3,
+      "engaged_v2": 19,
       "engaged_v1": 9
      },
      "steps": [
@@ -681,6 +681,11 @@
        "meetings": 5
       },
       {
+       "owner_id": "650299108",
+       "owner": "Mathieu d'Ornellas",
+       "meetings": 1
+      },
+      {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
        "meetings": 4
@@ -689,16 +694,16 @@
     }
    ],
    "activation": {
-    "meet": 36,
-    "deal": 38,
-    "both": 25,
+    "meet": 37,
+    "deal": 71,
+    "both": 26,
     "meet_only": 11,
-    "deal_only": 13,
-    "activated": 49,
-    "deal_auto": 2,
-    "deal_manual": 36,
-    "deal_only_manual": 12,
-    "activated_v2": 23,
+    "deal_only": 45,
+    "activated": 82,
+    "deal_auto": 32,
+    "deal_manual": 39,
+    "deal_only_manual": 14,
+    "activated_v2": 56,
     "activated_v1": 26,
     "relanced": 657
    },
@@ -800,18 +805,18 @@
     },
     {
      "day": 19,
-     "count": 47,
-     "share": 6.71
+     "count": 46,
+     "share": 6.57
     },
     {
      "day": 20,
-     "count": 49,
-     "share": 7.0
+     "count": 48,
+     "share": 6.86
     },
     {
      "day": 21,
-     "count": 53,
-     "share": 7.57
+     "count": 52,
+     "share": 7.43
     }
    ]
   },
@@ -820,8 +825,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 558,
-   "status_note": "558 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 548,
+   "status_note": "548 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
@@ -833,30 +838,30 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 558,
+     "active": 548,
      "status": "EN_COURS",
      "sent": 1191,
      "bounced": 1,
-     "opens": 395,
+     "opens": 397,
      "clicks": 13,
-     "opens_emails": 589,
+     "opens_emails": 591,
      "clicks_emails": 17,
      "opens_frozen": false,
-     "replies": 34,
-     "meetings": 18,
-     "deals_ae": 20,
-     "engaged": 28,
+     "replies": 35,
+     "meetings": 19,
+     "deals_ae": 75,
+     "engaged": 82,
      "split": {
-      "both": 10,
-      "meet_only": 8,
-      "deal_only": 10,
-      "engaged": 28,
-      "deal_n8n": 0,
-      "deal_manual": 20,
-      "deal_only_manual": 10,
+      "both": 12,
+      "meet_only": 7,
+      "deal_only": 63,
+      "engaged": 82,
+      "deal_n8n": 53,
+      "deal_manual": 22,
+      "deal_only_manual": 12,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 28
+      "engaged_v1": 82
      },
      "steps": [
       {
@@ -870,7 +875,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 264,
+       "opens": 266,
        "clicks": 6
       }
      ],
@@ -883,7 +888,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 8
+       "meetings": 9
       },
       {
        "owner_id": "75453551",
@@ -894,17 +899,17 @@
     }
    ],
    "activation": {
-    "meet": 18,
-    "deal": 20,
-    "both": 10,
-    "meet_only": 8,
-    "deal_only": 10,
-    "activated": 28,
-    "deal_auto": 0,
-    "deal_manual": 20,
-    "deal_only_manual": 10,
+    "meet": 19,
+    "deal": 75,
+    "both": 12,
+    "meet_only": 7,
+    "deal_only": 63,
+    "activated": 82,
+    "deal_auto": 53,
+    "deal_manual": 22,
+    "deal_only_manual": 12,
     "activated_v2": 0,
-    "activated_v1": 28,
+    "activated_v1": 82,
     "relanced": 0
    },
    "reply_curve": [
@@ -915,33 +920,33 @@
     },
     {
      "day": 1,
+     "count": 8,
+     "share": 1.05
+    },
+    {
+     "day": 2,
      "count": 9,
      "share": 1.18
     },
     {
-     "day": 2,
+     "day": 3,
      "count": 10,
      "share": 1.31
     },
     {
-     "day": 3,
-     "count": 11,
-     "share": 1.45
-    },
-    {
      "day": 4,
-     "count": 19,
-     "share": 2.5
+     "count": 18,
+     "share": 2.37
     },
     {
      "day": 5,
-     "count": 34,
-     "share": 4.47
+     "count": 31,
+     "share": 4.07
     },
     {
      "day": 6,
-     "count": 34,
-     "share": 4.47
+     "count": 35,
+     "share": 4.6
     }
    ]
   }
