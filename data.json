@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-16T17:41:58.478283+00:00",
+  "generated_at": "2026-09-16T18:48:26.474129+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -825,8 +825,8 @@
    "label": "Batch du 10 septembre 2026",
    "sent_at": "2026-09-10T09:00:00Z",
    "status": "EN_COURS",
-   "active": 546,
-   "status_note": "546 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
+   "active": 545,
+   "status_note": "545 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
    "ab_test": false,
    "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
    "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
@@ -838,16 +838,16 @@
      "audience": "V3",
      "version": "A",
      "enrolled": 761,
-     "active": 546,
+     "active": 545,
      "status": "EN_COURS",
      "sent": 1191,
      "bounced": 1,
-     "opens": 397,
+     "opens": 399,
      "clicks": 14,
-     "opens_emails": 595,
+     "opens_emails": 597,
      "clicks_emails": 18,
      "opens_frozen": false,
-     "replies": 36,
+     "replies": 37,
      "meetings": 21,
      "deals_ae": 75,
      "engaged": 84,
@@ -875,7 +875,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 270,
+       "opens": 272,
        "clicks": 6
       }
      ],
@@ -945,8 +945,8 @@
     },
     {
      "day": 6,
-     "count": 36,
-     "share": 4.73
+     "count": 37,
+     "share": 4.86
     }
    ]
   }
