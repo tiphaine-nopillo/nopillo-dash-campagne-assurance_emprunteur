@@ -105,7 +105,7 @@ ATTRIB_DAYS = 21
 # d'antériorité, pas de l'activité. 4 concernent des contacts de cohorte.
 BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
             ("2026-09-16T09:57:00Z", "2026-09-16T09:58:00Z"),
-            ("2026-09-16T11:00:00Z", "2026-09-16T11:02:00Z")]
+            ("2026-09-16T11:00:00Z", "2026-09-16T11:03:00Z")]
 
 # Marqueur de simulation réelle. Écrit par n8n depuis last_event_at, À LA
 # CRÉATION COMME À LA MISE À JOUR : un dossier ouvert à la main pendant une
@@ -400,8 +400,12 @@ def in_backfill(d):
     """La date tombe-t-elle dans une rafale de rattrapage n8n ?
 
     Un rattrapage importe de l'ANTÉRIORITÉ, pas de l'activité. Deux rafales
-    connues : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h02
-    (~190 transactions, reprise du flux après 33 jours d'arrêt).
+    connues : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h03
+    (~190 créations et ~248 mises à jour, reprise du flux après 33 jours
+    d'arrêt). La borne haute du 16/09 est à 11h03 et non 11h02 : la rafale
+    s'est prolongée jusqu'à 11:02:04, et deux transactions ouvertes le 5 juin
+    y recevaient leur mouvement d'étape — comptées à tort comme activations
+    de septembre. Vérifié le 17/09 par requête directe sur le pipe.
 
     L'exclusion porte sur CHAQUE date prise isolément, plus sur la transaction
     entière comme avant : un dossier créé pendant la rafale mais réellement
@@ -497,6 +501,39 @@ def attribute(cid, simulated, replies, rdv_pub, calls):
     if call:
         return ("sales", None)
     return ("non_attribuable", None)
+
+
+def qualify(cid, bucket, sub, mset):
+    """Statut de qualification d'un contact activé : certain, ou en attente.
+
+    Définition arrêtée le 17/09/2026 avec Clémence. Un client n'est un lead
+    que dans trois cas : il a pris un RDV lui-même, il a démarré son parcours,
+    ou un commercial l'a eu au téléphone ET il a exprimé un intérêt.
+
+    CERTAIN — les deux premiers cas, mesurables sans intervention humaine :
+      - RDV réservé en self-service (hs_meeting_source = MEETINGS_PUBLIC) ;
+      - simulation réelle (last_step_date renseignée).
+
+    EN ATTENTE — tout le reste. Deux sous-cas, volontairement distingués :
+      - « rdv_pose » : un commercial a bloqué un créneau. Un rendez-vous dans
+        l'agenda suppose un accord verbal, le doute est faible ;
+      - « carte_seule » : une fiche a été ouverte dans HubSpot sans aucun
+        rendez-vous. C'est là qu'est le vrai doute — sur 151 contacts appelés,
+        37 avaient une carte dont 21 en optimization_declined. Une carte en
+        refus comptait quand même comme une activation.
+
+    POURQUOI UNE RÉPONSE NE SUFFIT PAS : hs_sales_email_last_replied enregistre
+    n'importe quelle réponse, y compris « ça ne m'intéresse pas », un message
+    d'absence ou une demande de désinscription. Rien ne distingue un refus d'un
+    signal d'intérêt. Les compter reviendrait à compter des « non ».
+    """
+    if bucket == "marketing" and sub in ("rdv_public", "simulation"):
+        return "certain", None
+    return "attente", ("rdv_pose" if cid in mset else "carte_seule")
+
+
+def empty_qual():
+    return dict(certain=0, attente=0, attente_rdv_pose=0, attente_carte_seule=0)
 
 
 def empty_attr():
@@ -691,6 +728,7 @@ def build():
     # total activé : le total ne change pas, seule sa décomposition est ajoutée.
     camp_attr = empty_attr()
     attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
+    camp_qual, qual_cells = empty_qual(), {}
     last_sync = last_integration_move(pipeline)
     sync_stale = business_hours_between(last_sync,
                                         dt.datetime.now(dt.timezone.utc)) > 24
@@ -766,18 +804,26 @@ def build():
                     reply_at[cid] = w
             calls_at = first_outbound_call(ids, since_ms)
 
-            cell_attr = empty_attr()
+            cell_attr, cell_qual = empty_attr(), empty_qual()
             attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
                         "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
+            qual_ids = {"certain": [], "attente_rdv_pose": [], "attente_carte_seule": []}
             for cid in (dset | mset):
                 bucket, sub = attribute(cid, simulated, reply_at, rdv_pub, calls_at)
                 attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
                 add_attr(cell_attr, bucket, sub)
                 add_attr(camp_attr, bucket, sub)
+                q, qsub = qualify(cid, bucket, sub, mset)
+                for acc in (cell_qual, camp_qual):
+                    acc[q] += 1
+                    if qsub:
+                        acc[f"attente_{qsub}"] += 1
+                qual_ids["certain" if q == "certain" else f"attente_{qsub}"].append(cid)
                 add_attr(attr_v2 if cid in ({x for x, t in d_wave.items() if t == "v2"} |
                                             {x for x, t in m_wave.items() if t == "v2"})
                          else attr_v1, bucket, sub)
             attr_cells[c["list_id"]] = cell_attr
+            qual_cells[c["list_id"]] = cell_qual
 
             # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
             # de relance, donc attribuable à la relance et non au batch.
@@ -794,7 +840,9 @@ def build():
                          marketing=cell_attr["marketing"]["total"],
                          sales=cell_attr["sales"]["total"],
                          non_attribuable=cell_attr["non_attribuable"]["total"],
-                         simule=cell_attr["marketing"]["simulation"])
+                         simule=cell_attr["marketing"]["simulation"],
+                         certain=cell_qual["certain"],
+                         attente=cell_qual["attente"])
             n_meet, n_deal = len(mset), len(dset)
 
             coh_meet |= mset
@@ -826,7 +874,8 @@ def build():
                 # ce fichier est servi publiquement par GitHub Pages.
                 _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
                           deal_only=sorted(dset - mset), v2=sorted(v2),
-                          attr={k: sorted(v) for k, v in attr_ids.items()}),
+                          attr={k: sorted(v) for k, v in attr_ids.items()},
+                          qual={k: sorted(v) for k, v in qual_ids.items()}),
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=n)
@@ -880,6 +929,7 @@ def build():
         marketing=camp_attr["marketing"], sales=camp_attr["sales"],
         non_attribuable=camp_attr["non_attribuable"],
         par_cellule=attr_cells, par_vague=dict(v1=attr_v1, v2=attr_v2),
+        qualification=dict(camp_qual, par_cellule=qual_cells),
         sync_stale=sync_stale,
         last_sync=last_sync.isoformat() if last_sync else None)
 
@@ -937,6 +987,17 @@ def build():
             # Mêmes contacts, relus par ORIGINE de l'activation. Les cinq
             # catégories sont disjointes : un contact apparaît une seule fois.
             # C'est ici qu'on vérifie un arbitrage douteux, fiche par fiche.
+            qua = ids.get("qual") or {}
+            if any(qua.values()):
+                print(f"  — qualification —")
+                for cat, label in (("certain", "activé CERTAIN"),
+                                   ("attente_rdv_pose", "en attente · RDV posé par un commercial"),
+                                   ("attente_carte_seule", "en attente · carte seule, À ARBITRER")):
+                    if qua.get(cat):
+                        print(f"  {label} ({len(qua[cat])})")
+                        for cid in qua[cat]:
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}")
             att = ids.get("attr") or {}
             if any(att.values()):
                 print(f"  — origine de l'activation —")
@@ -1010,6 +1071,22 @@ def build():
     print(f"   NON ATTRIBUABLE           {na['total']:5d}   {pcts(na['total'], tot)}")
     print(f"   = TOTAL                   {tot:5d}   doit égaler {a['activated']} activés"
           f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
+    q = at["qualification"]
+    print("\n--- qualification · définition du 17/09 ---")
+    print(f"   ACTIVÉS CERTAINS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
+    print(f"     RDV pris par le client  {mk['rdv_public']:5d}")
+    print(f"     parcours démarré        {mk['simulation']:5d}")
+    print(f"   EN ATTENTE RETOUR SALES   {q['attente']:5d}   {pcts(q['attente'], tot)}")
+    print(f"     dont RDV posé           {q['attente_rdv_pose']:5d}"
+          f"   créneau bloqué : accord verbal probable")
+    print(f"     dont carte seule        {q['attente_carte_seule']:5d}"
+          f"   aucun RDV : c'est ici qu'est le doute")
+    print(f"   = TOTAL POTENTIEL         {q['certain'] + q['attente']:5d}"
+          f"   doit égaler {a['activated']} activés"
+          f" · {'OK' if q['certain'] + q['attente'] == a['activated'] else 'ÉCART'}")
+    print("   Une réponse à un mail NE SUFFIT PAS : la propriété HubSpot ne")
+    print("   distingue pas « ça m'intéresse » d'un refus ou d'un message")
+    print("   d'absence. Ces contacts vont en attente, pas en activés.")
     v1a, v2a = at["par_vague"]["v1"], at["par_vague"]["v2"]
     print(f"   vague 1 : marketing {v1a['marketing']['total']} · "
           f"sales {v1a['sales']['total']} · na {v1a['non_attribuable']['total']}")
