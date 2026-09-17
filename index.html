@@ -253,6 +253,9 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Comment se décomposent les clients activés<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
+        <div class="bsub" style="margin-bottom:8px"><strong>Les chiffres de ce bloc portent sur le
+          total potentiel, pas sur les activés certains.</strong> La carte de tête affiche le
+          chiffre défendable ; ici on décompose l'ensemble, qualification comprise.</div>
         <div class="bsub">
           Un client est <strong>activé</strong> s'il a pris un RDV, s'il a un dossier dans le pipe
           courtage AE, ou les deux. Les trois cas sont <strong>disjoints</strong> : un contact
@@ -856,8 +859,19 @@ function render(){
     /* Les six chiffres d'activation vivent dans leur bloc dédié, où deux rangs
        séparés portent la règle de lecture. Sur une grille de cartes plates,
        deux totaux qui se recoupent invitent à une addition fausse. */
-    kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
-      `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`)+
+    /* Carte de tête : le chiffre HONNÊTE, pas le total.
+       Le total activé compte des fiches ouvertes après un appel où le client a
+       dit non. Le chiffre de tête est celui que les gens retiennent — il doit
+       donc être celui qu'on peut défendre. Le total potentiel reste affiché
+       juste en dessous, pour la continuité de série et pour que personne ne
+       croie à une perte de données. */
+    (ACT.qualification
+      ? kpi('star','Clients activés certains',ACT.qualification.certain,
+          `${pct(ACT.qualification.certain,nAll)} des ciblés · `+
+          `${fmt(ACT.activated)} potentiels dont ${fmt(ACT.qualification.attente)} `+
+          `en attente du sales`)
+      : kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
+          `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`))+
     /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
        vague : un data.json d'avant le patch reste lisible sans rien casser. */
     ((D.dedup||{}).relanced?
