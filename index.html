@@ -865,11 +865,15 @@ function render(){
        donc être celui qu'on peut défendre. Le total potentiel reste affiché
        juste en dessous, pour la continuité de série et pour que personne ne
        croie à une perte de données. */
-    (ACT.qualification
-      ? kpi('star','Clients activés certains',ACT.qualification.certain,
-          `${pct(ACT.qualification.certain,nAll)} des ciblés · `+
-          `${fmt(ACT.activated)} potentiels dont ${fmt(ACT.qualification.attente)} `+
-          `en attente du sales`)
+    /* Le bloc qualification vit sous dedup.attribution, pas sous
+       dedup.activation : lire ACT.qualification renvoyait undefined et faisait
+       tomber la carte sur son repli « objectif de la campagne ». */
+    (((D.dedup||{}).attribution||{}).qualification
+      ? kpi('star','Clients activés certains',
+          D.dedup.attribution.qualification.certain,
+          `${pct(D.dedup.attribution.qualification.certain,nAll)} des ciblés · `+
+          `${fmt(ACT.activated)} potentiels dont `+
+          `${fmt(D.dedup.attribution.qualification.attente)} en attente du sales`)
       : kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
           `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`))+
     /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
