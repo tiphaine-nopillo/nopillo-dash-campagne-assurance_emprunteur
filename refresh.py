@@ -506,34 +506,42 @@ def attribute(cid, simulated, replies, rdv_pub, calls):
 def qualify(cid, bucket, sub, mset):
     """Statut de qualification d'un contact activé : certain, ou en attente.
 
-    Définition arrêtée le 17/09/2026 avec Clémence. Un client n'est un lead
-    que dans trois cas : il a pris un RDV lui-même, il a démarré son parcours,
-    ou un commercial l'a eu au téléphone ET il a exprimé un intérêt.
+    Définition arrêtée le 17/09/2026 avec Clémence. Un client est un lead dans
+    trois cas, et uniquement dans ces trois cas :
+      1. il prend lui-même un créneau, suite à nos e-mails ou depuis l'app ;
+      2. il démarre son parcours de son propre chef ;
+      3. outbound : on l'a eu au téléphone, ça peut l'intéresser, ET il veut
+         qu'on organise un RDV pour en parler.
 
-    CERTAIN — les deux premiers cas, mesurables sans intervention humaine :
-      - RDV réservé en self-service (hs_meeting_source = MEETINGS_PUBLIC) ;
-      - simulation réelle (last_step_date renseignée).
+    LECTURE DU CAS 3 : le résultat attendu d'un outbound qualifié est un RDV
+    organisé. Un contact qui a un rendez-vous posé par un commercial a donc,
+    par construction, franchi les deux conditions — il a été joint, et il a
+    voulu qu'on lui cale un créneau. Il est CERTAIN.
+    Réserve : rien dans HubSpot ne dit si le créneau a été honoré. La règle
+    porte sur l'intention exprimée au téléphone, pas sur la tenue du RDV.
 
-    EN ATTENTE — tout le reste. Deux sous-cas, volontairement distingués :
-      - « rdv_pose » : un commercial a bloqué un créneau. Un rendez-vous dans
-        l'agenda suppose un accord verbal, le doute est faible ;
-      - « carte_seule » : une fiche a été ouverte dans HubSpot sans aucun
-        rendez-vous. C'est là qu'est le vrai doute — sur 151 contacts appelés,
-        37 avaient une carte dont 21 en optimization_declined. Une carte en
-        refus comptait quand même comme une activation.
+    RESTE EN ATTENTE : les contacts qui n'ont qu'une fiche ouverte dans
+    HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un
+    accord ou un refus. C'est la population que Clémence pointe : sur
+    151 contacts appelés, 37 avaient une carte dont 21 en optimization_declined.
 
     POURQUOI UNE RÉPONSE NE SUFFIT PAS : hs_sales_email_last_replied enregistre
     n'importe quelle réponse, y compris « ça ne m'intéresse pas », un message
     d'absence ou une demande de désinscription. Rien ne distingue un refus d'un
-    signal d'intérêt. Les compter reviendrait à compter des « non ».
+    signal d'intérêt. Une réponse sans RDV ni parcours reste en attente.
     """
-    if bucket == "marketing" and sub in ("rdv_public", "simulation"):
-        return "certain", None
-    return "attente", ("rdv_pose" if cid in mset else "carte_seule")
+    if sub == "rdv_public":
+        return "certain", "rdv_client"      # cas 1
+    if sub == "simulation":
+        return "certain", "parcours"        # cas 2
+    if cid in mset:
+        return "certain", "rdv_sales"       # cas 3, RDV organisé
+    return "attente", "carte_seule"
 
 
 def empty_qual():
-    return dict(certain=0, attente=0, attente_rdv_pose=0, attente_carte_seule=0)
+    return dict(certain=0, attente=0, certain_rdv_client=0, certain_parcours=0,
+                certain_rdv_sales=0, attente_carte_seule=0)
 
 
 def empty_attr():
@@ -807,7 +815,8 @@ def build():
             cell_attr, cell_qual = empty_attr(), empty_qual()
             attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
                         "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
-            qual_ids = {"certain": [], "attente_rdv_pose": [], "attente_carte_seule": []}
+            qual_ids = {"certain_rdv_client": [], "certain_parcours": [],
+                        "certain_rdv_sales": [], "attente_carte_seule": []}
             for cid in (dset | mset):
                 bucket, sub = attribute(cid, simulated, reply_at, rdv_pub, calls_at)
                 attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
@@ -816,9 +825,8 @@ def build():
                 q, qsub = qualify(cid, bucket, sub, mset)
                 for acc in (cell_qual, camp_qual):
                     acc[q] += 1
-                    if qsub:
-                        acc[f"attente_{qsub}"] += 1
-                qual_ids["certain" if q == "certain" else f"attente_{qsub}"].append(cid)
+                    acc[f"{q}_{qsub}"] += 1
+                qual_ids[f"{q}_{qsub}"].append(cid)
                 add_attr(attr_v2 if cid in ({x for x, t in d_wave.items() if t == "v2"} |
                                             {x for x, t in m_wave.items() if t == "v2"})
                          else attr_v1, bucket, sub)
@@ -990,9 +998,10 @@ def build():
             qua = ids.get("qual") or {}
             if any(qua.values()):
                 print(f"  — qualification —")
-                for cat, label in (("certain", "activé CERTAIN"),
-                                   ("attente_rdv_pose", "en attente · RDV posé par un commercial"),
-                                   ("attente_carte_seule", "en attente · carte seule, À ARBITRER")):
+                for cat, label in (("certain_rdv_client", "certain · cas 1, RDV pris par le client"),
+                                   ("certain_parcours", "certain · cas 2, parcours démarré"),
+                                   ("certain_rdv_sales", "certain · cas 3, RDV organisé après appel"),
+                                   ("attente_carte_seule", "EN ATTENTE · carte seule, À ARBITRER")):
                     if qua.get(cat):
                         print(f"  {label} ({len(qua[cat])})")
                         for cid in qua[cat]:
@@ -1074,13 +1083,12 @@ def build():
     q = at["qualification"]
     print("\n--- qualification · définition du 17/09 ---")
     print(f"   ACTIVÉS CERTAINS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
-    print(f"     RDV pris par le client  {mk['rdv_public']:5d}")
-    print(f"     parcours démarré        {mk['simulation']:5d}")
+    print(f"     cas 1 · RDV pris par le client   {q['certain_rdv_client']:5d}")
+    print(f"     cas 2 · parcours démarré         {q['certain_parcours']:5d}")
+    print(f"     cas 3 · RDV organisé après appel {q['certain_rdv_sales']:5d}")
     print(f"   EN ATTENTE RETOUR SALES   {q['attente']:5d}   {pcts(q['attente'], tot)}")
-    print(f"     dont RDV posé           {q['attente_rdv_pose']:5d}"
-          f"   créneau bloqué : accord verbal probable")
-    print(f"     dont carte seule        {q['attente_carte_seule']:5d}"
-          f"   aucun RDV : c'est ici qu'est le doute")
+    print(f"     carte ouverte, aucun RDV         {q['attente_carte_seule']:5d}"
+          f"   accord ou refus : à arbitrer")
     print(f"   = TOTAL POTENTIEL         {q['certain'] + q['attente']:5d}"
           f"   doit égaler {a['activated']} activés"
           f" · {'OK' if q['certain'] + q['attente'] == a['activated'] else 'ÉCART'}")
