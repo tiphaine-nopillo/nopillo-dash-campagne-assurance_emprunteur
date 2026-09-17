@@ -271,6 +271,11 @@
         <div class="eq" id="waveEq"></div>
         <div class="bsub" id="waveNote" style="margin-top:12px"></div>
       </div>
+      <div id="qualWrap" style="display:none">
+        <div class="rlab">Statut de qualification — <strong>certains contre en attente</strong></div>
+        <div class="eq" id="qualEq"></div>
+        <div class="bsub" id="qualNote" style="margin-top:12px"></div>
+      </div>
       <div id="attrWrap" style="display:none">
         <div class="rlab">Qui a produit l'activation — <strong>marketing contre sales</strong></div>
         <div class="eq" id="attrEq"></div>
@@ -365,6 +370,7 @@
       </div></div>
       <div class="twrap"><table id="tAttr">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Activés</th>
+          <th>Certains</th><th>En attente</th>
           <th>Marketing</th><th>dont simulation</th><th>Sales</th><th>Non attribuable</th>
           <th>Part marketing</th></tr></thead>
         <tbody></tbody></table></div>
@@ -509,6 +515,9 @@
         comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
       </div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>17/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Qualification</span></td>
+          <td>— → certains / en attente retour sales</td>
+          <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas : certains + en attente = activés. Définition du lead arrêtée avec Clémence — un client n'est un lead que s'il prend un RDV lui-même, démarre son parcours, ou dit au téléphone que ça l'intéresse. Le dashboard mesure seul les deux premiers cas. Le troisième attend une propriété HubSpot portant la qualification du commercial ; tant qu'elle vit dans un GSheet, le collecteur ne peut pas la lire. Une réponse à un e-mail ne vaut pas activation : <code>hs_sales_email_last_replied</code> ne distingue pas un « oui » d'un refus.</td></tr>
         <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
           <td>— → marketing / sales / non attribuable</td>
           <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas, seule sa décomposition est ajoutée — même principe que l'axe v1/v2. Trois cas disjoints dont la somme fait le total. Aucune valeur antérieure n'est invalidée.</td></tr>
@@ -996,6 +1005,35 @@ function render(){
         `le flux n'est pas rétabli.`;
     }
 
+    /* Qualification. Définition du lead arrêtée le 17/09 : seuls le RDV pris
+       par le client et le parcours démarré sont mesurables sans intervention
+       humaine. Le reste attend l'arbitrage des commerciaux. Le total activé
+       ne change pas : certains + en attente = activés. */
+    const Q=AT.qualification;
+    if(Q){
+      document.getElementById('qualWrap').style.display='block';
+      document.getElementById('qualEq').innerHTML=
+        tile('','Activés certains',Q.certain,`${pct(Q.certain,tot)} des activés`)+
+        `<div class="eq-op">+</div>`+
+        tile('','En attente retour sales',Q.attente,`${pct(Q.attente,tot)} des activés`)+
+        `<div class="eq-op">=</div>`+
+        tile('res','Total potentiel',tot,`${pct(tot,nAll)} des ciblés`);
+      document.getElementById('qualNote').innerHTML=
+        `<strong>Activés certains</strong> : le client a pris un RDV lui-même `+
+        `(${fmt(mk.rdv_public)}) ou démarré son parcours (${fmt(mk.simulation)}). `+
+        `Ces deux cas se mesurent sans intervention humaine. `+
+        `<strong>En attente</strong> : ${fmt(Q.attente_rdv_pose)} ont un rendez-vous posé par un `+
+        `commercial — un créneau bloqué suppose un accord verbal, le doute est faible — et `+
+        `${fmt(Q.attente_carte_seule)} n'ont qu'une fiche ouverte dans HubSpot, sans rendez-vous : `+
+        `c'est là qu'est le vrai doute, et c'est cette population que les commerciaux doivent `+
+        `arbitrer. `+
+        `<strong>Une réponse à un e-mail ne suffit pas</strong> : la propriété HubSpot ne distingue `+
+        `pas « ça m'intéresse » d'un refus, d'un message d'absence ou d'une demande de `+
+        `désinscription. Ces contacts vont en attente, jamais en activés certains. `+
+        `Le chiffre à avancer aujourd'hui est <strong>${fmt(Q.certain)}</strong> ; `+
+        `${fmt(tot)} est la borne haute, atteinte si tous les contacts en attente sont qualifiés.`;
+    }
+
     document.getElementById('attrWrap').style.display='block';
     document.getElementById('attrEq').innerHTML=
       tile('','Marketing',mk.total,`${pct(mk.total,tot)} des activés`)+
@@ -1029,11 +1067,14 @@ function render(){
     /* Tableau par cellule. par_cellule est indexé par list_id. */
     const PC=AT.par_cellule||{};
     document.getElementById('attrBlock').style.display='block';
-    const arow=(lab,cell,a,cls)=>{
+    const QC=(Q&&Q.par_cellule)||{};
+    const arow=(lab,cell,a,cls,q)=>{
       const t=a.marketing.total+a.sales.total+a.non_attribuable.total;
       return `<tr class="${cls||''}"><td class="left">${lab}</td>
         <td class="left${cls?' m':''}">${cell}</td>
         <td><strong>${fmt(t)}</strong></td>
+        <td class="g">${q?fmt(q.certain):VOID}</td>
+        <td class="o">${q?fmt(q.attente):VOID}</td>
         <td class="g">${fmt(a.marketing.total)}</td>
         <td class="m">${fmt(a.marketing.simulation)}</td>
         <td class="o">${fmt(a.sales.total)}</td>
@@ -1043,12 +1084,12 @@ function render(){
       D.cohorts.map(co=>co.cells.map((c,i)=>{
         const a=PC[c.list_id]; if(!a)return '';
         return arow(i===0?'<strong>'+co.label+'</strong>':'',
-          (AL[c.audience]||c.audience)+(c.version?' · '+c.version:''),a);
+          (AL[c.audience]||c.audience)+(c.version?' · '+c.version:''),a,'',QC[c.list_id]);
       }).join('')).join('')
       +(AT.par_vague?arow('<strong>Vague 1</strong>','envoi initial',AT.par_vague.v1,'')
         +arow('<strong>Vague 2</strong>','relance',AT.par_vague.v2,''):'')
       +arow('TOTAL CAMPAGNE','union dédupliquée',
-            {marketing:mk,sales:sl,non_attribuable:na},'totrow');
+            {marketing:mk,sales:sl,non_attribuable:na},'totrow',Q);
   }
 
   /* ---------- NIVEAU 2 ---------- */
@@ -1340,6 +1381,15 @@ function render(){
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
+    {level:'high',title:'Le chiffre à avancer est « activés certains », pas le total',
+     body:`Le total activé compte toute transaction du pipe courtage, y compris une fiche ouverte `
+       +`par un commercial après un appel où le client a dit non. Sur 151 contacts appelés en `
+       +`outbound, 37 avaient une carte dont 21 en <code>optimization_declined</code> — et une `
+       +`carte en refus comptait comme une activation. Les <strong>activés certains</strong> ne `
+       +`retiennent que ce qui se mesure sans intervention humaine : RDV pris par le client, ou `
+       +`parcours démarré. Le reste attend l'arbitrage des commerciaux. Les transactions ne sont `
+       +`pas supprimées : elles portent la trace du travail outbound et le motif du refus. On `
+       +`corrige la mesure, pas la donnée.`},
     {level:'high',title:'Une panne de synchronisation fabrique de faux « sales »',
      body:`L'attribution repose sur la présence d'un dossier remonté par n8n. Quand le flux est `
        +`en panne, un client qui a réellement simulé n'a aucun dossier : il perd son signal `
