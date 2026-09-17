@@ -244,6 +244,7 @@
     <div class="banner ok" id="bFix"><span class="d"></span><span></span></div>
     <div class="banner info" id="bAttrib"><span class="d"></span><span></span></div>
     <div class="banner" id="bOverlap" style="display:none"><span class="d"></span><span></span></div>
+    <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
 
     <!-- NIVEAU 1 -->
     <div class="lvl"><span class="lvl-n">1</span>Performance globale</div>
@@ -269,6 +270,13 @@
         <div class="rlab">Origine de l'activation — <strong>envoi initial contre relance</strong></div>
         <div class="eq" id="waveEq"></div>
         <div class="bsub" id="waveNote" style="margin-top:12px"></div>
+      </div>
+      <div id="attrWrap" style="display:none">
+        <div class="rlab">Qui a produit l'activation — <strong>marketing contre sales</strong></div>
+        <div class="eq" id="attrEq"></div>
+        <div class="rlab">Détail du marketing — <strong>ces trois-là s'additionnent</strong></div>
+        <div class="eq" id="attrMk"></div>
+        <div class="bsub" id="attrNote" style="margin-top:12px"></div>
       </div>
     </div>
 
@@ -344,6 +352,24 @@
         <tbody></tbody></table></div>
     </div>
 
+    <div class="block" id="attrBlock" style="display:none">
+      <div class="bhead"><div>
+        <h3 class="btitle">Origine de l'activation, par cellule<span class="src">last_step_date ∪ hs_meeting_source ∪ CALL</span></h3>
+        <div class="bsub">
+          Trois colonnes <strong>disjointes</strong> dont la somme fait le total activé.
+          <strong>Marketing</strong> : le client a simulé, a répondu à une séquence, ou a réservé
+          son rendez-vous lui-même avant tout appel. <strong>Sales</strong> : un appel sortant a
+          précédé tout signal marketing. <strong>Non attribuable</strong> : ni l'un ni l'autre.
+          La simulation prime sur tout, même si un appel a suivi.
+        </div>
+      </div></div>
+      <div class="twrap"><table id="tAttr">
+        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Activés</th>
+          <th>Marketing</th><th>dont simulation</th><th>Sales</th><th>Non attribuable</th>
+          <th>Part marketing</th></tr></thead>
+        <tbody></tbody></table></div>
+    </div>
+
     <div class="two">
       <div class="block">
         <div class="bhead"><div><h3 class="btitle">Taux d'activation par cohorte</h3>
@@ -393,6 +419,8 @@
           <td><strong>Libellé imprécis, assumé.</strong> Le pipe est alimenté de <strong>deux</strong> façons : n8n remonte les statuts du partenaire — là, le client est réellement entré dans le simulateur — et les commerciaux créent des fiches à la main. Sur les 44 contacts comptés, 33 le sont via une transaction manuelle, qui atteste qu'un commercial a ouvert une fiche et non qu'un client a simulé. Le mot « simulation » ne vaut strictement que pour la part n8n, affichée partout à côté du total.</td></tr>
         <tr><td>Clients activés</td><td>MEETING_EVENT ∪ DEAL</td>
           <td>Union en contacts uniques : RDV seul, simulation seule, ou les deux. Un contact avec RDV et dossier compte une fois. Le total campagne est calculé sur des identifiants de contact par le collecteur, jamais par addition des cellules.</td></tr>
+        <tr><td>Origine de l'activation</td><td>DEAL.last_step_date · MEETING.hs_meeting_source · CALL.hs_call_direction</td>
+          <td>Trois cas disjoints dont la somme fait le total activé. Règle, dans cet ordre : une simulation réelle l'emporte sur tout ; sinon une réponse ou un RDV self-service antérieur au premier appel sortant ; sinon un appel sortant ; sinon non attribuable. Le marqueur de simulation est <code>last_step_date</code>, et non <code>last_step_id</code> — cette dernière n'est renseignée que si le dernier événement est une complétion d'étape, soit 3 transactions sur 394.</td></tr>
         <tr><td>Vague d'activation</td><td>appartenance à une liste de relance</td>
           <td>Un contact relancé dispose de deux fenêtres de 21 jours : celle de son batch initial et celle de sa relance. L'événement est étiqueté v1 ou v2 selon la fenêtre dans laquelle il tombe. Le rattachement d'un contact relancé à sa cohorte est <strong>calculé</strong> par croisement avec les listes de cellules, jamais déclaré en dur : les listes de relance sont construites sur un statut de séquence, pas sur l'appartenance à un batch.</td></tr>
         <tr><td>Statut du batch</td><td>contact.hs_sequences_is_enrolled</td>
@@ -481,6 +509,15 @@
         comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
       </div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
+          <td>— → marketing / sales / non attribuable</td>
+          <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas, seule sa décomposition est ajoutée — même principe que l'axe v1/v2. Trois cas disjoints dont la somme fait le total. Aucune valeur antérieure n'est invalidée.</td></tr>
+        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulation</span></td>
+          <td>hs_object_source_label → last_step_date</td>
+          <td><strong>Lève la réserve « libellé imprécis, assumé ».</strong> La source de la fiche ne dit pas si un client a simulé : un deal créé à la main pendant une panne n8n, puis mis à jour par le flux, reste marqué CRM_UI. <code>last_step_date</code> est écrite dans les deux cas. Le KPI « simulations entamées » est inchangé ; c'est la décomposition d'attribution qui s'appuie désormais sur ce marqueur.</td></tr>
+        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Rattrapage</span></td>
+          <td>exclusion par transaction → par date</td>
+          <td><strong>Correction d'un mode de défaillance silencieux.</strong> Le flux n8n, arrêté depuis le 13/08, a été rétabli le 16/09 : ~190 transactions créées et 248 mouvements d'étape en deux minutes. La clause « déplacé d'étape dans la fenêtre » les aurait comptés comme autant d'activations. L'exclusion porte maintenant sur chaque date prise isolément, pas sur la transaction entière — un dossier créé pendant la rafale mais réellement déplacé plus tard reste compté.</td></tr>
         <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre RDV</span></td>
           <td>cumul ouvert → J+21</td>
           <td><strong>Rupture.</strong> Le filtre des réunions n'avait qu'une borne de début : un RDV pris des mois après l'envoi restait imputé au batch d'origine, alors que les dossiers étaient bornés depuis le 22/08. Mesuré en direct — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09. Les compteurs de RDV d'août antérieurs à cette date ne sont pas comparables.</td></tr>
@@ -933,6 +970,87 @@ function render(){
         <td>${fmt(ACT.activated)}</td><td>${pct(ACT.activated_v2,REL)}</td></tr>`;
   }
 
+  /* ---------- ATTRIBUTION SALES / MARKETING ----------
+     Nouvel axe, sans rupture : le total activé ne change pas, seule sa
+     décomposition est ajoutée. Trois cas DISJOINTS dont la somme fait le
+     total, comme l'axe v1/v2. Masqué tant que data.json ne porte pas le bloc :
+     un data.json d'avant le 16/09 reste lisible. */
+  const AT=(D.dedup||{}).attribution;
+  if(AT&&AT.marketing){
+    const mk=AT.marketing, sl=AT.sales, na=AT.non_attribuable;
+    const tot=mk.total+sl.total+na.total;
+
+    /* Le drapeau sync_stale n'est pas cosmétique : quand le flux n8n est en
+       panne, un client qui a simulé n'a pas de dossier remonté, donc aucun
+       signal marketing, donc il bascule sur l'appel du commercial. La
+       décomposition se met à surestimer le sales EN SILENCE. */
+    if(AT.sync_stale){
+      const b=document.getElementById('bSync');
+      b.style.display='flex';
+      b.querySelector('span:last-child').innerHTML=
+        `<strong>Synchronisation n8n obsolète.</strong> Aucun mouvement sur le pipe courtage `+
+        `depuis plus de 24 h ouvrées`+(AT.last_sync?` (dernier : `+
+        new Date(AT.last_sync).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+`)`:'')+
+        `. Les contacts ayant simulé depuis n'ont pas de dossier remonté : ils basculent à tort `+
+        `en <strong>sales</strong>. La décomposition ci-dessous est à ne pas publier tant que `+
+        `le flux n'est pas rétabli.`;
+    }
+
+    document.getElementById('attrWrap').style.display='block';
+    document.getElementById('attrEq').innerHTML=
+      tile('','Marketing',mk.total,`${pct(mk.total,tot)} des activés`)+
+      `<div class="eq-op">+</div>`+
+      tile('','Sales',sl.total,`${pct(sl.total,tot)} des activés`)+
+      `<div class="eq-op">+</div>`+
+      tile('','Non attribuable',na.total,`${pct(na.total,tot)} des activés`)+
+      `<div class="eq-op">=</div>`+
+      tile('res','Clients activés',tot,`${pct(tot,nAll)} des ciblés`);
+    document.getElementById('attrMk').innerHTML=
+      tile('sub','Simulation',mk.simulation,`${pct(mk.simulation,mk.total)} du marketing`)+
+      `<div class="eq-op">+</div>`+
+      tile('sub','Réponse à une séquence',mk.reponse,`${pct(mk.reponse,mk.total)} du marketing`)+
+      `<div class="eq-op">+</div>`+
+      tile('sub','RDV self-service',mk.rdv_public,`${pct(mk.rdv_public,mk.total)} du marketing`)+
+      `<div class="eq-op">=</div>`+
+      tile('sub res','Marketing',mk.total,`${pct(mk.total,tot)} des activés`);
+    document.getElementById('attrNote').innerHTML=
+      `Règle appliquée dans cet ordre : une <strong>simulation</strong> réelle l'emporte sur tout, `+
+      `même si un appel a suivi — le client était déjà entré dans le parcours produit. Sinon, une `+
+      `<strong>réponse</strong> à une séquence ou un <strong>RDV réservé par le client</strong>, `+
+      `à condition d'être antérieurs au premier appel sortant. Sinon, un <strong>appel sortant</strong> `+
+      `loggé bascule en sales. Sinon, non attribuable. `+
+      `La date comparée au premier appel est celle de la <strong>réservation</strong> du rendez-vous, `+
+      `jamais celle de sa tenue : un RDV réservé le 11 et tenu le 15, avec un appel le 15, est du `+
+      `marketing. `+
+      `Le marqueur de simulation est <code>last_step_date</code>, écrite par n8n à la création `+
+      `comme à la mise à jour : elle rattrape les dossiers ouverts à la main pendant une panne, `+
+      `ce que la source de la fiche ne sait pas faire.`;
+
+    /* Tableau par cellule. par_cellule est indexé par list_id. */
+    const PC=AT.par_cellule||{};
+    document.getElementById('attrBlock').style.display='block';
+    const arow=(lab,cell,a,cls)=>{
+      const t=a.marketing.total+a.sales.total+a.non_attribuable.total;
+      return `<tr class="${cls||''}"><td class="left">${lab}</td>
+        <td class="left${cls?' m':''}">${cell}</td>
+        <td><strong>${fmt(t)}</strong></td>
+        <td class="g">${fmt(a.marketing.total)}</td>
+        <td class="m">${fmt(a.marketing.simulation)}</td>
+        <td class="o">${fmt(a.sales.total)}</td>
+        <td class="m">${fmt(a.non_attribuable.total)}</td>
+        <td>${pct(a.marketing.total,t)}</td></tr>`;};
+    document.querySelector('#tAttr tbody').innerHTML=
+      D.cohorts.map(co=>co.cells.map((c,i)=>{
+        const a=PC[c.list_id]; if(!a)return '';
+        return arow(i===0?'<strong>'+co.label+'</strong>':'',
+          (AL[c.audience]||c.audience)+(c.version?' · '+c.version:''),a);
+      }).join('')).join('')
+      +(AT.par_vague?arow('<strong>Vague 1</strong>','envoi initial',AT.par_vague.v1,'')
+        +arow('<strong>Vague 2</strong>','relance',AT.par_vague.v2,''):'')
+      +arow('TOTAL CAMPAGNE','union dédupliquée',
+            {marketing:mk,sales:sl,non_attribuable:na},'totrow');
+  }
+
   /* ---------- NIVEAU 2 ---------- */
   const K2=KPI.filter(k=>['replies','meetings',PK].includes(k.key));
   document.getElementById('thK2').outerHTML=K2.map(k=>`<th>${k.label}</th>`).join('');
@@ -1222,6 +1340,24 @@ function render(){
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
+    {level:'high',title:'Une panne de synchronisation fabrique de faux « sales »',
+     body:`L'attribution repose sur la présence d'un dossier remonté par n8n. Quand le flux est `
+       +`en panne, un client qui a réellement simulé n'a aucun dossier : il perd son signal `
+       +`marketing et bascule sur l'appel du commercial. C'est arrivé du 13/08 au 16/09, `
+       +`33 jours sans aucune remontée. Le drapeau <code>sync_stale</code> lève un bandeau dès `
+       +`que rien n'a bougé depuis 24 h ouvrées — quand il est levé, la décomposition ne doit `
+       +`pas être publiée.`},
+    {level:'med',title:'La date de réservation, jamais celle de tenue',
+     body:`Pour départager marketing et sales sur un rendez-vous, on compare la date de `
+       +`<strong>réservation</strong> au premier appel sortant, jamais la date de tenue. `
+       +`Cas réel : réservation le 11/09, rendez-vous le 15/09, appel le 15/09 à l'heure du `
+       +`rendez-vous. Avec la date de tenue, le contact bascule à tort en sales — 5 erreurs sur `
+       +`57 venaient de là lors de la validation manuelle.`},
+    {level:'med',title:'L\'attribution ignore le filtre d\'intitulé des RDV',
+     body:`L'attribution utilise <code>hs_meeting_source</code> sans filtrer sur l'intitulé, `
+       +`parce que le filtre « emprunteur » rate les rendez-vous pris via le lien générique. `
+       +`Le filtre de la définition d'ACTIVATION, lui, est inchangé : y toucher déplacerait des `
+       +`chiffres déjà publiés. Les deux périmètres diffèrent donc légèrement, volontairement.`},
     {level:'high',title:'Le taux de la vague 2 n\'est pas un taux de campagne',
      body:`Les listes de relance ne contiennent <strong>que</strong> des contacts non activés. `
        +`Leur dénominateur est à 0 % d'activés par construction. Toute activation de vague 2 est `
