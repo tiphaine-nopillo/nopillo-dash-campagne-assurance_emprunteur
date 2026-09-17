@@ -1033,19 +1033,20 @@ function render(){
         `<div class="eq-op">=</div>`+
         tile('res','Total potentiel',tot,`${pct(tot,nAll)} des ciblés`);
       document.getElementById('qualNote').innerHTML=
-        `<strong>Activés certains</strong> : le client a pris un RDV lui-même `+
-        `(${fmt(mk.rdv_public)}) ou démarré son parcours (${fmt(mk.simulation)}). `+
-        `Ces deux cas se mesurent sans intervention humaine. `+
-        `<strong>En attente</strong> : ${fmt(Q.attente_rdv_pose)} ont un rendez-vous posé par un `+
-        `commercial — un créneau bloqué suppose un accord verbal, le doute est faible — et `+
-        `${fmt(Q.attente_carte_seule)} n'ont qu'une fiche ouverte dans HubSpot, sans rendez-vous : `+
-        `c'est là qu'est le vrai doute, et c'est cette population que les commerciaux doivent `+
-        `arbitrer. `+
-        `<strong>Une réponse à un e-mail ne suffit pas</strong> : la propriété HubSpot ne distingue `+
-        `pas « ça m'intéresse » d'un refus, d'un message d'absence ou d'une demande de `+
-        `désinscription. Ces contacts vont en attente, jamais en activés certains. `+
-        `Le chiffre à avancer aujourd'hui est <strong>${fmt(Q.certain)}</strong> ; `+
-        `${fmt(tot)} est la borne haute, atteinte si tous les contacts en attente sont qualifiés.`;
+        `<strong>Activés certains</strong>, les trois cas de la définition : `+
+        `${fmt(Q.certain_rdv_client)} ont pris un RDV eux-mêmes, `+
+        `${fmt(Q.certain_parcours)} ont démarré leur parcours, et `+
+        `${fmt(Q.certain_rdv_sales)} ont eu un RDV organisé après un appel — le résultat attendu `+
+        `d'un outbound qualifié, donc le cas 3 est rempli. `+
+        `<strong>En attente</strong> : ${fmt(Q.attente_carte_seule)} contacts n'ont qu'une fiche `+
+        `ouverte dans HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un `+
+        `accord ou un refus — c'est cette population que les commerciaux doivent arbitrer. `+
+        `<strong>Une réponse à un e-mail ne suffit pas</strong> : la propriété HubSpot ne `+
+        `distingue pas « ça m'intéresse » d'un refus ou d'un message d'absence. `+
+        `Le chiffre à avancer est <strong>${fmt(Q.certain)}</strong> ; ${fmt(tot)} est la borne `+
+        `haute, atteinte si tous les contacts en attente sont qualifiés. `+
+        `<em>Réserve : rien dans HubSpot ne dit si un créneau posé a été honoré. La règle porte `+
+        `sur l'intention exprimée au téléphone, pas sur la tenue du rendez-vous.</em>`;
     }
 
     document.getElementById('attrWrap').style.display='block';
