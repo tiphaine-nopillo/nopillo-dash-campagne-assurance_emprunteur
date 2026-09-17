@@ -574,7 +574,6 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
     dset, d_auto, d_wave, simulated = set(), set(), {}, set()
     for did, props in deals.items():
         has_simu = bool(props.get(SIMU_PROP))
-        tag = deal_engages(props, None)  # placeholder, recalculé par contact
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
