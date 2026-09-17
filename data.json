@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-17T09:56:23.288483+00:00",
+  "generated_at": "2026-09-17T10:02:37.906718+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -265,6 +265,56 @@
      }
     }
    },
+   "qualification": {
+    "certain": 108,
+    "attente": 51,
+    "attente_rdv_pose": 12,
+    "attente_carte_seule": 39,
+    "par_cellule": {
+     "14319": {
+      "certain": 15,
+      "attente": 11,
+      "attente_rdv_pose": 4,
+      "attente_carte_seule": 7
+     },
+     "14334": {
+      "certain": 13,
+      "attente": 10,
+      "attente_rdv_pose": 3,
+      "attente_carte_seule": 7
+     },
+     "14336": {
+      "certain": 7,
+      "attente": 0,
+      "attente_rdv_pose": 0,
+      "attente_carte_seule": 0
+     },
+     "14337": {
+      "certain": 10,
+      "attente": 1,
+      "attente_rdv_pose": 0,
+      "attente_carte_seule": 1
+     },
+     "14412": {
+      "certain": 27,
+      "attente": 13,
+      "attente_rdv_pose": 3,
+      "attente_carte_seule": 10
+     },
+     "14413": {
+      "certain": 13,
+      "attente": 3,
+      "attente_rdv_pose": 1,
+      "attente_carte_seule": 2
+     },
+     "14951": {
+      "certain": 23,
+      "attente": 13,
+      "attente_rdv_pose": 1,
+      "attente_carte_seule": 12
+     }
+    }
+   },
    "sync_stale": false,
    "last_sync": "2026-09-17T08:00:09.611000+00:00"
   }
@@ -315,7 +365,9 @@
       "marketing": 19,
       "sales": 7,
       "non_attribuable": 0,
-      "simule": 3
+      "simule": 3,
+      "certain": 15,
+      "attente": 11
      },
      "steps": [
       {
@@ -385,7 +437,9 @@
       "marketing": 16,
       "sales": 7,
       "non_attribuable": 0,
-      "simule": 2
+      "simule": 2,
+      "certain": 13,
+      "attente": 10
      },
      "steps": [
       {
@@ -462,7 +516,9 @@
       "marketing": 7,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 4
+      "simule": 4,
+      "certain": 7,
+      "attente": 0
      },
      "steps": [
       {
@@ -534,7 +590,9 @@
       "marketing": 10,
       "sales": 1,
       "non_attribuable": 0,
-      "simule": 7
+      "simule": 7,
+      "certain": 10,
+      "attente": 1
      },
      "steps": [
       {
@@ -757,7 +815,9 @@
       "marketing": 38,
       "sales": 2,
       "non_attribuable": 0,
-      "simule": 3
+      "simule": 3,
+      "certain": 27,
+      "attente": 13
      },
      "steps": [
       {
@@ -827,7 +887,9 @@
       "marketing": 16,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 8
+      "simule": 8,
+      "certain": 13,
+      "attente": 3
      },
      "steps": [
       {
@@ -1036,7 +1098,9 @@
       "marketing": 36,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 7
+      "simule": 7,
+      "certain": 23,
+      "attente": 13
      },
      "steps": [
       {
