@@ -254,7 +254,7 @@
       <div class="bhead"><div>
         <h3 class="btitle">Comment se décomposent les clients activés<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
         <div class="bsub" style="margin-bottom:8px"><strong>Les chiffres de ce bloc portent sur le
-          total potentiel, pas sur les activés certains.</strong> La carte de tête affiche le
+          total potentiel, pas sur les activés confirmés.</strong> La carte de tête affiche le
           chiffre défendable ; ici on décompose l'ensemble, qualification comprise.</div>
         <div class="bsub">
           Un client est <strong>activé</strong> s'il a pris un RDV, s'il a un dossier dans le pipe
@@ -275,7 +275,7 @@
         <div class="bsub" id="waveNote" style="margin-top:12px"></div>
       </div>
       <div id="qualWrap" style="display:none">
-        <div class="rlab">Statut de qualification — <strong>certains contre en attente</strong></div>
+        <div class="rlab">Statut de qualification — <strong>confirmés contre en attente</strong></div>
         <div class="eq" id="qualEq"></div>
         <div class="bsub" id="qualNote" style="margin-top:12px"></div>
       </div>
@@ -519,7 +519,7 @@
       </div>
       <div class="twrap"><table class="dt"><tbody>
         <tr><td>17/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Qualification</span></td>
-          <td>— → certains / en attente retour sales</td>
+          <td>— → certains / en attente de qualification</td>
           <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas : certains + en attente = activés. Définition du lead arrêtée avec Clémence — un client n'est un lead que s'il prend un RDV lui-même, démarre son parcours, ou dit au téléphone que ça l'intéresse. Le dashboard mesure seul les deux premiers cas. Le troisième attend une propriété HubSpot portant la qualification du commercial ; tant qu'elle vit dans un GSheet, le collecteur ne peut pas la lire. Une réponse à un e-mail ne vaut pas activation : <code>hs_sales_email_last_replied</code> ne distingue pas un « oui » d'un refus.</td></tr>
         <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
           <td>— → marketing / sales / non attribuable</td>
@@ -869,11 +869,11 @@ function render(){
        dedup.activation : lire ACT.qualification renvoyait undefined et faisait
        tomber la carte sur son repli « objectif de la campagne ». */
     (((D.dedup||{}).attribution||{}).qualification
-      ? kpi('star','Clients activés certains',
+      ? kpi('star','Clients activés confirmés',
           D.dedup.attribution.qualification.certain,
           `${pct(D.dedup.attribution.qualification.certain,nAll)} des ciblés · `+
           `${fmt(ACT.activated)} potentiels dont `+
-          `${fmt(D.dedup.attribution.qualification.attente)} en attente du sales`)
+          `${fmt(D.dedup.attribution.qualification.attente)} en attente de qualification`)
       : kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
           `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`))+
     /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
@@ -1031,13 +1031,13 @@ function render(){
     if(Q){
       document.getElementById('qualWrap').style.display='block';
       document.getElementById('qualEq').innerHTML=
-        tile('','Activés certains',Q.certain,`${pct(Q.certain,tot)} des activés`)+
+        tile('','Activés confirmés',Q.certain,`${pct(Q.certain,tot)} des activés`)+
         `<div class="eq-op">+</div>`+
-        tile('','En attente retour sales',Q.attente,`${pct(Q.attente,tot)} des activés`)+
+        tile('','En attente de qualification',Q.attente,`${pct(Q.attente,tot)} des activés`)+
         `<div class="eq-op">=</div>`+
         tile('res','Total potentiel',tot,`${pct(tot,nAll)} des ciblés`);
       document.getElementById('qualNote').innerHTML=
-        `<strong>Activés certains</strong>, les trois cas de la définition : `+
+        `<strong>Activés confirmés</strong>, les trois cas de la définition : `+
         `${fmt(Q.certain_rdv_client)} ont pris un RDV eux-mêmes, `+
         `${fmt(Q.certain_parcours)} ont démarré leur parcours, et `+
         `${fmt(Q.certain_rdv_sales)} ont eu un RDV organisé après un appel — le résultat attendu `+
@@ -1400,11 +1400,11 @@ function render(){
 
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
-    {level:'high',title:'Le chiffre à avancer est « activés certains », pas le total',
+    {level:'high',title:'Le chiffre à avancer est « activés confirmés », pas le total',
      body:`Le total activé compte toute transaction du pipe courtage, y compris une fiche ouverte `
        +`par un commercial après un appel où le client a dit non. Sur 151 contacts appelés en `
        +`outbound, 37 avaient une carte dont 21 en <code>optimization_declined</code> — et une `
-       +`carte en refus comptait comme une activation. Les <strong>activés certains</strong> ne `
+       +`carte en refus comptait comme une activation. Les <strong>activés confirmés</strong> ne `
        +`retiennent que ce qui se mesure sans intervention humaine : RDV pris par le client, ou `
        +`parcours démarré. Le reste attend l'arbitrage des commerciaux. Les transactions ne sont `
        +`pas supprimées : elles portent la trace du travail outbound et le motif du refus. On `
