@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-17T14:51:10.972214+00:00",
+  "generated_at": "2026-09-17T18:56:10.691772+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -107,27 +107,27 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 110,
+   "meet": 124,
    "deal": 131,
    "both": 76,
-   "meet_only": 34,
+   "meet_only": 48,
    "deal_only": 55,
-   "activated": 165,
+   "activated": 179,
    "deal_auto": 19,
    "deal_manual": 112,
    "deal_only_manual": 42,
-   "sum_cells": 165,
+   "sum_cells": 179,
    "overlap": 0,
-   "activated_v2": 55,
+   "activated_v2": 69,
    "activated_v1": 110
   },
   "relanced": 1070,
   "attribution": {
    "marketing": {
-    "total": 146,
-    "simulation": 34,
+    "total": 160,
+    "simulation": 36,
     "reponse": 34,
-    "rdv_public": 78
+    "rdv_public": 90
    },
    "sales": {
     "total": 19
@@ -194,10 +194,10 @@
     },
     "14412": {
      "marketing": {
-      "total": 41,
-      "simulation": 3,
+      "total": 54,
+      "simulation": 4,
       "reponse": 11,
-      "rdv_public": 27
+      "rdv_public": 39
      },
      "sales": {
       "total": 2
@@ -208,8 +208,8 @@
     },
     "14413": {
      "marketing": {
-      "total": 17,
-      "simulation": 8,
+      "total": 18,
+      "simulation": 9,
       "reponse": 3,
       "rdv_public": 6
      },
@@ -252,10 +252,10 @@
     },
     "v2": {
      "marketing": {
-      "total": 40,
-      "simulation": 7,
+      "total": 54,
+      "simulation": 9,
       "reponse": 15,
-      "rdv_public": 18
+      "rdv_public": 30
      },
      "sales": {
       "total": 15
@@ -266,10 +266,10 @@
     }
    },
    "qualification": {
-    "certain": 124,
+    "certain": 138,
     "attente": 41,
-    "certain_rdv_client": 78,
-    "certain_parcours": 34,
+    "certain_rdv_client": 90,
+    "certain_parcours": 36,
     "certain_rdv_sales": 12,
     "attente_carte_seule": 41,
     "par_cellule": {
@@ -306,18 +306,18 @@
       "attente_carte_seule": 1
      },
      "14412": {
-      "certain": 33,
+      "certain": 46,
       "attente": 10,
-      "certain_rdv_client": 27,
-      "certain_parcours": 3,
+      "certain_rdv_client": 39,
+      "certain_parcours": 4,
       "certain_rdv_sales": 3,
       "attente_carte_seule": 10
      },
      "14413": {
-      "certain": 15,
+      "certain": 16,
       "attente": 2,
       "certain_rdv_client": 6,
-      "certain_parcours": 8,
+      "certain_parcours": 9,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 2
      },
@@ -813,26 +813,26 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies": 87,
-     "meetings": 32,
+     "replies": 97,
+     "meetings": 45,
      "deals_ae": 32,
-     "engaged": 43,
+     "engaged": 56,
      "split": {
       "both": 21,
-      "meet_only": 11,
+      "meet_only": 24,
       "deal_only": 11,
-      "engaged": 43,
+      "engaged": 56,
       "deal_n8n": 1,
       "deal_manual": 31,
       "deal_only_manual": 10,
       "relanced": 532,
-      "engaged_v2": 26,
+      "engaged_v2": 39,
       "engaged_v1": 17,
-      "marketing": 41,
+      "marketing": 54,
       "sales": 2,
       "non_attribuable": 0,
-      "simule": 3,
-      "certain": 33,
+      "simule": 4,
+      "certain": 46,
       "attente": 10
      },
      "steps": [
@@ -855,17 +855,17 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 12
+       "meetings": 17
       },
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 9
+       "meetings": 14
       },
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 11
+       "meetings": 14
       }
      ]
     },
@@ -885,26 +885,26 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies": 30,
-     "meetings": 12,
+     "replies": 34,
+     "meetings": 13,
      "deals_ae": 13,
-     "engaged": 17,
+     "engaged": 18,
      "split": {
       "both": 8,
-      "meet_only": 4,
+      "meet_only": 5,
       "deal_only": 5,
-      "engaged": 17,
+      "engaged": 18,
       "deal_n8n": 3,
       "deal_manual": 10,
       "deal_only_manual": 3,
       "relanced": 125,
-      "engaged_v2": 7,
+      "engaged_v2": 8,
       "engaged_v1": 10,
-      "marketing": 17,
+      "marketing": 18,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 8,
-      "certain": 15,
+      "simule": 9,
+      "certain": 16,
       "attente": 2
      },
      "steps": [
@@ -937,22 +937,22 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 5
+       "meetings": 6
       }
      ]
     }
    ],
    "activation": {
-    "meet": 44,
+    "meet": 58,
     "deal": 45,
     "both": 29,
-    "meet_only": 15,
+    "meet_only": 29,
     "deal_only": 16,
-    "activated": 60,
+    "activated": 74,
     "deal_auto": 4,
     "deal_manual": 41,
     "deal_only_manual": 13,
-    "activated_v2": 33,
+    "activated_v2": 47,
     "activated_v1": 27,
     "relanced": 657
    },
@@ -1093,10 +1093,10 @@
      "bounced": 1,
      "opens": 402,
      "clicks": 14,
-     "opens_emails": 600,
+     "opens_emails": 601,
      "clicks_emails": 18,
      "opens_frozen": false,
-     "replies": 38,
+     "replies": 39,
      "meetings": 21,
      "deals_ae": 30,
      "engaged": 37,
@@ -1130,7 +1130,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 274,
+       "opens": 275,
        "clicks": 6
       }
      ],
@@ -1205,8 +1205,8 @@
     },
     {
      "day": 7,
-     "count": 38,
-     "share": 4.99
+     "count": 39,
+     "share": 5.12
     }
    ]
   }
