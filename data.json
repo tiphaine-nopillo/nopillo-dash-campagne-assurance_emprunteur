@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-16T22:01:46.026809+00:00",
+  "generated_at": "2026-09-17T09:39:59.602323+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -11,6 +11,7 @@
   "meeting_window_note": "Depuis le 11/09, les RDV sont bornés à J+21 comme les dossiers. Avant ce correctif, meet_f n'avait qu'une borne basse : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — entre 9h55 et 11h30, soit dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09. La correction fait BAISSER les compteurs de RDV d'août par rapport à ce qui a été communiqué : c'est voulu, les RDV concernés sont réattribués à la vague 2.",
   "attribution_window_note": "ATTRIB_DAYS = 21, hérité et non calibré. Les courbes de réponse cumulées du 11/09 montrent que les deux batchs d'août MONTAIENT ENCORE à J+21 (5 août : 9,28 → 9,44 → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus juste. Non modifié pour l'instant : changer la fenêtre réécrit rétroactivement tout l'historique publié.",
   "frozen_note": "Ouvertures et clics FIGÉS pour les cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked sont des propriétés « dernière fois » : elles ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial. Les 1 070 contacts relancés le 11/09 auraient donc fait basculer ces dates et pollué les compteurs d'août. La fenêtre d'août étant close depuis le 26/08 et le 03/09, ces valeurs ne doivent plus évoluer : elles sont écrites ici et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne, via workflow, pour ne plus dépendre d'une propriété sans mémoire.",
+  "attribution_sm_note": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. NOUVEL AXE SANS RUPTURE — le total activé ne change pas, seule sa décomposition est ajoutée, comme l'axe v1/v2. RÈGLE, dans cet ordre : 1) DEAL.last_step_date renseignée → marketing (simulation) ; 2) sinon, réponse à une séquence OU RDV réservé en self-service, ANTÉRIEUR au premier appel sortant → marketing ; 3) sinon, appel sortant loggé → sales ; 4) sinon, non attribuable. Validée 7/7 contre les cas arbitrés à la main le 16/09. CHOIX ASSUMÉ : la simulation prime sur tout, même si un appel a suivi — le client était déjà entré dans le parcours produit. PIÈGE : pour le RDV on compare la date de RÉSERVATION (hs_createdate) au premier appel, JAMAIS la date de tenue (hs_meeting_start_time). Réservation le 11/09, rendez-vous le 15/09, appel le 15/09 à l'heure du rendez-vous : avec la date de tenue, le contact bascule à tort en sales. MARQUEUR DE SIMULATION : last_step_date, et non last_step_id. last_step_id vient du step_id du dernier event et n'est renseignée que si cet event est une complétion d'étape — 3 transactions sur 394. last_step_date vient de last_event_at : 245 sur 394. Elle est écrite par n8n à la création COMME à la mise à jour, donc elle rattrape les dossiers ouverts à la main pendant une panne. hs_object_source_label ne sait pas le faire : un deal CRM_UI peut cacher une vraie simulation. FILTRE D'INTITULÉ : l'attribution utilise hs_meeting_source SANS filtre sur l'intitulé, qui rate les RDV pris via le lien générique « Rendez-vous téléphonique Nopillo ». Le filtre de la définition d'ACTIVATION reste inchangé : y toucher déplacerait des chiffres publiés. LIMITE : les réponses reposent sur hs_sales_email_last_replied, qui ne garde que la dernière. C'est déjà la convention du dashboard.",
   "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
@@ -106,21 +107,167 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 105,
-   "deal": 213,
-   "both": 74,
-   "meet_only": 31,
-   "deal_only": 139,
-   "activated": 244,
-   "deal_auto": 109,
-   "deal_manual": 104,
-   "deal_only_manual": 38,
-   "sum_cells": 244,
+   "meet": 106,
+   "deal": 125,
+   "both": 72,
+   "meet_only": 34,
+   "deal_only": 53,
+   "activated": 159,
+   "deal_auto": 18,
+   "deal_manual": 107,
+   "deal_only_manual": 40,
+   "sum_cells": 159,
    "overlap": 0,
-   "activated_v2": 89,
-   "activated_v1": 155
+   "activated_v2": 50,
+   "activated_v1": 109
   },
-  "relanced": 1070
+  "relanced": 1070,
+  "attribution": {
+   "marketing": {
+    "total": 142,
+    "simulation": 34,
+    "reponse": 34,
+    "rdv_public": 74
+   },
+   "sales": {
+    "total": 17
+   },
+   "non_attribuable": {
+    "total": 0
+   },
+   "par_cellule": {
+    "14319": {
+     "marketing": {
+      "total": 19,
+      "simulation": 3,
+      "reponse": 4,
+      "rdv_public": 12
+     },
+     "sales": {
+      "total": 7
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14334": {
+     "marketing": {
+      "total": 16,
+      "simulation": 2,
+      "reponse": 3,
+      "rdv_public": 11
+     },
+     "sales": {
+      "total": 7
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14336": {
+     "marketing": {
+      "total": 7,
+      "simulation": 4,
+      "reponse": 0,
+      "rdv_public": 3
+     },
+     "sales": {
+      "total": 0
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14337": {
+     "marketing": {
+      "total": 10,
+      "simulation": 7,
+      "reponse": 0,
+      "rdv_public": 3
+     },
+     "sales": {
+      "total": 1
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14412": {
+     "marketing": {
+      "total": 38,
+      "simulation": 3,
+      "reponse": 11,
+      "rdv_public": 24
+     },
+     "sales": {
+      "total": 2
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14413": {
+     "marketing": {
+      "total": 16,
+      "simulation": 8,
+      "reponse": 3,
+      "rdv_public": 5
+     },
+     "sales": {
+      "total": 0
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14951": {
+     "marketing": {
+      "total": 36,
+      "simulation": 7,
+      "reponse": 13,
+      "rdv_public": 16
+     },
+     "sales": {
+      "total": 0
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    }
+   },
+   "par_vague": {
+    "v1": {
+     "marketing": {
+      "total": 106,
+      "simulation": 27,
+      "reponse": 19,
+      "rdv_public": 60
+     },
+     "sales": {
+      "total": 3
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "v2": {
+     "marketing": {
+      "total": 36,
+      "simulation": 7,
+      "reponse": 15,
+      "rdv_public": 14
+     },
+     "sales": {
+      "total": 14
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    }
+   },
+   "sync_stale": false,
+   "last_sync": "2026-09-17T08:00:09.611000+00:00"
+  }
  },
  "cohorts": [
   {
@@ -152,19 +299,23 @@
      "opens_frozen": true,
      "replies": 42,
      "meetings": 18,
-     "deals_ae": 27,
-     "engaged": 31,
+     "deals_ae": 22,
+     "engaged": 26,
      "split": {
       "both": 14,
       "meet_only": 4,
-      "deal_only": 13,
-      "engaged": 31,
-      "deal_n8n": 7,
+      "deal_only": 8,
+      "engaged": 26,
+      "deal_n8n": 2,
       "deal_manual": 20,
       "deal_only_manual": 7,
       "relanced": 173,
-      "engaged_v2": 14,
-      "engaged_v1": 17
+      "engaged_v2": 9,
+      "engaged_v1": 17,
+      "marketing": 19,
+      "sales": 7,
+      "non_attribuable": 0,
+      "simule": 3
      },
      "steps": [
       {
@@ -218,19 +369,23 @@
      "opens_frozen": true,
      "replies": 47,
      "meetings": 15,
-     "deals_ae": 25,
-     "engaged": 29,
+     "deals_ae": 19,
+     "engaged": 23,
      "split": {
       "both": 11,
       "meet_only": 4,
-      "deal_only": 14,
-      "engaged": 29,
-      "deal_n8n": 9,
-      "deal_manual": 16,
-      "deal_only_manual": 5,
+      "deal_only": 8,
+      "engaged": 23,
+      "deal_n8n": 1,
+      "deal_manual": 18,
+      "deal_only_manual": 7,
       "relanced": 165,
-      "engaged_v2": 16,
-      "engaged_v1": 13
+      "engaged_v2": 10,
+      "engaged_v1": 13,
+      "marketing": 16,
+      "sales": 7,
+      "non_attribuable": 0,
+      "simule": 2
      },
      "steps": [
       {
@@ -303,7 +458,11 @@
       "deal_only_manual": 0,
       "relanced": 42,
       "engaged_v2": 1,
-      "engaged_v1": 6
+      "engaged_v1": 6,
+      "marketing": 7,
+      "sales": 0,
+      "non_attribuable": 0,
+      "simule": 4
      },
      "steps": [
       {
@@ -359,19 +518,23 @@
      "opens_frozen": true,
      "replies": 13,
      "meetings": 8,
-     "deals_ae": 7,
-     "engaged": 10,
+     "deals_ae": 8,
+     "engaged": 11,
      "split": {
       "both": 5,
       "meet_only": 3,
-      "deal_only": 2,
-      "engaged": 10,
-      "deal_n8n": 3,
+      "deal_only": 3,
+      "engaged": 11,
+      "deal_n8n": 4,
       "deal_manual": 4,
       "deal_only_manual": 1,
       "relanced": 33,
       "engaged_v2": 1,
-      "engaged_v1": 9
+      "engaged_v1": 10,
+      "marketing": 10,
+      "sales": 1,
+      "non_attribuable": 0,
+      "simule": 7
      },
      "steps": [
       {
@@ -424,16 +587,16 @@
    ],
    "activation": {
     "meet": 45,
-    "deal": 65,
+    "deal": 55,
     "both": 33,
     "meet_only": 12,
-    "deal_only": 32,
-    "activated": 77,
-    "deal_auto": 23,
-    "deal_manual": 42,
-    "deal_only_manual": 13,
-    "activated_v2": 32,
-    "activated_v1": 45,
+    "deal_only": 22,
+    "activated": 67,
+    "deal_auto": 11,
+    "deal_manual": 44,
+    "deal_only_manual": 15,
+    "activated_v2": 21,
+    "activated_v1": 46,
     "relanced": 413
    },
    "reply_curve": [
@@ -576,21 +739,25 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies": 71,
-     "meetings": 28,
-     "deals_ae": 46,
-     "engaged": 54,
+     "replies": 73,
+     "meetings": 29,
+     "deals_ae": 31,
+     "engaged": 40,
      "split": {
       "both": 20,
-      "meet_only": 8,
-      "deal_only": 26,
-      "engaged": 54,
-      "deal_n8n": 16,
+      "meet_only": 9,
+      "deal_only": 11,
+      "engaged": 40,
+      "deal_n8n": 1,
       "deal_manual": 30,
       "deal_only_manual": 10,
       "relanced": 532,
-      "engaged_v2": 37,
-      "engaged_v1": 17
+      "engaged_v2": 23,
+      "engaged_v1": 17,
+      "marketing": 38,
+      "sales": 2,
+      "non_attribuable": 0,
+      "simule": 3
      },
      "steps": [
       {
@@ -612,7 +779,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 10
+       "meetings": 11
       },
       {
        "owner_id": "650299108",
@@ -642,21 +809,25 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies": 28,
+     "replies": 29,
      "meetings": 11,
-     "deals_ae": 27,
-     "engaged": 29,
+     "deals_ae": 12,
+     "engaged": 16,
      "split": {
-      "both": 9,
-      "meet_only": 2,
-      "deal_only": 18,
-      "engaged": 29,
-      "deal_n8n": 17,
+      "both": 7,
+      "meet_only": 4,
+      "deal_only": 5,
+      "engaged": 16,
+      "deal_n8n": 2,
       "deal_manual": 10,
       "deal_only_manual": 3,
       "relanced": 125,
-      "engaged_v2": 20,
-      "engaged_v1": 9
+      "engaged_v2": 6,
+      "engaged_v1": 10,
+      "marketing": 16,
+      "sales": 0,
+      "non_attribuable": 0,
+      "simule": 8
      },
      "steps": [
       {
@@ -694,17 +865,17 @@
     }
    ],
    "activation": {
-    "meet": 39,
-    "deal": 73,
-    "both": 29,
-    "meet_only": 10,
-    "deal_only": 44,
-    "activated": 83,
-    "deal_auto": 33,
+    "meet": 40,
+    "deal": 43,
+    "both": 27,
+    "meet_only": 13,
+    "deal_only": 16,
+    "activated": 56,
+    "deal_auto": 3,
     "deal_manual": 40,
     "deal_only_manual": 13,
-    "activated_v2": 57,
-    "activated_v1": 26,
+    "activated_v2": 29,
+    "activated_v1": 27,
     "relanced": 657
    },
    "reply_curve": [
@@ -715,108 +886,108 @@
     },
     {
      "day": 1,
+     "count": 11,
+     "share": 1.57
+    },
+    {
+     "day": 2,
      "count": 12,
      "share": 1.71
     },
     {
-     "day": 2,
+     "day": 3,
      "count": 13,
      "share": 1.86
     },
     {
-     "day": 3,
-     "count": 14,
-     "share": 2.0
-    },
-    {
      "day": 4,
-     "count": 14,
-     "share": 2.0
+     "count": 13,
+     "share": 1.86
     },
     {
      "day": 5,
-     "count": 15,
-     "share": 2.14
+     "count": 14,
+     "share": 2.0
     },
     {
      "day": 6,
-     "count": 17,
-     "share": 2.43
+     "count": 16,
+     "share": 2.29
     },
     {
      "day": 7,
-     "count": 19,
-     "share": 2.71
+     "count": 18,
+     "share": 2.57
     },
     {
      "day": 8,
-     "count": 23,
-     "share": 3.29
+     "count": 22,
+     "share": 3.14
     },
     {
      "day": 9,
-     "count": 23,
-     "share": 3.29
+     "count": 22,
+     "share": 3.14
     },
     {
      "day": 10,
-     "count": 23,
-     "share": 3.29
+     "count": 22,
+     "share": 3.14
     },
     {
      "day": 11,
-     "count": 29,
-     "share": 4.14
+     "count": 28,
+     "share": 4.0
     },
     {
      "day": 12,
+     "count": 34,
+     "share": 4.86
+    },
+    {
+     "day": 13,
      "count": 35,
      "share": 5.0
     },
     {
-     "day": 13,
-     "count": 36,
-     "share": 5.14
-    },
-    {
      "day": 14,
-     "count": 38,
-     "share": 5.43
+     "count": 37,
+     "share": 5.29
     },
     {
      "day": 15,
-     "count": 40,
-     "share": 5.71
+     "count": 39,
+     "share": 5.57
     },
     {
      "day": 16,
-     "count": 40,
-     "share": 5.71
+     "count": 39,
+     "share": 5.57
     },
     {
      "day": 17,
-     "count": 40,
-     "share": 5.71
+     "count": 39,
+     "share": 5.57
     },
     {
      "day": 18,
-     "count": 42,
-     "share": 6.0
+     "count": 41,
+     "share": 5.86
     },
     {
      "day": 19,
-     "count": 46,
-     "share": 6.57
+     "count": 45,
+     "share": 6.43
     },
     {
      "day": 20,
-     "count": 48,
-     "share": 6.86
+     "count": 47,
+     "share": 6.71
     },
     {
      "day": 21,
-     "count": 52,
-     "share": 7.43
+     "count": 51,
+     "share": 7.29
     }
    ]
   },
@@ -842,26 +1013,30 @@
      "status": "EN_COURS",
      "sent": 1191,
      "bounced": 1,
-     "opens": 399,
+     "opens": 401,
      "clicks": 14,
      "opens_emails": 598,
      "clicks_emails": 18,
      "opens_frozen": false,
-     "replies": 37,
+     "replies": 38,
      "meetings": 21,
-     "deals_ae": 75,
-     "engaged": 84,
+     "deals_ae": 27,
+     "engaged": 36,
      "split": {
       "both": 12,
       "meet_only": 9,
-      "deal_only": 63,
-      "engaged": 84,
-      "deal_n8n": 53,
-      "deal_manual": 22,
+      "deal_only": 15,
+      "engaged": 36,
+      "deal_n8n": 4,
+      "deal_manual": 23,
       "deal_only_manual": 12,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 84
+      "engaged_v1": 36,
+      "marketing": 36,
+      "sales": 0,
+      "non_attribuable": 0,
+      "simule": 7
      },
      "steps": [
       {
@@ -900,16 +1075,16 @@
    ],
    "activation": {
     "meet": 21,
-    "deal": 75,
+    "deal": 27,
     "both": 12,
     "meet_only": 9,
-    "deal_only": 63,
-    "activated": 84,
-    "deal_auto": 53,
-    "deal_manual": 22,
+    "deal_only": 15,
+    "activated": 36,
+    "deal_auto": 4,
+    "deal_manual": 23,
     "deal_only_manual": 12,
     "activated_v2": 0,
-    "activated_v1": 84,
+    "activated_v1": 36,
     "relanced": 0
    },
    "reply_curve": [
@@ -940,13 +1115,18 @@
     },
     {
      "day": 5,
-     "count": 31,
-     "share": 4.07
+     "count": 30,
+     "share": 3.94
     },
     {
      "day": 6,
-     "count": 37,
-     "share": 4.86
+     "count": 38,
+     "share": 4.99
+    },
+    {
+     "day": 7,
+     "count": 38,
+     "share": 4.99
     }
    ]
   }
