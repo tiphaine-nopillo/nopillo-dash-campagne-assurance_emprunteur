@@ -998,9 +998,9 @@ def build():
             qua = ids.get("qual") or {}
             if any(qua.values()):
                 print(f"  — qualification —")
-                for cat, label in (("certain_rdv_client", "certain · cas 1, RDV pris par le client"),
-                                   ("certain_parcours", "certain · cas 2, parcours démarré"),
-                                   ("certain_rdv_sales", "certain · cas 3, RDV organisé après appel"),
+                for cat, label in (("certain_rdv_client", "confirmé · cas 1, RDV pris par le client"),
+                                   ("certain_parcours", "confirmé · cas 2, parcours démarré"),
+                                   ("certain_rdv_sales", "confirmé · cas 3, RDV organisé après appel"),
                                    ("attente_carte_seule", "EN ATTENTE · carte seule, À ARBITRER")):
                     if qua.get(cat):
                         print(f"  {label} ({len(qua[cat])})")
@@ -1082,11 +1082,11 @@ def build():
           f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
     q = at["qualification"]
     print("\n--- qualification · définition du 17/09 ---")
-    print(f"   ACTIVÉS CERTAINS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
+    print(f"   ACTIVÉS CONFIRMÉS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
     print(f"     cas 1 · RDV pris par le client   {q['certain_rdv_client']:5d}")
     print(f"     cas 2 · parcours démarré         {q['certain_parcours']:5d}")
     print(f"     cas 3 · RDV organisé après appel {q['certain_rdv_sales']:5d}")
-    print(f"   EN ATTENTE RETOUR SALES   {q['attente']:5d}   {pcts(q['attente'], tot)}")
+    print(f"   EN ATTENTE DE QUALIFICATION   {q['attente']:5d}   {pcts(q['attente'], tot)}")
     print(f"     carte ouverte, aucun RDV         {q['attente_carte_seule']:5d}"
           f"   accord ou refus : à arbitrer")
     print(f"   = TOTAL POTENTIEL         {q['certain'] + q['attente']:5d}"
