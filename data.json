@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-17T10:08:46.041174+00:00",
+  "generated_at": "2026-09-17T10:15:41.677017+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -266,51 +266,67 @@
     }
    },
    "qualification": {
-    "certain": 108,
-    "attente": 51,
-    "attente_rdv_pose": 12,
+    "certain": 120,
+    "attente": 39,
+    "certain_rdv_client": 74,
+    "certain_parcours": 34,
+    "certain_rdv_sales": 12,
     "attente_carte_seule": 39,
     "par_cellule": {
      "14319": {
-      "certain": 15,
-      "attente": 11,
-      "attente_rdv_pose": 4,
+      "certain": 19,
+      "attente": 7,
+      "certain_rdv_client": 12,
+      "certain_parcours": 3,
+      "certain_rdv_sales": 4,
       "attente_carte_seule": 7
      },
      "14334": {
-      "certain": 13,
-      "attente": 10,
-      "attente_rdv_pose": 3,
+      "certain": 16,
+      "attente": 7,
+      "certain_rdv_client": 11,
+      "certain_parcours": 2,
+      "certain_rdv_sales": 3,
       "attente_carte_seule": 7
      },
      "14336": {
       "certain": 7,
       "attente": 0,
-      "attente_rdv_pose": 0,
+      "certain_rdv_client": 3,
+      "certain_parcours": 4,
+      "certain_rdv_sales": 0,
       "attente_carte_seule": 0
      },
      "14337": {
       "certain": 10,
       "attente": 1,
-      "attente_rdv_pose": 0,
+      "certain_rdv_client": 3,
+      "certain_parcours": 7,
+      "certain_rdv_sales": 0,
       "attente_carte_seule": 1
      },
      "14412": {
-      "certain": 27,
-      "attente": 13,
-      "attente_rdv_pose": 3,
+      "certain": 30,
+      "attente": 10,
+      "certain_rdv_client": 24,
+      "certain_parcours": 3,
+      "certain_rdv_sales": 3,
       "attente_carte_seule": 10
      },
      "14413": {
-      "certain": 13,
-      "attente": 3,
-      "attente_rdv_pose": 1,
+      "certain": 14,
+      "attente": 2,
+      "certain_rdv_client": 5,
+      "certain_parcours": 8,
+      "certain_rdv_sales": 1,
       "attente_carte_seule": 2
      },
      "14951": {
-      "certain": 23,
-      "attente": 13,
-      "attente_rdv_pose": 1,
+      "certain": 24,
+      "attente": 12,
+      "certain_rdv_client": 16,
+      "certain_parcours": 7,
+      "certain_rdv_sales": 1,
       "attente_carte_seule": 12
      }
     }
@@ -366,8 +382,8 @@
       "sales": 7,
       "non_attribuable": 0,
       "simule": 3,
-      "certain": 15,
-      "attente": 11
+      "certain": 19,
+      "attente": 7
      },
      "steps": [
       {
@@ -438,8 +454,8 @@
       "sales": 7,
       "non_attribuable": 0,
       "simule": 2,
-      "certain": 13,
-      "attente": 10
+      "certain": 16,
+      "attente": 7
      },
      "steps": [
       {
@@ -816,8 +832,8 @@
       "sales": 2,
       "non_attribuable": 0,
       "simule": 3,
-      "certain": 27,
-      "attente": 13
+      "certain": 30,
+      "attente": 10
      },
      "steps": [
       {
@@ -888,8 +904,8 @@
       "sales": 0,
       "non_attribuable": 0,
       "simule": 8,
-      "certain": 13,
-      "attente": 3
+      "certain": 14,
+      "attente": 2
      },
      "steps": [
       {
@@ -1099,8 +1115,8 @@
       "sales": 0,
       "non_attribuable": 0,
       "simule": 7,
-      "certain": 23,
-      "attente": 13
+      "certain": 24,
+      "attente": 12
      },
      "steps": [
       {
