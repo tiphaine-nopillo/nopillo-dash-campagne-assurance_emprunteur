@@ -84,6 +84,7 @@ H = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
 CONTACTS = "/crm/v3/objects/contacts/search"
 EMAILS = "/crm/v3/objects/emails/search"
 MEETINGS = "/crm/v3/objects/meetings/search"
+CALLS = "/crm/v3/objects/calls/search"
 DEALS = "/crm/v3/objects/deals/search"
 CHUNK = 100          # taille de lot pour les filtres associations.contact
 
@@ -102,7 +103,23 @@ ATTRIB_DAYS = 21
 # Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
 # contacts enrôlés et contacts jamais touchés par une séquence. Import
 # d'antériorité, pas de l'activité. 4 concernent des contacts de cohorte.
-BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z")]
+BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
+            ("2026-09-16T09:57:00Z", "2026-09-16T09:58:00Z"),
+            ("2026-09-16T11:00:00Z", "2026-09-16T11:02:00Z")]
+
+# Marqueur de simulation réelle. Écrit par n8n depuis last_event_at, À LA
+# CRÉATION COMME À LA MISE À JOUR : un dossier ouvert à la main pendant une
+# panne puis repris par le flux le porte quand même. C'est exactement ce que
+# hs_object_source_label ne sait pas faire — un deal CRM_UI peut cacher une
+# vraie simulation.
+# NE PAS confondre avec last_step_id, qui vient du step_id du DERNIER event et
+# n'est renseignée que si cet event est une complétion d'étape : 3 transactions
+# sur 394 au 17/09, contre 245 pour last_step_date.
+SIMU_PROP = "last_step_date"
+
+# Réservation en self-service via un lien public. Distingue un RDV que le
+# client a posé lui-même d'un RDV calé par un commercial au téléphone.
+MEETING_PUBLIC = "MEETINGS_PUBLIC"
 
 # Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
 # PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
@@ -126,6 +143,10 @@ def post(path, body):
         r.raise_for_status()
         return r.json()
     r.raise_for_status()
+
+
+def pcts(n, d):
+    return f"{100 * n / d:.1f} %".replace(".", ",") if d else "—"
 
 
 def num(v):
@@ -375,16 +396,29 @@ def _contacts_of(object_type, object_ids):
     return m
 
 
+def in_backfill(d):
+    """La date tombe-t-elle dans une rafale de rattrapage n8n ?
+
+    Un rattrapage importe de l'ANTÉRIORITÉ, pas de l'activité. Deux rafales
+    connues : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h02
+    (~190 transactions, reprise du flux après 33 jours d'arrêt).
+
+    L'exclusion porte sur CHAQUE date prise isolément, plus sur la transaction
+    entière comme avant : un dossier créé pendant la rafale mais réellement
+    déplacé d'étape trois jours plus tard reste une activation légitime. Sans
+    ce changement, la clause « déplacé d'étape dans la fenêtre » comptait les
+    248 mouvements du rattrapage du 16/09 comme autant d'activations.
+    """
+    if not d:
+        return False
+    return any(to_dt(a) <= d < to_dt(b) for a, b in BACKFILL)
+
+
 def deal_engages(props, wins):
     """Étiquette de vague si la transaction entre dans une fenêtre, sinon None.
 
     AUCUN filtre sur dealstage, volontairement : les transactions remontées
     par n8n sautent des étapes, une étape absente ne prouve rien.
-
-    AUCUN filtre sur la source non plus, mais c'est un arbitrage non tranché :
-    une part importante des transactions est créée à la main et atteste qu'un
-    commercial a ouvert une fiche, pas qu'un client a simulé. La répartition
-    par source est collectée pour rendre l'arbitrage visible.
 
     Deux bornes, en OU :
       - createdate : dossier ouvert pendant la fenêtre ;
@@ -394,28 +428,138 @@ def deal_engages(props, wins):
     Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
     déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
     """
-    created = to_dt(props.get("createdate"))
-    if created and any(to_dt(a) <= created < to_dt(b) for a, b in BACKFILL):
-        return None
     for key in ("createdate", "hs_v2_date_entered_current_stage"):
-        tag = in_windows(to_dt(props.get(key)), wins)
+        d = to_dt(props.get(key))
+        if in_backfill(d):
+            continue
+        tag = in_windows(d, wins)
         if tag:
             return tag
     return None
 
 
-def engagement_sets(ids, cohort_send, pipeline, meet_f, rmap):
-    """Contacts ayant un dossier, contacts ayant un RDV, qui a posé le RDV,
-    et l'étiquette de vague de chaque activation.
+def first_outbound_call(contact_ids, since_ms):
+    """Premier appel SORTANT loggé pour chaque contact, après l'envoi du batch.
+
+    Marqueur de prise en main commerciale. On garde le PREMIER : la question
+    d'attribution est de savoir si un signal marketing a précédé le premier
+    contact sortant, pas le dernier.
+    """
+    out = {}
+    if not contact_ids:
+        return out
+    calls = _objects_assoc(
+        CALLS, contact_ids,
+        [{"propertyName": "hs_call_direction", "operator": "EQ", "value": "OUTBOUND"},
+         {"propertyName": "hs_timestamp", "operator": "GTE", "value": str(since_ms)}],
+        ["hs_timestamp", "hs_call_direction"])
+    cmap = _contacts_of("calls", list(calls.keys()))
+    for kid, p in calls.items():
+        when = to_dt(p.get("hs_timestamp"))
+        if not when:
+            continue
+        for c in cmap.get(kid, []):
+            if c not in out or when < out[c]:
+                out[c] = when
+    return out
+
+
+def attribute(cid, simulated, replies, rdv_pub, calls):
+    """Origine de l'activation d'un contact : marketing, sales, ou ni l'un ni l'autre.
+
+    Ordre volontaire, la simulation prime sur tout :
+      1. une simulation réelle (last_step_date) → marketing, même si un appel
+         a suivi : le client était déjà entré dans le parcours produit ;
+      2. une réponse à une séquence OU un RDV réservé en self-service,
+         ANTÉRIEUR au premier appel sortant → marketing ;
+      3. un appel sortant loggé → sales ;
+      4. rien de tout ça → non attribuable.
+
+    PIÈGE CENTRAL sur le RDV : on compare la date de RÉSERVATION
+    (hs_createdate) au premier appel, JAMAIS la date de tenue
+    (hs_meeting_start_time). Cas réel : réservation le 11/09, rendez-vous le
+    15/09, appel commercial le 15/09 à l'heure du rendez-vous. Avec la date de
+    tenue, le contact bascule à tort en sales — 5 erreurs sur 57 venaient de là.
+    """
+    if cid in simulated:
+        return ("marketing", "simulation")
+    call = calls.get(cid)
+    sigs = []
+    if replies.get(cid):
+        sigs.append((replies[cid], "reponse"))
+    if rdv_pub.get(cid):
+        sigs.append((rdv_pub[cid], "rdv_public"))
+    if sigs:
+        sigs.sort(key=lambda x: x[0])
+        when, kind = sigs[0]
+        if call is None or when < call:
+            return ("marketing", kind)
+    if call:
+        return ("sales", None)
+    return ("non_attribuable", None)
+
+
+def empty_attr():
+    return dict(marketing=dict(total=0, simulation=0, reponse=0, rdv_public=0),
+                sales=dict(total=0), non_attribuable=dict(total=0))
+
+
+def add_attr(acc, bucket, sub):
+    acc[bucket]["total"] += 1
+    if bucket == "marketing" and sub:
+        acc["marketing"][sub] += 1
+
+
+def business_hours_between(a, b):
+    """Heures ouvrées (lundi-vendredi) entre deux instants. Jours fériés ignorés."""
+    if not a or b <= a:
+        return 0
+    h, cur = 0, a.replace(minute=0, second=0, microsecond=0)
+    while cur < b and h < 24 * 30:
+        if cur.weekday() < 5:
+            h += 1
+        cur += dt.timedelta(hours=1)
+    return h
+
+
+def last_integration_move(pipeline):
+    """Date du dernier signe de vie de n8n sur ce pipe.
+
+    Sert au drapeau sync_stale. Sans lui, une panne du flux produit des faux
+    « sales » en silence : un client qui a simulé n'a pas de dossier remonté,
+    donc aucun signal marketing, donc il bascule sur l'appel du commercial.
+    C'est exactement ce qui s'est produit du 13/08 au 16/09.
+    """
+    body = {"filterGroups": [{"filters": [
+        {"propertyName": "pipeline", "operator": "EQ", "value": pipeline},
+        {"propertyName": "hs_object_source_label", "operator": "EQ",
+         "value": "INTEGRATION"}]}],
+        "properties": ["createdate", "hs_v2_date_entered_current_stage"],
+        "sorts": [{"propertyName": "createdate", "direction": "DESCENDING"}],
+        "limit": 1}
+    r = post(DEALS, body).get("results") or []
+    if not r:
+        return None
+    p = r[0]["properties"]
+    ds = [x for x in (to_dt(p.get("createdate")),
+                      to_dt(p.get("hs_v2_date_entered_current_stage"))) if x]
+    return max(ds) if ds else None
+
+
+def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
+    """Ensembles d'activation, plus les signaux nécessaires à l'attribution.
 
     Retourne des ENSEMBLES de contacts, jamais des compteurs d'objets : un
-    même contact peut avoir un RDV courtage puis un RDV devis. L'unité de
-    mesure est le contact.
+    même contact peut avoir un RDV courtage puis un RDV devis.
 
-    CHANGEMENT DE CETTE VERSION : l'appartenance à la fenêtre est évaluée
-    CONTACT PAR CONTACT, parce qu'un contact relancé a deux fenêtres. Avant,
-    une seule fenêtre valait pour toute la cellule — et les RDV n'en avaient
-    aucune en borne haute.
+    DEUX collectes de réunions, volontairement :
+      - meet_f porte le filtre d'intitulé et sert la définition d'ACTIVATION,
+        inchangée depuis le 22/08 ;
+      - meet_f_attr ne le porte pas et sert l'ATTRIBUTION, via
+        hs_meeting_source. Le filtre d'intitulé rate les rendez-vous pris par
+        le lien générique « Rendez-vous téléphonique Nopillo » : acceptable
+        pour l'activation, faux pour l'attribution. Toucher au premier
+        changerait des chiffres déjà publiés, on ne le fait pas.
     """
     keep = set(ids)
     wins = {c: windows_for(c, cohort_send, rmap) for c in keep}
@@ -425,13 +569,19 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, rmap):
         DEALS, ids,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
-         "hs_object_source_label"])
+         "hs_object_source_label", SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
-    dset, d_auto, d_wave = set(), set(), {}
+    dset, d_auto, d_wave, simulated = set(), set(), {}, set()
     for did, props in deals.items():
+        has_simu = bool(props.get(SIMU_PROP))
+        tag = deal_engages(props, None)  # placeholder, recalculé par contact
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
+            # La simulation est un FAIT sur le contact, pas sur la fenêtre :
+            # elle vaut même si la transaction n'entre pas dans l'attribution.
+            if has_simu:
+                simulated.add(c)
             tag = deal_engages(props, wins[c])
             if not tag:
                 continue
@@ -444,10 +594,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, rmap):
             if props.get("hs_object_source_label") != "CRM_UI":
                 d_auto.add(c)
 
-    # ---- rendez-vous
-    # La borne haute est appliquée ICI, côté client, parce qu'elle dépend du
-    # contact. Le filtre serveur meet_f ne porte que la borne basse, le
-    # propriétaire et l'intitulé.
+    # ---- rendez-vous, périmètre ACTIVATION (filtre d'intitulé)
     meets = _objects_assoc(MEETINGS, ids, meet_f,
                            ["hubspot_owner_id", "hs_timestamp", "hs_createdate"])
     mmap = _contacts_of("meetings", list(meets.keys()))
@@ -468,7 +615,23 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, rmap):
             if m_wave.get(c) != "v2":
                 m_wave[c] = tag
 
-    return dset, mset, m_owner, d_auto, d_wave, m_wave
+    # ---- rendez-vous, périmètre ATTRIBUTION (sans filtre d'intitulé)
+    # On retient la date de RÉSERVATION du premier RDV self-service.
+    meets_a = _objects_assoc(MEETINGS, ids, meet_f_attr,
+                             ["hs_meeting_source", "hs_createdate"])
+    amap = _contacts_of("meetings", list(meets_a.keys()))
+    rdv_pub = {}
+    for mid, p in meets_a.items():
+        if (p.get("hs_meeting_source") or "").upper() != MEETING_PUBLIC:
+            continue
+        booked = to_dt(p.get("hs_createdate"))
+        if not booked:
+            continue
+        for c in amap.get(mid, []):
+            if c in keep and (c not in rdv_pub or booked < rdv_pub[c]):
+                rdv_pub[c] = booked
+
+    return dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub
 
 
 # -------------------------------------------------------------------- build
@@ -525,6 +688,19 @@ def build():
     camp_meet, camp_deal, camp_deal_auto = set(), set(), set()
     camp_v2 = set()
 
+    # Attribution sales / marketing. Trois cas DISJOINTS dont la somme fait le
+    # total activé : le total ne change pas, seule sa décomposition est ajoutée.
+    camp_attr = empty_attr()
+    attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
+    last_sync = last_integration_move(pipeline)
+    sync_stale = business_hours_between(last_sync,
+                                        dt.datetime.now(dt.timezone.utc)) > 24
+    if sync_stale:
+        print(f"\n   /!\\ SYNC OBSOLETE : dernier mouvement n8n sur le pipe "
+              f"{last_sync.isoformat() if last_sync else 'jamais'}. "
+              f"Les contacts ayant simulé depuis n'ont pas de dossier remonté : "
+              f"ils basculent a tort en sales.\n")
+
     cohorts = []
     for co in cfg["cohorts"]:
         send = iso(co["sent_at"])
@@ -572,13 +748,37 @@ def build():
                        "value": str(since_ms)},
                       {"propertyName": "hubspot_owner_id", "operator": "IN",
                        "values": AE_MEETING_OWNERS}]
+            # Périmètre ATTRIBUTION : même bornes, SANS filtre d'intitulé.
+            meet_f_attr = list(meet_f)
             mf = cfg.get("meeting_filter")
             if mf:
                 meet_f.append({"propertyName": mf["property"],
                                "operator": mf["operator"], "value": mf["value"]})
 
-            dset, mset, m_owner, d_auto, d_wave, m_wave = engagement_sets(
-                ids, send, pipeline, meet_f, rmap)
+            (dset, mset, m_owner, d_auto, d_wave, m_wave,
+             simulated, rdv_pub) = engagement_sets(
+                ids, send, pipeline, meet_f, meet_f_attr, rmap)
+
+            # Signaux d'attribution restants : réponses et premier appel sortant.
+            reply_at = {}
+            for cid, _, rep, _, _ in members:
+                w = to_dt(rep)
+                if w and w >= send:
+                    reply_at[cid] = w
+            calls_at = first_outbound_call(ids, since_ms)
+
+            cell_attr = empty_attr()
+            attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
+                        "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
+            for cid in (dset | mset):
+                bucket, sub = attribute(cid, simulated, reply_at, rdv_pub, calls_at)
+                attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
+                add_attr(cell_attr, bucket, sub)
+                add_attr(camp_attr, bucket, sub)
+                add_attr(attr_v2 if cid in ({x for x, t in d_wave.items() if t == "v2"} |
+                                            {x for x, t in m_wave.items() if t == "v2"})
+                         else attr_v1, bucket, sub)
+            attr_cells[c["list_id"]] = cell_attr
 
             # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
             # de relance, donc attribuable à la relance et non au batch.
@@ -591,7 +791,11 @@ def build():
                          deal_n8n=len(d_auto), deal_manual=len(dset - d_auto),
                          deal_only_manual=len((dset - mset) - d_auto),
                          relanced=len(relanced), engaged_v2=len(v2),
-                         engaged_v1=len((dset | mset) - v2))
+                         engaged_v1=len((dset | mset) - v2),
+                         marketing=cell_attr["marketing"]["total"],
+                         sales=cell_attr["sales"]["total"],
+                         non_attribuable=cell_attr["non_attribuable"]["total"],
+                         simule=cell_attr["marketing"]["simulation"])
             n_meet, n_deal = len(mset), len(dset)
 
             coh_meet |= mset
@@ -622,7 +826,8 @@ def build():
                 # Détail par contact, RETIRÉ avant l'écriture de data.json :
                 # ce fichier est servi publiquement par GitHub Pages.
                 _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
-                          deal_only=sorted(dset - mset), v2=sorted(v2)),
+                          deal_only=sorted(dset - mset), v2=sorted(v2),
+                          attr={k: sorted(v) for k, v in attr_ids.items()}),
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=n)
@@ -670,6 +875,15 @@ def build():
                                            - len(camp_v2))
     dedup["relanced"] = len(rmap)
 
+    # Décomposition sales / marketing. Nouvel axe, sans rupture : le total
+    # activé est inchangé, marketing + sales + non attribuable = activés.
+    dedup["attribution"] = dict(
+        marketing=camp_attr["marketing"], sales=camp_attr["sales"],
+        non_attribuable=camp_attr["non_attribuable"],
+        par_cellule=attr_cells, par_vague=dict(v1=attr_v1, v2=attr_v2),
+        sync_stale=sync_stale,
+        last_sync=last_sync.isoformat() if last_sync else None)
+
     data = dict(
         meta=dict(
             campaign=cfg["campaign"],
@@ -685,6 +899,7 @@ def build():
             meeting_window_note=cfg["notes"].get("meeting_window"),
             attribution_window_note=cfg["notes"].get("attribution_window"),
             frozen_note=cfg.get("frozen_metrics", {}).get("_doc"),
+            attribution_sm_note=cfg["notes"].get("attribution_sales_marketing"),
             overlap_note=(
                 f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
                 f"plusieurs batchs. Le niveau 1 utilise l'union dédupliquée."
@@ -720,6 +935,23 @@ def build():
                         flag = "  [vague 2]" if cid in v2 else ""
                         print(f"    https://app-eu1.hubspot.com/contacts/"
                               f"{PORTAL}/contact/{cid}{flag}")
+            # Mêmes contacts, relus par ORIGINE de l'activation. Les cinq
+            # catégories sont disjointes : un contact apparaît une seule fois.
+            # C'est ici qu'on vérifie un arbitrage douteux, fiche par fiche.
+            att = ids.get("attr") or {}
+            if any(att.values()):
+                print(f"  — origine de l'activation —")
+                for cat, label in (("marketing_simulation", "marketing · a simulé"),
+                                   ("marketing_reponse", "marketing · a répondu"),
+                                   ("marketing_rdv_public", "marketing · RDV self-service"),
+                                   ("sales", "sales · appel sortant d'abord"),
+                                   ("non_attribuable", "non attribuable")):
+                    if att.get(cat):
+                        print(f"  {label} ({len(att[cat])})")
+                        for cid in att[cat]:
+                            flag = "  [vague 2]" if cid in v2 else ""
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}{flag}")
     print("--- fin du détail ---\n")
 
     with open("data.json", "w", encoding="utf-8") as f:
@@ -766,6 +998,28 @@ def build():
     if a["overlap"]:
         print(f"   ⚠ somme des cellules {a['sum_cells']} vs union {a['activated']} :"
               f" {a['overlap']} contact(s) activé(s) ciblé(s) dans deux batchs")
+
+    at = dedup["attribution"]
+    mk, sl, na = at["marketing"], at["sales"], at["non_attribuable"]
+    tot = mk["total"] + sl["total"] + na["total"]
+    print("\n--- origine de l'activation · sales contre marketing ---")
+    print(f"   MARKETING                 {mk['total']:5d}   {pcts(mk['total'], tot)}")
+    print(f"     dont simulation         {mk['simulation']:5d}")
+    print(f"     dont réponse séquence   {mk['reponse']:5d}")
+    print(f"     dont RDV self-service   {mk['rdv_public']:5d}")
+    print(f"   SALES                     {sl['total']:5d}   {pcts(sl['total'], tot)}")
+    print(f"   NON ATTRIBUABLE           {na['total']:5d}   {pcts(na['total'], tot)}")
+    print(f"   = TOTAL                   {tot:5d}   doit égaler {a['activated']} activés"
+          f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
+    v1a, v2a = at["par_vague"]["v1"], at["par_vague"]["v2"]
+    print(f"   vague 1 : marketing {v1a['marketing']['total']} · "
+          f"sales {v1a['sales']['total']} · na {v1a['non_attribuable']['total']}")
+    print(f"   vague 2 : marketing {v2a['marketing']['total']} · "
+          f"sales {v2a['sales']['total']} · na {v2a['non_attribuable']['total']}")
+    if at["sync_stale"]:
+        print("   ⚠ sync_stale : aucun mouvement n8n depuis plus de 24 h ouvrées.")
+        print("     Les contacts ayant simulé depuis n'ont pas de dossier remonté")
+        print("     et basculent à tort en sales. Chiffres à ne pas publier.")
 
 
 if __name__ == "__main__":
