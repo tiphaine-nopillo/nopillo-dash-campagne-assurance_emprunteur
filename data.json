@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-18T14:20:26.949471+00:00",
+  "generated_at": "2026-09-18T18:17:04.781123+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -108,13 +108,13 @@
   "contacts": 2075,
   "activation": {
    "meet": 128,
-   "deal": 152,
-   "both": 82,
-   "meet_only": 46,
+   "deal": 154,
+   "both": 84,
+   "meet_only": 44,
    "deal_only": 70,
    "activated": 198,
    "deal_auto": 28,
-   "deal_manual": 124,
+   "deal_manual": 126,
    "deal_only_manual": 48,
    "sum_cells": 198,
    "overlap": 0,
@@ -815,15 +815,15 @@
      "opens_frozen": true,
      "replies": 100,
      "meetings": 48,
-     "deals_ae": 41,
+     "deals_ae": 43,
      "engaged": 64,
      "split": {
-      "both": 25,
-      "meet_only": 23,
+      "both": 27,
+      "meet_only": 21,
       "deal_only": 16,
       "engaged": 64,
       "deal_n8n": 2,
-      "deal_manual": 39,
+      "deal_manual": 41,
       "deal_only_manual": 14,
       "relanced": 532,
       "engaged_v2": 47,
@@ -885,7 +885,7 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies": 35,
+     "replies": 36,
      "meetings": 13,
      "deals_ae": 17,
      "engaged": 21,
@@ -944,13 +944,13 @@
    ],
    "activation": {
     "meet": 61,
-    "deal": 58,
-    "both": 34,
-    "meet_only": 27,
+    "deal": 60,
+    "both": 36,
+    "meet_only": 25,
     "deal_only": 24,
     "activated": 85,
     "deal_auto": 7,
-    "deal_manual": 51,
+    "deal_manual": 53,
     "deal_only_manual": 18,
     "activated_v2": 58,
     "activated_v1": 27,
@@ -1093,10 +1093,10 @@
      "bounced": 1,
      "opens": 404,
      "clicks": 14,
-     "opens_emails": 602,
+     "opens_emails": 603,
      "clicks_emails": 18,
      "opens_frozen": false,
-     "replies": 39,
+     "replies": 40,
      "meetings": 21,
      "deals_ae": 35,
      "engaged": 41,
@@ -1130,7 +1130,7 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 276,
+       "opens": 277,
        "clicks": 6
       }
      ],
@@ -1210,8 +1210,8 @@
     },
     {
      "day": 8,
-     "count": 39,
-     "share": 5.12
+     "count": 40,
+     "share": 5.26
     }
    ]
   }
