@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-22T18:43:26.372848+00:00",
+  "generated_at": "2026-09-22T21:57:37.376467+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -107,27 +107,27 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 158,
+   "meet": 160,
    "deal": 190,
    "both": 93,
-   "meet_only": 65,
+   "meet_only": 67,
    "deal_only": 97,
-   "activated": 255,
+   "activated": 257,
    "deal_auto": 32,
    "deal_manual": 158,
    "deal_only_manual": 72,
-   "sum_cells": 255,
+   "sum_cells": 257,
    "overlap": 0,
-   "activated_v2": 122,
-   "activated_v1": 133
+   "activated_v2": 123,
+   "activated_v1": 134
   },
   "relanced": 1070,
   "attribution": {
    "marketing": {
-    "total": 226,
+    "total": 228,
     "simulation": 53,
     "reponse": 63,
-    "rdv_public": 110
+    "rdv_public": 112
    },
    "sales": {
     "total": 29
@@ -194,10 +194,10 @@
     },
     "14412": {
      "marketing": {
-      "total": 79,
+      "total": 80,
       "simulation": 6,
       "reponse": 31,
-      "rdv_public": 42
+      "rdv_public": 43
      },
      "sales": {
       "total": 3
@@ -222,10 +222,10 @@
     },
     "14951": {
      "marketing": {
-      "total": 59,
+      "total": 60,
       "simulation": 14,
       "reponse": 15,
-      "rdv_public": 30
+      "rdv_public": 31
      },
      "sales": {
       "total": 1
@@ -238,10 +238,10 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 129,
+      "total": 130,
       "simulation": 34,
       "reponse": 21,
-      "rdv_public": 74
+      "rdv_public": 75
      },
      "sales": {
       "total": 4
@@ -252,10 +252,10 @@
     },
     "v2": {
      "marketing": {
-      "total": 97,
+      "total": 98,
       "simulation": 19,
       "reponse": 42,
-      "rdv_public": 36
+      "rdv_public": 37
      },
      "sales": {
       "total": 25
@@ -266,9 +266,9 @@
     }
    },
    "qualification": {
-    "certain": 184,
+    "certain": 186,
     "attente": 71,
-    "certain_rdv_client": 110,
+    "certain_rdv_client": 112,
     "certain_parcours": 53,
     "certain_rdv_sales": 21,
     "attente_carte_seule": 71,
@@ -306,9 +306,9 @@
       "attente_carte_seule": 1
      },
      "14412": {
-      "certain": 52,
+      "certain": 53,
       "attente": 30,
-      "certain_rdv_client": 42,
+      "certain_rdv_client": 43,
       "certain_parcours": 6,
       "certain_rdv_sales": 4,
       "attente_carte_seule": 30
@@ -322,9 +322,9 @@
       "attente_carte_seule": 6
      },
      "14951": {
-      "certain": 46,
+      "certain": 47,
       "attente": 14,
-      "certain_rdv_client": 30,
+      "certain_rdv_client": 31,
       "certain_parcours": 14,
       "certain_rdv_sales": 2,
       "attente_carte_seule": 14
@@ -814,25 +814,25 @@
      "clicks_emails": 7,
      "opens_frozen": true,
      "replies": 106,
-     "meetings": 49,
+     "meetings": 50,
      "deals_ae": 64,
-     "engaged": 82,
+     "engaged": 83,
      "split": {
       "both": 31,
-      "meet_only": 18,
+      "meet_only": 19,
       "deal_only": 33,
-      "engaged": 82,
+      "engaged": 83,
       "deal_n8n": 3,
       "deal_manual": 61,
       "deal_only_manual": 30,
       "relanced": 532,
-      "engaged_v2": 65,
+      "engaged_v2": 66,
       "engaged_v1": 17,
-      "marketing": 79,
+      "marketing": 80,
       "sales": 3,
       "non_attribuable": 0,
       "simule": 6,
-      "certain": 52,
+      "certain": 53,
       "attente": 30
      },
      "steps": [
@@ -860,7 +860,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 15
+       "meetings": 16
       },
       {
        "owner_id": "75453551",
@@ -943,16 +943,16 @@
     }
    ],
    "activation": {
-    "meet": 65,
+    "meet": 66,
     "deal": 85,
     "both": 41,
-    "meet_only": 24,
+    "meet_only": 25,
     "deal_only": 44,
-    "activated": 109,
+    "activated": 110,
     "deal_auto": 9,
     "deal_manual": 76,
     "deal_only_manual": 37,
-    "activated_v2": 82,
+    "activated_v2": 83,
     "activated_v1": 27,
     "relanced": 657
    },
@@ -1093,29 +1093,29 @@
      "bounced": 2,
      "opens": 422,
      "clicks": 24,
-     "opens_emails": 804,
+     "opens_emails": 805,
      "clicks_emails": 30,
      "opens_frozen": false,
      "replies": 52,
-     "meetings": 38,
+     "meetings": 39,
      "deals_ae": 39,
-     "engaged": 60,
+     "engaged": 61,
      "split": {
       "both": 17,
-      "meet_only": 21,
+      "meet_only": 22,
       "deal_only": 22,
-      "engaged": 60,
+      "engaged": 61,
       "deal_n8n": 9,
       "deal_manual": 30,
       "deal_only_manual": 14,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 60,
-      "marketing": 59,
+      "engaged_v1": 61,
+      "marketing": 60,
       "sales": 1,
       "non_attribuable": 0,
       "simule": 14,
-      "certain": 46,
+      "certain": 47,
       "attente": 14
      },
      "steps": [
@@ -1137,7 +1137,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 195,
+       "opens": 196,
        "clicks": 12
       }
      ],
@@ -1150,7 +1150,7 @@
       {
        "owner_id": "650299108",
        "owner": "Mathieu d'Ornellas",
-       "meetings": 14
+       "meetings": 15
       },
       {
        "owner_id": "75453551",
@@ -1161,17 +1161,17 @@
     }
    ],
    "activation": {
-    "meet": 38,
+    "meet": 39,
     "deal": 39,
     "both": 17,
-    "meet_only": 21,
+    "meet_only": 22,
     "deal_only": 22,
-    "activated": 60,
+    "activated": 61,
     "deal_auto": 9,
     "deal_manual": 30,
     "deal_only_manual": 14,
     "activated_v2": 0,
-    "activated_v1": 60,
+    "activated_v1": 61,
     "relanced": 0
    },
    "reply_curve": [
