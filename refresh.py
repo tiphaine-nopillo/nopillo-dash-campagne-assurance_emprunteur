@@ -115,11 +115,45 @@ BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
 # NE PAS confondre avec last_step_id, qui vient du step_id du DERNIER event et
 # n'est renseignée que si cet event est une complétion d'étape : 3 transactions
 # sur 394 au 17/09, contre 245 pour last_step_date.
+# ÉTAPES QUI PROUVENT QUE LE CLIENT A AGI.
+# resolveDealStageId, dans le flow n8n « Sync Courtage AE x HubSpot » :
+#   étape 'ajout-emprunteurs' franchie  -> simulation_completed
+#   étape 'intro' franchie              -> simulation_started
+#   aucune étape franchie               -> optimization_activated
+# Donc optimization_activated signifie EXACTEMENT « le client a accès au
+# simulateur et n'a rien rempli ». Ce n'est pas une activation.
+# simulation_started correspond littéralement à « a rempli au minimum le
+# premier champ » de la définition du 17/09.
+SIMU_STAGES = {
+    "5363445963",   # simulation_started
+    "5363445964",   # simulation_completed
+    "5783848147",   # simulation_ready
+    "5363445965",   # offer_viewed
+    "5363445966",   # offer_accepted
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
+}
+STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
+STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
+
+# NE PAS UTILISER COMME MARQUEUR DE SIMULATION. last_step_date vient de
+# last_event_at, et un event existe dès l'activation de l'optimisation :
+# 153 optimisations courtage AE ont des events sans aucune étape complétée.
+# La propriété prouve qu'il s'est passé quelque chose, pas que le client a
+# rempli un champ. Conservée pour information seulement.
 SIMU_PROP = "last_step_date"
 
 # Réservation en self-service via un lien public. Distingue un RDV que le
 # client a posé lui-même d'un RDV calé par un commercial au téléphone.
 MEETING_PUBLIC = "MEETINGS_PUBLIC"
+
+# Transactions créées par un workflow HubSpot PARCE QU'un RDV existe, et non
+# parce qu'un client a fait quelque chose. Elles ne prouvent rien : le RDV est
+# déjà compté via l'objet MEETING. Les compter comme dossier reviendrait à
+# compter deux fois le même signal, et pire, à activer un contact dont le RDV
+# est hors fenêtre au motif qu'une carte a été créée depuis.
+# 43 transactions créées le 24/09 à 17h28, en moins d'une seconde.
+ORIGINE_RDV_SANS_SIMU = "rdv_sans_simu"
 
 # Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
 # PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
@@ -614,11 +648,21 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         DEALS, ids,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
-         "hs_object_source_label", SIMU_PROP])
+         "hs_object_source_label", "origine_creation_deal_ae", SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
     dset, d_auto, d_wave, simulated = set(), set(), {}, set()
     for did, props in deals.items():
-        has_simu = bool(props.get(SIMU_PROP))
+        stage = str(props.get("dealstage") or "")
+        # SEULE une étape de parcours prouve une activation.
+        #  - optimization_activated : accès au simulateur, aucune étape. Non compté.
+        #  - carte créée par le workflow « RDV sans simu » : aucune information
+        #    propre, elle existe PARCE QU'un RDV existe, et le RDV est déjà
+        #    compté via MEETING. Non comptée.
+        #  - optimization_declined : étape terminale pilotée par le CS. Le flow
+        #    n8n ne l'écrit plus et la protège, donc elle efface l'information
+        #    de parcours. Non comptée : le contact reste activable par un RDV,
+        #    sinon il part en attente de qualification.
+        has_simu = stage in SIMU_STAGES
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
@@ -626,6 +670,8 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             # elle vaut même si la transaction n'entre pas dans l'attribution.
             if has_simu:
                 simulated.add(c)
+            if not has_simu:
+                continue
             tag = deal_engages(props, wins[c])
             if not tag:
                 continue
@@ -633,9 +679,14 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if d_wave.get(c) != "v2":
                 d_wave[c] = tag
             # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
-            # transactions est automatique : c'est le signal le plus fort
+            # transactions vient de l'INTÉGRATION : c'est le signal le plus fort
             # dont on dispose sur un parcours réellement produit.
-            if props.get("hs_object_source_label") != "CRM_UI":
+            # Le test portait avant sur « différent de CRM_UI », ce qui rangeait
+            # les transactions créées par un workflow HubSpot
+            # (AUTOMATION_PLATFORM) du côté n8n — alors qu'aucun client n'avait
+            # simulé. Corrigé le 25/09 après la mise en place du workflow
+            # « RDV sans simu ».
+            if props.get("hs_object_source_label") == "INTEGRATION":
                 d_auto.add(c)
 
     # ---- rendez-vous, périmètre ACTIVATION (filtre d'intitulé)
