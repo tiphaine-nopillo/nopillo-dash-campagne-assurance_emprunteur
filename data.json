@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-25T13:33:07.039183+00:00",
+  "generated_at": "2026-09-25T13:57:16.678792+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -9,7 +9,7 @@
   "attribution_note": "RDV et simulations rattachés par appartenance aux listes statiques, à partir de l'envoi et sans limite de délai pour l'instant. Les transactions ouvertes AVANT la campagne mais déplacées d'étape après l'envoi sont comptées : c'est ce qui rattrape les réactivations. Attribution temporelle, non causale.",
   "relance_note": "Vague 2 du 11/09/2026 : 1 070 contacts relancés sur 4 listes. RATTACHEMENT CALCULÉ : refresh.py croise chaque contact relancé avec les listes de cellules pour retrouver sa cohorte. Un contact relancé n'est PAS une nouvelle cohorte — il est déjà dans le dénominateur de son batch. PÉRIODE PAR CONTACT : deux périodes, celle ouverte par l'envoi du batch et celle ouverte par la relance, étiquetées v1 et v2. BIAIS ASSUMÉ : les 4 listes ne contiennent QUE des contacts non activés, le taux de la vague 2 n'est donc pas comparable à celui d'un batch initial.",
   "meeting_window_note": "Les RDV suivent exactement la même règle de délai que les simulations, quelle qu'elle soit. Avant le 11/09, le filtre des réunions n'avait qu'une borne basse alors que les transactions étaient bornées : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close. Les deux signaux sont alignés depuis.",
-  "attribution_window_note": "AUCUNE BORNE HAUTE depuis le 25/09/2026, en attendant l'arbitrage Growth. Un RDV ou une simulation compte quel que soit le délai après l'envoi. La borne BASSE subsiste : rien d'antérieur à l'envoi n'est compté, et un contact relancé conserve deux périodes étiquetées v1 et v2. HISTORIQUE : cumul ouvert jusqu'au 22/08 ; J+21 du 22/08 au 25/09 ; aucune borne depuis. CE QUE ÇA COÛTE, à dire à chaque publication : 1) LES COHORTES NE SONT PLUS COMPARABLES — une cohorte ancienne accumule plus longtemps et gagne toujours ; 2) LES CHIFFRES PUBLIÉS REMONTENT EN PERMANENCE, un chiffre cité en réunion est faux la semaine suivante ; 3) l'attribution s'affaiblit avec le temps — un RDV pris trois mois après l'envoi, sans relance, ne vient probablement pas de la campagne. POURQUOI ON NE SAIT PAS CALIBRER : le seul moyen serait de regarder quand les réponses cessent d'arriver. Cette mesure a été retirée le 25/09 parce qu'elle était fausse (voir replies_retirees). Toute valeur de fenêtre serait donc un choix, pas un optimum démontré. RÉVERSIBLE : ATTRIB_DAYS dans refresh.py.",
+  "attribution_window_note": "AUCUNE LIMITE DE DÉLAI. Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après l'envoi. La borne BASSE subsiste : rien d'antérieur à l'envoi n'est compté, et un contact relancé conserve deux périodes étiquetées v1 et v2. HISTORIQUE : cumul ouvert jusqu'au 22/08 ; J+21 du 22/08 au 25/09 ; aucune limite depuis. CE QUE ÇA COÛTE, à dire à chaque publication : 1) LES COHORTES NE SE COMPARENT PAS — une cohorte ancienne accumule plus longtemps et gagne toujours ; 2) LES CHIFFRES PUBLIÉS REMONTENT EN PERMANENCE, horodater ce qu'on annonce ; 3) l'attribution s'affaiblit avec le temps. POURQUOI ON N'A PAS CALIBRÉ UNE LIMITE : le seul moyen aurait été de regarder quand les réponses cessent d'arriver. Cette mesure s'est révélée fausse et a été retirée (voir replies_retirees). RÉVERSIBLE : ATTRIB_DAYS dans refresh.py.",
   "frozen_note": "Ouvertures et clics FIGÉS pour les six cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Ces valeurs sont écrites dans frozen_metrics et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne.",
   "attribution_sm_note": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. Le total activé ne change pas, seule sa décomposition est ajoutée. RÈGLE, dans cet ordre : 1) le contact a une simulation commencée → marketing ; 2) sinon, réponse ou RDV réservé par le client ANTÉRIEUR au premier appel sortant → marketing ; 3) sinon, appel sortant loggé → sales ; 4) sinon, non attribuable. CHOIX ASSUMÉ : la simulation prime, même si un appel a suivi. PIÈGE : pour le RDV on compare la date de RÉSERVATION au premier appel, jamais la date de tenue. LIMITE CONNUE : le sous-cas « réponse » s'appuie sur hs_sales_email_last_replied, dont la date glisse à chaque nouvel e-mail commercial. Ce signal est peu fiable, mais il ne s'applique qu'aux contacts sans simulation ni RDV self-service, donc à une minorité. LIMITE STRUCTURELLE : faute de date de PREMIÈRE étape de simulation, on ne sait pas si une simulation précède ou suit l'appel. La répartition sous-estime probablement le sales.",
   "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
@@ -70,7 +70,7 @@
  },
  "objectif": {
   "clients_actives": 200,
-  "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : sans limite de délai d'attribution, le compteur monte tout seul. L'objectif sera donc atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a bien fonctionné — il faut regarder à quelle vitesse il a été atteint."
+  "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
  },
  "relances": [
   {
@@ -106,12 +106,12 @@
   "contacts": 2075,
   "activation": {
    "meet": 167,
-   "deal": 123,
-   "both": 64,
-   "meet_only": 103,
+   "deal": 124,
+   "both": 65,
+   "meet_only": 102,
    "deal_only": 59,
    "activated": 226,
-   "deal_auto": 54,
+   "deal_auto": 55,
    "deal_manual": 69,
    "deal_only_manual": 11,
    "sum_cells": 226,
@@ -123,13 +123,13 @@
   "process": 5,
   "attribution": {
    "marketing": {
-    "total": 214,
-    "simulation": 123,
+    "total": 215,
+    "simulation": 124,
     "reponse": 8,
     "rdv_public": 83
    },
    "sales": {
-    "total": 12
+    "total": 11
    },
    "non_attribuable": {
     "total": 0
@@ -193,13 +193,13 @@
     },
     "14412": {
      "marketing": {
-      "total": 57,
-      "simulation": 31,
+      "total": 58,
+      "simulation": 32,
       "reponse": 2,
       "rdv_public": 24
      },
      "sales": {
-      "total": 2
+      "total": 1
      },
      "non_attribuable": {
       "total": 0
@@ -251,13 +251,13 @@
     },
     "v2": {
      "marketing": {
-      "total": 84,
-      "simulation": 55,
+      "total": 85,
+      "simulation": 56,
       "reponse": 7,
       "rdv_public": 22
      },
      "sales": {
-      "total": 8
+      "total": 7
      },
      "non_attribuable": {
       "total": 0
@@ -268,8 +268,8 @@
     "certain": 226,
     "attente": 0,
     "certain_rdv_client": 83,
-    "certain_parcours": 123,
-    "certain_rdv_sales": 20,
+    "certain_parcours": 124,
+    "certain_rdv_sales": 19,
     "attente_carte_seule": 0,
     "par_cellule": {
      "14319": {
@@ -308,8 +308,8 @@
       "certain": 59,
       "attente": 0,
       "certain_rdv_client": 24,
-      "certain_parcours": 31,
-      "certain_rdv_sales": 4,
+      "certain_parcours": 32,
+      "certain_rdv_sales": 3,
       "attente_carte_seule": 0
      },
      "14413": {
@@ -708,23 +708,23 @@
      "opens_frozen": true,
      "replies_non_fiable": 110,
      "meetings": 51,
-     "deals_ae": 31,
+     "deals_ae": 32,
      "engaged": 59,
      "split": {
-      "both": 23,
-      "meet_only": 28,
+      "both": 24,
+      "meet_only": 27,
       "deal_only": 8,
       "engaged": 59,
-      "deal_n8n": 7,
+      "deal_n8n": 8,
       "deal_manual": 24,
       "deal_only_manual": 1,
       "relanced": 532,
       "engaged_v2": 45,
       "engaged_v1": 14,
-      "marketing": 57,
-      "sales": 2,
+      "marketing": 58,
+      "sales": 1,
       "non_attribuable": 0,
-      "simule": 31,
+      "simule": 32,
       "certain": 59,
       "attente": 0,
       "process": 1
@@ -839,12 +839,12 @@
    ],
    "activation": {
     "meet": 67,
-    "deal": 44,
-    "both": 29,
-    "meet_only": 38,
+    "deal": 45,
+    "both": 30,
+    "meet_only": 37,
     "deal_only": 15,
     "activated": 82,
-    "deal_auto": 13,
+    "deal_auto": 14,
     "deal_manual": 31,
     "deal_only_manual": 2,
     "activated_v2": 60,
