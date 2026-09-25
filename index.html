@@ -377,97 +377,92 @@
     <h2 class="stitle">Méthodo &amp; limites</h2>
 
     <div class="block">
-      <h3 class="btitle">D'où vient chaque chiffre</h3>
-      <div class="bsub">L'API Sequences de HubSpot ne renvoie aucune métrique de performance. Tout est reconstruit depuis les objets CRM.</div>
-      <div class="twrap"><table class="dt"><tbody>
-        <tr><td>Contacts d'un batch</td><td>liste statique</td>
-          <td>Le dénominateur. Statique donc figé : il ne dérive pas dans le temps.</td></tr>
-        <tr><td>Envois, ouvertures, clics</td><td>EMAIL ∩ associations.contact</td>
-          <td>Double filtre : la séquence restreint le périmètre, l'appartenance à la liste isole le batch. Compteurs bornés à 1 par e-mail pour de l'unique.</td></tr>
-        <tr><td>Réponses</td><td>contact.hs_sales_email_last_replied</td>
-          <td>Filtré à partir de la date d'envoi du batch. Date de dernière réponse, pas de la première.</td></tr>
-        <tr><td>RDV</td><td>MEETING_EVENT · owner ∈ {Clara, Lilian, Mathieu}</td>
-          <td>Associé aux contacts de la liste, dans la fenêtre d'attribution, intitulé contenant « emprunteur ». Propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
-        <tr><td>Simulations entamées</td><td>DEAL · pipeline 3817233652</td>
-          <td><strong>Libellé imprécis, assumé.</strong> Le pipe est alimenté de <strong>deux</strong> façons : n8n remonte les statuts du partenaire — là, le client est réellement entré dans le simulateur — et les commerciaux créent des fiches à la main. Sur les 44 contacts comptés, 33 le sont via une transaction manuelle, qui atteste qu'un commercial a ouvert une fiche et non qu'un client a simulé. Le mot « simulation » ne vaut strictement que pour la part n8n, affichée partout à côté du total.</td></tr>
-        <tr><td>Clients activés</td><td>MEETING_EVENT ∪ DEAL</td>
-          <td>Union en contacts uniques : RDV seul, simulation seule, ou les deux. Un contact avec RDV et dossier compte une fois. Le total campagne est calculé sur des identifiants de contact par le collecteur, jamais par addition des cellules.</td></tr>
-        <tr><td>Origine de l'activation</td><td>DEAL.last_step_date · MEETING.hs_meeting_source · CALL.hs_call_direction</td>
-          <td>Trois cas disjoints dont la somme fait le total activé. Règle, dans cet ordre : une simulation réelle l'emporte sur tout ; sinon une réponse ou un RDV self-service antérieur au premier appel sortant ; sinon un appel sortant ; sinon non attribuable. Le marqueur de simulation est <code>last_step_date</code>, et non <code>last_step_id</code> — cette dernière n'est renseignée que si le dernier événement est une complétion d'étape, soit 3 transactions sur 394.</td></tr>
-        <tr><td>Vague d'activation</td><td>appartenance à une liste de relance</td>
-          <td>Un contact relancé dispose de deux fenêtres de 21 jours : celle de son batch initial et celle de sa relance. L'événement est étiqueté v1 ou v2 selon la fenêtre dans laquelle il tombe. Le rattachement d'un contact relancé à sa cohorte est <strong>calculé</strong> par croisement avec les listes de cellules, jamais déclaré en dur : les listes de relance sont construites sur un statut de séquence, pas sur l'appartenance à un batch.</td></tr>
-        <tr><td>Statut du batch</td><td>contact.hs_sequences_is_enrolled</td>
-          <td>Dérivé, jamais saisi. Une cellule sans contact encore enrôlé a fini d'envoyer.</td></tr>
-      </tbody></table></div>
-    </div>
-
-    <div class="block">
-      <h3 class="btitle">Comment chaque chiffre est calculé</h3>
+      <h3 class="btitle">La règle, en quatre lignes</h3>
       <div class="bsub">
-        Numérateur, dénominateur et source pour chaque élément affiché. À confronter aux
-        équipes si un chiffre surprend : dans la quasi-totalité des cas, l'écart vient d'une
-        définition différente, pas d'une erreur de collecte.
+        Un client est <strong>activé</strong> s'il a pris un RDV « emprunteur » avec Clara, Lilian ou
+        Mathieu, ou s'il a commencé à simuler. S'il fait les deux, il compte une fois.<br>
+        Ça ne compte que dans les <strong>45 jours</strong> suivant le mail qu'il a reçu.<br>
+        Tout est compté en <strong>contacts</strong>, jamais en rendez-vous ni en dossiers.<br>
+        Les trois façons de découper ce total ne s'additionnent jamais entre elles.
       </div>
-      <div class="twrap"><table class="dt"><tbody>
-        <tr><td>Contacts ciblés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">niveau 1</span></td>
-          <td>union dédupliquée des listes de cohorte</td>
-          <td>Pas la somme des cellules : un contact ciblé dans deux batchs ne compte qu'une fois. Les contacts relancés n'y sont <strong>pas</strong> ajoutés : ils y étaient déjà.</td></tr>
-        <tr><td>Envois</td><td>objets EMAIL au statut SENT ou BOUNCED</td>
-          <td>Unité = l'e-mail. Double filtre : la séquence restreint le périmètre, l'appartenance à la liste isole le batch. Une séquence sert plusieurs batchs.</td></tr>
-        <tr><td>Ouvertures</td><td>contacts dont <code>hs_sales_email_last_opened</code> ≥ date d'envoi</td>
-          <td>Unité = le contact. <strong>Figées pour les cellules d'août</strong> depuis le 11/09 : la propriété ne garde que la dernière ouverture, et les relances l'écrasaient.</td></tr>
-        <tr><td>Clics</td><td>contacts dont <code>hs_sales_email_last_clicked</code> ≥ date d'envoi</td>
-          <td>Unité = le contact. Même gel que les ouvertures sur les cellules d'août.</td></tr>
-        <tr><td>Réponses</td><td>contacts dont <code>hs_sales_email_last_replied</code> ≥ date d'envoi</td>
-          <td>Date de la <strong>dernière</strong> réponse, pas de la première. <strong>Ni bornée ni figée</strong> : ce compteur subit encore l'effet des relances.</td></tr>
-        <tr><td>RDV pris</td><td>MEETING_EVENT dans la fenêtre d'attribution, intitulé contenant « emprunteur », owner ∈ {Clara, Lilian, Mathieu}</td>
-          <td>Unité = le contact, et non la réunion : un contact peut avoir un RDV courtage puis un RDV devis. Le filtre d'intitulé est nécessaire, sinon toute réunion des contacts ciblés serait comptée. <strong>Borne haute ajoutée le 11/09</strong> : avant, un RDV pris des mois après l'envoi restait imputé au batch.</td></tr>
-        <tr><td>Simulations entamées</td><td>DEAL du pipe créés dans la fenêtre <strong>OU</strong> déplacés d'étape dans la fenêtre, toutes sources confondues</td>
-          <td>Unité = le contact. Le second terme ne filtre pas les étapes, il capte le mouvement : il rattrape les dossiers antérieurs réactivés par la campagne, invisibles sur la seule date de création.</td></tr>
-        <tr><td>Clients activés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal · niveau 1</span></td>
-          <td>RDV seul + simulation seule + RDV et simulation<br>= union dédupliquée MEETING_EVENT ∪ DEAL</td>
-          <td><strong>Somme de trois ensembles disjoints</strong>, et non de deux totaux. Les cartes du niveau 1 affichent les trois cas exclusifs, jamais les totaux RDV et simulations, qui se recoupent. Les totaux restent publiés dans la ligne de réconciliation et dans la matrice du niveau 2. Le collecteur calcule l'union sur les identifiants de contact au niveau de la campagne entière.</td></tr>
-        <tr><td>Contacts relancés<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">carte niveau 1</span></td>
-          <td>union des listes de relance</td>
-          <td><strong>Ne s'ajoute pas au dénominateur.</strong> Un contact relancé était déjà ciblé par son batch. L'ajouter ferait baisser tous les taux sans qu'aucune nouvelle personne n'ait été touchée.</td></tr>
-        <tr><td>Activés par la relance<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">vague 2</span></td>
-          <td>contacts dont l'activation tombe dans la fenêtre de relance ÷ contacts relancés</td>
-          <td><strong>Non comparable à un taux de batch.</strong> Les listes de relance ne contiennent que des contacts non activés : leur dénominateur est à 0 % d'activés par construction. C'est un gain marginal pur.</td></tr>
-        <tr><td>Total RDV · Total simulations<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">second rang</span></td>
-          <td>RDV seul + les deux · simulation seule + les deux</td>
-          <td>Les chiffres que l'équipe retrouvera en filtrant HubSpot elle-même. Publiés sur un <strong>rang séparé</strong>, avec l'opérateur ∪ et non + : ils se recoupent. Sans eux, un commercial qui compte les RDV dans le CRM face à un chiffre plus petit conclut que le dashboard est faux — et cesse de s'en servir sans le signaler. Garde-fou d'adoption autant qu'indicateur.</td></tr>
-        <tr><td>RDV seul · Simulation seule · RDV et simulation<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">cartes niveau 1</span></td>
-          <td>intersection et différences des deux ensembles</td>
-          <td>Sous-ensembles <strong>disjoints</strong> : leur somme fait le total activé, contrairement aux colonnes RDV et Simulations qui se recoupent. « RDV seul » mesure une fuite commerciale. « Simulation seule » mesure un parcours self-service, sous réserve que la transaction ne soit pas une saisie manuelle.</td></tr>
-        <tr><td>Recoupement des cohortes<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">garde-fou</span></td>
-          <td>somme des cellules − union des identifiants</td>
-          <td>Publié dans <code>dedup.activation.overlap</code> et affiché sous la décomposition dès qu'il est non nul. La coïncidence entre somme et union n'est pas une garantie, elle est surveillée.</td></tr>
-        <tr><td>Rattrapage exclu</td><td>DEAL créés entre 15:25 et 15:26 le 06/08</td>
-          <td>10 transactions en 20 secondes, mêlant contacts enrôlés et contacts jamais touchés par une séquence : import d'antériorité, pas de l'activité.</td></tr>
-        <tr><td>Fenêtre d'attribution</td><td>J+21 après le dernier envoi touchant le contact</td>
-          <td>Sans borne de fin, un cumul ouvert monte à chaque rafraîchissement et deux cohortes d'âge différent cessent d'être comparables. Depuis le 11/09, la fenêtre est <strong>par contact</strong> : un contact relancé en a deux, disjointes.</td></tr>
-        <tr><td>Taux d'activation<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">graphe niveau 2</span></td>
-          <td>clients activés ÷ contacts de la cohorte</td>
-          <td>Dénominateur = effectif ciblé du batch, jamais les envois.</td></tr>
-        <tr><td>Courbe de réponse</td><td>contacts ayant répondu à J+n ÷ contacts de la cohorte</td>
-          <td>Plafonne sur le taux de réponse réel, pas à 100 %. Horizon borné aux jours écoulés depuis l'envoi.</td></tr>
-        <tr><td>Détail par étape<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">niveau 3</span></td>
-          <td>regroupement par objet d'e-mail, compteur borné à 1 par e-mail</td>
-          <td>Seul endroit resté en unité e-mail, pour lire l'usure entre étapes.</td></tr>
-        <tr><td>Verdict A/B</td><td>test z de proportions bilatéral, seuil 5 %</td>
-          <td>Aucun gagnant désigné si p &gt; 0,05, quel que soit l'écart observé.</td></tr>
-        <tr><td>Seuil détectable</td><td>2,80 × √(p̄(1−p̄)(1/n<sub>A</sub>+1/n<sub>B</sub>))</td>
-          <td>Écart minimum décelable à 80 % de puissance. Tout écart inférieur est indistinguable du hasard.</td></tr>
-        <tr><td>Statut de la cohorte</td><td>contact.hs_sequences_is_enrolled ∩ hs_latest_sequence_enrolled</td>
-          <td>Dérivé, jamais saisi. <strong>Réserve depuis les relances</strong> : la propriété ne garde que la dernière séquence, donc un contact relancé sort du décompte de sa cellule d'origine.</td></tr>
-        <tr><td>Répartition par propriétaire</td><td>propriétaire de la réunion, premier RDV du contact</td>
-          <td>L'API CRM Search ne renvoie pas les associations : lire le champ donnait un décompte vide. Il s'agit du propriétaire de la <strong>réunion</strong>, pas du contact.</td></tr>
-      </tbody></table></div>
     </div>
 
     <div class="block">
-      <h3 class="btitle">Ce que cette version corrige</h3>
-      <div id="fixes"></div>
+      <h3 class="btitle">Chaque chiffre, en clair</h3>
+      <div class="twrap"><table class="dt"><tbody>
+
+        <tr><td>Contacts ciblés</td>
+          <td>2 075</td>
+          <td>Toutes les personnes à qui on a envoyé un mail, comptées une seule fois même si elles
+            ont reçu deux batchs. Les relancés ne s'ajoutent pas : ils étaient déjà là.</td></tr>
+
+        <tr><td>Envois</td>
+          <td>e-mails partis</td>
+          <td>Le seul chiffre compté en e-mails et non en personnes. Un contact qui reçoit trois
+            étapes de séquence compte trois fois.</td></tr>
+
+        <tr><td>Ouvertures · Clics</td>
+          <td>personnes ayant ouvert ou cliqué</td>
+          <td>HubSpot ne garde que la <strong>dernière</strong> ouverture de chaque personne, pas
+            l'historique. Les chiffres des six cellules d'août sont donc <strong>figés</strong> au
+            11/09 : sans ça, les relances de septembre les auraient fait bouger.</td></tr>
+
+        <tr><td>Réponses</td>
+          <td>personnes ayant répondu</td>
+          <td>Même limite que les ouvertures, mais ce compteur n'est <strong>pas figé</strong> : il
+            bouge encore. Une réponse ne vaut pas activation — HubSpot ne fait pas la différence
+            entre « ça m'intéresse » et un refus.</td></tr>
+
+        <tr><td>RDV pris</td>
+          <td>personnes ayant un rendez-vous</td>
+          <td>Rendez-vous dont le titre contient « emprunteur », posé par Clara, Lilian ou Mathieu,
+            dans les 45 jours. Une personne avec deux rendez-vous compte une fois.</td></tr>
+
+        <tr><td>Simulations entamées</td>
+          <td>personnes ayant commencé à simuler</td>
+          <td>Leur dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire
+            qu'elles ont rempli au moins le premier champ.<br>
+            <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
+            simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
+            rendez-vous existe.</td></tr>
+
+        <tr><td>Clients activés</td>
+          <td>RDV <strong>ou</strong> simulation</td>
+          <td>Le chiffre principal. C'est une union, jamais une addition : une personne qui a un
+            rendez-vous <em>et</em> une simulation compte une fois.</td></tr>
+
+        <tr><td>Dossiers en souscription</td>
+          <td>personnes montant un dossier</td>
+          <td>Leur dossier est à l'étape <code>process_started</code> ou au-delà. C'est un
+            sous-ensemble des activés, pas un chiffre à ajouter.</td></tr>
+
+        <tr><td>Contacts relancés<br>Vague 1 · Vague 2</td>
+          <td>1 070 personnes</td>
+          <td>Une relance n'est pas un nouveau batch : ces personnes étaient déjà dans le
+            dénominateur. Chacune obtient une seconde période de 45 jours à partir de sa relance.<br>
+            <strong>Le taux de la vague 2 ne se compare pas à celui d'un envoi initial</strong> : on
+            n'a relancé que des gens qui n'avaient rien fait.</td></tr>
+
+        <tr><td>Marketing · Sales<br>Non attribuable</td>
+          <td>qui a produit l'activation</td>
+          <td>Dans cet ordre : une simulation l'emporte toujours ; sinon une réponse ou un
+            rendez-vous pris par la personne <strong>avant</strong> le premier appel sortant ; sinon
+            un appel sortant. On compare la date de <strong>réservation</strong> du rendez-vous,
+            jamais celle où il a lieu.</td></tr>
+
+        <tr><td>Fenêtre de 45 jours</td>
+          <td>à partir du mail reçu</td>
+          <td>Sans limite de temps, un vieux batch accumule plus longtemps qu'un batch récent et
+            gagne toujours : plus aucune comparaison n'est possible, et les chiffres publiés
+            remontent sans fin. 45 jours parce que les réponses arrivaient encore à J+21.</td></tr>
+
+        <tr><td>Rattrapages exclus</td>
+          <td>3 rafales</td>
+          <td>Quand le flux n8n se rétablit après une panne, il crée des centaines de dossiers en
+            quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
+            ils sont écartés (06/08 et 16/09).</td></tr>
+
+      </tbody></table></div>
     </div>
 
     <div class="block">
@@ -477,74 +472,60 @@
 
     <div class="block">
       <h3 class="btitle">Journal des définitions</h3>
-      <div class="bsub">
-        Tout changement de définition crée une rupture de série : un chiffre d'après n'est pas
-        comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
-      </div>
+      <div class="bsub">Chaque changement de règle est daté ici. Un chiffre d'avant n'est pas
+        comparable à un chiffre d'après.</div>
       <div class="twrap"><table class="dt"><tbody>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre d'attribution</span></td>
-          <td>J+21 → J+45</td>
-          <td><strong>Rupture de série.</strong> J+21 était hérité et jamais calibré : les courbes de réponse montaient encore à J+21 sur les deux batchs d'août, la fenêtre coupait en pleine pente, et nos séquences durant deux semaines le dernier e-mail n'avait qu'une semaine pour agir. J+45 récupère l'essentiel des conversions tardives. Supprimer toute borne a été mesuré puis écarté : le gain n'était que d'environ 31 contacts, les moins attribuables, contre la perte de la comparabilité entre cohortes et de la stabilité des chiffres publiés. Les fenêtres d'août rouvrent, leurs chiffres vont monter — aucune valeur antérieure au 25/09 n'est comparable à une valeur postérieure.</td></tr>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Transactions de workflow</span></td>
-          <td>toute transaction → étapes de parcours seulement</td>
-          <td><strong>Rupture.</strong> Une transaction ne compte plus que si son étape prouve que le client a agi. Le flow n8n range en <code>optimization_activated</code> les optimisations dont <strong>aucune étape n'est franchie</strong> : accès au simulateur, rien de rempli. Ce n'est pas une activation. Seules comptent <code>simulation_started</code> et au-delà — ce qui correspond littéralement à « a rempli au minimum le premier champ » de la définition. Sont aussi écartées les cartes créées par le workflow « RDV sans simu » (le RDV est déjà compté via la réunion) et <code>optimization_declined</code>, étape terminale pilotée par le CS qui efface l'information de parcours. <code>last_step_date</code> n'est plus le marqueur : elle vient du dernier événement, et 153 optimisations en ont sans aucune étape complétée. Second correctif : le test « tracé par n8n » portait sur « source ≠ CRM_UI » et rangeait les cartes de workflow du côté n8n ; il porte désormais sur « source = INTEGRATION ».</td></tr>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre</span></td>
+          <td>21 → 45 jours</td>
+          <td>Les réponses arrivaient encore à J+21 : on coupait trop tôt. Les chiffres d'août remontent. <strong>Rien d'avant le 25/09 n'est comparable à rien d'après.</strong></td></tr>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
+          <td>toute fiche → étapes réelles</td>
+          <td>Une fiche ne compte que si le client a rempli au moins un champ (<code>simulation_started</code> ou plus loin). Un simple accès au simulateur, un dossier refusé, ou une fiche créée automatiquement à cause d'un rendez-vous ne comptent plus.</td></tr>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Souscription</span></td>
+          <td>nouveau</td>
+          <td>Nombre de personnes montant un dossier. Sous-ensemble des activés.</td></tr>
         <tr><td>17/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Qualification</span></td>
-          <td>— → certains / en attente de qualification</td>
-          <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas : certains + en attente = activés. Définition du lead arrêtée avec Clémence — un client n'est un lead que s'il prend un RDV lui-même, démarre son parcours, ou dit au téléphone que ça l'intéresse. Le dashboard mesure seul les deux premiers cas. Le troisième attend une propriété HubSpot portant la qualification du commercial ; tant qu'elle vit dans un GSheet, le collecteur ne peut pas la lire. Une réponse à un e-mail ne vaut pas activation : <code>hs_sales_email_last_replied</code> ne distingue pas un « oui » d'un refus.</td></tr>
-        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
-          <td>— → marketing / sales / non attribuable</td>
-          <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas, seule sa décomposition est ajoutée — même principe que l'axe v1/v2. Trois cas disjoints dont la somme fait le total. Aucune valeur antérieure n'est invalidée.</td></tr>
-        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulation</span></td>
-          <td>hs_object_source_label → last_step_date</td>
-          <td><strong>Lève la réserve « libellé imprécis, assumé ».</strong> La source de la fiche ne dit pas si un client a simulé : un deal créé à la main pendant une panne n8n, puis mis à jour par le flux, reste marqué CRM_UI. <code>last_step_date</code> est écrite dans les deux cas. Le KPI « simulations entamées » est inchangé ; c'est la décomposition d'attribution qui s'appuie désormais sur ce marqueur.</td></tr>
-        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Rattrapage</span></td>
-          <td>exclusion par transaction → par date</td>
-          <td><strong>Correction d'un mode de défaillance silencieux.</strong> Le flux n8n, arrêté depuis le 13/08, a été rétabli le 16/09 : ~190 transactions créées et 248 mouvements d'étape en deux minutes. La clause « déplacé d'étape dans la fenêtre » les aurait comptés comme autant d'activations. L'exclusion porte maintenant sur chaque date prise isolément, pas sur la transaction entière — un dossier créé pendant la rafale mais réellement déplacé plus tard reste compté.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre RDV</span></td>
-          <td>cumul ouvert → J+21</td>
-          <td><strong>Rupture.</strong> Le filtre des réunions n'avait qu'une borne de début : un RDV pris des mois après l'envoi restait imputé au batch d'origine, alors que les dossiers étaient bornés depuis le 22/08. Mesuré en direct — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09. Les compteurs de RDV d'août antérieurs à cette date ne sont pas comparables.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Vagues</span></td>
-          <td>— → v1 / v2</td>
-          <td><strong>Nouveau, sans rupture.</strong> Un contact relancé dispose d'une seconde fenêtre de 21 jours ouverte à la date de sa relance. Le total activé ne change pas de définition : seule sa décomposition par vague est ajoutée. Le dénominateur ne bouge pas — un contact relancé était déjà ciblé.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Ouvertures et clics</span></td>
-          <td>recalculés → figés pour août</td>
-          <td><strong>Gel.</strong> Les propriétés HubSpot ne gardent que la dernière ouverture, écrasée à chaque nouvel e-mail : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août à la hausse, sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Les six cellules d'août sont figées au relevé du 11/09 11h30. Ce relevé est postérieur de 2 h à l'envoi des relances : les valeurs sont surestimées d'une vingtaine d'ouvertures.</td></tr>
+          <td>nouveau</td>
+          <td>Définition du lead calée avec Clémence : rendez-vous pris par le client, parcours démarré, ou rendez-vous organisé après un appel. Le total activé ne change pas.</td></tr>
+        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Marketing / Sales</span></td>
+          <td>nouveau</td>
+          <td>Qui a produit l'activation. Trois catégories qui s'additionnent pour faire le total.</td></tr>
+        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Rattrapages</span></td>
+          <td>par fiche → par date</td>
+          <td>Quand n8n se rétablit, il crée des centaines de dossiers en quelques secondes. On écarte ces secondes-là, plus les fiches entières : un dossier créé pendant la rafale mais bougé trois jours plus tard compte toujours.</td></tr>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
+          <td>cumul → fenêtre</td>
+          <td>Un rendez-vous pris des mois après l'envoi était encore crédité au batch. Mesuré : le batch du 13 août a gagné 7 rendez-vous en 2 heures après l'envoi des relances.</td></tr>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Relances</span></td>
+          <td>nouveau</td>
+          <td>Un contact relancé obtient une seconde période d'attribution. Le dénominateur ne bouge pas : il y était déjà.</td></tr>
+        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Ouvertures d'août</span></td>
+          <td>figées</td>
+          <td>HubSpot ne garde que la dernière ouverture de chaque personne. Sans gel, les relances de septembre auraient fait bouger les chiffres d'août.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Vocabulaire</span></td>
           <td>engagement → activation</td>
-          <td><strong>Aucune rupture de série.</strong> Le calcul est identique au 22/08 : même union RDV ∪ dossier, mêmes sources, mêmes filtres. Seuls les libellés changent, pour tenir le langage retenu par l'équipe.</td></tr>
-        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Cartes niveau 1</span></td>
-          <td>RDV · simulations  →  RDV seul · simu seule · les deux</td>
-          <td><strong>Rupture de lecture, aucune rupture de calcul.</strong> Les cartes affichaient deux totaux qui se recoupent : côte à côte sur une grille de cartes plates, elles invitaient à une addition qui surestimait le total. Les six chiffres d'activation sont désormais regroupés dans un bloc dédié, sur deux rangs : les trois cas <strong>exclusifs</strong> qui s'additionnent, puis les deux <strong>totaux</strong> qui se recoupent.</td></tr>
+          <td>Libellés seulement. Les valeurs restent comparables.</td></tr>
+        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Cartes du haut</span></td>
+          <td>totaux → cas exclusifs</td>
+          <td>Deux totaux qui se recoupent, côte à côte, invitaient à une addition fausse.</td></tr>
         <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Total campagne</span></td>
-          <td>somme des cellules → union des identifiants</td>
-          <td><strong>Correction d'un mode de défaillance silencieux.</strong> Les totaux d'activation étaient obtenus en additionnant les cellules — juste uniquement tant qu'aucun contact activé n'est ciblé par deux batchs. Le collecteur calcule maintenant l'union sur les identifiants de contact et publie l'écart.</td></tr>
-        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Données embarquées</span></td>
-          <td>seed du 18/08 → seed du 25/08</td>
-          <td><strong>Correction d'un mode de défaillance silencieux.</strong> La copie de secours intégrée à <code>index.html</code> datait du 18 août et portait encore l'ancien KPI principal. En cas d'échec de chargement de <code>data.json</code>, le dashboard affichait des chiffres périmés sans autre signal que la mention « données embarquées ».</td></tr>
+          <td>somme → union</td>
+          <td>Additionner les cellules surcompte dès qu'une personne est ciblée deux fois.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
-          <td>simulations → engagement</td>
-          <td><strong>Rupture.</strong> L'ancien KPI filtrait sur des étapes que n8n n'alimente pas : il affichait un chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité.</td></tr>
+          <td>simulations → activation</td>
+          <td>L'ancien filtrait sur des étapes que n8n ne remplit pas : il affichait un chiffre quasi nul.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
-          <td>réunions → contacts uniques</td>
-          <td><strong>Rupture.</strong> Le compteur portait sur les objets MEETING_EVENT : 62 réunions pour 51 contacts, certains ayant un RDV courtage puis un RDV devis.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Origine des deals</span></td>
-          <td>affirmation retirée → source affichée</td>
-          <td><strong>Correction d'une erreur de méthodo.</strong> Ce dashboard affirmait que le pipe courtage n'était alimenté que par le partenaire. C'est faux : 40 transactions sur 77 sont créées à la main dans HubSpot.</td></tr>
+          <td>réunions → personnes</td>
+          <td>62 réunions correspondaient à 51 personnes.</td></tr>
+        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Origine des dossiers</span></td>
+          <td>affirmation → mesure</td>
+          <td>On affirmait que le pipe n'était alimenté que par le produit. Faux : une majorité de fiches est créée à la main.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Répartition</span></td>
           <td>propriétaire du contact → de la réunion</td>
-          <td><strong>Rupture.</strong> Le graphe attribuait les RDV au propriétaire du contact : des commerciaux y apparaissaient sans avoir posé le moindre rendez-vous.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Attribution</span></td>
-          <td>cumul ouvert → fenêtre J+21</td>
-          <td>Les valeurs antérieures étaient des cumuls sans borne, non comparables d'une cohorte à l'autre. Appliqué aux dossiers seulement : les RDV ont attendu le 11/09.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Matrice</span></td>
-          <td>—  →  RDV × dossier</td>
-          <td>Nouveau. Sépare la fuite commerciale du parcours self-service.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre RDV</span></td>
-          <td>—  →  3 propriétaires habilités</td>
-          <td>Sans effet sur les chiffres du moment : les RDV leur appartiennent déjà. Garde-fou pour les cohortes suivantes.</td></tr>
+          <td>Des commerciaux apparaissaient sans avoir posé un seul rendez-vous.</td></tr>
         <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre</span></td>
-          <td>1 cohorte → 2 cohortes</td>
-          <td>Le batch du 13 août existait mais n'était pas déclaré : le dashboard affichait environ la moitié de la production réelle du courtage AE.</td></tr>
+          <td>1 → 2 cohortes</td>
+          <td>Le batch du 13 août n'était pas déclaré : le dashboard affichait la moitié de la production réelle.</td></tr>
       </tbody></table></div>
     </div>
 
@@ -1285,186 +1266,43 @@ function render(){
   }
 
   /* ---------- Méthodo ---------- */
-  document.getElementById('fixes').innerHTML=[
-    {level:'high',title:'Borne haute sur les RDV',
-     body:`Le filtre des réunions n'avait qu'une date de début : un RDV pris des mois après `
-       +`l'envoi restait imputé au batch d'origine, alors que les dossiers étaient bornés à `
-       +`J+21 depuis le 22/08. Mesuré le 11/09 — dans les 2 h suivant l'envoi des relances, le `
-       +`batch du 13 août a gagné <strong>7 RDV</strong> alors que sa fenêtre était close depuis `
-       +`le 03/09. Les deux signaux partagent désormais la même fenêtre.`},
-    {level:'high',title:'Fenêtre d\'attribution par contact',
-     body:`Un contact relancé dispose de <strong>deux</strong> fenêtres de 21 jours : celle de `
-       +`son batch initial et celle de sa relance. Un événement compte s'il tombe dans l'une ou `
-       +`l'autre, et il est étiqueté v1 ou v2. Deux fenêtres disjointes plutôt qu'une seule `
-       +`élargie : une activation réelle d'août ne doit pas disparaître parce que le contact a `
-       +`été relancé, et une fenêtre unique de 58 jours détruirait la comparabilité entre `
-       +`cohortes.`},
-    {level:'high',title:'Ouvertures et clics d\'août figés',
-     body:`<code>hs_sales_email_last_opened</code> et <code>hs_sales_email_last_clicked</code> `
-       +`ne gardent que la <strong>dernière</strong> date, écrasée à chaque nouvel e-mail. `
-       +`Une ouverture de relance restait comptée comme une ouverture d'août, puisque la `
-       +`comparaison est « ≥ date d'envoi ». Borner en haut ne réglait rien : un vrai ouvreur `
-       +`d'août serait alors sorti du compte. La donnée d'origine n'existe plus — les valeurs `
-       +`des six cellules d'août sont figées au relevé du 11/09 11h30 et ne sont plus `
-       +`recalculées. Correctif durable : horodater une propriété contact à chaque ouverture.`},
-    {level:'high',title:'Relances rattachées par calcul, pas par déclaration',
-     body:`Les listes de relance sont construites sur un statut de séquence — « a terminé sa `
-       +`campagne », « a été interrompu » — et non sur l'appartenance à un batch. Un mapping `
-       +`déclaré en dur aurait été faux pour une partie des contacts. Le collecteur croise `
-       +`chaque contact relancé avec les listes de cellules pour retrouver sa cohorte réelle.`},
-    {level:'high',title:'Attribution des e-mails par séquence → par liste',
-     body:`La séquence <code>841303267</code> a servi le RP du 5 août, <strong>puis</strong> `
-       +`celui du 13 août, <strong>puis</strong> le batch du 10 septembre. L'ancienne version `
-       +`comptait par <code>hs_sequence_id</code> sans filtrer les contacts : les envois d'un `
-       +`batch étaient imputés au précédent. Le double filtre séquence + appartenance à la liste `
-       +`isole désormais chaque batch.`},
-    {level:'high',title:'KPI principal : activation, plus « simulations »',
-     body:`L'ancien KPI s'appuyait sur des étapes que n8n n'alimente pas — il affichait un `
-       +`chiffre quasi nul par défaut d'instrumentation, pas par absence d'activité. `
-       +`Le nouveau ne filtre plus sur les étapes : celles remontées par n8n sont sautées, `
-       +`une étape absente ne prouve rien.`},
-    {level:'high',title:'RDV attribués au propriétaire de la réunion',
-     body:`Le graphe de répartition utilisait <code>contact.hubspot_owner_id</code> : `
-       +`un commercial y apparaissait dès qu'il possédait des fiches, même sans avoir `
-       +`posé un seul rendez-vous. Il utilise désormais le propriétaire de la RÉUNION. `
-       +`Les deals ne sont plus répartis : créés par n8n, ils n'ont pas de propriétaire.`},
-    {level:'high',title:'RDV comptés en contacts, plus en réunions',
-     body:`Un même contact peut avoir un RDV courtage puis un RDV devis. Même correction `
-       +`d'unité que celle déjà appliquée aux ouvertures et aux clics.`},
-    {level:'high',title:'Réactivations rattrapées',
-     body:`Un dossier ouvert avant la campagne mais déplacé après l'envoi est désormais compté. `
-       +`Sur la seule date de création il était invisible — et cet angle mort grandit à mesure `
-       +`que la base mûrit et que les clients ont déjà un dossier ouvert.`},
-    {level:'high',title:'Jointure liste × transaction refaite en deux temps',
-     body:`Combiner <code>hs_crm_search.ilsListIds</code> et un filtre <code>DEAL.*</code> dans `
-       +`la même requête fait sauter le filtre de liste <strong>sans lever d'erreur</strong> : `
-       +`deux listes différentes renvoyaient le même résultat. La jointure se fait désormais `
-       +`dans le code, après deux appels séparés.`},
-    {level:'high',title:'Totaux d\'activation en union, plus en somme de cellules',
-     body:`Les totaux RDV, simulations et activés étaient obtenus en additionnant les `
-       +`cellules — juste uniquement tant qu'aucun contact activé n'est ciblé par deux batchs. `
-       +`Le collecteur calcule maintenant l'union sur les identifiants de contact au niveau `
-       +`campagne et publie l'écart avec la somme.`},
-    {level:'med',title:'Statut du batch dérivé de HubSpot',
-     body:`Une cellule est TERMINÉ quand plus aucun de ses contacts n'est activement enrôlé `
-       +`dans une séquence <strong>de la campagne</strong>. Plus de saisie manuelle.`},
-    {level:'med',title:'Cohortes déclarées au fil des batchs',
-     body:`Le batch du 13 août, puis celui du 10 septembre, existaient dans le portail sans `
-       +`être rattachés à une liste connue du dashboard. Leurs contacts et leurs activations `
-       +`n'apparaissaient nulle part.`},
-  ].map(a=>`<div class="anom"><span class="abadge ${a.level}">CORRIGÉ</span>
-    <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
-
   document.getElementById('limits').innerHTML=[
-    {level:'high',title:'Attribution temporelle, non causale',body:D.meta.attribution_note},
-    {level:'high',title:'Le chiffre à avancer est « activés confirmés », pas le total',
-     body:`Le total activé compte toute transaction du pipe courtage, y compris une fiche ouverte `
-       +`par un commercial après un appel où le client a dit non. Sur 151 contacts appelés en `
-       +`outbound, 37 avaient une carte dont 21 en <code>optimization_declined</code> — et une `
-       +`carte en refus comptait comme une activation. Les <strong>activés confirmés</strong> ne `
-       +`retiennent que ce qui se mesure sans intervention humaine : RDV pris par le client, ou `
-       +`parcours démarré. Le reste attend l'arbitrage des commerciaux. Les transactions ne sont `
-       +`pas supprimées : elles portent la trace du travail outbound et le motif du refus. On `
-       +`corrige la mesure, pas la donnée.`},
+    {level:'high',title:'Un dossier ne prouve pas toujours un parcours',
+     body:`Le pipe est alimenté par le produit ET à la main par les commerciaux. Une fiche créée `
+       +`à la main atteste qu'un commercial a ouvert un dossier, pas qu'un client a simulé. C'est `
+       +`pourquoi seule l'étape compte, jamais l'existence de la fiche.`},
     {level:'high',title:'Une panne de synchronisation fabrique de faux « sales »',
-     body:`L'attribution repose sur la présence d'un dossier remonté par n8n. Quand le flux est `
-       +`en panne, un client qui a réellement simulé n'a aucun dossier : il perd son signal `
-       +`marketing et bascule sur l'appel du commercial. C'est arrivé du 13/08 au 16/09, `
-       +`33 jours sans aucune remontée. Le drapeau <code>sync_stale</code> lève un bandeau dès `
-       +`que rien n'a bougé depuis 24 h ouvrées — quand il est levé, la décomposition ne doit `
-       +`pas être publiée.`},
-    {level:'med',title:'La date de réservation, jamais celle de tenue',
-     body:`Pour départager marketing et sales sur un rendez-vous, on compare la date de `
-       +`<strong>réservation</strong> au premier appel sortant, jamais la date de tenue. `
-       +`Cas réel : réservation le 11/09, rendez-vous le 15/09, appel le 15/09 à l'heure du `
-       +`rendez-vous. Avec la date de tenue, le contact bascule à tort en sales — 5 erreurs sur `
-       +`57 venaient de là lors de la validation manuelle.`},
-    {level:'med',title:'L\'attribution ignore le filtre d\'intitulé des RDV',
-     body:`L'attribution utilise <code>hs_meeting_source</code> sans filtrer sur l'intitulé, `
-       +`parce que le filtre « emprunteur » rate les rendez-vous pris via le lien générique. `
-       +`Le filtre de la définition d'ACTIVATION, lui, est inchangé : y toucher déplacerait des `
-       +`chiffres déjà publiés. Les deux périmètres diffèrent donc légèrement, volontairement.`},
-    {level:'high',title:'Le taux de la vague 2 n\'est pas un taux de campagne',
-     body:`Les listes de relance ne contiennent <strong>que</strong> des contacts non activés. `
-       +`Leur dénominateur est à 0 % d'activés par construction. Toute activation de vague 2 est `
-       +`un gain marginal pur, mais le taux affiché ne se compare à aucun taux de batch initial. `
-       +`Ne jamais les mettre côte à côte en comité.`},
-    {level:'high',title:'Le libellé « simulations entamées » surpromet',
-     body:`Ce chiffre compte les contacts ayant une transaction dans le pipe courtage AE. `
-       +`Il ne mesure un parcours sur le simulateur que pour la part remontée par n8n. `
-       +`Les autres reposent sur une transaction créée à la main, qui atteste qu'un commercial `
-       +`a ouvert une fiche. Le mot « simulation » ne doit pas être défendu tel quel en comité. `
-       +`Deux issues possibles : instrumenter le clic sur le lien de simulation, ou renommer le `
-       +`KPI en « dossiers ouverts ».`},
-    {level:'high',title:'Un deal ne prouve pas un parcours produit',
-     body:`Le pipe est alimenté de deux façons. n8n remonte les statuts du partenaire `
-       +`(<code>INTEGRATION</code>) : là, le client est réellement entré dans le parcours. `
-       +`Mais une majorité de transactions est créée à la main (<code>CRM_UI</code>) : elles `
-       +`attestent qu'un commercial a ouvert une fiche, pas qu'un client a simulé. Le KPI ne `
-       +`filtre pas sur la source — arbitrage non tranché, rendu visible par le bloc « Origine `
-       +`des deals ». La question à poser aux commerciaux : dans quel cas créent-ils un deal à `
-       +`la main ?`},
-    {level:'high',title:'Les étapes du pipe ne sont pas traversées',
-     body:`Les transactions remontées par n8n portent directement le statut rapporté par le `
-       +`partenaire : un dossier peut apparaître en <code>process_started</code> sans jamais `
-       +`être passé par <code>simulation_started</code>. Une étape absente ne prouve rien. `
-       +`Aucun KPI ne doit filtrer sur les étapes de ce pipe.`},
-    {level:'med',title:'Ouvertures d\'août figées après contamination partielle',
-     body:`Le relevé de gel date du 11/09 11h30, soit 2 h après l'envoi des relances : le total `
-       +`campagne était déjà passé de 1 214 à 1 236 ouvertures. Les valeurs figées sont donc `
-       +`surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un `
-       +`relevé propre.`},
-    {level:'med',title:'Les réponses ne sont ni bornées ni figées',
-     body:`<code>hs_sales_email_last_replied</code> souffre exactement du même défaut que les `
-       +`ouvertures, sans avoir reçu le même correctif. Le compteur est passé de 174 à 205 entre `
-       +`le 11 et le 14/09 : une partie vient des relances et alimente les compteurs d'août.`},
-    {level:'med',title:'La fenêtre de 21 jours n\'est pas calibrée',
-     body:`Les courbes de réponse cumulées <strong>montaient encore à J+21</strong> sur les deux `
-       +`batchs d'août — 5 août : 9,28 → 9,44 → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %. La `
-       +`fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus `
-       +`juste, mais changer ce chiffre réécrit rétroactivement tout l'historique publié. `
-       +`Arbitrage à porter en comité.`},
-    {level:'med',title:'Le statut « encore en séquence » est fragilisé par les relances',
-     body:`<code>hs_latest_sequence_enrolled</code> ne garde que la <strong>dernière</strong> `
-       +`séquence. Depuis le 11/09, les contacts relancés pointent vers une séquence de relance : `
-       +`leurs cellules d'origine basculent en TERMINÉ. Pour août c'est juste — les envois sont `
-       +`finis — mais le mécanisme est aveugle, pas un constat de fin réelle.`},
-    {level:'med',title:'Seul le dernier mouvement d\'étape est connu',
-     body:`<code>hs_v2_date_entered_current_stage</code> ne garde que l'entrée dans l'étape `
-       +`actuelle. Un dossier déplacé le 15/08 puis le 25/08 n'expose que le 25/08 : hors `
-       +`fenêtre, il sort du comptage.`},
-    {level:'med',title:'createdate est une date de synchronisation',
-     body:`Les transactions sont créées par un batch n8n à 06:30 chaque matin : décalage jusqu'à `
-       +`24 h avec l'action réelle du client. Le batch du 6 août à 15:25 est un rattrapage `
-       +`d'antériorité, exclu du comptage.`},
+     body:`Si le flux produit s'arrête, un client qui a simulé n'a pas de dossier : il perd son `
+       +`signal marketing et bascule sur l'appel du commercial. C'est arrivé 33 jours, du 13/08 au `
+       +`16/09. Un bandeau alerte désormais si rien n'a bougé depuis 24 h ouvrées.`},
+    {level:'high',title:'Les étapes du pipe sont parfois posées à la main',
+     body:`37 fiches sont sur « simulation démarrée » ou plus loin sans qu'aucun événement produit `
+       +`ne le confirme. Le dashboard n'en souffre pas — ces personnes ont par ailleurs un `
+       +`rendez-vous — mais qui lit le pipe croit qu'elles ont simulé.`},
+    {level:'high',title:'Un dossier refusé efface la trace du parcours',
+     body:`Une fiche passée en « optimisation refusée » ne dit plus si le client avait simulé avant. `
+       +`On perd ces cas. Le correctif est identifié : le flux calcule déjà le nombre d'étapes `
+       +`franchies, il suffit de l'écrire dans HubSpot.`},
+    {level:'med',title:'Les réponses ne sont pas fiables',
+     body:`HubSpot ne garde que la dernière réponse de chaque personne, et ne distingue pas un `
+       +`« ça m'intéresse » d'un refus ou d'un message d'absence. Le compteur bouge encore, `
+       +`contrairement aux ouvertures qui sont figées.`},
+    {level:'med',title:"Ouvertures d'août figées après coup",
+     body:`Le relévé date de 2 h après l'envoi des relances : les valeurs sont surestimées d'une `
+       +`vingtaine d'ouvertures. C'est le meilleur relévé disponible, pas un relévé propre.`},
+    {level:'med',title:'Attribution temporelle, pas causale',
+     body:`Un rendez-vous postérieur à l'envoi n'a pas forcément été causé par lui. Réserve en `
+       +`faveur de la causalité : aucun contact du 5 août n'avait de dossier dans ce pipe avant `
+       +`l'envoi.`},
     {level:'med',title:'Doublons de contacts',
-     body:`Un même client peut exister en double avec deux e-mails : le dossier sur une fiche, `
-       +`le RDV sur l'autre. Il apparaît alors en « deal seul » alors qu'il a pris rendez-vous. `
-       +`La colonne « deal seul » est donc légèrement surestimée.`},
-    {level:'med',title:'Réponses : dernière, pas première',
-     body:`<code>hs_sales_email_last_replied</code> porte la date de la <strong>dernière</strong> `
-       +`réponse. Un contact ayant répondu à J+1 puis à J+6 est compté à J+6, ce qui décale la `
-       +`courbe vers le tard. HubSpot n'expose pas d'équivalent « première réponse » sur les `
-       +`e-mails commerciaux.`},
-    {level:'med',title:'Ouvertures non fiables',
-     body:`Apple Mail Privacy Protection précharge les images et gonfle le compteur. `
-       +`Ne pas piloter dessus.`},
-    {level:'med',title:'Le filtre d\'intitulé des RDV dépend du nommage à la source',
-     body:`Plusieurs liens de réservation et plusieurs conventions coexistent pour un même type `
-       +`de rendez-vous, dont un lien générique « Rendez-vous téléphonique Nopillo » qui ne `
-       +`précise pas son objet. Vérification du 07 au 13/09 : sur 15 réunions génériques, 5 `
-       +`concernaient des contacts ciblés AE et <strong>aucune</strong> n'était du courtage `
-       +`assurance emprunteur. Le filtre tient sur ce périmètre, mais le correctif durable est `
-       +`un lien de réservation dédié avec un intitulé fixe.`},
-    {level:'low',title:'Maturité inégale entre cohortes',
-     body:`Les taux ne sont pas comparables avant que toutes les cohortes aient atteint J+21.`},
-    {level:'low',title:'Étapes de séquence regroupées par objet',
-     body:`Les engagements ne portent pas le numéro d'étape : le regroupement se fait par objet `
-       +`d'e-mail. Deux étapes au même objet fusionneraient.`},
+     body:`Un même client peut exister deux fois avec deux e-mails, le dossier sur une fiche et le `
+       +`rendez-vous sur l'autre. Il apparaît alors en « dossier seul » à tort.`},
+    {level:'low',title:'Ouvertures gonflées par Apple Mail',
+     body:`Apple Mail précharge les images et déclenche des ouvertures qui n'en sont pas. Ne pas `
+       +`piloter dessus.`},
     {level:'low',title:'Pas de clic par lien',
-     body:`L'objet EMAIL ne porte aucune URL cliquée. <code>hs_email_click_count</code> est un `
-       +`total tous liens confondus. Isoler les clics sur un lien précis suppose une page relais `
-       +`suivie côté HubSpot, à instrumenter avant l'envoi — donc jamais rétroactif.`},
+     body:`HubSpot donne un total de clics, sans dire quel lien a été cliqué. Isoler un lien précis `
+       +`demande de l'instrumenter avant l'envoi — jamais rétroactif.`},
   ].map(a=>`<div class="anom"><span class="abadge ${a.level}">${
       {high:'CRITIQUE',med:'À SAVOIR',low:'MINEUR'}[a.level]}</span>
     <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
