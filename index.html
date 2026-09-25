@@ -477,10 +477,9 @@
 
         <tr><td>Délai d'attribution</td>
           <td>aucune limite pour l'instant</td>
-          <td>On compte tout ce qui arrive après l'envoi, sans limite de délai — en attendant la
-            décision sur la durée à retenir. <strong>Conséquence : les cohortes ne se comparent pas
-            entre elles</strong>, une ancienne accumule plus longtemps, et les chiffres montent au
-            fil du temps.</td></tr>
+          <td>On compte tout ce qui arrive après l'envoi, sans limite de délai. <strong>Conséquence :
+            les cohortes ne se comparent pas entre elles</strong>, une ancienne accumule plus
+            longtemps, et les chiffres montent au fil du temps.</td></tr>
 
         <tr><td>Rattrapages exclus</td>
           <td>3 rafales</td>
@@ -506,7 +505,7 @@
           <td>HubSpot enregistre la dernière réponse du contact à <strong>n'importe quel</strong> e-mail, et la date glisse à chaque nouvel échange. La cellule RP du 13 août est passée de 68 à 110 réponses en dix jours, sur une campagne terminée depuis. Aucune source fiable n'existe : les e-mails entrants ne portent pas l'identifiant de séquence. Le compteur et la courbe sont retirés plutôt que d'afficher un chiffre faux.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre</span></td>
           <td>21 jours → aucune limite</td>
-          <td>En attente d'arbitrage sur la durée à retenir. <strong>Conséquence : les cohortes ne se comparent plus entre elles</strong> et les chiffres montent au fil du temps. Rien d'avant le 25/09 n'est comparable à rien d'après.</td></tr>
+          <td>Décision de Clémence : on compte tout, sans limite. <strong>Conséquence : les cohortes ne se comparent plus entre elles</strong> et les chiffres montent au fil du temps. Rien d'avant le 25/09 n'est comparable à rien d'après.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
           <td>toute fiche → étapes réelles</td>
           <td>Une fiche ne compte que si le client a rempli au moins un champ (<code>simulation_started</code> ou plus loin). Un simple accès au simulateur, un dossier refusé, ou une fiche créée automatiquement à cause d'un rendez-vous ne comptent plus.</td></tr>
@@ -1316,9 +1315,8 @@ function render(){
     {level:'high',title:'Aucune limite de délai : les cohortes ne se comparent pas',
      body:`On compte tout ce qui arrive après l'envoi, sans borne. Une cohorte ancienne accumule `
        +`donc plus longtemps qu'une récente et paraîtra toujours meilleure. Les chiffres publiés `
-       +`remontent aussi en permanence : horodater ce qu'on annonce. La durée à retenir est en `
-       +`attente d'arbitrage — et on ne sait pas la calibrer, la mesure qui l'aurait permis étant `
-       +`fausse.`},
+       +`remontent aussi en permanence : horodater ce qu'on annonce. Décision de Clémence du 25/09 `
+       +`— et on n'aurait pas su calibrer une limite, la mesure qui l'aurait permis étant fausse.`},
     {level:'med',title:"Ouvertures d'août figées après coup",
      body:`Le relévé date de 2 h après l'envoi des relances : les valeurs sont surestimées d'une `
        +`vingtaine d'ouvertures. C'est le meilleur relévé disponible, pas un relévé propre.`},
