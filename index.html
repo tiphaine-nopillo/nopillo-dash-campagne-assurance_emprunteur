@@ -831,7 +831,10 @@ function render(){
     /* Le bloc qualification vit sous dedup.attribution, pas sous
        dedup.activation : lire ACT.qualification renvoyait undefined et faisait
        tomber la carte sur son repli « objectif de la campagne ». */
-    (((D.dedup||{}).attribution||{}).qualification
+    /* La distinction confirmés / en attente n'a de sens que s'il reste des
+       contacts à arbitrer. Depuis que l'étape du pipe tranche seule, la file
+       est vide : on revient au libellé simple. */
+    ((((D.dedup||{}).attribution||{}).qualification||{}).attente
       ? kpi('star','Clients activés confirmés',
           D.dedup.attribution.qualification.certain,
           `${pct(D.dedup.attribution.qualification.certain,nAll)} des ciblés · `+
@@ -841,6 +844,10 @@ function render(){
           `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`))+
     /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
        vague : un data.json d'avant le patch reste lisible sans rien casser. */
+    ((D.dedup||{}).process!=null?
+      kpi('green','Dossiers en souscription',(D.dedup||{}).process,
+        `${pct((D.dedup||{}).process,ACT.activated)} des activés · process_started ou au-delà`)
+      :'')+
     ((D.dedup||{}).relanced?
       kpi('orange','Contacts relancés',(D.dedup||{}).relanced,
         `${pct((D.dedup||{}).relanced,nAll)} des ciblés · déjà comptés dans leur batch`)+
@@ -978,7 +985,7 @@ function render(){
        humaine. Le reste attend l'arbitrage des commerciaux. Le total activé
        ne change pas : certains + en attente = activés. */
     const Q=AT.qualification;
-    if(Q){
+    if(Q&&Q.attente){
       document.getElementById('qualWrap').style.display='block';
       document.getElementById('qualEq').innerHTML=
         tile('','Activés confirmés',Q.certain,`${pct(Q.certain,tot)} des activés`)+
