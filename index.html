@@ -146,6 +146,18 @@
     text-transform:uppercase;color:var(--muted)}
   .recon .m{font-size:10.5px}
 
+  .goal{margin-top:16px;padding:14px 16px;background:var(--surface2);border-radius:10px;
+    border:1px dashed var(--border2)}
+  .goal-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    flex-wrap:wrap;margin-bottom:9px}
+  .goal-t{font-size:12.5px;font-weight:600}
+  .goal-n{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+  .goal-bar{height:12px;border-radius:999px;background:var(--border);overflow:hidden}
+  .goal-fill{height:100%;border-radius:999px;
+    background:linear-gradient(90deg,var(--indigo),var(--emerald))}
+  .goal-note{font-family:var(--font-mono);font-size:10px;color:var(--muted);
+    margin-top:9px;line-height:1.65}
+
   .split-bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-top:16px;
     border:1px solid var(--border)}
   .split-bar>div{display:flex;align-items:center;justify-content:center;
@@ -260,6 +272,12 @@
       <div class="eq" id="actTot"></div>
       <div class="recon" id="actRecon"></div>
       <div class="split-bar" id="actBar"></div>
+      <div class="goal" id="goalWrap" style="display:none">
+        <div class="goal-head"><span class="goal-t" id="goalT"></span>
+          <span class="goal-n" id="goalN"></span></div>
+        <div class="goal-bar"><div class="goal-fill" id="goalFill"></div></div>
+        <div class="goal-note" id="goalNote"></div>
+      </div>
       <div class="bsub" id="actNote" style="margin-top:12px"></div>
       <div id="waveWrap" style="display:none">
         <div class="rlab">Origine de l'activation — <strong>envoi initial contre relance</strong></div>
@@ -385,6 +403,13 @@
     <div class="block">
       <h3 class="btitle">Chaque chiffre, en clair</h3>
       <div class="twrap"><table class="dt"><tbody>
+
+        <tr><td>Objectif</td>
+          <td>200 clients activés</td>
+          <td>Toutes cohortes confondues, en contacts uniques. <strong>Sans limite de délai, le
+            compteur monte tout seul</strong> : l'objectif sera atteint mécaniquement avec le temps,
+            même sans nouvel envoi. Un dépassement ne prouve donc pas à lui seul que la campagne a
+            bien fonctionné — c'est la vitesse qui compte.</td></tr>
 
         <tr><td>Contacts ciblés</td>
           <td>2 075</td>
@@ -874,6 +899,25 @@ function render(){
     tile('','RDV et simulation',ACT.both,`${pct(ACT.both,ACT.activated)} des activés`)+
     `<div class="eq-op">=</div>`+
     tile('res','Clients activés',ACT.activated,`${pct(ACT.activated,nAll)} des ciblés`);
+
+  /* Objectif. Affiché sous la décomposition, pas en carte de tête : un objectif
+     n'est pas une mesure, et sans limite de délai il sera atteint mécaniquement
+     avec le temps. La note le dit à côté du chiffre plutôt que dans la méthodo,
+     parce que c'est là que quelqu'un lira le pourcentage. */
+  const OBJ=(D.objectif||{}).clients_actives;
+  if(OBJ){
+    const part=100*ACT.activated/OBJ, reste=OBJ-ACT.activated;
+    document.getElementById('goalWrap').style.display='block';
+    document.getElementById('goalT').textContent=
+      reste>0?`Objectif : ${fmt(reste)} clients activés restants`:'Objectif atteint';
+    document.getElementById('goalN').textContent=
+      `${fmt(ACT.activated)} / ${fmt(OBJ)} · ${part.toFixed(0)} %`;
+    document.getElementById('goalFill').style.width=Math.min(100,part)+'%';
+    document.getElementById('goalNote').innerHTML=
+      `Toutes cohortes confondues, en contacts uniques. <strong>Sans limite de délai `+
+      `d'attribution, ce compteur monte tout seul</strong> : l'objectif sera atteint avec le temps, `+
+      `même sans nouvel envoi. Ce qui compte est la vitesse, pas le franchissement.`;
+  }
 
   const segs=[['sb-both','Les deux',ACT.both],['sb-meet','RDV seul',ACT.meet_only],
               ['sb-deal','Simulation seule',ACT.deal_only]];
