@@ -156,6 +156,32 @@ STAGE_PROCESS = {
     "5378179265",   # process_completed
 }
 
+# Profondeur du parcours. Une entrée par étape RÉELLE du pipe, nommée comme
+# dans HubSpot — aucun regroupement, aucun libellé inventé. Un contact est
+# rangé au niveau le PLUS AVANCÉ qu'il a atteint, tous dossiers confondus.
+# L'ordre suit celui du pipe.
+NIVEAU_PARCOURS = [
+    (1, "simulation_started",   "5363445963"),
+    (2, "simulation_completed", "5363445964"),
+    (3, "simulation_ready",     "5783848147"),
+    (4, "offer_viewed",         "5363445965"),
+    (5, "offer_accepted",       "5363445966"),
+    (6, "process_started",      "5363445967"),
+    (7, "process_completed",    "5378179265"),
+]
+NIVEAU_LABEL = {r: lbl for r, lbl, _ in NIVEAU_PARCOURS}
+ORDRE_FIN = [f"{pref}{lbl}" for _, lbl, _ in reversed(NIVEAU_PARCOURS)
+             for pref in ("RDV + ", "")] + ["RDV seul"]
+
+
+def niveau_de(stage):
+    """Rang du parcours atteint par ce dossier, 0 si aucune étape franchie."""
+    for rang, _, sid in NIVEAU_PARCOURS:
+        if stage == sid:
+            return rang
+    return 0
+
+
 STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
 STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
 
@@ -678,6 +704,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
          "hs_object_source_label", "origine_creation_deal_ae", SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
     dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
+    niveau = {}
     for did, props in deals.items():
         stage = str(props.get("dealstage") or "")
         # SEULE une étape de parcours prouve une activation.
@@ -705,6 +732,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if not tag:
                 continue
             dset.add(c)
+            niveau[c] = max(niveau.get(c, 0), niveau_de(stage))
             if d_wave.get(c) != "v2":
                 d_wave[c] = tag
             # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
@@ -755,7 +783,8 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if c in keep and (c not in rdv_pub or booked < rdv_pub[c]):
                 rdv_pub[c] = booked
 
-    return dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub, process
+    return (dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub,
+            process, niveau)
 
 
 # -------------------------------------------------------------------- build
@@ -818,6 +847,7 @@ def build():
     attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
     camp_qual, qual_cells = empty_qual(), {}
     camp_process = set()
+    camp_fin = {}
     last_sync = last_integration_move(pipeline)
     sync_stale = business_hours_between(last_sync,
                                         dt.datetime.now(dt.timezone.utc)) > 24
@@ -883,7 +913,7 @@ def build():
                                "operator": mf["operator"], "value": mf["value"]})
 
             (dset, mset, m_owner, d_auto, d_wave, m_wave,
-             simulated, rdv_pub, process) = engagement_sets(
+             simulated, rdv_pub, process, niveau) = engagement_sets(
                 ids, send, pipeline, meet_f, meet_f_attr, rmap)
 
             # Signaux d'attribution restants : réponses et premier appel sortant.
@@ -897,6 +927,18 @@ def build():
             cell_attr, cell_qual = empty_attr(), empty_qual()
             attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
                         "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
+            # Classement fin des activés : profondeur du parcours × présence
+            # d'un RDV. Catégories disjointes, leur somme fait le total activé.
+            fin_ids = {}
+            for cid in (dset | mset):
+                rang = niveau.get(cid, 0)
+                a_rdv = cid in mset
+                if rang == 0:
+                    cle = "RDV seul"
+                else:
+                    cle = ("RDV + " if a_rdv else "") + NIVEAU_LABEL[rang]
+                fin_ids.setdefault(cle, []).append(cid)
+
             qual_ids = {"certain_rdv_client": [], "certain_parcours": [],
                         "certain_rdv_sales": [], "attente_carte_seule": []}
             for cid in (dset | mset):
@@ -914,6 +956,8 @@ def build():
                          else attr_v1, bucket, sub)
             attr_cells[c["list_id"]] = cell_attr
             qual_cells[c["list_id"]] = cell_qual
+            for k, v in fin_ids.items():
+                camp_fin.setdefault(k, set()).update(v)
 
             # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
             # de relance, donc attribuable à la relance et non au batch.
@@ -967,7 +1011,8 @@ def build():
                 _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
                           deal_only=sorted(dset - mset), v2=sorted(v2),
                           attr={k: sorted(v) for k, v in attr_ids.items()},
-                          qual={k: sorted(v) for k, v in qual_ids.items()}),
+                          qual={k: sorted(v) for k, v in qual_ids.items()},
+                          fin={k: sorted(v) for k, v in fin_ids.items()}),
                 steps=steps,
                 by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
                                meetings=n)
@@ -1073,12 +1118,13 @@ def build():
             v2 = set(ids["v2"])
             print(f"\n{co['id']} · {c['audience']}-{c['version']} "
                   f"· {c['split']['engaged']} engagés sur {c['enrolled']} ciblés")
-            for cat, label in (("both", "RDV + dossier"),
-                               ("meet_only", "RDV seul"),
-                               ("deal_only", "dossier seul")):
-                if ids[cat]:
-                    print(f"  {label} ({len(ids[cat])})")
-                    for cid in ids[cat]:
+            # Classement par profondeur de parcours, du plus loin au plus près.
+            # Catégories disjointes : un contact n'apparaît qu'une fois.
+            fin = ids.get("fin") or {}
+            for cat in ORDRE_FIN:
+                if fin.get(cat):
+                    print(f"  {cat} ({len(fin[cat])})")
+                    for cid in fin[cat]:
                         flag = "  [vague 2]" if cid in v2 else ""
                         print(f"    https://app-eu1.hubspot.com/contacts/"
                               f"{PORTAL}/contact/{cid}{flag}")
@@ -1178,6 +1224,18 @@ def build():
     print(f"   = TOTAL                   {tot:5d}   doit égaler {a['activated']} activés"
           f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
     q = at["qualification"]
+    if camp_fin:
+        print("\n--- activés par profondeur de parcours ---")
+        tot_fin = 0
+        for cat in ORDRE_FIN:
+            v = len(camp_fin.get(cat, ()))
+            if v:
+                tot_fin += v
+                print(f"   {cat:30} {v:5d}   {pcts(v, a['activated'])}")
+        print(f"   = TOTAL                        {tot_fin:5d}"
+              f"   doit égaler {a['activated']} activés"
+              f" · {'OK' if tot_fin == a['activated'] else 'ÉCART'}")
+
     print("\n--- qualification · définition du 17/09 ---")
     print(f"   ACTIVÉS CONFIRMÉS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
     print(f"     cas 1 · RDV pris par le client   {q['certain_rdv_client']:5d}")
