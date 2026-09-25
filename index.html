@@ -241,6 +241,7 @@
   <div class="section active" id="s-cohorts">
     <h2 class="stitle" id="campTitle">Campagne</h2>
 
+    <div class="banner" id="bWindow" style="display:none"><span class="d"></span><span></span></div>
     <div class="banner" id="bOverlap" style="display:none"><span class="d"></span><span></span></div>
     <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
 
@@ -481,6 +482,9 @@
         comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
       </div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre d'attribution</span></td>
+          <td>J+21 → J+45</td>
+          <td><strong>Rupture de série.</strong> J+21 était hérité et jamais calibré : les courbes de réponse montaient encore à J+21 sur les deux batchs d'août, la fenêtre coupait en pleine pente, et nos séquences durant deux semaines le dernier e-mail n'avait qu'une semaine pour agir. J+45 récupère l'essentiel des conversions tardives. Supprimer toute borne a été mesuré puis écarté : le gain n'était que d'environ 31 contacts, les moins attribuables, contre la perte de la comparabilité entre cohortes et de la stabilité des chiffres publiés. Les fenêtres d'août rouvrent, leurs chiffres vont monter — aucune valeur antérieure au 25/09 n'est comparable à une valeur postérieure.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Transactions de workflow</span></td>
           <td>toute transaction → étapes de parcours seulement</td>
           <td><strong>Rupture.</strong> Une transaction ne compte plus que si son étape prouve que le client a agi. Le flow n8n range en <code>optimization_activated</code> les optimisations dont <strong>aucune étape n'est franchie</strong> : accès au simulateur, rien de rempli. Ce n'est pas une activation. Seules comptent <code>simulation_started</code> et au-delà — ce qui correspond littéralement à « a rempli au minimum le premier champ » de la définition. Sont aussi écartées les cartes créées par le workflow « RDV sans simu » (le RDV est déjà compté via la réunion) et <code>optimization_declined</code>, étape terminale pilotée par le CS qui efface l'information de parcours. <code>last_step_date</code> n'est plus le marqueur : elle vient du dernier événement, et 153 optimisations en ont sans aucune étape complétée. Second correctif : le test « tracé par n8n » portait sur « source ≠ CRM_UI » et rangeait les cartes de workflow du côté n8n ; il porte désormais sur « source = INTEGRATION ».</td></tr>
@@ -778,6 +782,20 @@ function render(){
     const b=document.getElementById('bOverlap');
     b.style.display='flex';
     b.querySelector('span:last-child').innerHTML=D.meta.overlap_note;
+  }
+
+  /* Sans borne haute, un batch ancien accumule plus longtemps qu'un batch
+     récent : le comparer revient à comparer un coureur arrivé à un coureur en
+     course. Le bandeau le dit à chaque visite, parce que le tableau des
+     cohortes juste en dessous invite précisément à cette comparaison. */
+  if(/SANS borne haute/.test(D.meta.source||'')){
+    const b=document.getElementById('bWindow');
+    b.style.display='flex';
+    b.querySelector('span:last-child').innerHTML=
+      `<strong>Aucune borne d'attribution.</strong> Un RDV ou une simulation compte quel que soit `+
+      `le délai après l'envoi. <strong>Les cohortes ne sont donc pas comparables entre elles</strong> `+
+      `— une ancienne accumule plus longtemps — et tout chiffre publié remontera au fil du temps. `+
+      `Horodater les chiffres cités.`;
   }
 
   KPI=D.kpis||[]; PK=D.meta.primary_kpi||'deals_ae';
