@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-25T10:06:41.200523+00:00",
+  "generated_at": "2026-09-25T10:15:19.797723+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -122,6 +122,7 @@
    "activated_v1": 124
   },
   "relanced": 1070,
+  "process": 5,
   "attribution": {
    "marketing": {
     "total": 209,
@@ -383,7 +384,8 @@
       "non_attribuable": 0,
       "simule": 14,
       "certain": 27,
-      "attente": 0
+      "attente": 0,
+      "process": 2
      },
      "steps": [
       {
@@ -455,7 +457,8 @@
       "non_attribuable": 0,
       "simule": 18,
       "certain": 30,
-      "attente": 0
+      "attente": 0,
+      "process": 1
      },
      "steps": [
       {
@@ -534,7 +537,8 @@
       "non_attribuable": 0,
       "simule": 5,
       "certain": 8,
-      "attente": 0
+      "attente": 0,
+      "process": 0
      },
      "steps": [
       {
@@ -608,7 +612,8 @@
       "non_attribuable": 0,
       "simule": 2,
       "certain": 9,
-      "attente": 0
+      "attente": 0,
+      "process": 0
      },
      "steps": [
       {
@@ -671,7 +676,8 @@
     "deal_only_manual": 4,
     "activated_v2": 34,
     "activated_v1": 40,
-    "relanced": 413
+    "relanced": 413,
+    "process": 3
    },
    "reply_curve": [
     {
@@ -833,7 +839,8 @@
       "non_attribuable": 0,
       "simule": 32,
       "certain": 59,
-      "attente": 0
+      "attente": 0,
+      "process": 1
      },
      "steps": [
       {
@@ -905,7 +912,8 @@
       "non_attribuable": 0,
       "simule": 14,
       "certain": 22,
-      "attente": 0
+      "attente": 0,
+      "process": 1
      },
      "steps": [
       {
@@ -954,7 +962,8 @@
     "deal_only_manual": 2,
     "activated_v2": 60,
     "activated_v1": 21,
-    "relanced": 657
+    "relanced": 657,
+    "process": 2
    },
    "reply_curve": [
     {
@@ -1116,7 +1125,8 @@
       "non_attribuable": 0,
       "simule": 37,
       "certain": 63,
-      "attente": 0
+      "attente": 0,
+      "process": 0
      },
      "steps": [
       {
@@ -1172,7 +1182,8 @@
     "deal_only_manual": 3,
     "activated_v2": 0,
     "activated_v1": 63,
-    "relanced": 0
+    "relanced": 0,
+    "process": 0
    },
    "reply_curve": [
     {
