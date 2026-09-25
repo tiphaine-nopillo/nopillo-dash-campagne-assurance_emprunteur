@@ -98,7 +98,23 @@ CHUNK = 100          # taille de lot pour les filtres associations.contact
 # sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
 # pour l'instant, car changer ce chiffre réécrit rétroactivement tout
 # l'historique déjà communiqué.
-ATTRIB_DAYS = 21
+# Fenêtre d'attribution, en jours après l'envoi qui a touché le contact.
+# 45 jours depuis le 25/09/2026. Historique du réglage :
+#   - cumul ouvert jusqu'au 22/08 : deux cohortes d'âge différent cessaient
+#     d'être comparables, et tout chiffre publié remontait sans fin ;
+#   - J+21 du 22/08 au 25/09 : hérité, jamais calibré. Les courbes de réponse
+#     montaient ENCORE à J+21 sur les deux batchs d'août (5 août : 9,28 → 9,44
+#     → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupait en pleine
+#     pente, et les séquences durant deux semaines, le dernier e-mail n'avait
+#     qu'une semaine pour agir ;
+#   - J+45 aujourd'hui : récupère l'essentiel des conversions tardives tout en
+#     gardant une borne. Sans borne du tout, le gain mesuré n'était que de
+#     ~31 contacts (218 → 249), et ces conversions-là sont les moins
+#     attribuables — un RDV pris trois mois après un mail, sans relance entre
+#     temps, ne vient probablement pas de la campagne.
+# CE QUE LA BORNE PRÉSERVE : la comparabilité entre cohortes, et la stabilité
+# des chiffres publiés. Mettre None ici la supprime.
+ATTRIB_DAYS = 45
 
 # Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
 # contacts enrôlés et contacts jamais touchés par une séquence. Import
@@ -324,10 +340,14 @@ def windows_for(cid, cohort_send, rmap):
     et une fenêtre unique de 58 jours détruirait la comparabilité entre
     cohortes.
     """
-    w = [("v1", cohort_send, cohort_send + dt.timedelta(days=ATTRIB_DAYS))]
+    def fin(debut):
+        return (None if ATTRIB_DAYS is None
+                else debut + dt.timedelta(days=ATTRIB_DAYS))
+
+    w = [("v1", cohort_send, fin(cohort_send))]
     r = rmap.get(cid)
     if r and r > cohort_send:
-        w.append(("v2", r, r + dt.timedelta(days=ATTRIB_DAYS)))
+        w.append(("v2", r, fin(r)))
     return w
 
 
@@ -336,7 +356,7 @@ def in_windows(when, wins):
     if not when:
         return None
     for tag, start, end in reversed(wins):
-        if start <= when <= end:
+        if start <= when and (end is None or when <= end):
             return tag
     return None
 
@@ -1018,7 +1038,9 @@ def build():
             primary_kpi=cfg.get("primary_kpi"),
             source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
                     "· MEETING_EVENT ∪ DEAL pipeline " + pipeline
-                    + f" · contacts uniques, fenêtre J+{ATTRIB_DAYS} par contact"),
+                    + (" · contacts uniques, SANS borne haute d'attribution"
+                       if ATTRIB_DAYS is None
+                       else f" · contacts uniques, fenêtre J+{ATTRIB_DAYS} par contact")),
             attribution_note=cfg["notes"]["attribution"],
             relance_note=cfg["notes"].get("relances"),
             meeting_window_note=cfg["notes"].get("meeting_window"),
@@ -1137,6 +1159,11 @@ def build():
     if a["overlap"]:
         print(f"   ⚠ somme des cellules {a['sum_cells']} vs union {a['activated']} :"
               f" {a['overlap']} contact(s) activé(s) ciblé(s) dans deux batchs")
+
+    if ATTRIB_DAYS is None:
+        print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
+        print("   comparables entre elles — un batch ancien accumule plus longtemps —")
+        print("   et tout chiffre publié remontera au fil du temps.")
 
     at = dedup["attribution"]
     mk, sl, na = at["marketing"], at["sales"], at["non_attribuable"]
