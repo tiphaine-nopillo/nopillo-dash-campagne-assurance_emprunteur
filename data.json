@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-25T12:41:46.971916+00:00",
+  "generated_at": "2026-09-25T13:06:24.304388+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -789,6 +789,126 @@
      "day": 21,
      "count": 52,
      "share": 8.32
+    },
+    {
+     "day": 22,
+     "count": 52,
+     "share": 8.32
+    },
+    {
+     "day": 23,
+     "count": 57,
+     "share": 9.12
+    },
+    {
+     "day": 24,
+     "count": 58,
+     "share": 9.28
+    },
+    {
+     "day": 25,
+     "count": 59,
+     "share": 9.44
+    },
+    {
+     "day": 26,
+     "count": 61,
+     "share": 9.76
+    },
+    {
+     "day": 27,
+     "count": 62,
+     "share": 9.92
+    },
+    {
+     "day": 28,
+     "count": 64,
+     "share": 10.24
+    },
+    {
+     "day": 29,
+     "count": 70,
+     "share": 11.2
+    },
+    {
+     "day": 30,
+     "count": 70,
+     "share": 11.2
+    },
+    {
+     "day": 31,
+     "count": 70,
+     "share": 11.2
+    },
+    {
+     "day": 32,
+     "count": 71,
+     "share": 11.36
+    },
+    {
+     "day": 33,
+     "count": 73,
+     "share": 11.68
+    },
+    {
+     "day": 34,
+     "count": 74,
+     "share": 11.84
+    },
+    {
+     "day": 35,
+     "count": 75,
+     "share": 12.0
+    },
+    {
+     "day": 36,
+     "count": 85,
+     "share": 13.6
+    },
+    {
+     "day": 37,
+     "count": 88,
+     "share": 14.08
+    },
+    {
+     "day": 38,
+     "count": 88,
+     "share": 14.08
+    },
+    {
+     "day": 39,
+     "count": 89,
+     "share": 14.24
+    },
+    {
+     "day": 40,
+     "count": 91,
+     "share": 14.56
+    },
+    {
+     "day": 41,
+     "count": 96,
+     "share": 15.36
+    },
+    {
+     "day": 42,
+     "count": 99,
+     "share": 15.84
+    },
+    {
+     "day": 43,
+     "count": 100,
+     "share": 16.0
+    },
+    {
+     "day": 44,
+     "count": 104,
+     "share": 16.64
+    },
+    {
+     "day": 45,
+     "count": 120,
+     "share": 19.2
     }
    ]
   },
@@ -1075,6 +1195,116 @@
      "day": 21,
      "count": 45,
      "share": 6.43
+    },
+    {
+     "day": 22,
+     "count": 46,
+     "share": 6.57
+    },
+    {
+     "day": 23,
+     "count": 47,
+     "share": 6.71
+    },
+    {
+     "day": 24,
+     "count": 49,
+     "share": 7.0
+    },
+    {
+     "day": 25,
+     "count": 51,
+     "share": 7.29
+    },
+    {
+     "day": 26,
+     "count": 52,
+     "share": 7.43
+    },
+    {
+     "day": 27,
+     "count": 54,
+     "share": 7.71
+    },
+    {
+     "day": 28,
+     "count": 67,
+     "share": 9.57
+    },
+    {
+     "day": 29,
+     "count": 72,
+     "share": 10.29
+    },
+    {
+     "day": 30,
+     "count": 73,
+     "share": 10.43
+    },
+    {
+     "day": 31,
+     "count": 77,
+     "share": 11.0
+    },
+    {
+     "day": 32,
+     "count": 82,
+     "share": 11.71
+    },
+    {
+     "day": 33,
+     "count": 84,
+     "share": 12.0
+    },
+    {
+     "day": 34,
+     "count": 88,
+     "share": 12.57
+    },
+    {
+     "day": 35,
+     "count": 119,
+     "share": 17.0
+    },
+    {
+     "day": 36,
+     "count": 124,
+     "share": 17.71
+    },
+    {
+     "day": 37,
+     "count": 127,
+     "share": 18.14
+    },
+    {
+     "day": 38,
+     "count": 130,
+     "share": 18.57
+    },
+    {
+     "day": 39,
+     "count": 134,
+     "share": 19.14
+    },
+    {
+     "day": 40,
+     "count": 136,
+     "share": 19.43
+    },
+    {
+     "day": 41,
+     "count": 139,
+     "share": 19.86
+    },
+    {
+     "day": 42,
+     "count": 147,
+     "share": 21.0
+    },
+    {
+     "day": 43,
+     "count": 148,
+     "share": 21.14
     }
    ]
   },
