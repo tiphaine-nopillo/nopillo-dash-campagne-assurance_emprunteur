@@ -1117,6 +1117,7 @@ def build():
         kpis=cfg["kpis"],
         audience_labels=cfg["audience_labels"],
         stats_config=cfg["stats"],
+        objectif=cfg.get("objectif"),
         relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
         cohorts=cohorts,
@@ -1204,6 +1205,12 @@ def build():
     print(f"   Les deux                  {a['both']:5d}")
     print(f"   = TOTAL ACTIVÉS           {a['activated']:5d}"
           f"   soit {100 * a['activated'] / dedup['contacts']:.2f} % des ciblés")
+    obj = (cfg.get("objectif") or {}).get("clients_actives")
+    if obj:
+        ecart = a["activated"] - obj
+        print(f"   objectif                  {obj:5d}"
+              f"   {'atteint' if ecart >= 0 else 'restant : ' + str(-ecart)}"
+              f" · {pcts(a['activated'], obj)} de l'objectif")
     print(f"   dont en souscription      {dedup['process']:5d}"
           f"   dossier en process_started ou au-delà")
     print(f"   dont RDV seul {a['meet_only']} · dossier seul {a['deal_only']}"
