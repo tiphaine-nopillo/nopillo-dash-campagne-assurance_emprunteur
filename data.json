@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-25T13:29:27.432574+00:00",
+  "generated_at": "2026-09-25T13:33:07.039183+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -41,14 +41,14 @@
    "label": "RDV pris",
    "source": "meeting",
    "base": "enrolled",
-   "note": "Contacts uniques ayant un rendez-vous dont l'intitulé contient « emprunteur », posé par Clara, Lilian ou Mathieu, dans la fenêtre d'attribution. Un contact avec plusieurs rendez-vous compte une fois. Réservé par le client ou calé par un commercial : les deux comptent."
+   "note": "Contacts uniques ayant un rendez-vous dont l'intitulé contient « emprunteur », posé par Clara, Lilian ou Mathieu, après l'envoi. Un contact avec plusieurs rendez-vous compte une fois. Réservé par le client ou calé par un commercial : les deux comptent."
   },
   {
    "key": "deals_ae",
    "label": "Simulations entamées",
    "source": "deal",
    "base": "enrolled",
-   "note": "Contacts uniques dont une transaction du pipe courtage AE est à l'étape simulation_started ou au-delà, créée ou déplacée d'étape dans la fenêtre. L'étape prouve que le client a rempli au moins le premier champ : le flow n8n range en optimization_activated les optimisations dont AUCUNE étape n'est franchie. Ne comptent pas : optimization_activated, optimization_declined, et les cartes créées par le workflow « RDV sans simu » — le RDV est déjà compté."
+   "note": "Contacts uniques dont une transaction du pipe courtage AE est à l'étape simulation_started ou au-delà, créée ou déplacée d'étape après l'envoi. L'étape prouve que le client a rempli au moins le premier champ : le flow n8n range en optimization_activated les optimisations dont AUCUNE étape n'est franchie. Ne comptent pas : optimization_activated, optimization_declined, et les cartes créées par le workflow « RDV sans simu » — le RDV est déjà compté."
   },
   {
    "key": "engaged",
