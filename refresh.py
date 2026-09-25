@@ -98,8 +98,7 @@ CHUNK = 100          # taille de lot pour les filtres associations.contact
 # sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
 # pour l'instant, car changer ce chiffre réécrit rétroactivement tout
 # l'historique déjà communiqué.
-# AUCUNE BORNE HAUTE (None) depuis le 25/09/2026, en attendant l'arbitrage
-# Growth. Un RDV ou une simulation compte quel que soit le délai après
+# AUCUNE LIMITE DE DÉLAI (None). Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après
 # l'envoi ; seule la borne basse subsiste, rien d'antérieur à l'envoi.
 # CE QUE ÇA COÛTE, et qui doit être dit à chaque publication :
 #   - les cohortes ne sont plus comparables : une cohorte ancienne accumule
