@@ -241,8 +241,6 @@
   <div class="section active" id="s-cohorts">
     <h2 class="stitle" id="campTitle">Campagne</h2>
 
-    <div class="banner ok" id="bFix"><span class="d"></span><span></span></div>
-    <div class="banner info" id="bAttrib"><span class="d"></span><span></span></div>
     <div class="banner" id="bOverlap" style="display:none"><span class="d"></span><span></span></div>
     <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
 
@@ -253,15 +251,8 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Comment se décomposent les clients activés<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
-        <div class="bsub" style="margin-bottom:8px"><strong>Les chiffres de ce bloc portent sur le
-          total potentiel, pas sur les activés confirmés.</strong> La carte de tête affiche le
-          chiffre défendable ; ici on décompose l'ensemble, qualification comprise.</div>
-        <div class="bsub">
-          Un client est <strong>activé</strong> s'il a pris un RDV, s'il a un dossier dans le pipe
-          courtage AE, ou les deux. Les trois cas sont <strong>disjoints</strong> : un contact
-          tombe dans un seul, et leur somme est le total. Tous les décomptes sont en contacts
-          uniques, dédupliqués au niveau campagne.
-        </div>
+        <div class="bsub">Décomposition du <strong>total potentiel</strong>. Trois cas disjoints,
+          en contacts uniques. La carte de tête affiche le chiffre confirmé.</div>
       </div></div>
       <div id="actEq"></div>
       <div class="rlab">Les mêmes contacts, lus en totaux — <strong>ces deux-là se recoupent</strong></div>
@@ -293,11 +284,7 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Comparaison des batchs</h3>
-        <div class="bsub">
-          L'axe comparatif de cette campagne est désormais la <strong>cohorte</strong> : l'A/B s'est
-          arrêté au 5 août, seule la version A a été renvoyée le 13. Une cohorte encore en cours
-          d'envoi est signalée et exclue de la comparaison.
-        </div>
+        <div class="bsub">Une cohorte encore en cours d'envoi est signalée et exclue de la comparaison.</div>
       </div></div>
       <div class="twrap"><table id="tCohorts">
         <thead><tr><th class="left">Cohorte</th><th class="left">Statut</th><th>Contacts</th>
@@ -308,13 +295,8 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Nature de l'activation, par cellule<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
-        <div class="bsub">
-          Les colonnes <strong>RDV pris</strong> et <strong>Simulations</strong> se recoupent :
-          ne les additionnez pas. Les trois colonnes « dont » sont disjointes et leur somme fait
-          le total activé. <strong>RDV seul</strong> mesure une fuite commerciale — le rendez-vous
-          n'a produit aucun dossier. <strong>Simulation seule</strong> mesure un parcours
-          self-service, mais à confronter à la colonne « deal seul manuel » du bloc suivant.
-        </div>
+        <div class="bsub">Les colonnes <strong>RDV pris</strong> et <strong>Simulations</strong>
+          se recoupent : ne les additionnez pas. Les trois colonnes « dont » sont disjointes.</div>
       </div></div>
       <div class="twrap"><table id="tMatrix">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
@@ -327,14 +309,8 @@
     <div class="block">
       <div class="bhead"><div>
         <h3 class="btitle">Origine des deals<span class="src">hs_object_source_label</span></h3>
-        <div class="bsub">
-          Qui a créé la transaction. <strong>n8n</strong> remonte le statut rapporté par le
-          partenaire : le client est réellement entré dans le parcours.
-          <strong>À la main</strong> signifie qu'un commercial a ouvert une fiche dans HubSpot —
-          ça peut refléter un client qui a simulé, ou seulement un dossier suivi manuellement.
-          La dernière colonne est celle à surveiller : un « deal seul » créé à la main ne mesure
-          pas du self-service, mais de la saisie commerciale sans RDV tracé.
-        </div>
+        <div class="bsub">La colonne à surveiller est la dernière : un dossier seul créé à la main
+          mesure de la saisie commerciale, pas un parcours produit.</div>
       </div></div>
       <div class="twrap"><table id="tSource">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Deals</th>
@@ -346,12 +322,8 @@
     <div class="block" id="relanceBlock" style="display:none">
       <div class="bhead"><div>
         <h3 class="btitle">Effet des relances, par cellule<span class="src">vague 2</span></h3>
-        <div class="bsub">
-          Une relance n'est <strong>pas une cohorte</strong> : les contacts relancés étaient déjà
-          dans le dénominateur de leur batch. Chacun dispose d'une seconde fenêtre d'attribution
-          de 21 jours, ouverte à la date de sa relance. Les colonnes vague 1 et vague 2 sont
-          <strong>disjointes</strong> et leur somme fait le total activé.
-        </div>
+        <div class="bsub">Une relance n'est pas une cohorte : ses contacts étaient déjà dans le
+          dénominateur. Vague 1 et vague 2 sont disjointes.</div>
       </div></div>
       <div class="twrap"><table id="tRelance">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
@@ -363,13 +335,8 @@
     <div class="block" id="attrBlock" style="display:none">
       <div class="bhead"><div>
         <h3 class="btitle">Origine de l'activation, par cellule<span class="src">last_step_date ∪ hs_meeting_source ∪ CALL</span></h3>
-        <div class="bsub">
-          Trois colonnes <strong>disjointes</strong> dont la somme fait le total activé.
-          <strong>Marketing</strong> : le client a simulé, a répondu à une séquence, ou a réservé
-          son rendez-vous lui-même avant tout appel. <strong>Sales</strong> : un appel sortant a
-          précédé tout signal marketing. <strong>Non attribuable</strong> : ni l'un ni l'autre.
-          La simulation prime sur tout, même si un appel a suivi.
-        </div>
+        <div class="bsub">Trois colonnes disjointes. <strong>Marketing</strong> : simulation, réponse,
+          ou RDV réservé avant tout appel. <strong>Sales</strong> : appel sortant en premier.</div>
       </div></div>
       <div class="twrap"><table id="tAttr">
         <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Activés</th>
@@ -394,10 +361,6 @@
 
     <!-- NIVEAU 3 -->
     <div class="lvl"><span class="lvl-n">3</span>Détail par cohorte</div>
-    <div class="banner info"><span class="d"></span><span>
-      Chaque cohorte ne permet pas la même comparaison. Le 5 août porte un A/B sur les deux audiences,
-      le 13 août n'a qu'une version. Quand il n'y a rien à comparer, le dashboard l'écrit.
-    </span></div>
     <div id="cohDetail"></div>
 
     <div class="block">
@@ -518,6 +481,9 @@
         comparable à un chiffre d'avant. Il est daté ici. Aucune définition ne change en silence.
       </div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Transactions de workflow</span></td>
+          <td>toute transaction → étapes de parcours seulement</td>
+          <td><strong>Rupture.</strong> Une transaction ne compte plus que si son étape prouve que le client a agi. Le flow n8n range en <code>optimization_activated</code> les optimisations dont <strong>aucune étape n'est franchie</strong> : accès au simulateur, rien de rempli. Ce n'est pas une activation. Seules comptent <code>simulation_started</code> et au-delà — ce qui correspond littéralement à « a rempli au minimum le premier champ » de la définition. Sont aussi écartées les cartes créées par le workflow « RDV sans simu » (le RDV est déjà compté via la réunion) et <code>optimization_declined</code>, étape terminale pilotée par le CS qui efface l'information de parcours. <code>last_step_date</code> n'est plus le marqueur : elle vient du dernier événement, et 153 optimisations en ont sans aucune étape complétée. Second correctif : le test « tracé par n8n » portait sur « source ≠ CRM_UI » et rangeait les cartes de workflow du côté n8n ; il porte désormais sur « source = INTEGRATION ».</td></tr>
         <tr><td>17/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Qualification</span></td>
           <td>— → certains / en attente de qualification</td>
           <td><strong>Nouveau, sans rupture.</strong> Le total activé ne change pas : certains + en attente = activés. Définition du lead arrêtée avec Clémence — un client n'est un lead que s'il prend un RDV lui-même, démarre son parcours, ou dit au téléphone que ça l'intéresse. Le dashboard mesure seul les deux premiers cas. Le troisième attend une propriété HubSpot portant la qualification du commercial ; tant qu'elle vit dans un GSheet, le collecteur ne peut pas la lire. Une réponse à un e-mail ne vaut pas activation : <code>hs_sales_email_last_replied</code> ne distingue pas un « oui » d'un refus.</td></tr>
@@ -808,9 +774,6 @@ function render(){
     dt.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})
     +' · '+String(dt.getHours()).padStart(2,'0')+'h'+String(dt.getMinutes()).padStart(2,'0');
   document.getElementById('campTitle').textContent=D.meta.campaign;
-  document.querySelector('#bFix span:last-child').innerHTML=
-    '<strong>Attribution corrigée.</strong> '+D.meta.fix_note;
-  document.querySelector('#bAttrib span:last-child').innerHTML=D.meta.attribution_note;
   if(D.meta.overlap_note&&!/Aucun recoupement/.test(D.meta.overlap_note)){
     const b=document.getElementById('bOverlap');
     b.style.display='flex';
@@ -926,29 +889,18 @@ function render(){
       `et non ${fmt(ACT.meet+ACT.deal)} : ${fmt(ACT.both)} contacts sont dans les deux`);
 
   document.getElementById('actRecon').innerHTML=
-    `<span class="rl">Comment le retrouver dans HubSpot</span>`+
-    `<span><strong>${fmt(ACT.meet)}</strong> RDV — filtre intitulé « emprunteur », `+
-      `owner ∈ {Clara, Lilian, Mathieu}, dans la fenêtre d'attribution du contact</span>`+
-    `<span><strong>${fmt(ACT.deal)}</strong> dossiers — pipe courtage AE, `+
-      `créés ou déplacés d'étape dans la fenêtre</span>`+
-    `<span class="m">Décomptes en contacts, pas en objets. Un écart avec un décompte `+
-      `d'objets est attendu, tout comme avec un filtre HubSpot sans borne de fin.</span>`;
+    `<span class="rl">Retrouver ces chiffres dans HubSpot</span>`+
+    `<span><strong>${fmt(ACT.meet)}</strong> RDV — intitulé « emprunteur », owner ∈ {Clara, Lilian, Mathieu}, dans la fenêtre</span>`+
+    `<span><strong>${fmt(ACT.deal)}</strong> dossiers — pipe courtage AE, étape simulation_started ou au-delà</span>`+
+    `<span class="m">Décomptes en contacts, pas en objets.</span>`;
+
 
   document.getElementById('actNote').innerHTML=
-    `Les trois segments sont <strong>disjoints</strong> et leur somme fait le total : `+
-    segs.map(([,l,v])=>`${l} ${fmt(v)}`).join(' + ')+` = ${fmt(ACT.activated)}. `+
-    (ACT.deal_manual?`<strong>Réserve de lecture :</strong> sur les ${fmt(ACT.deal)} simulations, `+
-      `${fmt(ACT.deal_manual)} reposent sur une transaction créée à la main dans HubSpot, qui `+
-      `atteste qu'un commercial a ouvert une fiche et non qu'un client a parcouru le simulateur. `+
-      `Le total activé reste solide — ${fmt(ACT.meet+ACT.deal_only-ACT.deal_only_manual)} des `+
-      `${fmt(ACT.activated)} tiennent sur un RDV posé ou un dossier tracé par n8n — mais `+
-      (ACT.deal_only_manual?`${fmt(ACT.deal_only_manual)} contact${ACT.deal_only_manual>1?'s':''} `+
-        `ne ${ACT.deal_only_manual>1?'sont':'est'} activé${ACT.deal_only_manual>1?'s':''} que par `+
-        `une saisie commerciale sans RDV tracé.`:`aucun contact n'est activé par une saisie seule.`)
-      :'')+
-    (ACT.overlap?` <strong>Recoupement :</strong> la somme des cellules donne ${fmt(ACT.sum_cells)}, `+
-      `l'union ${fmt(ACT.activated)} — ${fmt(ACT.overlap)} contact(s) activé(s) ciblé(s) dans deux `+
-      `batchs. Le niveau 1 lit l'union.`:'');
+    segs.map(([,l,v])=>`${l} ${fmt(v)}`).join(' + ')+` = ${fmt(ACT.activated)}.`+
+    (ACT.deal_manual?` Sur ${fmt(ACT.deal)} simulations, ${fmt(ACT.deal_manual)} reposent sur une `+
+      `transaction créée à la main`+(ACT.deal_only_manual?`, dont ${fmt(ACT.deal_only_manual)} sans RDV tracé`:'')+`.`:'')+
+    (ACT.overlap?` Recoupement : ${fmt(ACT.overlap)} contact(s) activé(s) ciblé(s) dans deux batchs.`:'');
+
 
   /* ---------- VAGUES DE RELANCE ----------
      Les contacts relancés sont DÉJÀ dans le dénominateur de leur cohorte : les
@@ -969,13 +921,11 @@ function render(){
         `${pct(ACT.activated_v2,REL)} des ${fmt(REL)} relancés`)+
       `<div class="eq-op">=</div>`+
       tile('res','Clients activés',ACT.activated,`${pct(ACT.activated,nAll)} des ciblés`);
-    document.getElementById('waveNote').innerHTML=
-      `<strong>${fmt(REL)} contacts relancés</strong>, soit ${pct(REL,nAll)} des ciblés. `+
-      `Le dénominateur de la campagne ne bouge pas : ces contacts y étaient déjà. `+
-      `<strong>Lecture :</strong> les listes de relance ne contiennent que des contacts `+
-      `non activés. Le taux de la vague 2 n'est donc <strong>pas comparable</strong> à celui `+
-      `d'un envoi initial, dont le dénominateur incluait tout le monde — c'est un gain `+
-      `marginal pur, à ne jamais mettre côte à côte avec un taux de batch.`;
+      document.getElementById('waveNote').innerHTML=
+        `${fmt(REL)} contacts relancés, déjà comptés dans leur batch — le dénominateur ne bouge pas. `+
+        `<strong>Les listes de relance ne contiennent que des non-activés : le taux de la vague 2 `+
+        `n'est pas comparable à celui d'un envoi initial.</strong>`;
+
 
     document.getElementById('relanceBlock').style.display='block';
     document.querySelector('#tRelance tbody').innerHTML=
@@ -1037,21 +987,12 @@ function render(){
         `<div class="eq-op">=</div>`+
         tile('res','Total potentiel',tot,`${pct(tot,nAll)} des ciblés`);
       document.getElementById('qualNote').innerHTML=
-        `<strong>Activés confirmés</strong>, les trois cas de la définition : `+
-        `${fmt(Q.certain_rdv_client)} ont pris un RDV eux-mêmes, `+
-        `${fmt(Q.certain_parcours)} ont démarré leur parcours, et `+
-        `${fmt(Q.certain_rdv_sales)} ont eu un RDV organisé après un appel — le résultat attendu `+
-        `d'un outbound qualifié, donc le cas 3 est rempli. `+
-        `<strong>En attente</strong> : ${fmt(Q.attente_carte_seule)} contacts n'ont qu'une fiche `+
-        `ouverte dans HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un `+
-        `accord ou un refus — c'est cette population que les commerciaux doivent arbitrer. `+
-        `<strong>Une réponse à un e-mail ne suffit pas</strong> : la propriété HubSpot ne `+
-        `distingue pas « ça m'intéresse » d'un refus ou d'un message d'absence. `+
-        `Le chiffre à avancer est <strong>${fmt(Q.certain)}</strong> ; ${fmt(tot)} est la borne `+
-        `haute, atteinte si tous les contacts en attente sont qualifiés. `+
-        `<em>Réserve : rien dans HubSpot ne dit si un créneau posé a été honoré. La règle porte `+
-        `sur l'intention exprimée au téléphone, pas sur la tenue du rendez-vous.</em>`;
+        `<strong>Confirmés</strong> : ${fmt(Q.certain_rdv_client)} ont pris un RDV eux-mêmes, `+
+        `${fmt(Q.certain_parcours)} ont démarré leur parcours, ${fmt(Q.certain_rdv_sales)} ont eu un `+
+        `RDV organisé après un appel. <strong>En attente</strong> : ${fmt(Q.attente_carte_seule)} n'ont `+
+        `qu'une fiche, sans RDV — à arbitrer par le sales. Le chiffre à avancer est ${fmt(Q.certain)}.`;
     }
+
 
     document.getElementById('attrWrap').style.display='block';
     document.getElementById('attrEq').innerHTML=
@@ -1071,19 +1012,10 @@ function render(){
       `<div class="eq-op">=</div>`+
       tile('sub res','Marketing',mk.total,`${pct(mk.total,tot)} des activés`);
     document.getElementById('attrNote').innerHTML=
-      `Règle appliquée dans cet ordre : une <strong>simulation</strong> réelle l'emporte sur tout, `+
-      `même si un appel a suivi — le client était déjà entré dans le parcours produit. Sinon, une `+
-      `<strong>réponse</strong> à une séquence ou un <strong>RDV réservé par le client</strong>, `+
-      `à condition d'être antérieurs au premier appel sortant. Sinon, un <strong>appel sortant</strong> `+
-      `loggé bascule en sales. Sinon, non attribuable. `+
-      `La date comparée au premier appel est celle de la <strong>réservation</strong> du rendez-vous, `+
-      `jamais celle de sa tenue : un RDV réservé le 11 et tenu le 15, avec un appel le 15, est du `+
-      `marketing. `+
-      `Le marqueur de simulation est <code>last_step_date</code>, écrite par n8n à la création `+
-      `comme à la mise à jour : elle rattrape les dossiers ouverts à la main pendant une panne, `+
-      `ce que la source de la fiche ne sait pas faire.`;
+      `Ordre d'application : une simulation l'emporte sur tout ; sinon une réponse ou un RDV réservé `+
+      `par le client, à condition d'être antérieurs au premier appel sortant ; sinon un appel sortant `+
+      `bascule en sales.`;
 
-    /* Tableau par cellule. par_cellule est indexé par list_id. */
     const PC=AT.par_cellule||{};
     document.getElementById('attrBlock').style.display='block';
     const QC=(Q&&Q.par_cellule)||{};
