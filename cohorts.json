@@ -235,5 +235,9 @@
    "opens_emails": 158,
    "clicks_emails": 5
   }
+ },
+ "objectif": {
+  "clients_actives": 200,
+  "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : sans limite de délai d'attribution, le compteur monte tout seul. L'objectif sera donc atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a bien fonctionné — il faut regarder à quelle vitesse il a été atteint."
  }
 }
