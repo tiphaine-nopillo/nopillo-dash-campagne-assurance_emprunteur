@@ -1005,7 +1005,14 @@ def build():
                 opens=n_open, clicks=n_click,
                 opens_emails=agg["opens"], clicks_emails=agg["clicks"],
                 opens_frozen=bool(fz),
-                replies=len(delays), meetings=n_meet, deals_ae=n_deal,
+                # replies_non_fiable : conservé pour mémoire, JAMAIS affiché.
+                # hs_sales_email_last_replied enregistre la dernière réponse du
+                # contact à n'importe quel e-mail commercial, et la date glisse
+                # à chaque nouvel échange. La cellule RP du 13 août est passée
+                # de 68 à 110 entre le 15 et le 25/09, sur une campagne
+                # terminée. Le nom dit explicitement de ne pas s'en servir.
+                replies_non_fiable=len(delays),
+                meetings=n_meet, deals_ae=n_deal,
                 engaged=split["engaged"], split=split,
                 # Détail par contact, RETIRÉ avant l'écriture de data.json :
                 # ce fichier est servi publiquement par GitHub Pages.
