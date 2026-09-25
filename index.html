@@ -347,17 +347,12 @@
         <tbody></tbody></table></div>
     </div>
 
-    <div class="two">
-      <div class="block">
-        <div class="bhead"><div><h3 class="btitle">Taux d'activation par cohorte</h3>
-          <div class="bsub">Clients activés / contacts ciblés. La cohorte en cours est hachurée.</div></div></div>
-        <div class="chart sm" id="wrapCoh"><canvas id="chCoh"></canvas></div>
-      </div>
-      <div class="block">
-        <div class="bhead"><div><h3 class="btitle">Quand les contacts répondent<span class="src">hs_sales_email_last_replied</span></h3>
-          <div class="bsub">Part cumulée des contacts ayant répondu, à J+n. <strong>Date de dernière réponse, pas de la première</strong> : courbe décalée vers le tard.</div></div></div>
-        <div class="chart sm" id="wrapCurve"><canvas id="chCurve"></canvas></div>
-      </div>
+    <div class="block">
+      <div class="bhead"><div><h3 class="btitle">Taux d'activation par cohorte</h3>
+        <div class="bsub">Clients activés / contacts ciblés. <strong>Sans limite de délai, ces
+          barres ne sont pas comparables</strong> : le 5 août accumule depuis 51 jours, le
+          10 septembre depuis 15.</div></div></div>
+      <div class="chart sm" id="wrapCoh"><canvas id="chCoh"></canvas></div>
     </div>
 
     <!-- NIVEAU 3 -->
@@ -381,7 +376,7 @@
       <div class="bsub">
         Un client est <strong>activé</strong> s'il a pris un RDV « emprunteur » avec Clara, Lilian ou
         Mathieu, ou s'il a commencé à simuler. S'il fait les deux, il compte une fois.<br>
-        Ça ne compte que dans les <strong>45 jours</strong> suivant le mail qu'il a reçu.<br>
+Ça compte à partir du mail qu'il a reçu, <strong>sans limite de délai pour l'instant</strong>.<br>
         Tout est compté en <strong>contacts</strong>, jamais en rendez-vous ni en dossiers.<br>
         Les trois façons de découper ce total ne s'additionnent jamais entre elles.
       </div>
@@ -416,7 +411,7 @@
         <tr><td>RDV pris</td>
           <td>personnes ayant un rendez-vous</td>
           <td>Rendez-vous dont le titre contient « emprunteur », posé par Clara, Lilian ou Mathieu,
-            dans les 45 jours. Une personne avec deux rendez-vous compte une fois.</td></tr>
+            après l'envoi. Une personne avec deux rendez-vous compte une fois.</td></tr>
 
         <tr><td>Simulations entamées</td>
           <td>personnes ayant commencé à simuler</td>
@@ -439,7 +434,7 @@
         <tr><td>Contacts relancés<br>Vague 1 · Vague 2</td>
           <td>1 070 personnes</td>
           <td>Une relance n'est pas un nouveau batch : ces personnes étaient déjà dans le
-            dénominateur. Chacune obtient une seconde période de 45 jours à partir de sa relance.<br>
+            dénominateur. Chacune obtient une seconde période à partir de sa relance.<br>
             <strong>Le taux de la vague 2 ne se compare pas à celui d'un envoi initial</strong> : on
             n'a relancé que des gens qui n'avaient rien fait.</td></tr>
 
@@ -450,11 +445,12 @@
             un appel sortant. On compare la date de <strong>réservation</strong> du rendez-vous,
             jamais celle où il a lieu.</td></tr>
 
-        <tr><td>Fenêtre de 45 jours</td>
-          <td>à partir du mail reçu</td>
-          <td>Sans limite de temps, un vieux batch accumule plus longtemps qu'un batch récent et
-            gagne toujours : plus aucune comparaison n'est possible, et les chiffres publiés
-            remontent sans fin. 45 jours parce que les réponses arrivaient encore à J+21.</td></tr>
+        <tr><td>Délai d'attribution</td>
+          <td>aucune limite pour l'instant</td>
+          <td>On compte tout ce qui arrive après l'envoi, sans limite de délai — en attendant la
+            décision sur la durée à retenir. <strong>Conséquence : les cohortes ne se comparent pas
+            entre elles</strong>, une ancienne accumule plus longtemps, et les chiffres montent au
+            fil du temps.</td></tr>
 
         <tr><td>Rattrapages exclus</td>
           <td>3 rafales</td>
@@ -475,9 +471,12 @@
       <div class="bsub">Chaque changement de règle est daté ici. Un chiffre d'avant n'est pas
         comparable à un chiffre d'après.</div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Réponses</span></td>
+          <td>retirées du dashboard</td>
+          <td>HubSpot enregistre la dernière réponse du contact à <strong>n'importe quel</strong> e-mail, et la date glisse à chaque nouvel échange. La cellule RP du 13 août est passée de 68 à 110 réponses en dix jours, sur une campagne terminée depuis. Aucune source fiable n'existe : les e-mails entrants ne portent pas l'identifiant de séquence. Le compteur et la courbe sont retirés plutôt que d'afficher un chiffre faux.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre</span></td>
-          <td>21 → 45 jours</td>
-          <td>Les réponses arrivaient encore à J+21 : on coupait trop tôt. Les chiffres d'août remontent. <strong>Rien d'avant le 25/09 n'est comparable à rien d'après.</strong></td></tr>
+          <td>21 jours → aucune limite</td>
+          <td>En attente d'arbitrage sur la durée à retenir. <strong>Conséquence : les cohortes ne se comparent plus entre elles</strong> et les chiffres montent au fil du temps. Rien d'avant le 25/09 n'est comparable à rien d'après.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
           <td>toute fiche → étapes réelles</td>
           <td>Une fiche ne compte que si le client a rempli au moins un champ (<code>simulation_started</code> ou plus loin). Un simple accès au simulateur, un dossier refusé, ou une fiche créée automatiquement à cause d'un rendez-vous ne comptent plus.</td></tr>
@@ -1060,7 +1059,15 @@ function render(){
        des listes statiques disjointes, l'écart y est nul en pratique. */
     const ca=co.activation||{activated:sum(co.cells,c=>S(c).engaged)};
     per[PK]=ca.activated;
-    return {co,n,act,per,ca,rate:n?100*ca.activated/n:0,wip:co.status!=='TERMINE'};
+    /* « TERMINÉ » dit que les envois sont finis, pas que la fenêtre
+       d'attribution est écoulée. Comparer une cohorte de 15 jours à une
+       cohorte de 45 n'a pas de sens : on hachure tant que la fenêtre court. */
+    const jours=(Date.now()-new Date(co.sent_at))/86400000;
+    const fen=(D.meta.source||'').match(/J\+(\d+)/);
+    const ouvert=fen?jours<(+fen[1]):false;
+    return {co,n,act,per,ca,rate:n?100*ca.activated/n:0,
+            wip:co.status!=='TERMINE'||ouvert,
+            jours:Math.floor(jours),fenetre:fen?+fen[1]:null};
   });
   const done=rows.filter(r=>!r.wip);
   const best=done.length?Math.max(...done.map(r=>r.rate)):0;
@@ -1072,7 +1079,8 @@ function render(){
       <td>${fmt(r.n)}</td>
       <td class="${r.act?'o':'m'}">${r.act?fmt(r.act)+' ('+pct(r.act,r.n,0)+')':'—'}</td>
       ${K2.map(k=>`<td>${fmt(r.per[k.key])} <span class="m">(${pct(r.per[k.key],base(k.key)==='sent'?r.per.sent:r.n)})</span></td>`).join('')}
-      <td class="${r.wip?'m':(r.rate>=best&&best>0?'g':'')}">${r.rate.toFixed(1).replace('.',',')} %${r.wip?' <span class="m">(partiel)</span>':''}</td>
+      <td class="${r.wip?'m':(r.rate>=best&&best>0?'g':'')}">${r.rate.toFixed(1).replace('.',',')} %${
+        r.wip?` <span class="m">(J+${r.jours} sur ${r.fenetre})</span>`:''}</td>
     </tr>`).join('')
     +`<tr class="totrow"><td class="left">UNION DÉDUPLIQUÉE</td><td class="left m">—</td>
       <td>${fmt(nAll)}</td><td>${fmt(sum(rows,r=>r.act))}</td>
@@ -1133,33 +1141,6 @@ function render(){
         backgroundColor:rows.map(r=>r.wip?alpha(C.yellow,.35):alpha(C.indigo,.55)),
         borderColor:rows.map(r=>r.wip?C.yellow:C.indigo),borderWidth:1.5,borderRadius:4}
     ]},options:o}));
-
-  /* courbe de réponse */
-  const wc=D.cohorts.filter(co=>(co.reply_curve||[]).length);
-  if(!wc.length){
-    document.getElementById('wrapCurve').innerHTML=
-      `<div style="height:100%;display:flex;align-items:center;justify-content:center;
-        border:1px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center">
-        <div class="ab" style="max-width:320px">Délais de réponse non collectés.
-        Ils se rempliront au premier <code>refresh.py</code>.</div></div>`;
-  }else{
-    const hz=Math.max(...wc.map(co=>co.reply_curve[co.reply_curve.length-1].day));
-    let oc=withLegend(opts());
-    oc.scales.y.ticks.callback=v=>v+'%';
-    oc.scales.y.title={display:true,text:'% des contacts ciblés',color:C.muted,font:F};
-    oc.scales.y.grace=0;   // plus de plafond à 120 % : la courbe n'atteint plus 100
-    oc.plugins.valueLabels=false;
-    const pal=[C.indigo,C.greenS,C.yellow];
-    CH.push(new Chart('chCurve',{type:'line',
-      data:{labels:Array.from({length:hz+1},(_,j)=>'J+'+j),
-        datasets:wc.map((co,i)=>({
-          label:co.label.replace('Batch du ','')+(co.status!=='TERMINE'?' (en cours)':''),
-          data:Array.from({length:hz+1},(_,j)=>{
-            const p=co.reply_curve.find(x=>x.day===j);return p?p.share:null;}),
-          borderColor:pal[i%pal.length],backgroundColor:alpha(pal[i%pal.length],.07),
-          borderWidth:2.5,tension:.25,pointRadius:2.5,fill:i===0,spanGaps:true,
-          borderDash:co.status!=='TERMINE'?[5,4]:[]}))},options:oc}));
-  }
 
   /* ---------- NIVEAU 3 ---------- */
   document.getElementById('cohDetail').innerHTML=D.cohorts.map(co=>{
@@ -1283,10 +1264,12 @@ function render(){
      body:`Une fiche passée en « optimisation refusée » ne dit plus si le client avait simulé avant. `
        +`On perd ces cas. Le correctif est identifié : le flux calcule déjà le nombre d'étapes `
        +`franchies, il suffit de l'écrire dans HubSpot.`},
-    {level:'med',title:'Les réponses ne sont pas fiables',
-     body:`HubSpot ne garde que la dernière réponse de chaque personne, et ne distingue pas un `
-       +`« ça m'intéresse » d'un refus ou d'un message d'absence. Le compteur bouge encore, `
-       +`contrairement aux ouvertures qui sont figées.`},
+    {level:'high',title:'Aucune limite de délai : les cohortes ne se comparent pas',
+     body:`On compte tout ce qui arrive après l'envoi, sans borne. Une cohorte ancienne accumule `
+       +`donc plus longtemps qu'une récente et paraîtra toujours meilleure. Les chiffres publiés `
+       +`remontent aussi en permanence : horodater ce qu'on annonce. La durée à retenir est en `
+       +`attente d'arbitrage — et on ne sait pas la calibrer, la mesure qui l'aurait permis étant `
+       +`fausse.`},
     {level:'med',title:"Ouvertures d'août figées après coup",
      body:`Le relévé date de 2 h après l'envoi des relances : les valeurs sont surestimées d'une `
        +`vingtaine d'ouvertures. C'est le meilleur relévé disponible, pas un relévé propre.`},
