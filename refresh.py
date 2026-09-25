@@ -98,23 +98,16 @@ CHUNK = 100          # taille de lot pour les filtres associations.contact
 # sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
 # pour l'instant, car changer ce chiffre réécrit rétroactivement tout
 # l'historique déjà communiqué.
-# Fenêtre d'attribution, en jours après l'envoi qui a touché le contact.
-# 45 jours depuis le 25/09/2026. Historique du réglage :
-#   - cumul ouvert jusqu'au 22/08 : deux cohortes d'âge différent cessaient
-#     d'être comparables, et tout chiffre publié remontait sans fin ;
-#   - J+21 du 22/08 au 25/09 : hérité, jamais calibré. Les courbes de réponse
-#     montaient ENCORE à J+21 sur les deux batchs d'août (5 août : 9,28 → 9,44
-#     → 9,60 % ; 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupait en pleine
-#     pente, et les séquences durant deux semaines, le dernier e-mail n'avait
-#     qu'une semaine pour agir ;
-#   - J+45 aujourd'hui : récupère l'essentiel des conversions tardives tout en
-#     gardant une borne. Sans borne du tout, le gain mesuré n'était que de
-#     ~31 contacts (218 → 249), et ces conversions-là sont les moins
-#     attribuables — un RDV pris trois mois après un mail, sans relance entre
-#     temps, ne vient probablement pas de la campagne.
-# CE QUE LA BORNE PRÉSERVE : la comparabilité entre cohortes, et la stabilité
-# des chiffres publiés. Mettre None ici la supprime.
-ATTRIB_DAYS = 45
+# AUCUNE BORNE HAUTE (None) depuis le 25/09/2026, en attendant l'arbitrage
+# Growth. Un RDV ou une simulation compte quel que soit le délai après
+# l'envoi ; seule la borne basse subsiste, rien d'antérieur à l'envoi.
+# CE QUE ÇA COÛTE, et qui doit être dit à chaque publication :
+#   - les cohortes ne sont plus comparables : une cohorte ancienne accumule
+#     plus longtemps et gagne toujours ;
+#   - tout chiffre publié remonte au fil du temps.
+# HISTORIQUE : cumul ouvert jusqu'au 22/08, J+21 du 22/08 au 25/09, puis
+# aucune borne. Mettre un entier ici rétablit une fenêtre.
+ATTRIB_DAYS = None
 
 # Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
 # contacts enrôlés et contacts jamais touchés par une séquence. Import
@@ -720,17 +713,21 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
-            # La simulation est un FAIT sur le contact, pas sur la fenêtre :
-            # elle vaut même si la transaction n'entre pas dans l'attribution.
-            if has_simu:
-                simulated.add(c)
-            if stage in STAGE_PROCESS:
-                process.add(c)
             if not has_simu:
                 continue
+            # LA FENÊTRE S'APPLIQUE AUSSI À LA SIMULATION, depuis le 25/09.
+            # Elle ne portait avant que sur le total activé : simulated et
+            # process étaient renseignés en amont du test. Cinq contacts se
+            # retrouvaient classés « a simulé » alors que leur transaction
+            # était hors fenêtre — activés par leur rendez-vous, mais rangés
+            # dans la mauvaise catégorie. Un signal hors fenêtre ne compte
+            # nulle part, c'est la même règle partout.
             tag = deal_engages(props, wins[c])
             if not tag:
                 continue
+            simulated.add(c)
+            if stage in STAGE_PROCESS:
+                process.add(c)
             dset.add(c)
             niveau[c] = max(niveau.get(c, 0), niveau_de(stage))
             if d_wave.get(c) != "v2":
@@ -1048,8 +1045,14 @@ def build():
                             ab_test=co.get("ab_test", True), ab_note=co.get("ab_note"),
                             targeting=co.get("targeting"),
                             cells=cells, activation=act,
-                            reply_curve=cumulative_curve(
-                                all_delays, sum(c["enrolled"] for c in cells), send)))
+                            # Courbe de réponses RETIRÉE le 25/09 : sa source,
+                            # hs_sales_email_last_replied, enregistre la dernière
+                            # réponse à n'importe quel e-mail commercial et glisse
+                            # à chaque nouvel échange. La cellule RP du 13 août est
+                            # passée de 68 à 110 réponses en dix jours sur une
+                            # campagne terminée. Aucune source fiable n'existe : les
+                            # e-mails entrants ne portent pas hs_sequence_id.
+                            reply_curve=[]))
     cohorts.sort(key=lambda x: x["id"])
 
     # Union dédupliquée : les cohortes peuvent se recouper
