@@ -793,7 +793,7 @@ def load_config():
         return json.load(f)
 
 
-def cumulative_curve(delays, enrolled, send, horizon_max=21):
+def cumulative_curve(delays, enrolled, send, horizon_max=None):
     """Part des CONTACTS ayant répondu au plus tard à J+n.
 
     Le dénominateur est l'effectif ciblé, pas le nombre de répondants : une
@@ -803,7 +803,11 @@ def cumulative_curve(delays, enrolled, send, horizon_max=21):
     if not delays or not enrolled:
         return []
     elapsed = (dt.datetime.now(dt.timezone.utc) - send).days
-    horizon = max(0, min(horizon_max, elapsed))
+    # L'horizon suit la fenêtre d'attribution : afficher la courbe au-delà
+    # montrerait des réponses qui ne sont pas comptées. Sans fenêtre, on borne
+    # à 90 jours pour que le graphe reste lisible.
+    plafond = horizon_max if horizon_max is not None else (ATTRIB_DAYS or 90)
+    horizon = max(0, min(plafond, elapsed))
     return [dict(day=j, count=sum(1 for x in delays if x <= j),
                  share=round(100 * sum(1 for x in delays if x <= j) / enrolled, 2))
             for j in range(horizon + 1)]
