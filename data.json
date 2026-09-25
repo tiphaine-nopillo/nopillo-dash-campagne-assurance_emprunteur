@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-25T15:48:06.000494+00:00",
+  "generated_at": "2026-09-25T19:58:29.592735+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -878,7 +878,7 @@
      "bounced": 2,
      "opens": 428,
      "clicks": 25,
-     "opens_emails": 812,
+     "opens_emails": 813,
      "clicks_emails": 31,
      "opens_frozen": false,
      "replies_non_fiable": 58,
@@ -923,7 +923,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 203,
+       "opens": 204,
        "clicks": 13
       }
      ],
