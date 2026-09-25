@@ -133,6 +133,13 @@ SIMU_STAGES = {
     "5363445967",   # process_started
     "5378179265",   # process_completed
 }
+# Étapes de SOUSCRIPTION : le client ne simule plus, il monte un dossier.
+# C'est le bas de funnel, celui qui précède le revenu.
+STAGE_PROCESS = {
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
+}
+
 STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
 STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
 
@@ -650,7 +657,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
          "hs_object_source_label", "origine_creation_deal_ae", SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
-    dset, d_auto, d_wave, simulated = set(), set(), {}, set()
+    dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
     for did, props in deals.items():
         stage = str(props.get("dealstage") or "")
         # SEULE une étape de parcours prouve une activation.
@@ -670,6 +677,8 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             # elle vaut même si la transaction n'entre pas dans l'attribution.
             if has_simu:
                 simulated.add(c)
+            if stage in STAGE_PROCESS:
+                process.add(c)
             if not has_simu:
                 continue
             tag = deal_engages(props, wins[c])
@@ -726,7 +735,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if c in keep and (c not in rdv_pub or booked < rdv_pub[c]):
                 rdv_pub[c] = booked
 
-    return dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub
+    return dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub, process
 
 
 # -------------------------------------------------------------------- build
@@ -788,6 +797,7 @@ def build():
     camp_attr = empty_attr()
     attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
     camp_qual, qual_cells = empty_qual(), {}
+    camp_process = set()
     last_sync = last_integration_move(pipeline)
     sync_stale = business_hours_between(last_sync,
                                         dt.datetime.now(dt.timezone.utc)) > 24
@@ -804,6 +814,7 @@ def build():
         forced = (co.get("status") or "AUTO").upper()
         cells, all_delays = [], []
         coh_meet, coh_deal, coh_deal_auto, coh_v2 = set(), set(), set(), set()
+        coh_process = set()
 
         for c in co["cells"]:
             members = list_members(c["list_id"])
@@ -852,7 +863,7 @@ def build():
                                "operator": mf["operator"], "value": mf["value"]})
 
             (dset, mset, m_owner, d_auto, d_wave, m_wave,
-             simulated, rdv_pub) = engagement_sets(
+             simulated, rdv_pub, process) = engagement_sets(
                 ids, send, pipeline, meet_f, meet_f_attr, rmap)
 
             # Signaux d'attribution restants : réponses et premier appel sortant.
@@ -901,13 +912,15 @@ def build():
                          non_attribuable=cell_attr["non_attribuable"]["total"],
                          simule=cell_attr["marketing"]["simulation"],
                          certain=cell_qual["certain"],
-                         attente=cell_qual["attente"])
+                         attente=cell_qual["attente"],
+                         process=len(process))
             n_meet, n_deal = len(mset), len(dset)
 
             coh_meet |= mset
             coh_deal |= dset
             coh_deal_auto |= d_auto
             coh_v2 |= v2
+            coh_process |= process
 
             m_own = {}
             for cid in mset:
@@ -953,11 +966,13 @@ def build():
         camp_deal |= coh_deal
         camp_deal_auto |= coh_deal_auto
         camp_v2 |= coh_v2
+        camp_process |= coh_process
 
         act = activation_split(coh_meet, coh_deal, coh_deal_auto)
         act["activated_v2"] = len(coh_v2)
         act["activated_v1"] = act["activated"] - len(coh_v2)
         act["relanced"] = sum(c["split"]["relanced"] for c in cells)
+        act["process"] = len(coh_process)
 
         cohorts.append(dict(id=co["id"], label=co["label"], sent_at=co["sent_at"],
                             status=status, active=n_act, status_note=note,
@@ -981,6 +996,8 @@ def build():
     dedup["activation"]["activated_v1"] = (dedup["activation"]["activated"]
                                            - len(camp_v2))
     dedup["relanced"] = len(rmap)
+    # Bas de funnel : contacts dont un dossier est entré en souscription.
+    dedup["process"] = len(camp_process)
 
     # Décomposition sales / marketing. Nouvel axe, sans rupture : le total
     # activé est inchangé, marketing + sales + non attribuable = activés.
@@ -1105,6 +1122,8 @@ def build():
     print(f"   Les deux                  {a['both']:5d}")
     print(f"   = TOTAL ACTIVÉS           {a['activated']:5d}"
           f"   soit {100 * a['activated'] / dedup['contacts']:.2f} % des ciblés")
+    print(f"   dont en souscription      {dedup['process']:5d}"
+          f"   dossier en process_started ou au-delà")
     print(f"   dont RDV seul {a['meet_only']} · dossier seul {a['deal_only']}"
           f" (dont {a['deal_only_manual']} créé(s) à la main)")
     if rmap:
