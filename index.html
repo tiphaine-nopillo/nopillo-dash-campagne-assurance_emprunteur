@@ -146,17 +146,6 @@
     text-transform:uppercase;color:var(--muted)}
   .recon .m{font-size:10.5px}
 
-  .fun{display:flex;flex-direction:column;gap:7px;margin-top:4px}
-  .fun-row{display:grid;grid-template-columns:150px 1fr 108px;align-items:center;gap:14px}
-  .fun-lab{font-family:var(--font-mono);font-size:11px;color:var(--muted);text-align:right}
-  .fun-track{height:26px;background:var(--border);border-radius:6px;overflow:hidden}
-  .fun-bar{height:100%;border-radius:6px;display:flex;align-items:center;
-    justify-content:flex-end;padding-right:9px;
-    background:linear-gradient(90deg,var(--indigo),var(--emerald));
-    color:#fff;font-weight:600;font-size:12px;min-width:38px}
-  .fun-drop{font-family:var(--font-mono);font-size:10.5px;color:var(--muted)}
-  .fun-drop b{color:var(--raspberry);font-weight:600}
-
   .goal{margin-top:16px;padding:14px 16px;background:var(--surface2);border-radius:10px;
     border:1px dashed var(--border2)}
   .goal-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
@@ -283,6 +272,9 @@
       <div id="creaWrap" style="display:none;margin-top:20px">
         <div class="rlab">Qui a saisi la transaction — <strong>produit contre commercial</strong></div>
         <div class="twrap"><table class="dt"><tbody id="creaRows"></tbody></table></div>
+        <div class="rlab" style="margin-top:18px">D'où viennent les activés —
+          <strong>hors campagne</strong></div>
+        <div class="twrap"><table class="dt"><tbody id="creaHorsRows"></tbody></table></div>
         <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
           fiche, pas qui a provoqué la simulation : une carte ouverte à la main par un commercial
           compte ici alors que c'est le client qui a rempli le simulateur de son côté.</div>
@@ -378,17 +370,6 @@
       </div></div>
       <div class="twrap"><table class="dt"><tbody id="motifRows"></tbody></table></div>
       <div class="bsub" id="motifNote" style="margin-top:12px"></div>
-    </div>
-
-    <div class="block" id="funBlock" style="display:none">
-      <div class="bhead"><div>
-        <h3 class="btitle">Où s'arrêtent les clients dans le simulateur<span class="src">ae_etapes_simu</span></h3>
-        <div class="bsub">Combien de contacts ont <strong>atteint</strong> chaque étape. Les paliers
-          sont cumulés : un client qui va jusqu'à l'offre compte aussi dans toutes les étapes
-          précédentes. <strong>Ne jamais les additionner.</strong></div>
-      </div></div>
-      <div class="fun" id="funBars"></div>
-      <div class="bsub" id="funNote" style="margin-top:14px"></div>
     </div>
 
     <div class="block" id="relanceBlock" style="display:none">
@@ -500,9 +481,10 @@
           <td>personnes ayant commencé à simuler</td>
           <td>Le produit compte au moins une étape franchie (<code>ae_etapes_simu</code>), ou leur
             dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire qu'elles
-            ont rempli au moins le premier champ. Une carte créée par le workflow « RDV sans simu »
-            fait exception : son étape ne compte jamais, seul le nombre d'étapes franchies peut la
-            faire entrer.<br>
+            ont rempli au moins le premier champ, ou qu'un CS a fait avancer leur dossier après avoir
+            récolté les documents autrement. Une carte créée par le workflow « RDV sans simu » fait
+            exception : sa phase ne vaut jamais preuve, mais elle compte dès qu'elle porte des étapes
+            franchies — le client a alors simulé après avoir pris rendez-vous.<br>
             <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
             simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
             rendez-vous existe.</td></tr>
@@ -511,13 +493,6 @@
           <td>RDV <strong>ou</strong> simulation</td>
           <td>Le chiffre principal. C'est une union, jamais une addition : une personne qui a un
             rendez-vous <em>et</em> une simulation compte une fois.</td></tr>
-
-        <tr><td>Entonnoir du parcours</td>
-          <td>paliers cumulés</td>
-          <td>Combien de contacts ont <strong>atteint</strong> chaque étape du simulateur. Un client
-            qui va jusqu'à l'offre compte dans toutes les étapes précédentes : les paliers décroissent
-            forcément et ne s'additionnent pas. La colonne de droite montre le nombre d'abandons entre
-            deux étapes — c'est elle qui porte l'information.</td></tr>
 
         <tr><td>Dossiers en souscription</td>
           <td>personnes montant un dossier</td>
@@ -1012,10 +987,26 @@ function render(){
          <td>${pct(v,totPC)}</td></tr>`).join('');
     }
 
+    /* Origine des activés HORS campagne. Sans ce détail, « 137 hors campagne »
+       ne dit rien : on ne sait pas si ces clients viennent du produit, d'un CS,
+       ou d'un rendez-vous pris sans qu'aucune fiche n'ait été ouverte. */
+    const PH=G.par_createur_hors||{};
+    const rdvH=G.rdv_seul_hors||0;
+    const totH=Object.values(PH).reduce((a,b)=>a+b,0)+rdvH;
+    if(totH){
+      document.getElementById('creaHorsRows').innerHTML=
+        Object.entries(PH).map(([lib,v])=>
+          `<tr><td class="left">${lib}</td><td><strong>${fmt(v)}</strong></td>
+           <td>${pct(v,totH)}</td></tr>`).join('')+
+        (rdvH?`<tr><td class="left">RDV seul, aucune transaction</td>
+           <td><strong>${fmt(rdvH)}</strong></td><td>${pct(rdvH,totH)}</td></tr>`:'')+
+        `<tr class="totrow"><td class="left">TOTAL HORS CAMPAGNE</td>
+           <td><strong>${fmt(totH)}</strong></td><td>100 %</td></tr>`;
+    }
+
     document.getElementById('globNote').innerHTML=
-      `<strong>Hors campagnes</strong> : des clients arrivés par l'acquisition — Paid Search, Paid `+
-      `Social, direct — qui ont simulé sans avoir reçu nos e-mails. Ils s'étalent sur tout `+
-      `l'historique, pas sur une période. `+
+      `<strong>Hors campagnes</strong> : des clients qui ont pris rendez-vous ou simulé sans avoir `+
+      `reçu nos e-mails. Ils s'étalent sur tout l'historique, pas sur une période. `+
       (G.campagne_hors_global?`<strong>Alerte : ${fmt(G.campagne_hors_global)} contact(s) comptés en `+
         `campagne sont absents du global, la règle diverge entre les deux périmètres.</strong>`:'');
   }
@@ -1084,31 +1075,6 @@ function render(){
       `<strong>Ne comptent pas</strong> : une carte en « optimisation refusée » ou en « accès au `+
       `simulateur » sans rendez-vous ni étape franchie, et les comptes @nopillo.com, qui créent de `+
       `vraies transactions de test dans le pipe.`;
-  }
-
-  /* Entonnoir. Paliers CUMULÉS et non cas disjoints : la barre décroît
-     forcément, et la colonne de droite montre la perte entre deux étapes.
-     C'est elle qui porte l'information — le décrochage, pas le niveau. */
-  const FUN=(D.dedup||{}).funnel||[];
-  if(FUN.length&&FUN[0].contacts){
-    const base=FUN[0].contacts;
-    document.getElementById('funBlock').style.display='block';
-    document.getElementById('funBars').innerHTML=FUN.map((e,i)=>{
-      const perte=i?FUN[i-1].contacts-e.contacts:0;
-      const part=base?100*e.contacts/base:0;
-      return `<div class="fun-row">
-        <span class="fun-lab">${e.etape}</span>
-        <div class="fun-track"><div class="fun-bar" style="width:${Math.max(part,4)}%">${fmt(e.contacts)}</div></div>
-        <span class="fun-drop">${i?(perte?`<b>−${fmt(perte)}</b> abandons`:'aucun abandon'):`${pct(e.contacts,base)} · départ`}</span>
-      </div>`;}).join('');
-    const der=FUN[FUN.length-1].contacts;
-    const gros=FUN.map((e,i)=>({e,perte:i?FUN[i-1].contacts-e.contacts:0}))
-                  .sort((a,b)=>b.perte-a.perte)[0];
-    document.getElementById('funNote').innerHTML=
-      `${fmt(base)} contacts ont commencé à simuler, ${fmt(der)} sont allés au bout. `+
-      (gros&&gros.perte?`Le plus gros décrochage se produit à l'entrée de `+
-        `<strong>${gros.e.etape}</strong> : ${fmt(gros.perte)} contacts s'arrêtent là. `:'')+
-      `Ces paliers portent sur les contacts de la campagne, pas sur tout le portefeuille.`;
   }
 
   /* ---------- VAGUES DE RELANCE ----------
