@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-28T16:18:18.768161+00:00",
+  "generated_at": "2026-09-28T16:59:29.475980+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -12,7 +12,7 @@
   "attribution_window_note": "AUCUNE LIMITE DE DÉLAI. Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après l'envoi. La borne BASSE subsiste : rien d'antérieur à l'envoi n'est compté, et un contact relancé conserve deux périodes étiquetées v1 et v2. HISTORIQUE : cumul ouvert jusqu'au 22/08 ; J+21 du 22/08 au 25/09 ; aucune limite depuis. CE QUE ÇA COÛTE, à dire à chaque publication : 1) LES COHORTES NE SE COMPARENT PAS — une cohorte ancienne accumule plus longtemps et gagne toujours ; 2) LES CHIFFRES PUBLIÉS REMONTENT EN PERMANENCE, horodater ce qu'on annonce ; 3) l'attribution s'affaiblit avec le temps. POURQUOI ON N'A PAS CALIBRÉ UNE LIMITE : le seul moyen aurait été de regarder quand les réponses cessent d'arriver. Cette mesure s'est révélée fausse et a été retirée (voir replies_retirees). RÉVERSIBLE : ATTRIB_DAYS dans refresh.py.",
   "frozen_note": "Ouvertures et clics FIGÉS pour les six cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Ces valeurs sont écrites dans frozen_metrics et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne.",
   "attribution_sm_note": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. Le total activé ne change pas, seule sa décomposition est ajoutée. RÈGLE, dans cet ordre : 1) le contact a une simulation commencée → marketing ; 2) sinon, réponse ou RDV réservé par le client ANTÉRIEUR au premier appel sortant → marketing ; 3) sinon, appel sortant loggé → sales ; 4) sinon, non attribuable. CHOIX ASSUMÉ : la simulation prime, même si un appel a suivi. PIÈGE : pour le RDV on compare la date de RÉSERVATION au premier appel, jamais la date de tenue. LIMITE CONNUE : le sous-cas « réponse » s'appuie sur hs_sales_email_last_replied, dont la date glisse à chaque nouvel e-mail commercial. Ce signal est peu fiable, mais il ne s'applique qu'aux contacts sans simulation ni RDV self-service, donc à une minorité. LIMITE STRUCTURELLE : faute de date de PREMIÈRE étape de simulation, on ne sait pas si une simulation précède ou suit l'appel. La répartition sous-estime probablement le sales.",
-  "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
+  "overlap_note": "Recoupement entre cohortes : 8 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
  "kpis": [
@@ -106,13 +106,13 @@
   "contacts": 2075,
   "activation": {
    "meet": 169,
-   "deal": 154,
-   "both": 80,
-   "meet_only": 89,
+   "deal": 149,
+   "both": 75,
+   "meet_only": 94,
    "deal_only": 74,
    "activated": 243,
    "deal_auto": 74,
-   "deal_manual": 80,
+   "deal_manual": 75,
    "deal_only_manual": 13,
    "sum_cells": 243,
    "overlap": 0,
@@ -122,23 +122,75 @@
   "global": {
    "activated": 380,
    "meet": 178,
-   "deal": 285,
-   "both": 83,
+   "deal": 280,
+   "both": 78,
    "campagne": 243,
    "hors_campagne": 137,
-   "campagne_hors_global": 0
+   "campagne_hors_global": 0,
+   "par_createur": {
+    "Simulation produit · n8n": 199,
+    "Team CS · Lilian Maudet": 29,
+    "Team CS · Clara Baekelandt": 28,
+    "Team CS · Mathieu d'Ornellas": 21,
+    "Marc Chevalier · CGP": 4,
+    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1
+   }
+  },
+  "funnel": [
+   {
+    "rang": 1,
+    "etape": "simulation_started",
+    "contacts": 126
+   },
+   {
+    "rang": 2,
+    "etape": "simulation_completed",
+    "contacts": 54
+   },
+   {
+    "rang": 3,
+    "etape": "simulation_ready",
+    "contacts": 30
+   },
+   {
+    "rang": 4,
+    "etape": "offer_viewed",
+    "contacts": 24
+   },
+   {
+    "rang": 5,
+    "etape": "offer_accepted",
+    "contacts": 6
+   },
+   {
+    "rang": 6,
+    "etape": "process_started",
+    "contacts": 6
+   },
+   {
+    "rang": 7,
+    "etape": "process_completed",
+    "contacts": 2
+   }
+  ],
+  "motifs": {
+   "rdv_seul": 94,
+   "rdv_et_simu": 75,
+   "simu_seule_etapes": 63,
+   "simu_seule_pipe": 11
   },
   "relanced": 1070,
   "process": 6,
   "attribution": {
    "marketing": {
-    "total": 234,
-    "simulation": 154,
+    "total": 233,
+    "simulation": 149,
     "reponse": 6,
-    "rdv_public": 74
+    "rdv_public": 78
    },
    "sales": {
-    "total": 9
+    "total": 10
    },
    "non_attribuable": {
     "total": 0
@@ -146,13 +198,13 @@
    "par_cellule": {
     "14319": {
      "marketing": {
-      "total": 31,
-      "simulation": 21,
+      "total": 30,
+      "simulation": 20,
       "reponse": 1,
       "rdv_public": 9
      },
      "sales": {
-      "total": 1
+      "total": 2
      },
      "non_attribuable": {
       "total": 0
@@ -161,9 +213,9 @@
     "14334": {
      "marketing": {
       "total": 32,
-      "simulation": 22,
+      "simulation": 21,
       "reponse": 2,
-      "rdv_public": 8
+      "rdv_public": 9
      },
      "sales": {
       "total": 3
@@ -175,9 +227,9 @@
     "14336": {
      "marketing": {
       "total": 10,
-      "simulation": 7,
+      "simulation": 6,
       "reponse": 0,
-      "rdv_public": 3
+      "rdv_public": 4
      },
      "sales": {
       "total": 0
@@ -231,9 +283,9 @@
     "14951": {
      "marketing": {
       "total": 69,
-      "simulation": 44,
+      "simulation": 42,
       "reponse": 1,
-      "rdv_public": 24
+      "rdv_public": 26
      },
      "sales": {
       "total": 0
@@ -247,9 +299,9 @@
     "v1": {
      "marketing": {
       "total": 143,
-      "simulation": 87,
+      "simulation": 85,
       "reponse": 1,
-      "rdv_public": 55
+      "rdv_public": 57
      },
      "sales": {
       "total": 4
@@ -260,13 +312,13 @@
     },
     "v2": {
      "marketing": {
-      "total": 91,
-      "simulation": 67,
+      "total": 90,
+      "simulation": 64,
       "reponse": 5,
-      "rdv_public": 19
+      "rdv_public": 21
      },
      "sales": {
-      "total": 5
+      "total": 6
      },
      "non_attribuable": {
       "total": 0
@@ -276,32 +328,32 @@
    "qualification": {
     "certain": 243,
     "attente": 0,
-    "certain_rdv_client": 74,
-    "certain_parcours": 154,
-    "certain_rdv_sales": 15,
+    "certain_rdv_client": 78,
+    "certain_parcours": 149,
+    "certain_rdv_sales": 16,
     "attente_carte_seule": 0,
     "par_cellule": {
      "14319": {
       "certain": 32,
       "attente": 0,
       "certain_rdv_client": 9,
-      "certain_parcours": 21,
-      "certain_rdv_sales": 2,
+      "certain_parcours": 20,
+      "certain_rdv_sales": 3,
       "attente_carte_seule": 0
      },
      "14334": {
       "certain": 35,
       "attente": 0,
-      "certain_rdv_client": 8,
-      "certain_parcours": 22,
+      "certain_rdv_client": 9,
+      "certain_parcours": 21,
       "certain_rdv_sales": 5,
       "attente_carte_seule": 0
      },
      "14336": {
       "certain": 10,
       "attente": 0,
-      "certain_rdv_client": 3,
-      "certain_parcours": 7,
+      "certain_rdv_client": 4,
+      "certain_parcours": 6,
       "certain_rdv_sales": 0,
       "attente_carte_seule": 0
      },
@@ -332,8 +384,8 @@
      "14951": {
       "certain": 69,
       "attente": 0,
-      "certain_rdv_client": 24,
-      "certain_parcours": 44,
+      "certain_rdv_client": 26,
+      "certain_parcours": 42,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 0
      }
@@ -373,23 +425,23 @@
      "opens_frozen": true,
      "replies_non_fiable": 51,
      "meetings": 23,
-     "deals_ae": 21,
+     "deals_ae": 20,
      "engaged": 32,
      "split": {
-      "both": 12,
-      "meet_only": 11,
+      "both": 11,
+      "meet_only": 12,
       "deal_only": 9,
       "engaged": 32,
       "deal_n8n": 8,
-      "deal_manual": 13,
+      "deal_manual": 12,
       "deal_only_manual": 2,
       "relanced": 173,
       "engaged_v2": 13,
       "engaged_v1": 19,
-      "marketing": 31,
-      "sales": 1,
+      "marketing": 30,
+      "sales": 2,
       "non_attribuable": 0,
-      "simule": 21,
+      "simule": 20,
       "certain": 32,
       "attente": 0,
       "process": 2
@@ -434,11 +486,11 @@
      "sequence_id": "841303268",
      "audience": "RP",
      "version": "B",
-     "enrolled": 264,
+     "enrolled": 263,
      "active": 0,
      "status": "TERMINE",
-     "sent": 733,
-     "bounced": 4,
+     "sent": 732,
+     "bounced": 3,
      "opens": 187,
      "clicks": 17,
      "opens_emails": 360,
@@ -446,15 +498,15 @@
      "opens_frozen": true,
      "replies_non_fiable": 60,
      "meetings": 22,
-     "deals_ae": 22,
+     "deals_ae": 21,
      "engaged": 35,
      "split": {
-      "both": 9,
-      "meet_only": 13,
+      "both": 8,
+      "meet_only": 14,
       "deal_only": 13,
       "engaged": 35,
       "deal_n8n": 11,
-      "deal_manual": 11,
+      "deal_manual": 10,
       "deal_only_manual": 4,
       "relanced": 165,
       "engaged_v2": 18,
@@ -462,7 +514,7 @@
       "marketing": 32,
       "sales": 3,
       "non_attribuable": 0,
-      "simule": 22,
+      "simule": 21,
       "certain": 35,
       "attente": 0,
       "process": 2
@@ -471,7 +523,7 @@
       {
        "order": 1,
        "subject": "L’économie que les propriétaires immobiliers ignorent",
-       "sent": 254,
+       "sent": 253,
        "opens": 132,
        "clicks": 1
       },
@@ -514,27 +566,27 @@
      "sequence_id": "841303243",
      "audience": "LMNP",
      "version": "A",
-     "enrolled": 51,
+     "enrolled": 50,
      "active": 0,
      "status": "TERMINE",
-     "sent": 146,
+     "sent": 144,
      "bounced": 0,
      "opens": 39,
      "clicks": 2,
      "opens_emails": 85,
      "clicks_emails": 2,
      "opens_frozen": true,
-     "replies_non_fiable": 9,
+     "replies_non_fiable": 8,
      "meetings": 7,
-     "deals_ae": 7,
+     "deals_ae": 6,
      "engaged": 10,
      "split": {
-      "both": 4,
-      "meet_only": 3,
+      "both": 3,
+      "meet_only": 4,
       "deal_only": 3,
       "engaged": 10,
       "deal_n8n": 2,
-      "deal_manual": 5,
+      "deal_manual": 4,
       "deal_only_manual": 1,
       "relanced": 42,
       "engaged_v2": 3,
@@ -542,7 +594,7 @@
       "marketing": 10,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 7,
+      "simule": 6,
       "certain": 10,
       "attente": 0,
       "process": 0
@@ -551,15 +603,15 @@
       {
        "order": 1,
        "subject": "Renégociation assurance emprunteur",
-       "sent": 95,
-       "opens": 53,
+       "sent": 94,
+       "opens": 52,
        "clicks": 1
       },
       {
        "order": 2,
        "subject": "Rapide point sur votre assurance emprunteur",
-       "sent": 50,
-       "opens": 31,
+       "sent": 49,
+       "opens": 30,
        "clicks": 1
       },
       {
@@ -678,13 +730,13 @@
    ],
    "activation": {
     "meet": 62,
-    "deal": 59,
-    "both": 31,
-    "meet_only": 31,
+    "deal": 56,
+    "both": 28,
+    "meet_only": 34,
     "deal_only": 28,
     "activated": 90,
     "deal_auto": 26,
-    "deal_manual": 33,
+    "deal_manual": 30,
     "deal_only_manual": 7,
     "activated_v2": 35,
     "activated_v1": 55,
@@ -885,7 +937,7 @@
      "sequence_id": "841303267",
      "audience": "V3",
      "version": "A",
-     "enrolled": 761,
+     "enrolled": 760,
      "active": 0,
      "status": "TERMINE",
      "sent": 1728,
@@ -897,15 +949,15 @@
      "opens_frozen": false,
      "replies_non_fiable": 62,
      "meetings": 40,
-     "deals_ae": 44,
+     "deals_ae": 42,
      "engaged": 69,
      "split": {
-      "both": 15,
-      "meet_only": 25,
+      "both": 13,
+      "meet_only": 27,
       "deal_only": 29,
       "engaged": 69,
       "deal_n8n": 30,
-      "deal_manual": 14,
+      "deal_manual": 12,
       "deal_only_manual": 3,
       "relanced": 0,
       "engaged_v2": 0,
@@ -913,7 +965,7 @@
       "marketing": 69,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 44,
+      "simule": 42,
       "certain": 69,
       "attente": 0,
       "process": 0
@@ -962,13 +1014,13 @@
    ],
    "activation": {
     "meet": 40,
-    "deal": 44,
-    "both": 15,
-    "meet_only": 25,
+    "deal": 42,
+    "both": 13,
+    "meet_only": 27,
     "deal_only": 29,
     "activated": 69,
     "deal_auto": 30,
-    "deal_manual": 14,
+    "deal_manual": 12,
     "deal_only_manual": 3,
     "activated_v2": 0,
     "activated_v1": 69,
