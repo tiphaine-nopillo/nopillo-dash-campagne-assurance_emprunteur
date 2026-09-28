@@ -209,6 +209,25 @@ ORIGINE_RDV_SANS_SIMU = "rdv_sans_simu"
 # Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
 # PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
 # interchangeables.
+# Qui a saisi la transaction. Les identifiants sont des User IDs, distincts des
+# Owner IDs : Clara et Mathieu sont déduits de l'appariement avec le
+# propriétaire des transactions, pas confirmés par la table utilisateurs, qui
+# n'est pas interrogeable via l'API.
+# RÉSERVE DE LECTURE : le créateur dit qui a SAISI, pas qui a PROVOQUÉ. Une
+# fiche ouverte à la main qui porte ae_etapes_simu >= 1 signifie que le
+# commercial a créé la carte ET que le client a réellement simulé de son côté.
+CREATEURS = {
+    "63030630": "Team CS · Clara Baekelandt",
+    "48921115": "Team CS · Mathieu d'Ornellas",
+    "75453551": "Team CS · Lilian Maudet",
+    "33766697": "Marc Chevalier · CGP",
+    "31714049": "Autre utilisateur",
+}
+CREATEUR_AUTO = {
+    "INTEGRATION": "Simulation produit · n8n",
+    "AUTOMATION_PLATFORM": "Workflow HubSpot · RDV sans simu",
+}
+
 AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
                      "75453551",    # Lilian Maudet
                      "650299108"]   # Mathieu d'Ornellas
@@ -673,16 +692,23 @@ def activation_globale(pipeline, meet_f_global):
     """
     deals = _search_all(DEALS,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
-        ["dealstage", ETAPES_PROP])
-    ok_deals = []
+        ["dealstage", ETAPES_PROP, "hs_object_source_label",
+         "hs_created_by_user_id", "origine_creation_deal_ae"])
+    ok_deals, par_createur = [], {}
     for d in deals:
         p = d.get("properties") or {}
         try:
             etapes = int(float(p.get(ETAPES_PROP) or 0))
         except (TypeError, ValueError):
             etapes = 0
-        if etapes >= 1 or str(p.get("dealstage") or "") in SIMU_STAGES:
+        rdv_only = p.get("origine_creation_deal_ae") == ORIGINE_RDV_SANS_SIMU
+        if etapes >= 1 or (str(p.get("dealstage") or "") in SIMU_STAGES
+                           and not rdv_only):
             ok_deals.append(d["id"])
+            src = str(p.get("hs_object_source_label") or "")
+            lib = CREATEUR_AUTO.get(src) or CREATEURS.get(
+                str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
+            par_createur[lib] = par_createur.get(lib, 0) + 1
     dmap = _contacts_of("deals", ok_deals)
     simu = {c for ids in dmap.values() for c in ids}
 
@@ -690,7 +716,7 @@ def activation_globale(pipeline, meet_f_global):
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
 
-    return simu, rdv
+    return simu, rdv, par_createur
 
 
 def _search_all(endpoint, filters, props):
@@ -780,7 +806,14 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             etapes = int(float(props.get(ETAPES_PROP) or 0))
         except (TypeError, ValueError):
             etapes = 0
-        has_simu = etapes >= 1 or stage in SIMU_STAGES
+        # Une carte créée par le workflow « RDV sans simu » ne vaut JAMAIS
+        # simulation par son étape : elle a été ouverte parce qu'un rendez-vous
+        # existait, pas parce qu'un client avait rempli quelque chose. Cinq
+        # d'entre elles se sont retrouvées en simulation_started après un
+        # déplacement manuel, sans aucune étape franchie. Seule ae_etapes_simu
+        # peut les racheter — si le client simule vraiment par la suite.
+        rdv_only = props.get("origine_creation_deal_ae") == ORIGINE_RDV_SANS_SIMU
+        has_simu = etapes >= 1 or (stage in SIMU_STAGES and not rdv_only)
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
@@ -1155,7 +1188,7 @@ def build():
     if mf:
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
-    g_simu, g_rdv = activation_globale(pipeline, meet_f_global)
+    g_simu, g_rdv, g_createurs = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1163,7 +1196,9 @@ def build():
         both=len(g_simu & g_rdv),
         campagne=len(camp & g_all),
         hors_campagne=len(g_all - camp),
-        campagne_hors_global=len(camp - g_all))
+        campagne_hors_global=len(camp - g_all),
+        par_createur=dict(sorted(g_createurs.items(),
+                                 key=lambda kv: -kv[1])))
 
     # Entonnoir du parcours produit. Une étape est ATTEINTE dès qu'un contact
     # est allé au moins aussi loin : les paliers décroissent donc forcément.
@@ -1357,6 +1392,13 @@ def build():
         if g.get("campagne_hors_global"):
             print(f"   /!\\ {g['campagne_hors_global']} contact(s) comptés en campagne mais"
                   f" absents du global — incohérence à investiguer")
+        pc = g.get("par_createur") or {}
+        if pc:
+            tot_pc = sum(pc.values())
+            print("   — qui a saisi la transaction —")
+            for lib, v in pc.items():
+                print(f"     {lib:28} {v:5d}   {pcts(v, tot_pc)}")
+            print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
         print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
         print("   Il se lit comme un cumul, jamais comme un taux.")
 
