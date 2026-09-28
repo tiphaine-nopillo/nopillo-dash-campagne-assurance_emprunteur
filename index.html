@@ -445,8 +445,9 @@
 
         <tr><td>Simulations entamées</td>
           <td>personnes ayant commencé à simuler</td>
-          <td>Leur dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire
-            qu'elles ont rempli au moins le premier champ.<br>
+          <td>Le produit compte au moins une étape franchie (<code>ae_etapes_simu</code>), ou leur
+            dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire qu'elles
+            ont rempli au moins le premier champ.<br>
             <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
             simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
             rendez-vous existe.</td></tr>
@@ -506,6 +507,9 @@
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre</span></td>
           <td>21 jours → aucune limite</td>
           <td>Décision de Clémence : on compte tout, sans limite. <strong>Conséquence : les cohortes ne se comparent plus entre elles</strong> et les chiffres montent au fil du temps. Rien d'avant le 25/09 n'est comparable à rien d'après.</td></tr>
+        <tr><td>28/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
+          <td>étape du pipe → nombre d'étapes franchies</td>
+          <td><strong>Le marqueur vient désormais du produit.</strong> <code>ae_etapes_simu</code> compte les étapes réellement franchies dans le simulateur et survit à un déplacement d'étape manuel : un dossier passé en « optimisation refusée » garde la trace de sa simulation. 34 dossiers refusés portant une vraie simulation sont ainsi récupérés. L'étape du pipe reste acceptée en second recours tant que le rattrapage n8n n'a pas rempli la propriété partout.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
           <td>toute fiche → étapes réelles</td>
           <td>Une fiche ne compte que si le client a rempli au moins un champ (<code>simulation_started</code> ou plus loin). Un simple accès au simulateur, un dossier refusé, ou une fiche créée automatiquement à cause d'un rendez-vous ne comptent plus.</td></tr>
