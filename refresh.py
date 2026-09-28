@@ -1,1346 +1,1305 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suivi de performance · campagne Assurance Emprunteur · Nopillo</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🛡️</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
-  :root{
-    --indigo:#5747FF; --emerald:#11E28F; --raspberry:#DB3352;
-    --lavender:#DEDAFF; --tea:#E8FFD9; --dark:#040425;
-    --bg:#F8F8FC; --surface:#FFFFFF; --surface2:#F2F1FA;
-    --border:rgba(4,4,37,0.08); --border2:rgba(4,4,37,0.16);
-    --muted:#6B6B85; --green-strong:#089966; --green-dim:rgba(17,226,143,0.14);
-    --red-dim:rgba(219,51,82,0.10); --orange:#FF7A3D; --orange-dim:rgba(255,122,61,0.10);
-    --yellow:#F5B400; --yellow-dim:rgba(245,180,0,0.12);
-    --tick:#9092A8; --grid:rgba(4,4,37,0.04); --axis:rgba(4,4,37,0.10);
-    --font-sans:'Futura PT','Jost','Futura',-apple-system,BlinkMacSystemFont,sans-serif;
-    --font-mono:'JetBrains Mono','SF Mono','Menlo',monospace;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-sans);background:var(--bg);color:var(--dark);
-    min-height:100vh;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
-  code,.mono{font-family:var(--font-mono);font-feature-settings:'tnum' on,'lnum' on}
-  a{color:var(--indigo)}
+#!/usr/bin/env python3
+"""
+Suivi campagne Assurance Emprunteur · refresh.py
+Alimente data.json depuis HubSpot.
 
-  .topbar{position:sticky;top:0;z-index:50;background:rgba(248,248,252,.94);
-    backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:.95rem 1.5rem 0}
-  .topbar-inner{display:flex;align-items:flex-start;justify-content:space-between;
-    gap:1rem;flex-wrap:wrap;max-width:1500px;margin:0 auto}
-  .brand h1{font-size:1.3rem;font-weight:700;letter-spacing:-.025em;
-    display:flex;align-items:center;gap:14px;line-height:1.15;flex-wrap:wrap}
-  .brand-logo{height:26px;color:var(--indigo);display:block;flex-shrink:0}
-  .brand-divider{width:1px;height:22px;background:var(--border2);display:inline-block;flex-shrink:0}
-  .doc-title{font-size:1.22rem;font-weight:700;letter-spacing:-.025em}
-  @media(max-width:760px){.doc-title{font-size:1rem}}
-  @media(max-width:520px){.brand-divider{display:none}.doc-title{font-size:.92rem}}
-  .brand .sub{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);
-    letter-spacing:.02em;margin-top:5px}
-  .badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);
-    font-size:10px;color:var(--muted);padding:5px 11px;border:1px solid var(--border2);
-    border-radius:999px;background:var(--surface)}
-  .badge strong{color:var(--dark);font-weight:500}
-  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-strong);
-    box-shadow:0 0 0 3px var(--green-dim)}
+CORRECTIF CENTRAL DE CETTE VERSION — VAGUES DE RELANCE
+------------------------------------------------------
+Le 11/09/2026, 1 070 contacts déjà shootés en août ont été relancés sur 4 listes
+et 4 nouvelles séquences. Trois défauts du collecteur sont apparus, mesurés en
+direct entre deux runs espacés de 95 minutes :
 
-  .tabs{display:flex;margin-top:1rem;flex-wrap:wrap;max-width:1500px;
-    margin-left:auto;margin-right:auto}
-  .tab{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;font-weight:500;
-    padding:11px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;
-    transition:all .15s;white-space:nowrap;user-select:none;text-transform:uppercase}
-  .tab:hover{color:var(--dark)}
-  .tab.active{color:var(--indigo);border-bottom-color:var(--indigo)}
+  * Les RDV n'avaient AUCUNE borne haute. Un RDV pris des mois après l'envoi
+    restait imputé au batch d'origine. Dans les 2 h suivant l'envoi des
+    relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était
+    close depuis le 03/09. CORRIGÉ : borne haute J+21, comme les dossiers.
 
-  .page{max-width:1500px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
-  .section{display:none}.section.active{display:block}
-  h2.stitle{font-size:1.1rem;font-weight:700;margin-bottom:1rem;letter-spacing:-.02em}
-  h3.btitle{font-size:13px;font-weight:600;margin-bottom:3px;letter-spacing:-.01em}
-  .bsub{font-family:var(--font-mono);font-size:10px;color:var(--muted);
-    margin-bottom:14px;line-height:1.65}
-  .src{display:inline-block;font-family:var(--font-mono);font-size:9px;padding:3px 8px;
-    border-radius:999px;background:rgba(87,71,255,.08);color:var(--indigo);
-    margin-left:9px;font-weight:500;vertical-align:middle}
+  * Les ouvertures et les clics reposent sur hs_sales_email_last_opened et
+    hs_sales_email_last_clicked, des propriétés « dernière fois » sans
+    mémoire. Une ouverture de relance écrase la date d'août et reste comptée
+    comme une ouverture d'août. Le total campagne est passé de 1 214 à 1 236
+    ouvertures en 95 minutes. CORRIGÉ : les valeurs d'août sont FIGÉES dans
+    cohorts.json (frozen_metrics) et ne sont plus recalculées.
 
-  .lvl{display:flex;align-items:center;gap:10px;font-size:.95rem;font-weight:700;
-    letter-spacing:-.02em;margin:1.7rem 0 .9rem;padding-bottom:.55rem;
-    border-bottom:1px solid var(--border)}
-  .lvl:first-of-type{margin-top:.4rem}
-  .lvl-n{display:inline-flex;align-items:center;justify-content:center;
-    width:20px;height:20px;border-radius:6px;background:var(--indigo);color:#fff;
-    font-family:var(--font-mono);font-size:10.5px;font-weight:600;flex-shrink:0}
+  * Les dossiers de la relance étaient invisibles : seul deal_engages()
+    appliquait ATTRIB_DAYS, et les fenêtres d'août étaient fermées.
+    CORRIGÉ : fenêtre par contact, cf. ci-dessous.
 
-  .banner{display:flex;gap:11px;align-items:flex-start;padding:12px 15px;
-    background:var(--yellow-dim);border:1px solid rgba(245,180,0,.28);border-radius:10px;
-    margin-bottom:1rem;font-family:var(--font-mono);font-size:10.5px;
-    color:#8B6500;line-height:1.7}
-  .banner .d{width:7px;height:7px;border-radius:50%;background:var(--yellow);
-    flex-shrink:0;margin-top:5px}
-  .banner.info{background:rgba(87,71,255,.06);border-color:rgba(87,71,255,.2);color:#3D2DDB}
-  .banner.info .d{background:var(--indigo)}
-  .banner.ok{background:var(--green-dim);border-color:rgba(17,226,143,.3);color:var(--green-strong)}
-  .banner.ok .d{background:var(--green-strong)}
-  .banner code{background:rgba(4,4,37,.05);padding:1px 5px;border-radius:4px}
+MODÈLE DE FENÊTRE PAR CONTACT
+------------------------------
+Un contact relancé dispose de DEUX fenêtres de 21 jours : celle de son batch
+initial (v1) et celle de sa relance (v2). Un événement compte s'il tombe dans
+l'une OU l'autre, et il est étiqueté. Deux raisons de ne pas simplement
+décaler la fenêtre :
 
-  .kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:12px;margin-bottom:1.2rem}
-  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;
-    padding:1.05rem 1.15rem;position:relative;overflow:hidden;transition:all .15s}
-  .kpi:hover{border-color:var(--border2);transform:translateY(-1px);
-    box-shadow:0 4px 16px rgba(4,4,37,.04)}
-  .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-    border-radius:12px 12px 0 0;background:var(--muted)}
-  .kpi.indigo::before{background:var(--indigo)}
-  .kpi.green::before{background:var(--emerald)}
-  .kpi.orange::before{background:var(--orange)}
-  .kpi.yellow::before{background:var(--yellow)}
-  .kpi.star::before{background:linear-gradient(90deg,var(--indigo),var(--emerald))}
-  .kpi.star{border-color:var(--border2)}
-  .klabel{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;font-weight:500}
-  .kval{font-size:1.7rem;font-weight:700;letter-spacing:-.035em;line-height:1.05;
-    font-feature-settings:'tnum' on}
-  .ksub{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);
-    margin-top:5px;line-height:1.55}
+  * une activation réelle d'août ne doit pas disparaître parce que le contact
+    a été relancé un mois plus tard ;
+  * fusionner les deux en une fenêtre unique de 58 jours détruirait la
+    comparabilité entre cohortes que ATTRIB_DAYS sert à garantir.
 
-  .block{background:var(--surface);border:1px solid var(--border);border-radius:12px;
-    padding:1.3rem;margin-bottom:1.1rem}
-  .bhead{display:flex;align-items:flex-start;justify-content:space-between;
-    gap:1rem;flex-wrap:wrap;margin-bottom:12px}
-  .chart{position:relative;width:100%;height:270px}
-  .chart.sm{height:210px}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+Le rattachement d'un contact relancé à sa cohorte est CALCULÉ, pas déclaré :
+les listes de relance sont construites sur un statut de séquence, pas sur
+l'appartenance à un batch, et un mapping en dur serait faux pour une partie
+des contacts.
 
-  /* equation d'activation : RDV + simulations - les deux = actives */
-  .eq{display:flex;align-items:stretch;flex-wrap:wrap;gap:10px}
-  .eq-t{flex:1 1 150px;min-width:140px;background:var(--surface2);
-    border:1px solid var(--border);border-radius:10px;padding:13px 15px;position:relative}
-  .eq-t.res{background:linear-gradient(135deg,rgba(87,71,255,.07),rgba(17,226,143,.09));
-    border-color:var(--border2)}
-  .eq-t .l{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-  .eq-t .v{font-size:1.7rem;font-weight:700;letter-spacing:-.03em;line-height:1}
-  .eq-t .s{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:5px}
-  .eq-op{display:flex;align-items:center;justify-content:center;font-size:1.3rem;
-    font-weight:700;color:var(--muted);width:16px;flex:0 0 16px}
-  @media(max-width:820px){.eq-op{width:100%;flex:1 0 100%;height:14px}}
+Une relance n'est JAMAIS une cohorte. Ses contacts sont déjà dans le
+dénominateur de leur batch ; les compter deux fois ferait baisser tous les
+taux mécaniquement.
 
-  .rlab{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--muted);margin:20px 0 9px;
-    display:flex;align-items:center;gap:10px}
-  .rlab::after{content:'';flex:1;height:1px;background:var(--border)}
-  .rlab strong{color:var(--orange);font-weight:700}
-  .eq-t.sub{background:transparent;border-style:dashed}
-  .eq-t.sub .v{font-size:1.35rem;color:var(--muted)}
-  .eq-t.sub.res .v{color:var(--dark)}
+BIAIS DE SÉLECTION À NE PAS OUBLIER
+------------------------------------
+Les 4 listes de relance ne contiennent QUE des contacts non activés. Le taux
+d'activation d'une vague 2 n'est donc pas comparable à celui d'un batch
+initial, dont le dénominateur incluait tout le monde. Toute activation de
+vague 2 est un gain marginal pur.
 
-  .recon{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 20px;margin-top:14px;
-    padding:11px 14px;background:var(--surface2);border-radius:9px;
-    border:1px dashed var(--border2);font-size:11.5px}
-  .recon .rl{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--muted)}
-  .recon .m{font-size:10.5px}
+CORRECTIF DE LA VERSION PRÉCÉDENTE, TOUJOURS VALABLE
+----------------------------------------------------
+Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
+du 5 août, celui du 13 août puis le batch du 10 septembre. Toute métrique est
+attribuée par APPARTENANCE À LA LISTE de la cellule. La séquence ne sert qu'à
+restreindre le périmètre des e-mails collectés.
 
-  .goal{margin-top:16px;padding:14px 16px;background:var(--surface2);border-radius:10px;
-    border:1px dashed var(--border2)}
-  .goal-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
-    flex-wrap:wrap;margin-bottom:9px}
-  .goal-t{font-size:12.5px;font-weight:600}
-  .goal-n{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
-  .goal-bar{height:12px;border-radius:999px;background:var(--border);overflow:hidden}
-  .goal-fill{height:100%;border-radius:999px;
-    background:linear-gradient(90deg,var(--indigo),var(--emerald))}
-  .goal-note{font-family:var(--font-mono);font-size:10px;color:var(--muted);
-    margin-top:9px;line-height:1.65}
+Prérequis
+  export HUBSPOT_TOKEN="pat-eu1-..."
+  pip install requests
 
-  .split-bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-top:16px;
-    border:1px solid var(--border)}
-  .split-bar>div{display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-mono);font-size:10px;font-weight:600;color:#fff;
-    white-space:nowrap;overflow:hidden}
-  .sb-both{background:var(--indigo)}
-  .sb-meet{background:var(--yellow)}
-  .sb-deal{background:var(--emerald);color:var(--dark)!important}
-  @media(max-width:900px){.two{grid-template-columns:1fr}}
+Portées de l'application privée — LECTURE SEULE
+  crm.objects.contacts.read     membres des listes
+  crm.lists.read                filtre d'appartenance
+  sales-email-read              objets EMAIL
+  crm.objects.meetings.read     RDV  (couvert par sales-email-read sur ce portail)
+  crm.objects.deals.read        dossiers courtage
+"""
+import os
+import json
+import time
+import datetime as dt
 
-  .twrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
-  table{width:100%;border-collapse:collapse;font-size:11.5px}
-  thead th{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--muted);padding:10px 11px;text-align:right;
-    font-weight:500;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
-  thead th:first-child,thead th.left{text-align:left}
-  tbody tr{border-bottom:1px solid var(--border)}
-  tbody tr:last-child{border-bottom:none}
-  tbody tr:hover{background:var(--surface2)}
-  tbody tr.wip{background:rgba(245,180,0,.05)}
-  tbody td{padding:9px 11px;text-align:right;font-family:var(--font-mono);
-    font-size:11px;white-space:nowrap}
-  tbody td:first-child,tbody td.left{text-align:left;font-family:var(--font-sans);
-    font-size:12px;font-weight:500;white-space:normal}
-  .totrow td{background:var(--surface2);font-weight:600;border-top:1px solid var(--border2)}
-  .r{color:var(--raspberry);font-weight:600}
-  .g{color:var(--green-strong);font-weight:600}
-  .o{color:var(--orange);font-weight:600}
-  .m{color:var(--muted)}
-  .pill{display:inline-block;font-family:var(--font-mono);font-size:9px;padding:2px 8px;
-    border-radius:999px;font-weight:500;background:var(--surface2);color:var(--muted);
-    border:1px solid var(--border2)}
-  .pill.wip{background:var(--yellow-dim);color:#8B6500;border-color:rgba(245,180,0,.3)}
-  .pill.ok{background:var(--green-dim);color:var(--green-strong);border-color:rgba(17,226,143,.3)}
-  .pill.r{background:var(--red-dim);color:var(--raspberry);border-color:rgba(219,51,82,.3)}
+import requests
 
-  .coh-block{background:var(--surface);border:1px solid var(--border);
-    border-radius:12px;padding:1.3rem;margin-bottom:1.1rem}
-  .coh-block.wip{border-color:rgba(245,180,0,.35);background:rgba(245,180,0,.02)}
-  .coh-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:5px}
-  .coh-name{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+TOKEN = os.environ["HUBSPOT_TOKEN"]
+BASE = "https://api.hubapi.com"
+H = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+CONTACTS = "/crm/v3/objects/contacts/search"
+EMAILS = "/crm/v3/objects/emails/search"
+MEETINGS = "/crm/v3/objects/meetings/search"
+CALLS = "/crm/v3/objects/calls/search"
+DEALS = "/crm/v3/objects/deals/search"
+CHUNK = 100          # taille de lot pour les filtres associations.contact
 
-  .anom{display:flex;gap:11px;align-items:flex-start;padding:12px 0;
-    border-bottom:1px solid var(--border)}
-  .anom:last-child{border-bottom:none}
-  .abadge{font-family:var(--font-mono);font-size:8.5px;font-weight:600;padding:3px 8px;
-    border-radius:999px;letter-spacing:.05em;flex-shrink:0;margin-top:1px}
-  .abadge.high{background:var(--red-dim);color:var(--raspberry)}
-  .abadge.med{background:var(--orange-dim);color:var(--orange)}
-  .abadge.low{background:var(--surface2);color:var(--muted)}
-  .at{font-size:12.5px;font-weight:600;margin-bottom:3px}
-  .ab{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);line-height:1.7}
+# ---------------------------------------------------------------- engagement
+# Fenêtre d'attribution. Sans borne de fin, un cumul ouvert monte à chaque
+# rafraîchissement et deux cohortes d'âge différent cessent d'être comparables.
+#
+# NON CALIBRÉ. Les courbes de réponse cumulées relevées le 11/09 montrent que
+# les deux batchs d'août MONTAIENT ENCORE à J+21 (5 août : 9,28 → 9,44 → 9,60 % ;
+# 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupe en pleine pente et
+# sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
+# pour l'instant, car changer ce chiffre réécrit rétroactivement tout
+# l'historique déjà communiqué.
+# AUCUNE LIMITE DE DÉLAI (None). Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après
+# l'envoi ; seule la borne basse subsiste, rien d'antérieur à l'envoi.
+# CE QUE ÇA COÛTE, et qui doit être dit à chaque publication :
+#   - les cohortes ne sont plus comparables : une cohorte ancienne accumule
+#     plus longtemps et gagne toujours ;
+#   - tout chiffre publié remonte au fil du temps.
+# HISTORIQUE : cumul ouvert jusqu'au 22/08, J+21 du 22/08 au 25/09, puis
+# aucune borne. Mettre un entier ici rétablit une fenêtre.
+ATTRIB_DAYS = None
 
-  .dt td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top;
-    text-align:left;font-family:var(--font-sans);font-size:11.5px;white-space:normal}
-  .dt td:first-child{font-weight:600;width:24%}
-  .dt td:nth-child(2){font-family:var(--font-mono);color:var(--indigo);font-size:10.5px;width:28%}
-  .dt td:nth-child(3){color:var(--muted);font-size:11px}
-</style>
-</head>
-<body>
+# Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
+# contacts enrôlés et contacts jamais touchés par une séquence. Import
+# d'antériorité, pas de l'activité. 4 concernent des contacts de cohorte.
+BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
+            ("2026-09-16T09:57:00Z", "2026-09-16T09:58:00Z"),
+            ("2026-09-16T11:00:00Z", "2026-09-16T11:03:00Z")]
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <h1>
-        <svg class="brand-logo" viewBox="0 -0.5 81 27" xmlns="http://www.w3.org/2000/svg" aria-label="Nopillo">
-          <path d="M11.9693 17.2058V13.8364C11.9693 11.0336 10.0605 9.14961 7.21839 9.14961C5.88306 9.14961 4.74031 9.53983 3.82187 10.3077V9.42654H0V21.6157H3.82187V15.0134C3.82187 13.7022 4.72761 12.8231 6.07775 12.8231C7.33478 12.8231 8.1474 13.6644 8.1474 14.9672V17.9443C8.1474 20.3464 9.47638 21.6157 11.9904 21.6157H13.1565V17.9422H12.7121C12.2253 17.9422 11.9693 17.6883 11.9693 17.2058Z" fill="currentColor"/>
-          <path d="M20.2775 9.14961C16.5064 9.14961 13.6644 11.8895 13.6644 15.5211C13.6644 19.1527 16.5064 21.8926 20.2775 21.8926C24.0486 21.8926 26.8907 19.1527 26.8907 15.5211C26.8907 11.8895 24.0465 9.14961 20.2775 9.14961ZM20.2775 18.2191C18.739 18.2191 17.5793 17.0589 17.5793 15.5211C17.5793 13.9833 18.739 12.8231 20.2775 12.8231C21.816 12.8231 22.9757 13.9833 22.9757 15.5211C22.9757 17.0589 21.816 18.2191 20.2775 18.2191Z" fill="currentColor"/>
-          <path d="M74.3868 9.00695C70.6158 9.00695 67.7737 11.7469 67.7737 15.3784C67.7737 19.01 70.6158 21.7499 74.3868 21.7499C78.1579 21.7499 81 19.01 81 15.3784C81 11.7469 78.1558 9.00695 74.3868 9.00695ZM74.3868 18.0764C72.8484 18.0764 71.6887 16.9163 71.6887 15.3784C71.6887 13.8406 72.8484 12.6805 74.3868 12.6805C75.9253 12.6805 77.085 13.8406 77.085 15.3784C77.085 16.9163 75.9253 18.0764 74.3868 18.0764Z" fill="currentColor"/>
-          <path d="M35.6645 9.14961C34.3757 9.14961 33.216 9.55661 32.2912 10.3308V9.42654H28.4694V26.0004H32.2912V20.7115C33.216 21.4856 34.3757 21.8926 35.6645 21.8926C39.0504 21.8926 41.6025 19.1527 41.6025 15.5211C41.6025 11.8895 39.0504 9.14961 35.6645 9.14961ZM34.9894 18.2191C33.4509 18.2191 32.2912 17.0589 32.2912 15.5211C32.2912 13.9833 33.4509 12.8231 34.9894 12.8231C36.5279 12.8231 37.6876 13.9833 37.6876 15.5211C37.6876 17.0589 36.5279 18.2191 34.9894 18.2191Z" fill="currentColor"/>
-          <path d="M44.7621 3.84177C43.4479 3.84177 42.4554 4.81523 42.4554 6.10547C42.4554 7.39572 43.4479 8.39225 44.7621 8.39225C46.0762 8.39225 47.092 7.4083 47.092 6.10547C47.092 4.80264 46.091 3.84177 44.7621 3.84177Z" fill="currentColor"/>
-          <path d="M46.673 9.42654H42.8511V21.6157H46.673V9.42654Z" fill="currentColor"/>
-          <path d="M66.578 17.6421C66.5442 17.6673 66.5209 17.682 66.5188 17.6862C65.7104 18.324 64.6036 19.1988 63.9412 19.073C63.7444 19.0352 63.5751 18.8862 63.4228 18.6198C63.2492 18.3156 63.0059 17.6023 62.9551 17.1785C64.2671 15.9302 66.0913 13.9372 67.4838 11.4133C68.8847 8.87268 69.5175 6.40548 69.3609 4.07885C69.2297 2.12145 68.2689 0.615115 66.8531 0.145172C65.5771 -0.276518 64.1804 0.243776 63.0165 1.57598C60.4939 4.46907 59.4147 10.9748 59.3279 14.3966C59.3194 14.7575 59.3343 15.1099 59.347 15.4498C59.3512 15.5652 59.3554 15.6806 59.3575 15.8022C58.9978 16.1568 58.6042 16.5113 58.1979 16.8533L57.1757 17.6254C57.1419 17.6547 57.1334 17.661 57.1017 17.6862C56.2933 18.324 55.1886 19.1967 54.5262 19.0709C54.3294 19.0331 54.1601 18.8841 54.0078 18.6177C53.8321 18.3114 53.5887 17.5939 53.5401 17.1764C54.8521 15.9281 56.6763 13.9351 58.0688 11.4112C59.4697 8.87058 60.1024 6.40338 59.9458 4.07675C59.8146 2.11935 58.8539 0.613017 57.4381 0.143074C56.1621 -0.278615 54.7654 0.241678 53.6014 1.57388C51.0789 4.46697 49.9997 10.9727 49.9129 14.3945C49.9044 14.7596 49.9192 15.1246 49.9319 15.4477C49.9362 15.5631 49.9404 15.6785 49.9425 15.8001C49.6187 16.119 48.804 16.91 48.5289 17.1512L48.4569 17.2142V21.2821L48.7828 21.0765C48.9818 20.9506 49.3965 20.5961 49.7965 20.2562C50.0653 20.0275 50.3192 19.8114 50.4652 19.7002C50.5287 19.652 50.5901 19.6058 50.6515 19.5618C51.0832 20.6548 51.79 21.5192 52.6576 22.0101C53.2544 22.3479 53.902 22.5199 54.5855 22.5199C55.5992 22.5199 56.8519 22.1423 57.855 21.5339C58.1936 21.3283 58.8094 20.7408 59.3512 20.2226C59.6157 19.9709 59.8654 19.7317 60.0326 19.5828C60.0432 19.5744 60.0538 19.5681 60.0643 19.5597C60.4961 20.6548 61.2029 21.5171 62.0705 22.0101C62.6673 22.3479 63.3148 22.5199 63.9984 22.5199C64.9486 22.5199 65.977 22.1884 67.0563 21.5339C67.3208 21.3744 67.7779 21.001 68.4191 20.424C67.5748 19.6835 66.9378 18.7331 66.5759 17.6401L66.578 17.6421ZM63.2302 10.3664C63.6175 8.20763 64.61 4.69145 65.7823 3.63198C66.049 4.48165 66.0871 6.65514 64.5634 9.5755C64.1296 10.4063 63.5984 11.2308 62.9762 12.0364C63.0376 11.514 63.1223 10.9622 63.2281 10.3664H63.2302ZM53.8173 10.3664C54.2046 8.20763 55.1949 4.69355 56.3694 3.63198C56.6361 4.48165 56.6742 6.65514 55.1505 9.5755C54.7167 10.4063 54.1855 11.2308 53.5655 12.0364C53.6268 11.514 53.7115 10.9622 53.8173 10.3664Z" fill="currentColor"/>
-        </svg>
-        <span class="brand-divider"></span><span class="doc-title">Suivi de performance - campagne Assurance Emprunteur</span>
-      </h1>
-      <div class="sub">OPS · V2 août 2026</div>
-    </div>
-    <div class="badges">
-      <span class="badge"><span class="dot"></span>Dernière MAJ :&nbsp;<strong id="upd">—</strong></span>
-      <span class="badge" id="bSrc">—</span>
-    </div>
-  </div>
-  <div class="tabs">
-    <div class="tab active" data-t="cohorts">Cohortes</div>
-    <div class="tab" data-t="method">Méthodo</div>
-  </div>
-</div>
+# Marqueur de simulation réelle. Écrit par n8n depuis last_event_at, À LA
+# CRÉATION COMME À LA MISE À JOUR : un dossier ouvert à la main pendant une
+# panne puis repris par le flux le porte quand même. C'est exactement ce que
+# hs_object_source_label ne sait pas faire — un deal CRM_UI peut cacher une
+# vraie simulation.
+# NE PAS confondre avec last_step_id, qui vient du step_id du DERNIER event et
+# n'est renseignée que si cet event est une complétion d'étape : 3 transactions
+# sur 394 au 17/09, contre 245 pour last_step_date.
+# ÉTAPES QUI PROUVENT QUE LE CLIENT A AGI.
+# resolveDealStageId, dans le flow n8n « Sync Courtage AE x HubSpot » :
+#   étape 'ajout-emprunteurs' franchie  -> simulation_completed
+#   étape 'intro' franchie              -> simulation_started
+#   aucune étape franchie               -> optimization_activated
+# Donc optimization_activated signifie EXACTEMENT « le client a accès au
+# simulateur et n'a rien rempli ». Ce n'est pas une activation.
+# simulation_started correspond littéralement à « a rempli au minimum le
+# premier champ » de la définition du 17/09.
+# Nombre d'étapes réellement franchies dans le simulateur, écrit par n8n depuis
+# completed_steps. C'est le marqueur le plus sûr : il vient du produit, et il
+# survit à un déplacement d'étape manuel — un dossier passé en
+# optimization_declined le porte toujours.
+# COUVERTURE INCOMPLÈTE au 28/09 : le flow ne repasse que sur les optimisations
+# actives, 256 transactions ont encore la propriété vide dont 68 sur une étape
+# de parcours. D'où la règle additive ci-dessous, transitoire : dès que le
+# rattrapage est complet, l'étape pourra être retirée du test.
+ETAPES_PROP = "ae_etapes_simu"
 
-<div class="page">
-
-  <div class="section active" id="s-cohorts">
-    <h2 class="stitle" id="campTitle">Campagne</h2>
-
-    <div class="banner" id="bWindow" style="display:none"><span class="d"></span><span></span></div>
-    <div class="banner" id="bOverlap" style="display:none"><span class="d"></span><span></span></div>
-    <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
-
-    <!-- NIVEAU 1 -->
-    <div class="lvl"><span class="lvl-n">1</span>Performance globale</div>
-    <div class="kgrid" id="kpiGlobal"></div>
-
-    <div class="block">
-      <div class="bhead"><div>
-        <h3 class="btitle">Comment se décomposent les clients activés<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
-        <div class="bsub">Décomposition du <strong>total potentiel</strong>. Trois cas disjoints,
-          en contacts uniques. La carte de tête affiche le chiffre confirmé.</div>
-      </div></div>
-      <div id="actEq"></div>
-      <div class="rlab">Les mêmes contacts, lus en totaux — <strong>ces deux-là se recoupent</strong></div>
-      <div class="eq" id="actTot"></div>
-      <div class="recon" id="actRecon"></div>
-      <div class="split-bar" id="actBar"></div>
-      <div class="goal" id="goalWrap" style="display:none">
-        <div class="goal-head"><span class="goal-t" id="goalT"></span>
-          <span class="goal-n" id="goalN"></span></div>
-        <div class="goal-bar"><div class="goal-fill" id="goalFill"></div></div>
-        <div class="goal-note" id="goalNote"></div>
-      </div>
-      <div class="bsub" id="actNote" style="margin-top:12px"></div>
-      <div id="waveWrap" style="display:none">
-        <div class="rlab">Origine de l'activation — <strong>envoi initial contre relance</strong></div>
-        <div class="eq" id="waveEq"></div>
-        <div class="bsub" id="waveNote" style="margin-top:12px"></div>
-      </div>
-      <div id="qualWrap" style="display:none">
-        <div class="rlab">Statut de qualification — <strong>confirmés contre en attente</strong></div>
-        <div class="eq" id="qualEq"></div>
-        <div class="bsub" id="qualNote" style="margin-top:12px"></div>
-      </div>
-      <div id="attrWrap" style="display:none">
-        <div class="rlab">Qui a produit l'activation — <strong>marketing contre sales</strong></div>
-        <div class="eq" id="attrEq"></div>
-        <div class="rlab">Détail du marketing — <strong>ces trois-là s'additionnent</strong></div>
-        <div class="eq" id="attrMk"></div>
-        <div class="bsub" id="attrNote" style="margin-top:12px"></div>
-      </div>
-    </div>
-
-    <!-- NIVEAU 2 -->
-    <div class="lvl"><span class="lvl-n">2</span>Performance par cohorte</div>
-    <div class="block">
-      <div class="bhead"><div>
-        <h3 class="btitle">Comparaison des batchs</h3>
-        <div class="bsub">Une cohorte encore en cours d'envoi est signalée et exclue de la comparaison.</div>
-      </div></div>
-      <div class="twrap"><table id="tCohorts">
-        <thead><tr><th class="left">Cohorte</th><th class="left">Statut</th><th>Contacts</th>
-          <th>Encore en séquence</th><th id="thK2"></th><th>Taux d'activation</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-
-    <div class="block">
-      <div class="bhead"><div>
-        <h3 class="btitle">Nature de l'activation, par cellule<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
-        <div class="bsub">Les colonnes <strong>RDV pris</strong> et <strong>Simulations</strong>
-          se recoupent : ne les additionnez pas. Les trois colonnes « dont » sont disjointes.</div>
-      </div></div>
-      <div class="twrap"><table id="tMatrix">
-        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
-          <th>RDV pris</th><th>Simulations</th>
-          <th>dont les deux</th><th>dont RDV seul</th><th>dont simu seule</th>
-          <th>Activés</th><th>Taux</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-
-    <div class="block">
-      <div class="bhead"><div>
-        <h3 class="btitle">Origine des deals<span class="src">hs_object_source_label</span></h3>
-        <div class="bsub">La colonne à surveiller est la dernière : un dossier seul créé à la main
-          mesure de la saisie commerciale, pas un parcours produit.</div>
-      </div></div>
-      <div class="twrap"><table id="tSource">
-        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Deals</th>
-          <th>via n8n</th><th>à la main</th><th>Part n8n</th>
-          <th>dont « deal seul » manuel</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-
-    <div class="block" id="relanceBlock" style="display:none">
-      <div class="bhead"><div>
-        <h3 class="btitle">Effet des relances, par cellule<span class="src">vague 2</span></h3>
-        <div class="bsub">Une relance n'est pas une cohorte : ses contacts étaient déjà dans le
-          dénominateur. Vague 1 et vague 2 sont disjointes.</div>
-      </div></div>
-      <div class="twrap"><table id="tRelance">
-        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Ciblés</th>
-          <th>Relancés</th><th>Activés vague 1</th><th>Activés vague 2</th>
-          <th>Total activés</th><th>Taux vague 2</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-
-    <div class="block" id="attrBlock" style="display:none">
-      <div class="bhead"><div>
-        <h3 class="btitle">Origine de l'activation, par cellule<span class="src">last_step_date ∪ hs_meeting_source ∪ CALL</span></h3>
-        <div class="bsub">Trois colonnes disjointes. <strong>Marketing</strong> : simulation, réponse,
-          ou RDV réservé avant tout appel. <strong>Sales</strong> : appel sortant en premier.</div>
-      </div></div>
-      <div class="twrap"><table id="tAttr">
-        <thead><tr><th class="left">Cohorte</th><th class="left">Cellule</th><th>Activés</th>
-          <th>Certains</th><th>En attente</th>
-          <th>Marketing</th><th>dont simulation</th><th>Sales</th><th>Non attribuable</th>
-          <th>Part marketing</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-
-    <div class="block">
-      <div class="bhead"><div><h3 class="btitle">Taux d'activation par cohorte</h3>
-        <div class="bsub">Clients activés / contacts ciblés. <strong>Sans limite de délai, ces
-          barres ne sont pas comparables</strong> : le 5 août accumule depuis 51 jours, le
-          10 septembre depuis 15.</div></div></div>
-      <div class="chart sm" id="wrapCoh"><canvas id="chCoh"></canvas></div>
-    </div>
-
-    <!-- NIVEAU 3 -->
-    <div class="lvl"><span class="lvl-n">3</span>Détail par cohorte</div>
-    <div id="cohDetail"></div>
-
-    <div class="block">
-      <div class="bhead"><div>
-        <h3 class="btitle">RDV par propriétaire de la réunion<span class="src">meeting.hubspot_owner_id</span></h3>
-        <div class="bsub">Qui a <strong>posé</strong> le rendez-vous, et non à qui appartient le contact. Un contact avec plusieurs RDV est attribué au propriétaire du premier. Les deals courtage AE ne sont pas répartis : créés par n8n, ils n'ont pas de propriétaire.</div>
-      </div></div>
-      <div class="chart sm" id="wrapOwner"><canvas id="chOwner"></canvas></div>
-    </div>
-  </div>
-
-  <div class="section" id="s-method">
-    <h2 class="stitle">Méthodo &amp; limites</h2>
-
-    <div class="block">
-      <h3 class="btitle">La règle, en quatre lignes</h3>
-      <div class="bsub">
-        Un client est <strong>activé</strong> s'il a pris un RDV « emprunteur » avec Clara, Lilian ou
-        Mathieu, ou s'il a commencé à simuler. S'il fait les deux, il compte une fois.<br>
-Ça compte à partir du mail qu'il a reçu, <strong>sans limite de délai pour l'instant</strong>.<br>
-        Tout est compté en <strong>contacts</strong>, jamais en rendez-vous ni en dossiers.<br>
-        Les trois façons de découper ce total ne s'additionnent jamais entre elles.
-      </div>
-    </div>
-
-    <div class="block">
-      <h3 class="btitle">Chaque chiffre, en clair</h3>
-      <div class="twrap"><table class="dt"><tbody>
-
-        <tr><td>Objectif</td>
-          <td>200 clients activés</td>
-          <td>Toutes cohortes confondues, en contacts uniques. <strong>Sans limite de délai, le
-            compteur monte tout seul</strong> : l'objectif sera atteint mécaniquement avec le temps,
-            même sans nouvel envoi. Un dépassement ne prouve donc pas à lui seul que la campagne a
-            bien fonctionné — c'est la vitesse qui compte.</td></tr>
-
-        <tr><td>Contacts ciblés</td>
-          <td>2 075</td>
-          <td>Toutes les personnes à qui on a envoyé un mail, comptées une seule fois même si elles
-            ont reçu deux batchs. Les relancés ne s'ajoutent pas : ils étaient déjà là.</td></tr>
-
-        <tr><td>Envois</td>
-          <td>e-mails partis</td>
-          <td>Le seul chiffre compté en e-mails et non en personnes. Un contact qui reçoit trois
-            étapes de séquence compte trois fois.</td></tr>
-
-        <tr><td>Ouvertures · Clics</td>
-          <td>personnes ayant ouvert ou cliqué</td>
-          <td>HubSpot ne garde que la <strong>dernière</strong> ouverture de chaque personne, pas
-            l'historique. Les chiffres des six cellules d'août sont donc <strong>figés</strong> au
-            11/09 : sans ça, les relances de septembre les auraient fait bouger.<br>
-            À savoir : Apple Mail précharge les images et déclenche des ouvertures qui n'en sont
-            pas. Ne pas piloter dessus.</td></tr>
-
-        <tr><td>Réponses</td>
-          <td><strong>retirées</strong></td>
-          <td>HubSpot enregistre la dernière réponse du contact à <strong>n'importe quel</strong>
-            e-mail, et la date glisse à chaque nouvel échange. Une cellule d'août est passée de 68 à
-            110 réponses en dix jours, sur une campagne terminée. Aucune source fiable n'existe : les
-            e-mails entrants ne portent pas l'identifiant de séquence. Le compteur a été retiré
-            plutôt que d'afficher un chiffre faux.</td></tr>
-
-        <tr><td>RDV pris</td>
-          <td>personnes ayant un rendez-vous</td>
-          <td>Rendez-vous dont le titre contient « emprunteur », posé par Clara, Lilian ou Mathieu,
-            après l'envoi. Une personne avec deux rendez-vous compte une fois. Réservé par le
-            client ou calé par un commercial : les deux comptent.</td></tr>
-
-        <tr><td>Simulations entamées</td>
-          <td>personnes ayant commencé à simuler</td>
-          <td>Le produit compte au moins une étape franchie (<code>ae_etapes_simu</code>), ou leur
-            dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire qu'elles
-            ont rempli au moins le premier champ.<br>
-            <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
-            simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
-            rendez-vous existe.</td></tr>
-
-        <tr><td>Clients activés</td>
-          <td>RDV <strong>ou</strong> simulation</td>
-          <td>Le chiffre principal. C'est une union, jamais une addition : une personne qui a un
-            rendez-vous <em>et</em> une simulation compte une fois.</td></tr>
-
-        <tr><td>Dossiers en souscription</td>
-          <td>personnes montant un dossier</td>
-          <td>Leur dossier est à l'étape <code>process_started</code> ou au-delà. C'est un
-            sous-ensemble des activés, pas un chiffre à ajouter.</td></tr>
-
-        <tr><td>Contacts relancés<br>Vague 1 · Vague 2</td>
-          <td>1 070 personnes</td>
-          <td>Une relance n'est pas un nouveau batch : ces personnes étaient déjà dans le
-            dénominateur. Chacune obtient une seconde période à partir de sa relance.<br>
-            <strong>Le taux de la vague 2 ne se compare pas à celui d'un envoi initial</strong> : on
-            n'a relancé que des gens qui n'avaient rien fait.</td></tr>
-
-        <tr><td>Marketing · Sales<br>Non attribuable</td>
-          <td>qui a produit l'activation</td>
-          <td>Dans cet ordre : une simulation l'emporte toujours ; sinon une réponse ou un
-            rendez-vous pris par la personne <strong>avant</strong> le premier appel sortant ; sinon
-            un appel sortant. On compare la date de <strong>réservation</strong> du rendez-vous,
-            jamais celle où il a lieu.</td></tr>
-
-        <tr><td>Délai d'attribution</td>
-          <td>aucune limite pour l'instant</td>
-          <td>On compte tout ce qui arrive après l'envoi, sans limite de délai. <strong>Conséquence :
-            les cohortes ne se comparent pas entre elles</strong>, une ancienne accumule plus
-            longtemps, et les chiffres montent au fil du temps.</td></tr>
-
-        <tr><td>Rattrapages exclus</td>
-          <td>3 rafales</td>
-          <td>Quand le flux n8n se rétablit après une panne, il crée des centaines de dossiers en
-            quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
-            ils sont écartés (06/08 et 16/09).</td></tr>
-
-      </tbody></table></div>
-    </div>
-
-    <div class="block">
-      <h3 class="btitle">Limites connues</h3>
-      <div id="limits"></div>
-    </div>
-
-    <div class="block">
-      <h3 class="btitle">Journal des définitions</h3>
-      <div class="bsub">Chaque changement de règle est daté ici. Un chiffre d'avant n'est pas
-        comparable à un chiffre d'après.</div>
-      <div class="twrap"><table class="dt"><tbody>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Réponses</span></td>
-          <td>retirées du dashboard</td>
-          <td>HubSpot enregistre la dernière réponse du contact à <strong>n'importe quel</strong> e-mail, et la date glisse à chaque nouvel échange. La cellule RP du 13 août est passée de 68 à 110 réponses en dix jours, sur une campagne terminée depuis. Aucune source fiable n'existe : les e-mails entrants ne portent pas l'identifiant de séquence. Le compteur et la courbe sont retirés plutôt que d'afficher un chiffre faux.</td></tr>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Fenêtre</span></td>
-          <td>21 jours → aucune limite</td>
-          <td>Décision de Clémence : on compte tout, sans limite. <strong>Conséquence : les cohortes ne se comparent plus entre elles</strong> et les chiffres montent au fil du temps. Rien d'avant le 25/09 n'est comparable à rien d'après.</td></tr>
-        <tr><td>28/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
-          <td>étape du pipe → nombre d'étapes franchies</td>
-          <td><strong>Le marqueur vient désormais du produit.</strong> <code>ae_etapes_simu</code> compte les étapes réellement franchies dans le simulateur et survit à un déplacement d'étape manuel : un dossier passé en « optimisation refusée » garde la trace de sa simulation. 34 dossiers refusés portant une vraie simulation sont ainsi récupérés. L'étape du pipe reste acceptée en second recours tant que le rattrapage n8n n'a pas rempli la propriété partout.</td></tr>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Simulations</span></td>
-          <td>toute fiche → étapes réelles</td>
-          <td>Une fiche ne compte que si le client a rempli au moins un champ (<code>simulation_started</code> ou plus loin). Un simple accès au simulateur, un dossier refusé, ou une fiche créée automatiquement à cause d'un rendez-vous ne comptent plus.</td></tr>
-        <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Souscription</span></td>
-          <td>nouveau</td>
-          <td>Nombre de personnes montant un dossier. Sous-ensemble des activés.</td></tr>
-        <tr><td>17/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Qualification</span></td>
-          <td>nouveau</td>
-          <td>Définition du lead calée avec Clémence : rendez-vous pris par le client, parcours démarré, ou rendez-vous organisé après un appel. Le total activé ne change pas.</td></tr>
-        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Marketing / Sales</span></td>
-          <td>nouveau</td>
-          <td>Qui a produit l'activation. Trois catégories qui s'additionnent pour faire le total.</td></tr>
-        <tr><td>16/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Rattrapages</span></td>
-          <td>par fiche → par date</td>
-          <td>Quand n8n se rétablit, il crée des centaines de dossiers en quelques secondes. On écarte ces secondes-là, plus les fiches entières : un dossier créé pendant la rafale mais bougé trois jours plus tard compte toujours.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
-          <td>cumul → fenêtre</td>
-          <td>Un rendez-vous pris des mois après l'envoi était encore crédité au batch. Mesuré : le batch du 13 août a gagné 7 rendez-vous en 2 heures après l'envoi des relances.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Relances</span></td>
-          <td>nouveau</td>
-          <td>Un contact relancé obtient une seconde période d'attribution. Le dénominateur ne bouge pas : il y était déjà.</td></tr>
-        <tr><td>11/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Ouvertures d'août</span></td>
-          <td>figées</td>
-          <td>HubSpot ne garde que la dernière ouverture de chaque personne. Sans gel, les relances de septembre auraient fait bouger les chiffres d'août.</td></tr>
-        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Vocabulaire</span></td>
-          <td>engagement → activation</td>
-          <td>Libellés seulement. Les valeurs restent comparables.</td></tr>
-        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Cartes du haut</span></td>
-          <td>totaux → cas exclusifs</td>
-          <td>Deux totaux qui se recoupent, côte à côte, invitaient à une addition fausse.</td></tr>
-        <tr><td>25/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Total campagne</span></td>
-          <td>somme → union</td>
-          <td>Additionner les cellules surcompte dès qu'une personne est ciblée deux fois.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">KPI principal</span></td>
-          <td>simulations → activation</td>
-          <td>L'ancien filtrait sur des étapes que n8n ne remplit pas : il affichait un chiffre quasi nul.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">RDV</span></td>
-          <td>réunions → personnes</td>
-          <td>62 réunions correspondaient à 51 personnes.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Origine des dossiers</span></td>
-          <td>affirmation → mesure</td>
-          <td>On affirmait que le pipe n'était alimenté que par le produit. Faux : une majorité de fiches est créée à la main.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Répartition</span></td>
-          <td>propriétaire du contact → de la réunion</td>
-          <td>Des commerciaux apparaissaient sans avoir posé un seul rendez-vous.</td></tr>
-        <tr><td>22/08/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Périmètre</span></td>
-          <td>1 → 2 cohortes</td>
-          <td>Le batch du 13 août n'était pas déclaré : le dashboard affichait la moitié de la production réelle.</td></tr>
-      </tbody></table></div>
-    </div>
-
-    <div class="block">
-      <h3 class="btitle">Ce que ce dashboard refuse de faire</h3>
-      <div class="bsub">
-        · <strong>Attribuer les e-mails par séquence.</strong> Les séquences sont réutilisées entre batchs.<br>
-        · <strong>Compter une relance comme une cohorte.</strong> Ses contacts sont déjà dans le dénominateur.<br>
-        · <strong>Comparer le taux d'une relance à celui d'un batch.</strong> La relance ne cible que des non-activés.<br>
-        · <strong>Additionner les cohortes</strong> sans vérifier leur recoupement.<br>
-        · <strong>Additionner RDV et simulations.</strong> L'activation est une union, jamais une somme.<br>
-        · <strong>Additionner les cellules</strong> pour produire un total en contacts uniques.<br>
-        · <strong>Écrire « a simulé »</strong> là où la source ne dit que « une transaction existe ».<br>
-        · <strong>Filtrer sur les étapes du pipe courtage.</strong> Elles ne sont pas traversées.<br>
-        · <strong>Comparer un batch en cours à un batch terminé.</strong><br>
-        · <strong>Désigner un gagnant A/B</strong> sans test de proportions significatif à 5 %.<br>
-        · <strong>Cumuler les « Version A » entre batchs.</strong> Rien ne garantit le même message.<br>
-        · <strong>Afficher une cohorte sans <code>list_id</code>.</strong> Elle produirait des zéros trompeurs.<br>
-        · <strong>Écrire un nom, un e-mail ou un téléphone</strong> dans <code>data.json</code>.
-      </div>
-    </div>
-  </div>
-</div>
-
-<script type="application/json" id="seed">{
- "meta": {
-  "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-15T09:31:45.196162+00:00",
-  "collected": true,
-  "primary_axis": "cohort",
-  "primary_kpi": "engaged",
-  "source": "HubSpot · listes statiques ∩ EMAIL.hs_sequence_id · MEETING_EVENT ∪ DEAL pipeline 3817233652 · contacts uniques, fenêtre J+21 par contact",
-  "attribution_note": "RDV et deals rattachés par appartenance aux listes statiques, sur une fenêtre de 21 jours après l'horodatage d'envoi du batch. Les deals ouverts AVANT la campagne mais déplacés d'étape après l'envoi sont comptés : c'est ce qui rattrape les réactivations, invisibles sur la seule date de création. Attribution temporelle, non causale — avec une réserve en faveur de la causalité : sur les contacts du 5 août, aucun n'avait de transaction dans ce pipe avant l'envoi. Réserve inverse : une partie des deals est créée à la main par les commerciaux, et ne prouve donc pas à elle seule un parcours produit.",
-  "relance_note": "Vague 2 du 11/09/2026 : 1 070 contacts relancés sur 4 listes, chacune avec sa propre séquence. RATTACHEMENT CALCULÉ, non déclaratif. Un contact relancé n'est PAS une nouvelle cohorte — il est déjà dans le dénominateur de son batch. FENÊTRE PAR CONTACT : deux fenêtres de 21 jours, celle du batch initial et celle de la relance ; l'événement est étiqueté v1 ou v2. BIAIS DE SÉLECTION ASSUMÉ : les 4 listes ne contiennent QUE des contacts non activés, le taux de la vague 2 n'est donc PAS comparable à celui d'un batch initial.",
-  "meeting_window_note": "Depuis le 11/09, les RDV sont bornés à J+21 comme les dossiers. Avant ce correctif, le filtre n'avait qu'une borne basse : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close depuis le 03/09.",
-  "attribution_window_note": "ATTRIB_DAYS = 21, hérité et non calibré. Les courbes de réponse cumulées montaient encore à J+21 sur les deux batchs d'août. La fenêtre coupe en pleine pente et sous-estime les conversions. 30 à 45 jours serait plus juste. Non modifié : changer la fenêtre réécrit rétroactivement tout l'historique publié.",
-  "frozen_note": "Ouvertures et clics FIGÉS pour les cellules d'août, relevés le 11/09/2026 à 11h30 Paris. Les propriétés HubSpot ne gardent que la dernière date, écrasée à chaque nouvel e-mail : les 1 070 relancés auraient fait dériver les compteurs d'août. RÉSERVE : relevé postérieur de 2 h à l'envoi des relances, donc surestimé d'une vingtaine d'ouvertures.",
-  "overlap_note": "Recoupement entre cohortes : 11 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
-  "fix_note": "COPIE DE SECOURS DU 15/09/2026. Si cette mention apparaît avec « données embarquées » dans l'en-tête, data.json n'a pas pu être chargé et les chiffres affichés sont figés à cette date."
- },
- "kpis": [
-  {"key":"sent","label":"Envois","source":"email","base":"enrolled"},
-  {"key":"opens","label":"Ouvertures","source":"contact","base":"enrolled","note":"Contacts uniques, via hs_sales_email_last_opened postérieur à l'envoi. Figées pour les cellules d'août depuis le 11/09."},
-  {"key":"clicks","label":"Clics","source":"contact","base":"enrolled","note":"Contacts uniques, via hs_sales_email_last_clicked postérieur à l'envoi. Figés pour les cellules d'août depuis le 11/09."},
-  {"key":"replies","label":"Réponses","source":"reply","base":"enrolled"},
-  {"key":"meetings","label":"RDV pris","source":"meeting","base":"enrolled","note":"Contacts uniques ayant pris un rendez-vous, et non réunions : un contact peut avoir un RDV courtage puis un RDV devis. Restreint aux réunions posées par Clara, Lilian ou Mathieu, dans la fenêtre d'attribution du contact."},
-  {"key":"deals_ae","label":"Simulations entamées","source":"deal","base":"enrolled","note":"Contacts uniques associés à une transaction du pipe courtage AE créée ou déplacée d'étape dans la fenêtre. LIBELLÉ IMPRÉCIS ASSUMÉ : le pipe est alimenté à la fois par n8n, qui remonte un parcours réel, et à la main par les commerciaux. « Simulation entamée » ne vaut strictement que pour la part n8n, affichée partout à côté du total. Aucun filtre sur les étapes : les transactions remontées par n8n en sautent, une étape absente ne prouve rien."},
-  {"key":"engaged","label":"Clients activés","source":"union","base":"enrolled","note":"Union dédupliquée des contacts avec RDV et des contacts avec dossier courtage AE : RDV seul, simulation seule, ou les deux. Jamais la somme. Calculé au niveau campagne sur les identifiants de contact, pas par addition des cellules."}
- ],
- "audience_labels": {"RP":"Résidence principale","LMNP":"LMNP","V3":"Clients V3 éligibles AE"},
- "stats_config": {"min_n_for_rate":100,"alpha":0.05,"power":0.8},
- "relances": [
-  {"list_id":"14880","sequence_id":"859442418","sent_at":"2026-09-11T07:30:00Z","label":"Relance · toujours pas éligibles","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Toujours pas éligibles"},
-  {"list_id":"14876","sequence_id":"858857721","sent_at":"2026-09-11T07:30:00Z","label":"Relance · déjà éligibles au batch précédent","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Déjà éligible batch précédent"},
-  {"list_id":"14872","sequence_id":"859230400","sent_at":"2026-09-11T07:30:00Z","label":"Relance · page erreur, éligibles aujourd'hui","list_name":"A shooter batch Septembre AE - Déjà shooté entier AE - Page erreur - Eligibles auj"},
-  {"list_id":"14863","sequence_id":"860100852","sent_at":"2026-09-11T07:30:00Z","label":"Relance · campagne interrompue","list_name":"20260906 - Total shooté campagne AE interrompus"}
- ],
- "dedup": {
-  "contacts": 2075,
-  "relanced": 1070,
-  "activation": {"meet":95,"deal":90,"both":61,"meet_only":34,"deal_only":29,"activated":124,"deal_auto":12,"deal_manual":78,"deal_only_manual":22,"sum_cells":124,"overlap":0,"activated_v2":33,"activated_v1":91}
- },
- "cohorts": [
-  {
-   "id":"2026-08-05","label":"Batch du 5 août 2026","sent_at":"2026-08-05T08:31:00Z",
-   "status":"TERMINE","active":0,"status_note":null,"ab_test":true,"ab_note":null,"targeting":null,
-   "cells":[
-    {"list_id":"14319","list_name":"OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A","sequence_id":"841303267","audience":"RP","version":"A","enrolled":263,"active":0,"status":"TERMINE","sent":723,"bounced":1,"opens":192,"clicks":5,"opens_emails":379,"clicks_emails":5,"opens_frozen":true,"replies":40,"meetings":17,"deals_ae":19,"engaged":23,
-     "split":{"both":13,"meet_only":4,"deal_only":6,"engaged":23,"deal_n8n":2,"deal_manual":17,"deal_only_manual":5,"relanced":173,"engaged_v2":6,"engaged_v1":17},
-     "steps":[{"order":1,"subject":"Renégociation assurance emprunteur","sent":474,"opens":237,"clicks":1},{"order":2,"subject":"Rapide point sur votre assurance emprunteur","sent":249,"opens":143,"clicks":4}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":3},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":9},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":5}]},
-    {"list_id":"14334","list_name":"OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026","sequence_id":"841303268","audience":"RP","version":"B","enrolled":264,"active":0,"status":"TERMINE","sent":733,"bounced":4,"opens":187,"clicks":17,"opens_emails":360,"clicks_emails":16,"opens_frozen":true,"replies":46,"meetings":15,"deals_ae":15,"engaged":20,
-     "split":{"both":10,"meet_only":5,"deal_only":5,"engaged":20,"deal_n8n":1,"deal_manual":14,"deal_only_manual":4,"relanced":165,"engaged_v2":7,"engaged_v1":13},
-     "steps":[{"order":1,"subject":"L'économie que les propriétaires immobiliers ignorent","sent":254,"opens":131,"clicks":1},{"order":2,"subject":"Renégociation assurance emprunteur","sent":246,"opens":135,"clicks":8},{"order":3,"subject":"Dernière chance pour renégocier votre assurance emprunteur","sent":233,"opens":95,"clicks":7}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":1},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":9}]},
-    {"list_id":"14336","list_name":"OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A","sequence_id":"841303243","audience":"LMNP","version":"A","enrolled":51,"active":0,"status":"TERMINE","sent":146,"bounced":0,"opens":39,"clicks":2,"opens_emails":85,"clicks_emails":2,"opens_frozen":true,"replies":7,"meetings":4,"deals_ae":6,"engaged":7,
-     "split":{"both":3,"meet_only":1,"deal_only":3,"engaged":7,"deal_n8n":4,"deal_manual":2,"deal_only_manual":0,"relanced":42,"engaged_v2":1,"engaged_v1":6},
-     "steps":[{"order":1,"subject":"Renégociation assurance emprunteur","sent":95,"opens":53,"clicks":1},{"order":2,"subject":"Rapide point sur votre assurance emprunteur","sent":50,"opens":31,"clicks":1},{"order":3,"subject":"Re : Rapide point sur votre assurance emprunteur","sent":1,"opens":1,"clicks":0}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":2},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":2}]},
-    {"list_id":"14337","list_name":"OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B","sequence_id":"841252078","audience":"LMNP","version":"B","enrolled":47,"active":0,"status":"TERMINE","sent":129,"bounced":0,"opens":38,"clicks":1,"opens_emails":70,"clicks_emails":2,"opens_frozen":true,"replies":13,"meetings":8,"deals_ae":6,"engaged":9,
-     "split":{"both":5,"meet_only":3,"deal_only":1,"engaged":9,"deal_n8n":3,"deal_manual":3,"deal_only_manual":0,"relanced":33,"engaged_v2":0,"engaged_v1":9},
-     "steps":[{"order":1,"subject":"Economisez jusqu'à 5000€ sur votre assurance emprunteur","sent":46,"opens":24,"clicks":0},{"order":2,"subject":"Renégociation assurance emprunteur","sent":45,"opens":28,"clicks":1},{"order":3,"subject":"Dernière chance pour renégocier votre assurance emprunteur","sent":37,"opens":17,"clicks":1},{"order":4,"subject":"Re : Renégociation assurance emprunteur","sent":1,"opens":1,"clicks":0}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":2},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":1}]}
-   ],
-   "activation":{"meet":44,"deal":46,"both":31,"meet_only":13,"deal_only":15,"activated":59,"deal_auto":10,"deal_manual":36,"deal_only_manual":9,"activated_v2":14,"activated_v1":45,"relanced":413},
-   "reply_curve":[
-    {"day":0,"count":4,"share":0.64},{"day":1,"count":9,"share":1.44},{"day":2,"count":11,"share":1.76},{"day":3,"count":11,"share":1.76},
-    {"day":4,"count":16,"share":2.56},{"day":5,"count":19,"share":3.04},{"day":6,"count":19,"share":3.04},{"day":7,"count":22,"share":3.52},
-    {"day":8,"count":25,"share":4.0},{"day":9,"count":26,"share":4.16},{"day":10,"count":37,"share":5.92},{"day":11,"count":39,"share":6.24},
-    {"day":12,"count":43,"share":6.88},{"day":13,"count":45,"share":7.2},{"day":14,"count":46,"share":7.36},{"day":15,"count":50,"share":8.0},
-    {"day":16,"count":54,"share":8.64},{"day":17,"count":54,"share":8.64},{"day":18,"count":54,"share":8.64},{"day":19,"count":57,"share":9.12},
-    {"day":20,"count":58,"share":9.28},{"day":21,"count":59,"share":9.44}
-   ]
-  },
-  {
-   "id":"2026-08-13","label":"Batch du 13 août 2026","sent_at":"2026-08-13T09:31:00Z",
-   "status":"TERMINE","active":0,"status_note":null,"ab_test":false,
-   "ab_note":"Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
-   "targeting":null,
-   "cells":[
-    {"list_id":"14412","list_name":"OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026","sequence_id":"841303267","audience":"RP","version":"A","enrolled":560,"active":0,"status":"TERMINE","sent":1095,"bounced":1,"opens":373,"clicks":17,"opens_emails":539,"clicks_emails":7,"opens_frozen":true,"replies":68,"meetings":27,"deals_ae":21,"engaged":33,
-     "split":{"both":15,"meet_only":12,"deal_only":6,"engaged":33,"deal_n8n":1,"deal_manual":20,"deal_only_manual":5,"relanced":532,"engaged_v2":16,"engaged_v1":17},
-     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":556,"opens":268,"clicks":5},{"order":2,"subject":"Renégociation assurance emprunteur","sent":539,"opens":272,"clicks":2}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":9},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":7},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":11}]},
-    {"list_id":"14413","list_name":"OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026","sequence_id":"841303243","audience":"LMNP","version":"A","enrolled":140,"active":0,"status":"TERMINE","sent":259,"bounced":0,"opens":103,"clicks":7,"opens_emails":158,"clicks_emails":5,"opens_frozen":true,"replies":28,"meetings":9,"deals_ae":10,"engaged":12,
-     "split":{"both":7,"meet_only":2,"deal_only":3,"engaged":12,"deal_n8n":1,"deal_manual":9,"deal_only_manual":3,"relanced":125,"engaged_v2":3,"engaged_v1":9},
-     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":136,"opens":89,"clicks":5},{"order":2,"subject":"Renégociation assurance emprunteur","sent":123,"opens":69,"clicks":0}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":5},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":4}]}
-   ],
-   "activation":{"meet":36,"deal":31,"both":22,"meet_only":14,"deal_only":9,"activated":45,"deal_auto":2,"deal_manual":29,"deal_only_manual":8,"activated_v2":19,"activated_v1":26,"relanced":657},
-   "reply_curve":[
-    {"day":0,"count":10,"share":1.43},{"day":1,"count":12,"share":1.71},{"day":2,"count":13,"share":1.86},{"day":3,"count":14,"share":2.0},
-    {"day":4,"count":14,"share":2.0},{"day":5,"count":15,"share":2.14},{"day":6,"count":17,"share":2.43},{"day":7,"count":19,"share":2.71},
-    {"day":8,"count":23,"share":3.29},{"day":9,"count":23,"share":3.29},{"day":10,"count":23,"share":3.29},{"day":11,"count":29,"share":4.14},
-    {"day":12,"count":35,"share":5.0},{"day":13,"count":36,"share":5.14},{"day":14,"count":38,"share":5.43},{"day":15,"count":40,"share":5.71},
-    {"day":16,"count":40,"share":5.71},{"day":17,"count":40,"share":5.71},{"day":18,"count":42,"share":6.0},{"day":19,"count":47,"share":6.71},
-    {"day":20,"count":49,"share":7.0},{"day":21,"count":53,"share":7.57}
-   ]
-  },
-  {
-   "id":"2026-09-10","label":"Batch du 10 septembre 2026","sent_at":"2026-09-10T09:00:00Z",
-   "status":"EN_COURS","active":573,
-   "status_note":"573 contact(s) encore en séquence sur cette cohorte. Les chiffres vont encore monter.",
-   "ab_test":false,
-   "ab_note":"Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
-   "targeting":"Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ».",
-   "cells":[
-    {"list_id":"14951","list_name":"Campagne Assurance Emprunteur - Nouveaux clients - Batch du 10/09/2026","sequence_id":"841303267","audience":"V3","version":"A","enrolled":761,"active":573,"status":"EN_COURS","sent":916,"bounced":0,"opens":347,"clicks":11,"opens_emails":386,"clicks_emails":12,"opens_frozen":false,"replies":19,"meetings":15,"deals_ae":13,"engaged":20,
-     "split":{"both":8,"meet_only":7,"deal_only":5,"engaged":20,"deal_n8n":0,"deal_manual":13,"deal_only_manual":5,"relanced":0,"engaged_v2":0,"engaged_v1":20},
-     "steps":[{"order":1,"subject":"Rapide point sur votre assurance emprunteur","sent":613,"opens":324,"clicks":11},{"order":2,"subject":"Renégociation assurance emprunteur","sent":303,"opens":62,"clicks":1}],
-     "by_owner":[{"owner_id":"1722214870","owner":"Clara Baekelandt","meetings":4},{"owner_id":"650299108","owner":"Mathieu d'Ornellas","meetings":7},{"owner_id":"75453551","owner":"Lilian Maudet","meetings":4}]}
-   ],
-   "activation":{"meet":15,"deal":13,"both":8,"meet_only":7,"deal_only":5,"activated":20,"deal_auto":0,"deal_manual":13,"deal_only_manual":5,"activated_v2":0,"activated_v1":20,"relanced":0},
-   "reply_curve":[
-    {"day":0,"count":6,"share":0.79},{"day":1,"count":9,"share":1.18},{"day":2,"count":10,"share":1.31},
-    {"day":3,"count":11,"share":1.45},{"day":4,"count":19,"share":2.5},{"day":5,"count":19,"share":2.5}
-   ]
-  }
- ]
-}</script>
-<script>
-const C={indigo:'#5747FF',green:'#11E28F',greenS:'#089966',red:'#DB3352',
-  orange:'#FF7A3D',yellow:'#F5B400',muted:'#6B6B85',tick:'#9092A8',
-  grid:'rgba(4,4,37,0.04)',axis:'rgba(4,4,37,0.10)'};
-const F={family:'JetBrains Mono',size:10};
-const INK='#040425';
-const alpha=(h,a)=>{const n=parseInt(h.slice(1),16);
-  return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
-const fmt=n=>(n==null?'—':n.toLocaleString('fr-FR'));
-const pct=(n,d,dec=1)=>(n==null||!d)?'—':(100*n/d).toFixed(dec).replace('.',',')+' %';
-const pctFmt=v=>v.toFixed(1).replace('.',',')+' %';
-const VOID='<span class="m">—</span>';
-
-/* Étiquettes de valeur : au-dessus de la barre dans la couleur de la série ; si la
-   place manque, à l'intérieur et en encre sombre pour rester lisible. */
-const valueLabels={
-  id:'valueLabels',
-  afterDatasetsDraw(chart,args,po){
-    if(po===false)return;
-    const ctx=chart.ctx, area=chart.chartArea;
-    const fmtFn=(po&&po.fmt)||(v=>fmt(v));
-    ctx.save(); ctx.font="600 10.5px 'JetBrains Mono',monospace";
-    chart.data.datasets.forEach((ds,di)=>{
-      const meta=chart.getDatasetMeta(di);
-      if(meta.hidden)return;
-      const col=(typeof ds.borderColor==='string'?ds.borderColor:null)||INK;
-      meta.data.forEach((el,i)=>{
-        const v=ds.data[i]; if(v==null)return;
-        const txt=fmtFn(v); ctx.textAlign='center';
-        if(el.y-6>=area.top+2){ctx.fillStyle=col;ctx.textBaseline='bottom';ctx.fillText(txt,el.x,el.y-6);}
-        else{ctx.fillStyle=INK;ctx.textBaseline='top';ctx.fillText(txt,el.x,el.y+6);}
-      });
-    });
-    ctx.restore();
-  }
-};
-Chart.register(valueLabels);
-
-function opts(){return{responsive:true,maintainAspectRatio:false,
-  layout:{padding:{top:20,right:6}},
-  interaction:{mode:'index',intersect:false},
-  plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(4,4,37,.92)',padding:10,
-    titleFont:F,bodyFont:F,cornerRadius:8}},
-  scales:{y:{beginAtZero:true,grace:'12%',ticks:{color:C.tick,font:F},
-      grid:{color:C.grid},border:{color:C.axis}},
-    x:{ticks:{color:C.tick,font:F,maxRotation:0},grid:{display:false},border:{color:C.axis}}}}}
-function withLegend(o){o.plugins.legend={display:true,
-  labels:{color:C.tick,font:F,boxWidth:10,boxHeight:10,padding:10}};return o}
-
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.getElementById('s-'+t.dataset.t).classList.add('active');
-});
-
-function normCdf(z){
-  const t=1/(1+0.2316419*Math.abs(z)), d=0.3989422804*Math.exp(-z*z/2);
-  const p=1-d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
-  return z>=0?p:1-p;
+SIMU_STAGES = {
+    "5363445963",   # simulation_started
+    "5363445964",   # simulation_completed
+    "5783848147",   # simulation_ready
+    "5363445965",   # offer_viewed
+    "5363445966",   # offer_accepted
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
 }
-function zTest(x1,n1,x2,n2){
-  if(x1==null||x2==null||!n1||!n2)return null;
-  const p1=x1/n1,p2=x2/n2,p=(x1+x2)/(n1+n2);
-  const se=Math.sqrt(p*(1-p)*(1/n1+1/n2));
-  if(!se)return null;
-  return {p1,p2,diff:p2-p1,pv:2*(1-normCdf(Math.abs((p2-p1)/se)))};
-}
-function mde(x1,n1,x2,n2){
-  if(x1==null||x2==null||!n1||!n2)return null;
-  const p=(x1+x2)/(n1+n2);
-  return p?2.80*Math.sqrt(p*(1-p)*(1/n1+1/n2)):null;
+# Étapes de SOUSCRIPTION : le client ne simule plus, il monte un dossier.
+# C'est le bas de funnel, celui qui précède le revenu.
+STAGE_PROCESS = {
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
 }
 
-let D=null, CH=[], KPI=[], PK=null;
-const STATUS_PILL={TERMINE:'<span class="pill ok">TERMINÉ</span>',
-  PARTIEL:'<span class="pill wip">PARTIEL</span>',
-  EN_COURS:'<span class="pill wip">EN COURS</span>'};
-const cellDone=c=>c.status==='TERMINE';
-const sum=(a,f)=>a.reduce((x,y)=>x+(f(y)||0),0);
-
-const SEED=JSON.parse(document.getElementById('seed').textContent);
-fetch('data.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject())
-  .then(d=>boot(d,'data.json')).catch(()=>boot(SEED,'données embarquées'));
-function boot(d,src){D=d;document.getElementById('bSrc').textContent=src;
-  try{render()}catch(e){console.error(e)}}
-
-function render(){
-  const dt=new Date(D.meta.generated_at);
-  document.getElementById('upd').textContent=
-    dt.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})
-    +' · '+String(dt.getHours()).padStart(2,'0')+'h'+String(dt.getMinutes()).padStart(2,'0');
-  document.getElementById('campTitle').textContent=D.meta.campaign;
-  if(D.meta.overlap_note&&!/Aucun recoupement/.test(D.meta.overlap_note)){
-    const b=document.getElementById('bOverlap');
-    b.style.display='flex';
-    b.querySelector('span:last-child').innerHTML=D.meta.overlap_note;
-  }
-
-  /* Sans borne haute, un batch ancien accumule plus longtemps qu'un batch
-     récent : le comparer revient à comparer un coureur arrivé à un coureur en
-     course. Le bandeau le dit à chaque visite, parce que le tableau des
-     cohortes juste en dessous invite précisément à cette comparaison. */
-  if(/SANS borne haute/.test(D.meta.source||'')){
-    const b=document.getElementById('bWindow');
-    b.style.display='flex';
-    b.querySelector('span:last-child').innerHTML=
-      `<strong>Aucune borne d'attribution.</strong> Un RDV ou une simulation compte quel que soit `+
-      `le délai après l'envoi. <strong>Les cohortes ne sont donc pas comparables entre elles</strong> `+
-      `— une ancienne accumule plus longtemps — et tout chiffre publié remontera au fil du temps. `+
-      `Horodater les chiffres cités.`;
-  }
-
-  KPI=D.kpis||[]; PK=D.meta.primary_kpi||'deals_ae';
-  CH.forEach(c=>c.destroy()); CH=[];
-  const AL=D.audience_labels||{}, minN=(D.stats_config||{}).min_n_for_rate||100;
-  const allCells=D.cohorts.flatMap(co=>co.cells);
-  const T=k=>sum(allCells,c=>c[k]);
-  const base=k=>{const m=KPI.find(x=>x.key===k);return m?m.base:'enrolled'};
-  const nAll=(D.dedup||{}).contacts||T('enrolled');
-
-  /* Bloc d'activation. Fourni par le collecteur en union d'identifiants de
-     contact. Repli sur la somme des cellules si data.json précède cette
-     version — le repli surcompte les contacts ciblés par deux batchs, donc
-     il s'annonce dans le bandeau plutôt que de passer inaperçu. */
-  const S=c=>c.split||{};
-  let ACT=(D.dedup||{}).activation, ACT_FALLBACK=!ACT;
-  if(ACT_FALLBACK){
-    const g=k=>sum(allCells,c=>S(c)[k]);
-    ACT={meet:g('both')+g('meet_only'),deal:g('both')+g('deal_only'),both:g('both'),
-         meet_only:g('meet_only'),deal_only:g('deal_only'),
-         activated:g('both')+g('meet_only')+g('deal_only'),
-         deal_auto:g('deal_n8n'),deal_manual:g('deal_manual'),
-         deal_only_manual:g('deal_only_manual'),overlap:0};
-  }
-
-  /* ---------- NIVEAU 1 ---------- */
-  const kpi=(cls,lab,val,sub)=>`<div class="kpi ${cls}"><div class="klabel">${lab}</div>
-    <div class="kval">${fmt(val)}</div><div class="ksub">${sub||''}</div></div>`;
-  const denom=k=>base(k)==='sent'?T('sent'):nAll;
-  document.getElementById('kpiGlobal').innerHTML=
-    kpi('indigo','Contacts ciblés',nAll,`${D.cohorts.length} cohortes · dédupliqué`)+
-    /* Les cartes d'e-mailing d'abord. RDV et simulations sont RETIRÉS d'ici :
-       ce sont des totaux qui se recoupent, et côte à côte sur une grille de
-       cartes ils invitent à l'addition. Ils reviennent en ligne de
-       réconciliation sous la décomposition. */
-    KPI.filter(k=>!['meetings','deals_ae',PK].includes(k.key)).map(k=>kpi(
-      k.source==='email'?'indigo':'green',
-      k.label,T(k.key),
-      k.key==='sent'?`${(T('sent')/nAll).toFixed(1).replace('.',',')} par contact · ${fmt(T('bounced'))} rejetés`
-                    :`${pct(T(k.key),denom(k.key))} ${base(k.key)==='sent'?'des envois':'des ciblés'}`
-    )).join('')+
-    /* Les six chiffres d'activation vivent dans leur bloc dédié, où deux rangs
-       séparés portent la règle de lecture. Sur une grille de cartes plates,
-       deux totaux qui se recoupent invitent à une addition fausse. */
-    /* Carte de tête : le chiffre HONNÊTE, pas le total.
-       Le total activé compte des fiches ouvertes après un appel où le client a
-       dit non. Le chiffre de tête est celui que les gens retiennent — il doit
-       donc être celui qu'on peut défendre. Le total potentiel reste affiché
-       juste en dessous, pour la continuité de série et pour que personne ne
-       croie à une perte de données. */
-    /* Le bloc qualification vit sous dedup.attribution, pas sous
-       dedup.activation : lire ACT.qualification renvoyait undefined et faisait
-       tomber la carte sur son repli « objectif de la campagne ». */
-    /* La distinction confirmés / en attente n'a de sens que s'il reste des
-       contacts à arbitrer. Depuis que l'étape du pipe tranche seule, la file
-       est vide : on revient au libellé simple. */
-    ((((D.dedup||{}).attribution||{}).qualification||{}).attente
-      ? kpi('star','Clients activés confirmés',
-          D.dedup.attribution.qualification.certain,
-          `${pct(D.dedup.attribution.qualification.certain,nAll)} des ciblés · `+
-          `${fmt(ACT.activated)} potentiels dont `+
-          `${fmt(D.dedup.attribution.qualification.attente)} en attente de qualification`)
-      : kpi('star',KPI.find(k=>k.key===PK).label,ACT.activated,
-          `${pct(ACT.activated,nAll)} des ciblés · objectif de la campagne`))+
-    /* Cartes de relance. Masquées tant que data.json ne porte pas les clés de
-       vague : un data.json d'avant le patch reste lisible sans rien casser. */
-    ((D.dedup||{}).process!=null?
-      kpi('green','Dossiers en souscription',(D.dedup||{}).process,
-        `${pct((D.dedup||{}).process,ACT.activated)} des activés · process_started ou au-delà`)
-      :'')+
-    ((D.dedup||{}).relanced?
-      kpi('orange','Contacts relancés',(D.dedup||{}).relanced,
-        `${pct((D.dedup||{}).relanced,nAll)} des ciblés · déjà comptés dans leur batch`)+
-      kpi('yellow','Activés par la relance',ACT.activated_v2||0,
-        `${pct(ACT.activated_v2,(D.dedup||{}).relanced)} des relancés · gain marginal pur`)
-      :'');
-
-  /* Décomposition de l'activation. Lit dedup.activation, qui est une union
-     d'identifiants de contact calculée par le collecteur — et non une somme
-     de cellules, qui surcompterait dès qu'un contact activé est ciblé par
-     deux batchs. */
-  const tile=(cls,lab,val,sub)=>`<div class="eq-t ${cls||''}">
-    <div class="l">${lab}</div><div class="v">${fmt(val)}</div>
-    <div class="s">${sub||''}</div></div>`;
-  document.getElementById('actEq').className='eq';
-  document.getElementById('actEq').innerHTML=
-    tile('','RDV seul',ACT.meet_only,`${pct(ACT.meet_only,ACT.activated)} des activés`)+
-    `<div class="eq-op">+</div>`+
-    tile('','Simulation seule',ACT.deal_only,`${pct(ACT.deal_only,ACT.activated)} des activés`)+
-    `<div class="eq-op">+</div>`+
-    tile('','RDV et simulation',ACT.both,`${pct(ACT.both,ACT.activated)} des activés`)+
-    `<div class="eq-op">=</div>`+
-    tile('res','Clients activés',ACT.activated,`${pct(ACT.activated,nAll)} des ciblés`);
-
-  /* Objectif. Affiché sous la décomposition, pas en carte de tête : un objectif
-     n'est pas une mesure, et sans limite de délai il sera atteint mécaniquement
-     avec le temps. La note le dit à côté du chiffre plutôt que dans la méthodo,
-     parce que c'est là que quelqu'un lira le pourcentage. */
-  const OBJ=(D.objectif||{}).clients_actives;
-  if(OBJ){
-    const part=100*ACT.activated/OBJ, reste=OBJ-ACT.activated;
-    document.getElementById('goalWrap').style.display='block';
-    document.getElementById('goalT').textContent=
-      reste>0?`Objectif : ${fmt(reste)} clients activés restants`:'Objectif atteint';
-    document.getElementById('goalN').textContent=
-      `${fmt(ACT.activated)} / ${fmt(OBJ)} · ${part.toFixed(0)} %`;
-    document.getElementById('goalFill').style.width=Math.min(100,part)+'%';
-    document.getElementById('goalNote').innerHTML=
-      `Toutes cohortes confondues, en contacts uniques. <strong>Sans limite de délai `+
-      `d'attribution, ce compteur monte tout seul</strong> : l'objectif sera atteint avec le temps, `+
-      `même sans nouvel envoi. Ce qui compte est la vitesse, pas le franchissement.`;
-  }
-
-  const segs=[['sb-both','Les deux',ACT.both],['sb-meet','RDV seul',ACT.meet_only],
-              ['sb-deal','Simulation seule',ACT.deal_only]];
-  document.getElementById('actBar').innerHTML=segs.map(([c,l,v])=>{
-    const w=ACT.activated?100*v/ACT.activated:0;
-    return `<div class="${c}" style="width:${w}%" title="${l} : ${v}">${
-      w>=11?l+' · '+v:(w>=5?v:'')}</div>`}).join('');
-
-  /* Second rang : les totaux. Ce sont les chiffres que l'équipe retrouvera en
-     filtrant HubSpot elle-même. Sans eux, un commercial qui compte plus de RDV
-     dans le CRM que sur la carte conclut que le dashboard est faux — et cesse
-     de s'en servir sans le signaler.
-     Rang séparé, opérateur « ∪ » et non « + » : la nature du lien entre les
-     deux est portée par le signe. */
-  document.getElementById('actTot').innerHTML=
-    tile('sub','Total RDV',ACT.meet,
-      `${fmt(ACT.meet_only)} + ${fmt(ACT.both)} · ${pct(ACT.meet,nAll)} des ciblés`)+
-    `<div class="eq-op">∪</div>`+
-    tile('sub','Total simulations',ACT.deal,
-      `${fmt(ACT.deal_only)} + ${fmt(ACT.both)} · ${fmt(ACT.deal_auto)} tracé${ACT.deal_auto>1?'s':''} par n8n`)+
-    `<div class="eq-op">=</div>`+
-    tile('sub res','Clients activés',ACT.activated,
-      `et non ${fmt(ACT.meet+ACT.deal)} : ${fmt(ACT.both)} contacts sont dans les deux`);
-
-  document.getElementById('actRecon').innerHTML=
-    `<span class="rl">Retrouver ces chiffres dans HubSpot</span>`+
-    `<span><strong>${fmt(ACT.meet)}</strong> RDV — intitulé « emprunteur », owner ∈ {Clara, Lilian, Mathieu}, dans la fenêtre</span>`+
-    `<span><strong>${fmt(ACT.deal)}</strong> dossiers — pipe courtage AE, étape simulation_started ou au-delà</span>`+
-    `<span class="m">Décomptes en contacts, pas en objets.</span>`;
+# Profondeur du parcours. Une entrée par étape RÉELLE du pipe, nommée comme
+# dans HubSpot — aucun regroupement, aucun libellé inventé. Un contact est
+# rangé au niveau le PLUS AVANCÉ qu'il a atteint, tous dossiers confondus.
+# L'ordre suit celui du pipe.
+NIVEAU_PARCOURS = [
+    (1, "simulation_started",   "5363445963"),
+    (2, "simulation_completed", "5363445964"),
+    (3, "simulation_ready",     "5783848147"),
+    (4, "offer_viewed",         "5363445965"),
+    (5, "offer_accepted",       "5363445966"),
+    (6, "process_started",      "5363445967"),
+    (7, "process_completed",    "5378179265"),
+]
+NIVEAU_LABEL = {r: lbl for r, lbl, _ in NIVEAU_PARCOURS}
+ORDRE_FIN = [f"{pref}{lbl}" for _, lbl, _ in reversed(NIVEAU_PARCOURS)
+             for pref in ("RDV + ", "")] + ["RDV seul"]
 
 
-  document.getElementById('actNote').innerHTML=
-    segs.map(([,l,v])=>`${l} ${fmt(v)}`).join(' + ')+` = ${fmt(ACT.activated)}.`+
-    (ACT.deal_manual?` Sur ${fmt(ACT.deal)} simulations, ${fmt(ACT.deal_manual)} reposent sur une `+
-      `transaction créée à la main`+(ACT.deal_only_manual?`, dont ${fmt(ACT.deal_only_manual)} sans RDV tracé`:'')+`.`:'')+
-    (ACT.overlap?` Recoupement : ${fmt(ACT.overlap)} contact(s) activé(s) ciblé(s) dans deux batchs.`:'');
+def niveau_de(stage):
+    """Rang du parcours atteint par ce dossier, 0 si aucune étape franchie."""
+    for rang, _, sid in NIVEAU_PARCOURS:
+        if stage == sid:
+            return rang
+    return 0
 
 
-  /* ---------- VAGUES DE RELANCE ----------
-     Les contacts relancés sont DÉJÀ dans le dénominateur de leur cohorte : les
-     compter à part ferait baisser tous les taux sans qu'aucune nouvelle personne
-     n'ait été touchée. Une relance est une vague à l'intérieur d'une cohorte,
-     jamais une cohorte. Les blocs restent masqués tant que data.json ne porte
-     pas les clés de relance — un data.json d'avant le patch reste lisible. */
-  const REL=(D.dedup||{}).relanced||0;
-  if(REL>0&&ACT.activated_v2!=null){
-    const relDate=(D.relances&&D.relances[0])
-      ?new Date(D.relances[0].sent_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long'}):null;
-    document.getElementById('waveWrap').style.display='block';
-    document.getElementById('waveEq').innerHTML=
-      tile('','Vague 1 · envoi initial',ACT.activated_v1,
-        `${pct(ACT.activated_v1,ACT.activated)} des activés`)+
-      `<div class="eq-op">+</div>`+
-      tile('','Vague 2 · relance'+(relDate?' du '+relDate:''),ACT.activated_v2,
-        `${pct(ACT.activated_v2,REL)} des ${fmt(REL)} relancés`)+
-      `<div class="eq-op">=</div>`+
-      tile('res','Clients activés',ACT.activated,`${pct(ACT.activated,nAll)} des ciblés`);
-      document.getElementById('waveNote').innerHTML=
-        `${fmt(REL)} contacts relancés, déjà comptés dans leur batch — le dénominateur ne bouge pas. `+
-        `<strong>Les listes de relance ne contiennent que des non-activés : le taux de la vague 2 `+
-        `n'est pas comparable à celui d'un envoi initial.</strong>`;
+STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
+STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
+
+# NE PAS UTILISER COMME MARQUEUR DE SIMULATION. last_step_date vient de
+# last_event_at, et un event existe dès l'activation de l'optimisation :
+# 153 optimisations courtage AE ont des events sans aucune étape complétée.
+# La propriété prouve qu'il s'est passé quelque chose, pas que le client a
+# rempli un champ. Conservée pour information seulement.
+SIMU_PROP = "last_step_date"
+
+# Réservation en self-service via un lien public. Distingue un RDV que le
+# client a posé lui-même d'un RDV calé par un commercial au téléphone.
+MEETING_PUBLIC = "MEETINGS_PUBLIC"
+
+# Transactions créées par un workflow HubSpot PARCE QU'un RDV existe, et non
+# parce qu'un client a fait quelque chose. Elles ne prouvent rien : le RDV est
+# déjà compté via l'objet MEETING. Les compter comme dossier reviendrait à
+# compter deux fois le même signal, et pire, à activer un contact dont le RDV
+# est hors fenêtre au motif qu'une carte a été créée depuis.
+# 43 transactions créées le 24/09 à 17h28, en moins d'une seconde.
+ORIGINE_RDV_SANS_SIMU = "rdv_sans_simu"
+
+# Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
+# PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
+# interchangeables.
+AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
+                     "75453551",    # Lilian Maudet
+                     "650299108"]   # Mathieu d'Ornellas
+
+# Portail HubSpot, pour les liens de vérification imprimés dans les logs.
+PORTAL = "26173790"
 
 
-    document.getElementById('relanceBlock').style.display='block';
-    document.querySelector('#tRelance tbody').innerHTML=
-      D.cohorts.map(co=>co.cells.map((c,i)=>{
-        const s=S(c), r=s.relanced||0;
-        return `<tr><td class="left">${i===0?'<strong>'+co.label+'</strong>':''}</td>
-          <td class="left">${AL[c.audience]||c.audience}${c.version?' · '+c.version:''}</td>
-          <td>${fmt(c.enrolled)}</td>
-          <td class="${r?'o':'m'}">${r?fmt(r)+' <span class="m">('+pct(r,c.enrolled,0)+')</span>':'—'}</td>
-          <td>${fmt(s.engaged_v1)}</td>
-          <td class="${s.engaged_v2?'g':'m'}">${fmt(s.engaged_v2)}</td>
-          <td><strong>${fmt(s.engaged)}</strong></td>
-          <td class="${r?'':'m'}">${r?pct(s.engaged_v2,r):'—'}</td></tr>`;
-      }).join('')).join('')
-      +`<tr class="totrow"><td class="left">TOTAL CAMPAGNE</td>
-        <td class="left m">union dédupliquée</td>
-        <td>${fmt(nAll)}</td><td>${fmt(REL)}</td>
-        <td>${fmt(ACT.activated_v1)}</td><td>${fmt(ACT.activated_v2)}</td>
-        <td>${fmt(ACT.activated)}</td><td>${pct(ACT.activated_v2,REL)}</td></tr>`;
-  }
-
-  /* ---------- ATTRIBUTION SALES / MARKETING ----------
-     Nouvel axe, sans rupture : le total activé ne change pas, seule sa
-     décomposition est ajoutée. Trois cas DISJOINTS dont la somme fait le
-     total, comme l'axe v1/v2. Masqué tant que data.json ne porte pas le bloc :
-     un data.json d'avant le 16/09 reste lisible. */
-  const AT=(D.dedup||{}).attribution;
-  if(AT&&AT.marketing){
-    const mk=AT.marketing, sl=AT.sales, na=AT.non_attribuable;
-    const tot=mk.total+sl.total+na.total;
-
-    /* Le drapeau sync_stale n'est pas cosmétique : quand le flux n8n est en
-       panne, un client qui a simulé n'a pas de dossier remonté, donc aucun
-       signal marketing, donc il bascule sur l'appel du commercial. La
-       décomposition se met à surestimer le sales EN SILENCE. */
-    if(AT.sync_stale){
-      const b=document.getElementById('bSync');
-      b.style.display='flex';
-      b.querySelector('span:last-child').innerHTML=
-        `<strong>Synchronisation n8n obsolète.</strong> Aucun mouvement sur le pipe courtage `+
-        `depuis plus de 24 h ouvrées`+(AT.last_sync?` (dernier : `+
-        new Date(AT.last_sync).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+`)`:'')+
-        `. Les contacts ayant simulé depuis n'ont pas de dossier remonté : ils basculent à tort `+
-        `en <strong>sales</strong>. La décomposition ci-dessous est à ne pas publier tant que `+
-        `le flux n'est pas rétabli.`;
-    }
-
-    /* Qualification. Définition du lead arrêtée le 17/09 : seuls le RDV pris
-       par le client et le parcours démarré sont mesurables sans intervention
-       humaine. Le reste attend l'arbitrage des commerciaux. Le total activé
-       ne change pas : certains + en attente = activés. */
-    const Q=AT.qualification;
-    if(Q&&Q.attente){
-      document.getElementById('qualWrap').style.display='block';
-      document.getElementById('qualEq').innerHTML=
-        tile('','Activés confirmés',Q.certain,`${pct(Q.certain,tot)} des activés`)+
-        `<div class="eq-op">+</div>`+
-        tile('','En attente de qualification',Q.attente,`${pct(Q.attente,tot)} des activés`)+
-        `<div class="eq-op">=</div>`+
-        tile('res','Total potentiel',tot,`${pct(tot,nAll)} des ciblés`);
-      document.getElementById('qualNote').innerHTML=
-        `<strong>Confirmés</strong> : ${fmt(Q.certain_rdv_client)} ont pris un RDV eux-mêmes, `+
-        `${fmt(Q.certain_parcours)} ont démarré leur parcours, ${fmt(Q.certain_rdv_sales)} ont eu un `+
-        `RDV organisé après un appel. <strong>En attente</strong> : ${fmt(Q.attente_carte_seule)} n'ont `+
-        `qu'une fiche, sans RDV — à arbitrer par le sales. Le chiffre à avancer est ${fmt(Q.certain)}.`;
-    }
+# ---------------------------------------------------------------- utilitaires
+def post(path, body):
+    """POST avec retente exponentielle sur les limites de débit HubSpot."""
+    for attempt in range(5):
+        r = requests.post(BASE + path, headers=H, json=body, timeout=45)
+        if r.status_code == 429:
+            time.sleep(2 ** attempt)
+            continue
+        r.raise_for_status()
+        return r.json()
+    r.raise_for_status()
 
 
-    document.getElementById('attrWrap').style.display='block';
-    document.getElementById('attrEq').innerHTML=
-      tile('','Marketing',mk.total,`${pct(mk.total,tot)} des activés`)+
-      `<div class="eq-op">+</div>`+
-      tile('','Sales',sl.total,`${pct(sl.total,tot)} des activés`)+
-      `<div class="eq-op">+</div>`+
-      tile('','Non attribuable',na.total,`${pct(na.total,tot)} des activés`)+
-      `<div class="eq-op">=</div>`+
-      tile('res','Clients activés',tot,`${pct(tot,nAll)} des ciblés`);
-    document.getElementById('attrMk').innerHTML=
-      tile('sub','Simulation',mk.simulation,`${pct(mk.simulation,mk.total)} du marketing`)+
-      `<div class="eq-op">+</div>`+
-      tile('sub','Réponse à une séquence',mk.reponse,`${pct(mk.reponse,mk.total)} du marketing`)+
-      `<div class="eq-op">+</div>`+
-      tile('sub','RDV self-service',mk.rdv_public,`${pct(mk.rdv_public,mk.total)} du marketing`)+
-      `<div class="eq-op">=</div>`+
-      tile('sub res','Marketing',mk.total,`${pct(mk.total,tot)} des activés`);
-    document.getElementById('attrNote').innerHTML=
-      `Ordre d'application : une simulation l'emporte sur tout ; sinon une réponse ou un RDV réservé `+
-      `par le client, à condition d'être antérieurs au premier appel sortant ; sinon un appel sortant `+
-      `bascule en sales.`;
+def pcts(n, d):
+    return f"{100 * n / d:.1f} %".replace(".", ",") if d else "—"
 
-    const PC=AT.par_cellule||{};
-    document.getElementById('attrBlock').style.display='block';
-    const QC=(Q&&Q.par_cellule)||{};
-    const arow=(lab,cell,a,cls,q)=>{
-      const t=a.marketing.total+a.sales.total+a.non_attribuable.total;
-      return `<tr class="${cls||''}"><td class="left">${lab}</td>
-        <td class="left${cls?' m':''}">${cell}</td>
-        <td><strong>${fmt(t)}</strong></td>
-        <td class="g">${q?fmt(q.certain):VOID}</td>
-        <td class="o">${q?fmt(q.attente):VOID}</td>
-        <td class="g">${fmt(a.marketing.total)}</td>
-        <td class="m">${fmt(a.marketing.simulation)}</td>
-        <td class="o">${fmt(a.sales.total)}</td>
-        <td class="m">${fmt(a.non_attribuable.total)}</td>
-        <td>${pct(a.marketing.total,t)}</td></tr>`;};
-    document.querySelector('#tAttr tbody').innerHTML=
-      D.cohorts.map(co=>co.cells.map((c,i)=>{
-        const a=PC[c.list_id]; if(!a)return '';
-        return arow(i===0?'<strong>'+co.label+'</strong>':'',
-          (AL[c.audience]||c.audience)+(c.version?' · '+c.version:''),a,'',QC[c.list_id]);
-      }).join('')).join('')
-      +(AT.par_vague?arow('<strong>Vague 1</strong>','envoi initial',AT.par_vague.v1,'')
-        +arow('<strong>Vague 2</strong>','relance',AT.par_vague.v2,''):'')
-      +arow('TOTAL CAMPAGNE','union dédupliquée',
-            {marketing:mk,sales:sl,non_attribuable:na},'totrow',Q);
-  }
 
-  /* ---------- NIVEAU 2 ---------- */
-  const K2=KPI.filter(k=>['replies','meetings',PK].includes(k.key));
-  document.getElementById('thK2').outerHTML=K2.map(k=>`<th>${k.label}</th>`).join('');
-  const rows=D.cohorts.map(co=>{
-    const n=sum(co.cells,c=>c.enrolled), act=sum(co.cells,c=>c.active);
-    const per=Object.fromEntries(KPI.map(k=>[k.key,sum(co.cells,c=>c[k.key])]));
-    /* Activation de la cohorte : union dédupliquée des cellules si le
-       collecteur la fournit, sinon somme — les cellules d'une cohorte sont
-       des listes statiques disjointes, l'écart y est nul en pratique. */
-    const ca=co.activation||{activated:sum(co.cells,c=>S(c).engaged)};
-    per[PK]=ca.activated;
-    /* « TERMINÉ » dit que les envois sont finis, pas que la fenêtre
-       d'attribution est écoulée. Comparer une cohorte de 15 jours à une
-       cohorte de 45 n'a pas de sens : on hachure tant que la fenêtre court. */
-    const jours=(Date.now()-new Date(co.sent_at))/86400000;
-    const fen=(D.meta.source||'').match(/J\+(\d+)/);
-    const ouvert=fen?jours<(+fen[1]):false;
-    return {co,n,act,per,ca,rate:n?100*ca.activated/n:0,
-            wip:co.status!=='TERMINE'||ouvert,
-            jours:Math.floor(jours),fenetre:fen?+fen[1]:null};
-  });
-  const done=rows.filter(r=>!r.wip);
-  const best=done.length?Math.max(...done.map(r=>r.rate)):0;
-  document.querySelector('#tCohorts tbody').innerHTML=rows.map(r=>
-    `<tr class="${r.wip?'wip':''}">
-      <td class="left"><strong>${r.co.label}</strong><br>
-        <span class="m" style="font-family:var(--font-mono);font-size:10px">${r.co.cells.length} cellule${r.co.cells.length>1?'s':''}${r.co.ab_test===false?' · sans A/B':''}${r.ca.relanced?' · '+fmt(r.ca.relanced)+' relancés':''}</span></td>
-      <td class="left">${STATUS_PILL[r.co.status]||''}</td>
-      <td>${fmt(r.n)}</td>
-      <td class="${r.act?'o':'m'}">${r.act?fmt(r.act)+' ('+pct(r.act,r.n,0)+')':'—'}</td>
-      ${K2.map(k=>`<td>${fmt(r.per[k.key])} <span class="m">(${pct(r.per[k.key],base(k.key)==='sent'?r.per.sent:r.n)})</span></td>`).join('')}
-      <td class="${r.wip?'m':(r.rate>=best&&best>0?'g':'')}">${r.rate.toFixed(1).replace('.',',')} %${
-        r.wip?` <span class="m">(J+${r.jours} sur ${r.fenetre})</span>`:''}</td>
-    </tr>`).join('')
-    +`<tr class="totrow"><td class="left">UNION DÉDUPLIQUÉE</td><td class="left m">—</td>
-      <td>${fmt(nAll)}</td><td>${fmt(sum(rows,r=>r.act))}</td>
-      ${K2.map(k=>`<td>${fmt(k.key===PK?ACT.activated:T(k.key))}</td>`).join('')}
-      <td>${pct(ACT.activated,nAll)}</td></tr>`;
+def num(v):
+    """Entier tolérant : HubSpot renvoie parfois '1.0' là où on attend 1."""
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return 0
 
-  /* Matrice d'activation : RDV × simulation, en contacts uniques.
-     Deux lectures côte à côte. Les colonnes RDV et Simulations SE RECOUPENT
-     — leur somme n'est pas le total. Les colonnes « dont » sont disjointes et
-     leur somme fait le total. La ligne TOTAL lit l'union dédupliquée du
-     collecteur, jamais une addition de cellules. */
-  const mrow=(lab,cell,n,a,cls)=>`<tr class="${cls||''}">
-    <td class="left">${lab}</td><td class="left${cls?' m':''}">${cell}</td>
-    <td>${fmt(n)}</td>
-    <td>${fmt(a.meet)}</td>
-    <td>${fmt(a.deal)}</td>
-    <td class="g">${fmt(a.both)}</td>
-    <td class="o">${fmt(a.meet_only)}</td>
-    <td class="m">${fmt(a.deal_only)}</td>
-    <td><strong>${fmt(a.activated)}</strong></td>
-    <td>${pct(a.activated,n)}</td></tr>`;
-  const cellAct=c=>{const s=S(c);return {
-    meet:c.meetings,deal:c.deals_ae,both:s.both,meet_only:s.meet_only,
-    deal_only:s.deal_only,activated:s.engaged}};
-  document.querySelector('#tMatrix tbody').innerHTML=
-    D.cohorts.map(co=>co.cells.map((c,i)=>mrow(
-      i===0?'<strong>'+co.label+'</strong>':'',
-      (AL[c.audience]||c.audience)+(c.version?' · '+c.version:''),
-      c.enrolled,cellAct(c))).join('')).join('')
-    +mrow('TOTAL CAMPAGNE','union dédupliquée',nAll,ACT,'totrow');
 
-  /* origine des deals : n8n contre création manuelle. Un contact est classé
-     « n8n » dès qu'au moins un de ses deals est automatique. */
-  document.querySelector('#tSource tbody').innerHTML=
-    D.cohorts.map(co=>co.cells.map((c,i)=>{
-      const s=S(c), tot=(s.deal_n8n||0)+(s.deal_manual||0);
-      return `<tr><td class="left">${i===0?'<strong>'+co.label+'</strong>':''}</td>
-        <td class="left">${AL[c.audience]||c.audience}${c.version?' · '+c.version:''}</td>
-        <td>${fmt(tot)}</td>
-        <td class="g">${fmt(s.deal_n8n)}</td>
-        <td class="o">${fmt(s.deal_manual)}</td>
-        <td>${pct(s.deal_n8n,tot)}</td>
-        <td class="${s.deal_only_manual?'r':'m'}">${fmt(s.deal_only_manual)}</td></tr>`;
-    }).join('')).join('')
-    +`<tr class="totrow"><td class="left">TOTAL</td><td class="left m">—</td>
-      <td>${fmt(ACT.deal)}</td>
-      <td>${fmt(ACT.deal_auto)}</td>
-      <td>${fmt(ACT.deal_manual)}</td>
-      <td>${pct(ACT.deal_auto,ACT.deal)}</td>
-      <td>${fmt(ACT.deal_only_manual)}</td></tr>`;
+def to_dt(v):
+    """Date tolérante : millisecondes epoch ou chaîne ISO. None si illisible."""
+    if v in (None, ""):
+        return None
+    try:
+        return dt.datetime.fromtimestamp(float(v) / 1000, dt.timezone.utc)
+    except (TypeError, ValueError):
+        pass
+    try:
+        d = dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+        return d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)
+    except ValueError:
+        return None
 
-  let o=opts(); o.scales.y.ticks.callback=v=>v+'%';
-  o.scales.y.title={display:true,text:'% des contacts ciblés',color:C.muted,font:F};
-  o.plugins.valueLabels={fmt:pctFmt};
-  CH.push(new Chart('chCoh',{type:'bar',
-    data:{labels:rows.map(r=>r.co.label.replace('Batch du ','')),datasets:[
-      {label:'Taux d\'activation',data:rows.map(r=>+r.rate.toFixed(2)),
-        backgroundColor:rows.map(r=>r.wip?alpha(C.yellow,.35):alpha(C.indigo,.55)),
-        borderColor:rows.map(r=>r.wip?C.yellow:C.indigo),borderWidth:1.5,borderRadius:4}
-    ]},options:o}));
 
-  /* ---------- NIVEAU 3 ---------- */
-  document.getElementById('cohDetail').innerHTML=D.cohorts.map(co=>{
-    const cells=co.cells, wip=co.status!=='TERMINE';
-    const auds=[...new Set(cells.map(c=>c.audience))];
-    const rowsC=cells.map(c=>
-      `<tr><td class="left">${AL[c.audience]||c.audience}</td>
-        <td class="left"><span class="pill">Version ${c.version}</span></td>
-        <td class="left">${STATUS_PILL[c.status]||''}</td>
-        <td>${fmt(c.enrolled)}</td>
-        <td class="${c.active?'o':'m'}">${c.active?fmt(c.active):'—'}</td>
-        ${KPI.map(k=>`<td>${fmt(c[k.key])}${c.opens_frozen&&(k.key==='opens'||k.key==='clicks')?' <span class="pill">gelé</span>':''} <span class="m">(${pct(c[k.key],k.base==='sent'?c.sent:c.enrolled)})</span></td>`).join('')}
-      </tr>`).join('');
+def iso(v):
+    """Chaîne ISO d'un champ sent_at de config."""
+    return dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
 
-    const pairs=auds.map(a=>{
-      const cs=cells.filter(c=>c.audience===a);
-      const A=cs.find(c=>c.version==='A'), B=cs.find(c=>c.version==='B');
-      return A&&B?{aud:a,A,B}:null;
-    }).filter(Boolean);
 
-    let verdict='';
-    if(pairs.length&&pairs.some(p=>!cellDone(p.A)||!cellDone(p.B))){
-      verdict=`<div class="anom"><span class="abadge med">EN COURS</span><div>
-        <div class="at">Comparaison différée</div><div class="ab">${co.status_note||''}</div></div></div>`;
-    }else if(pairs.length){
-      verdict=pairs.map(p=>{
-        const lines=KPI.map(k=>{
-          const bA=k.base==='sent'?p.A.sent:p.A.enrolled, bB=k.base==='sent'?p.B.sent:p.B.enrolled;
-          const t=zTest(p.A[k.key],bA,p.B[k.key],bB), e=mde(p.A[k.key],bA,p.B[k.key],bB);
-          if(!t)return `<tr><td class="left">${k.label}</td><td colspan="5" class="left m">effectifs insuffisants</td></tr>`;
-          return `<tr><td class="left">${k.label}</td>
-            <td>${fmt(p.A[k.key])} <span class="m">(${(100*t.p1).toFixed(1).replace('.',',')} %)</span></td>
-            <td>${fmt(p.B[k.key])} <span class="m">(${(100*t.p2).toFixed(1).replace('.',',')} %)</span></td>
-            <td class="${t.diff>=0?'g':'r'}">${t.diff>=0?'+':''}${(100*t.diff).toFixed(1).replace('.',',')} pt</td>
-            <td class="m">±${(100*e).toFixed(1).replace('.',',')} pt</td>
-            <td class="left">${t.pv<0.05?'<span class="g">Version '+(t.diff>0?'B':'A')+' gagne</span>':'<span class="m">non concluant</span>'}</td></tr>`;
-        }).join('');
-        return `<div class="at" style="margin:.3rem 0 6px">Test A/B · ${AL[p.aud]||p.aud}
-            <span class="pill">A n=${fmt(p.A.enrolled)}</span> <span class="pill">B n=${fmt(p.B.enrolled)}</span>
-            ${Math.min(p.A.enrolled,p.B.enrolled)<minN?'<span class="pill r">puissance insuffisante</span>':''}</div>
-          <div class="twrap" style="margin-bottom:1rem"><table><thead><tr><th class="left">Métrique</th>
-            <th>Version A</th><th>Version B</th><th>Écart</th><th>Seuil détectable</th>
-            <th class="left">Verdict</th></tr></thead><tbody>${lines}</tbody></table></div>`;
-      }).join('');
-    }else if(auds.length>1){
-      const byA=auds.map(a=>{
-        const cs=cells.filter(c=>c.audience===a);
-        return {a,n:sum(cs,c=>c.enrolled),d:sum(cs,c=>c[PK])};
-      }).sort((x,y)=>(y.d/y.n)-(x.d/x.n));
-      verdict=`<div class="anom"><span class="abadge low">COMPARAISON D'AUDIENCE</span><div>
-        <div class="at">${co.ab_test===false?"A/B arrêté sur ce batch":"Pas d'A/B sur ce batch"}</div>
-        <div class="ab">${co.ab_note||"Les cellules diffèrent par l'audience, pas par le message."}
-        ${byA.map(x=>`<strong>${AL[x.a]||x.a}</strong> ${pct(x.d,x.n)}`).join(' contre ')}.
-        L'écart mesure une différence de cible, pas de contenu.</div></div></div>`;
-    }else{
-      verdict=`<div class="anom"><span class="abadge low">RIEN À COMPARER</span><div>
-        <div class="at">Cellule unique</div>
-        <div class="ab">${co.ab_note||"Ce batch ne se lit qu'en regard des précédents."}</div></div></div>`;
-    }
+def count_active(list_id, sequence_ids):
+    """Contacts encore activement enrôlés dans UNE SÉQUENCE DE LA CAMPAGNE.
 
-    /* Ciblage : publié seulement si cohorts.json le déclare. Une cohorte dont
-       le ciblage n'est pas documenté n'affiche rien plutôt qu'un texte vide. */
-    const targeting=co.targeting?`<div class="anom"><span class="abadge low">CIBLAGE</span>
-      <div><div class="at">Comment cette cohorte a été construite</div>
-      <div class="ab">${co.targeting}</div></div></div>`:'';
+    Le filtre sur hs_sequences_is_enrolled seul ne suffit pas : cette propriété
+    vaut vrai pour n'importe quelle séquence du portail.
 
-    return `<div class="coh-block ${wip?'wip':''}">
-      <div class="coh-head"><span class="coh-name">${co.label}</span>
-        ${STATUS_PILL[co.status]||''}
-        ${co.activation&&co.activation.relanced?`<span class="pill wip">${fmt(co.activation.relanced)} relancés</span>`:''}
-        ${[...new Set(cells.map(c=>c.sequence_id))].map(s=>`<span class="pill">séquence ${s}</span>`).join('')}
-      </div>
-      <div class="bsub">Listes : ${cells.map(c=>`<code>${c.list_id}</code>`).join(' · ')}</div>
-      <div class="twrap" style="margin-bottom:1rem"><table><thead><tr>
-        <th class="left">Audience</th><th class="left">Version</th><th class="left">Envois</th>
-        <th>Contacts</th><th>Encore en séq.</th>
-        ${KPI.map(k=>'<th>'+k.label+'</th>').join('')}</tr></thead>
-        <tbody>${rowsC}</tbody></table></div>
-      ${targeting}${verdict}</div>`;
-  }).join('');
+    On croise donc avec hs_latest_sequence_enrolled. RÉSERVE AGGRAVÉE PAR LES
+    RELANCES : cette propriété ne garde que la DERNIÈRE séquence. Depuis le
+    11/09, les 1 070 contacts relancés pointent vers une séquence de relance,
+    donc leurs cellules d'origine basculent toutes en TERMINE. Pour août c'est
+    juste — les envois sont finis — mais le mécanisme est aveugle et non un
+    constat de fin réelle.
+    """
+    return count_lists([list_id], [
+        {"propertyName": "hs_sequences_is_enrolled", "operator": "EQ", "value": "true"},
+        {"propertyName": "hs_latest_sequence_enrolled", "operator": "IN",
+         "values": [str(s) for s in sequence_ids]},
+    ])
 
-  /* propriétaires */
-  const own={};
-  allCells.forEach(c=>(c.by_owner||[]).forEach(w=>{
-    own[w.owner]=(own[w.owner]||0)+(w.meetings||0);}));
-  const all=Object.entries(own).sort((a,b)=>b[1]-a[1]);
-  const ow=all.filter(x=>x[1]>0);
-  if(!ow.length){
-    document.getElementById('wrapOwner').innerHTML=
-      `<div style="height:100%;display:flex;align-items:center;justify-content:center;
-        border:1px dashed var(--border2);border-radius:10px;padding:1.5rem;text-align:center">
-        <div class="ab" style="max-width:340px">${T('meetings')||T(PK)
-          ?'<strong style="color:var(--raspberry)">Incohérence :</strong> '+fmt(T('meetings'))+' RDV comptés, mais aucun rattaché à un propriétaire de réunion.'
-          :'Répartition non collectée.'}</div></div>`;
-  }else{
-    let oo=withLegend(opts()); oo.scales.y.ticks.stepSize=1;
-    CH.push(new Chart('chOwner',{type:'bar',data:{labels:ow.map(x=>x[0]),datasets:[
-      {label:'RDV pris',data:ow.map(x=>x[1]),backgroundColor:alpha(C.yellow,.6),
-        borderColor:C.yellow,borderWidth:1.5,borderRadius:4}
-    ]},options:oo}));
-    const idle=all.length-ow.length;
-    if(idle)document.getElementById('wrapOwner').insertAdjacentHTML('afterend',
-      `<div class="ab" style="margin-top:9px">${idle} propriétaire${idle>1?'s':''} sans aucun RDV posé, masqué${idle>1?'s':''}.</div>`);
-  }
 
-  /* ---------- Méthodo ---------- */
-  document.getElementById('limits').innerHTML=[
-    {level:'high',title:'Un dossier ne prouve pas toujours un parcours',
-     body:`Le pipe est alimenté par le produit ET à la main par les commerciaux. Une fiche créée `
-       +`à la main atteste qu'un commercial a ouvert un dossier, pas qu'un client a simulé. C'est `
-       +`pourquoi seule l'étape compte, jamais l'existence de la fiche.`},
-    {level:'high',title:'Une panne de synchronisation fabrique de faux « sales »',
-     body:`Si le flux produit s'arrête, un client qui a simulé n'a pas de dossier : il perd son `
-       +`signal marketing et bascule sur l'appel du commercial. C'est arrivé 33 jours, du 13/08 au `
-       +`16/09. Un bandeau alerte désormais si rien n'a bougé depuis 24 h ouvrées.`},
-    {level:'high',title:'Les étapes du pipe sont parfois posées à la main',
-     body:`37 fiches sont sur « simulation démarrée » ou plus loin sans qu'aucun événement produit `
-       +`ne le confirme. Le dashboard n'en souffre pas — ces personnes ont par ailleurs un `
-       +`rendez-vous — mais qui lit le pipe croit qu'elles ont simulé.`},
-    {level:'high',title:'Un dossier refusé efface la trace du parcours',
-     body:`Une fiche passée en « optimisation refusée » ne dit plus si le client avait simulé avant. `
-       +`On perd ces cas. Le correctif est identifié : le flux calcule déjà le nombre d'étapes `
-       +`franchies, il suffit de l'écrire dans HubSpot.`},
-    {level:'high',title:'Aucune limite de délai : les cohortes ne se comparent pas',
-     body:`On compte tout ce qui arrive après l'envoi, sans borne. Une cohorte ancienne accumule `
-       +`donc plus longtemps qu'une récente et paraîtra toujours meilleure. Les chiffres publiés `
-       +`remontent aussi en permanence : horodater ce qu'on annonce. Décision de Clémence du 25/09 `
-       +`— et on n'aurait pas su calibrer une limite, la mesure qui l'aurait permis étant fausse.`},
-    {level:'med',title:"Ouvertures d'août figées après coup",
-     body:`Le relévé date de 2 h après l'envoi des relances : les valeurs sont surestimées d'une `
-       +`vingtaine d'ouvertures. C'est le meilleur relévé disponible, pas un relévé propre.`},
-    {level:'med',title:'Attribution temporelle, pas causale',
-     body:`Un rendez-vous postérieur à l'envoi n'a pas forcément été causé par lui. Réserve en `
-       +`faveur de la causalité : aucun contact du 5 août n'avait de dossier dans ce pipe avant `
-       +`l'envoi.`},
-    {level:'med',title:'Doublons de contacts',
-     body:`Un même client peut exister deux fois avec deux e-mails, le dossier sur une fiche et le `
-       +`rendez-vous sur l'autre. Il apparaît alors en « dossier seul » à tort.`},
-    {level:'low',title:'Ouvertures gonflées par Apple Mail',
-     body:`Apple Mail précharge les images et déclenche des ouvertures qui n'en sont pas. Ne pas `
-       +`piloter dessus.`},
-    {level:'low',title:'Pas de clic par lien',
-     body:`HubSpot donne un total de clics, sans dire quel lien a été cliqué. Isoler un lien précis `
-       +`demande de l'instrumenter avant l'envoi — jamais rétroactif.`},
-  ].map(a=>`<div class="anom"><span class="abadge ${a.level}">${
-      {high:'CRITIQUE',med:'À SAVOIR',low:'MINEUR'}[a.level]}</span>
-    <div><div class="at">${a.title}</div><div class="ab">${a.body}</div></div></div>`).join('');
-}
-</script>
-</body>
-</html>
+def count_lists(list_ids, extra=None):
+    """Contacts appartenant à l'une des listes, avec un filtre additionnel."""
+    filters = [{"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                "values": [str(x) for x in list_ids]}]
+    if extra:
+        filters += (extra if isinstance(extra, list) else [extra])
+    body = {"filterGroups": [{"filters": filters}],
+            "properties": ["hs_object_id"], "limit": 1}
+    return post(CONTACTS, body).get("total", 0)
+
+
+def list_members(list_id):
+    """IDs des contacts d'une liste, avec leur propriétaire.
+
+    On ne demande que l'ID et le propriétaire : aucun nom, aucun e-mail,
+    aucun téléphone ne transite ni n'est écrit dans data.json.
+    """
+    out, after = [], None
+    while True:
+        body = {
+            "filterGroups": [{"filters": [
+                {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                 "values": [str(list_id)]},
+            ]}],
+            "properties": ["hubspot_owner_id", "hs_sales_email_last_replied",
+                           "hs_sales_email_last_opened", "hs_sales_email_last_clicked"],
+            "limit": CHUNK,
+        }
+        if after:
+            body["after"] = after
+        d = post(CONTACTS, body)
+        for r in d.get("results", []):
+            p = r["properties"]
+            out.append((r["id"], p.get("hubspot_owner_id"),
+                        p.get("hs_sales_email_last_replied"),
+                        p.get("hs_sales_email_last_opened"),
+                        p.get("hs_sales_email_last_clicked")))
+        after = (d.get("paging") or {}).get("next", {}).get("after")
+        if not after:
+            return out
+
+
+def owners_map():
+    r = requests.get(BASE + "/crm/v3/owners/", headers=H,
+                     params={"limit": 200}, timeout=30)
+    r.raise_for_status()
+    return {o["id"]: (f'{o.get("firstName","")} {o.get("lastName","")}'.strip()
+                      or o.get("email", "?"))
+            for o in r.json().get("results", [])}
+
+
+# ------------------------------------------------------------- vagues
+def build_relance_map(cfg):
+    """contact_id -> date du DERNIER envoi de relance qui l'a touché.
+
+    Rattachement CALCULÉ : on ne déclare nulle part qu'une liste de relance
+    appartient à telle cohorte. On collecte les contacts, et chacun est
+    retrouvé plus bas dans la cellule à laquelle il appartient déjà. Les
+    listes de relance sont construites sur un statut de séquence — « a fini
+    sa campagne », « a été interrompu » — et non sur l'appartenance à un
+    batch : un mapping en dur serait faux pour une partie des contacts.
+
+    Le max() protège le cas d'un contact présent dans deux listes de relance :
+    c'est le dernier envoi qui ouvre sa fenêtre.
+    """
+    out = {}
+    for r in cfg.get("relances", []):
+        when = iso(r["sent_at"])
+        for m in list_members(r["list_id"]):
+            cid = m[0]
+            if cid not in out or when > out[cid]:
+                out[cid] = when
+    return out
+
+
+def windows_for(cid, cohort_send, rmap):
+    """Fenêtres d'attribution d'un contact, de la plus ancienne à la plus récente.
+
+    [("v1", envoi du batch, +21j)] et, si le contact a été relancé,
+    [("v2", envoi de la relance, +21j)] en plus.
+
+    Deux fenêtres disjointes plutôt qu'une seule élargie : une activation
+    réelle d'août ne doit pas disparaître parce que le contact a été relancé,
+    et une fenêtre unique de 58 jours détruirait la comparabilité entre
+    cohortes.
+    """
+    def fin(debut):
+        return (None if ATTRIB_DAYS is None
+                else debut + dt.timedelta(days=ATTRIB_DAYS))
+
+    w = [("v1", cohort_send, fin(cohort_send))]
+    r = rmap.get(cid)
+    if r and r > cohort_send:
+        w.append(("v2", r, fin(r)))
+    return w
+
+
+def in_windows(when, wins):
+    """Étiquette de la fenêtre contenant cette date, la plus récente d'abord."""
+    if not when:
+        return None
+    for tag, start, end in reversed(wins):
+        if start <= when and (end is None or when <= end):
+            return tag
+    return None
+
+
+# ------------------------------------------------------------------- e-mails
+def emails_for(contact_ids, sequence_ids, since_ms):
+    """Envois, ouvertures, clics et réponses des e-mails de séquence reçus par
+    ces contacts précisément.
+
+    Le double filtre est ce qui corrige le bug : hs_sequence_id restreint aux
+    séquences de la campagne, associations.contact restreint aux contacts de la
+    cellule. Sans le second, un batch ultérieur partageant la séquence viendrait
+    gonfler les chiffres.
+    """
+    agg = dict(sent=0, bounced=0, opens=0, clicks=0)
+    steps = {}
+    if not contact_ids:
+        return agg, []
+    for i in range(0, len(contact_ids), CHUNK):
+        chunk = contact_ids[i:i + CHUNK]
+        after = None
+        while True:
+            body = {
+                "filterGroups": [{"filters": [
+                    {"propertyName": "hs_sequence_id", "operator": "IN",
+                     "values": [str(s) for s in sequence_ids]},
+                    {"propertyName": "associations.contact", "operator": "IN",
+                     "values": chunk},
+                    {"propertyName": "hs_timestamp", "operator": "GTE",
+                     "value": str(since_ms)},
+                ]}],
+                "properties": ["hs_email_status", "hs_email_subject",
+                               "hs_email_open_count", "hs_email_click_count",
+                               "hs_timestamp"],
+                "limit": 200,
+            }
+            if after:
+                body["after"] = after
+            d = post(EMAILS, body)
+            for e in d.get("results", []):
+                p = e["properties"]
+                status = (p.get("hs_email_status") or "").upper()
+                if status not in ("SENT", "BOUNCED"):
+                    continue
+                agg["sent"] += 1
+                subj = p.get("hs_email_subject") or "(sans objet)"
+                st = steps.setdefault(subj, dict(sent=0, opens=0, clicks=0))
+                st["sent"] += 1
+                if status == "BOUNCED":
+                    agg["bounced"] += 1
+                    continue
+                op = 1 if num(p.get("hs_email_open_count")) > 0 else 0
+                cl = 1 if num(p.get("hs_email_click_count")) > 0 else 0
+                agg["opens"] += op
+                agg["clicks"] += cl
+                st["opens"] += op
+                st["clicks"] += cl
+            after = (d.get("paging") or {}).get("next", {}).get("after")
+            if not after:
+                break
+    ordered = sorted(steps.items(), key=lambda x: -x[1]["sent"])
+    return agg, [dict(order=i + 1, subject=k, **v)
+                 for i, (k, v) in enumerate(ordered)]
+
+
+# ------------------------------------------------------- RDV et engagement
+def _objects_assoc(path, contact_ids, extra_filters, props):
+    """Objets associés à ces contacts, AVEC leurs propriétés."""
+    out = {}
+    for i in range(0, len(contact_ids), CHUNK):
+        chunk = contact_ids[i:i + CHUNK]
+        after = None
+        while True:
+            filters = [{"propertyName": "associations.contact",
+                        "operator": "IN", "values": chunk}] + extra_filters
+            body = {"filterGroups": [{"filters": filters}],
+                    "properties": props, "limit": 200}
+            if after:
+                body["after"] = after
+            d = post(path, body)
+            for r in d.get("results", []):
+                out[r["id"]] = r["properties"]
+            after = (d.get("paging") or {}).get("next", {}).get("after")
+            if not after:
+                break
+    return out
+
+
+def _contacts_of(object_type, object_ids):
+    """Contacts associés à chaque objet, via l'API associations v4."""
+    m = {}
+    ids = list(object_ids)
+    for i in range(0, len(ids), CHUNK):
+        d = post(f"/crm/v4/associations/{object_type}/contacts/batch/read",
+                 {"inputs": [{"id": o} for o in ids[i:i + CHUNK]]})
+        for r in d.get("results", []):
+            m[r["from"]["id"]] = [str(t["toObjectId"]) for t in r["to"]]
+    return m
+
+
+def in_backfill(d):
+    """La date tombe-t-elle dans une rafale de rattrapage n8n ?
+
+    Un rattrapage importe de l'ANTÉRIORITÉ, pas de l'activité. Deux rafales
+    connues : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h03
+    (~190 créations et ~248 mises à jour, reprise du flux après 33 jours
+    d'arrêt). La borne haute du 16/09 est à 11h03 et non 11h02 : la rafale
+    s'est prolongée jusqu'à 11:02:04, et deux transactions ouvertes le 5 juin
+    y recevaient leur mouvement d'étape — comptées à tort comme activations
+    de septembre. Vérifié le 17/09 par requête directe sur le pipe.
+
+    L'exclusion porte sur CHAQUE date prise isolément, plus sur la transaction
+    entière comme avant : un dossier créé pendant la rafale mais réellement
+    déplacé d'étape trois jours plus tard reste une activation légitime. Sans
+    ce changement, la clause « déplacé d'étape dans la fenêtre » comptait les
+    248 mouvements du rattrapage du 16/09 comme autant d'activations.
+    """
+    if not d:
+        return False
+    return any(to_dt(a) <= d < to_dt(b) for a, b in BACKFILL)
+
+
+def deal_engages(props, wins):
+    """Étiquette de vague si la transaction entre dans une fenêtre, sinon None.
+
+    AUCUN filtre sur dealstage, volontairement : les transactions remontées
+    par n8n sautent des étapes, une étape absente ne prouve rien.
+
+    Deux bornes, en OU :
+      - createdate : dossier ouvert pendant la fenêtre ;
+      - hs_v2_date_entered_current_stage : dernier mouvement d'étape, ce qui
+        rattrape les dossiers ouverts AVANT la campagne mais réactivés.
+
+    Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
+    déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
+    """
+    for key in ("createdate", "hs_v2_date_entered_current_stage"):
+        d = to_dt(props.get(key))
+        if in_backfill(d):
+            continue
+        tag = in_windows(d, wins)
+        if tag:
+            return tag
+    return None
+
+
+def first_outbound_call(contact_ids, since_ms):
+    """Premier appel SORTANT loggé pour chaque contact, après l'envoi du batch.
+
+    Marqueur de prise en main commerciale. On garde le PREMIER : la question
+    d'attribution est de savoir si un signal marketing a précédé le premier
+    contact sortant, pas le dernier.
+    """
+    out = {}
+    if not contact_ids:
+        return out
+    calls = _objects_assoc(
+        CALLS, contact_ids,
+        [{"propertyName": "hs_call_direction", "operator": "EQ", "value": "OUTBOUND"},
+         {"propertyName": "hs_timestamp", "operator": "GTE", "value": str(since_ms)}],
+        ["hs_timestamp", "hs_call_direction"])
+    cmap = _contacts_of("calls", list(calls.keys()))
+    for kid, p in calls.items():
+        when = to_dt(p.get("hs_timestamp"))
+        if not when:
+            continue
+        for c in cmap.get(kid, []):
+            if c not in out or when < out[c]:
+                out[c] = when
+    return out
+
+
+def attribute(cid, simulated, replies, rdv_pub, calls):
+    """Origine de l'activation d'un contact : marketing, sales, ou ni l'un ni l'autre.
+
+    Ordre volontaire, la simulation prime sur tout :
+      1. une simulation réelle (last_step_date) → marketing, même si un appel
+         a suivi : le client était déjà entré dans le parcours produit ;
+      2. une réponse à une séquence OU un RDV réservé en self-service,
+         ANTÉRIEUR au premier appel sortant → marketing ;
+      3. un appel sortant loggé → sales ;
+      4. rien de tout ça → non attribuable.
+
+    PIÈGE CENTRAL sur le RDV : on compare la date de RÉSERVATION
+    (hs_createdate) au premier appel, JAMAIS la date de tenue
+    (hs_meeting_start_time). Cas réel : réservation le 11/09, rendez-vous le
+    15/09, appel commercial le 15/09 à l'heure du rendez-vous. Avec la date de
+    tenue, le contact bascule à tort en sales — 5 erreurs sur 57 venaient de là.
+    """
+    if cid in simulated:
+        return ("marketing", "simulation")
+    call = calls.get(cid)
+    sigs = []
+    if replies.get(cid):
+        sigs.append((replies[cid], "reponse"))
+    if rdv_pub.get(cid):
+        sigs.append((rdv_pub[cid], "rdv_public"))
+    if sigs:
+        sigs.sort(key=lambda x: x[0])
+        when, kind = sigs[0]
+        if call is None or when < call:
+            return ("marketing", kind)
+    if call:
+        return ("sales", None)
+    return ("non_attribuable", None)
+
+
+def qualify(cid, bucket, sub, mset):
+    """Statut de qualification d'un contact activé : certain, ou en attente.
+
+    Définition arrêtée le 17/09/2026 avec Clémence. Un client est un lead dans
+    trois cas, et uniquement dans ces trois cas :
+      1. il prend lui-même un créneau, suite à nos e-mails ou depuis l'app ;
+      2. il démarre son parcours de son propre chef ;
+      3. outbound : on l'a eu au téléphone, ça peut l'intéresser, ET il veut
+         qu'on organise un RDV pour en parler.
+
+    LECTURE DU CAS 3 : le résultat attendu d'un outbound qualifié est un RDV
+    organisé. Un contact qui a un rendez-vous posé par un commercial a donc,
+    par construction, franchi les deux conditions — il a été joint, et il a
+    voulu qu'on lui cale un créneau. Il est CERTAIN.
+    Réserve : rien dans HubSpot ne dit si le créneau a été honoré. La règle
+    porte sur l'intention exprimée au téléphone, pas sur la tenue du RDV.
+
+    RESTE EN ATTENTE : les contacts qui n'ont qu'une fiche ouverte dans
+    HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un
+    accord ou un refus. C'est la population que Clémence pointe : sur
+    151 contacts appelés, 37 avaient une carte dont 21 en optimization_declined.
+
+    POURQUOI UNE RÉPONSE NE SUFFIT PAS : hs_sales_email_last_replied enregistre
+    n'importe quelle réponse, y compris « ça ne m'intéresse pas », un message
+    d'absence ou une demande de désinscription. Rien ne distingue un refus d'un
+    signal d'intérêt. Une réponse sans RDV ni parcours reste en attente.
+    """
+    if sub == "rdv_public":
+        return "certain", "rdv_client"      # cas 1
+    if sub == "simulation":
+        return "certain", "parcours"        # cas 2
+    if cid in mset:
+        return "certain", "rdv_sales"       # cas 3, RDV organisé
+    return "attente", "carte_seule"
+
+
+def empty_qual():
+    return dict(certain=0, attente=0, certain_rdv_client=0, certain_parcours=0,
+                certain_rdv_sales=0, attente_carte_seule=0)
+
+
+def empty_attr():
+    return dict(marketing=dict(total=0, simulation=0, reponse=0, rdv_public=0),
+                sales=dict(total=0), non_attribuable=dict(total=0))
+
+
+def add_attr(acc, bucket, sub):
+    acc[bucket]["total"] += 1
+    if bucket == "marketing" and sub:
+        acc["marketing"][sub] += 1
+
+
+def business_hours_between(a, b):
+    """Heures ouvrées (lundi-vendredi) entre deux instants. Jours fériés ignorés."""
+    if not a or b <= a:
+        return 0
+    h, cur = 0, a.replace(minute=0, second=0, microsecond=0)
+    while cur < b and h < 24 * 30:
+        if cur.weekday() < 5:
+            h += 1
+        cur += dt.timedelta(hours=1)
+    return h
+
+
+def last_integration_move(pipeline):
+    """Date du dernier signe de vie de n8n sur ce pipe.
+
+    Sert au drapeau sync_stale. Sans lui, une panne du flux produit des faux
+    « sales » en silence : un client qui a simulé n'a pas de dossier remonté,
+    donc aucun signal marketing, donc il bascule sur l'appel du commercial.
+    C'est exactement ce qui s'est produit du 13/08 au 16/09.
+    """
+    body = {"filterGroups": [{"filters": [
+        {"propertyName": "pipeline", "operator": "EQ", "value": pipeline},
+        {"propertyName": "hs_object_source_label", "operator": "EQ",
+         "value": "INTEGRATION"}]}],
+        "properties": ["createdate", "hs_v2_date_entered_current_stage"],
+        "sorts": [{"propertyName": "createdate", "direction": "DESCENDING"}],
+        "limit": 1}
+    r = post(DEALS, body).get("results") or []
+    if not r:
+        return None
+    p = r[0]["properties"]
+    ds = [x for x in (to_dt(p.get("createdate")),
+                      to_dt(p.get("hs_v2_date_entered_current_stage"))) if x]
+    return max(ds) if ds else None
+
+
+def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
+    """Ensembles d'activation, plus les signaux nécessaires à l'attribution.
+
+    Retourne des ENSEMBLES de contacts, jamais des compteurs d'objets : un
+    même contact peut avoir un RDV courtage puis un RDV devis.
+
+    DEUX collectes de réunions, volontairement :
+      - meet_f porte le filtre d'intitulé et sert la définition d'ACTIVATION,
+        inchangée depuis le 22/08 ;
+      - meet_f_attr ne le porte pas et sert l'ATTRIBUTION, via
+        hs_meeting_source. Le filtre d'intitulé rate les rendez-vous pris par
+        le lien générique « Rendez-vous téléphonique Nopillo » : acceptable
+        pour l'activation, faux pour l'attribution. Toucher au premier
+        changerait des chiffres déjà publiés, on ne le fait pas.
+    """
+    keep = set(ids)
+    wins = {c: windows_for(c, cohort_send, rmap) for c in keep}
+
+    # ---- dossiers courtage
+    deals = _objects_assoc(
+        DEALS, ids,
+        [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
+        ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
+         "hs_object_source_label", "origine_creation_deal_ae",
+         ETAPES_PROP, SIMU_PROP])
+    dmap = _contacts_of("deals", list(deals.keys()))
+    dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
+    niveau = {}
+    for did, props in deals.items():
+        stage = str(props.get("dealstage") or "")
+        # SEULE une étape de parcours prouve une activation.
+        #  - optimization_activated : accès au simulateur, aucune étape. Non compté.
+        #  - carte créée par le workflow « RDV sans simu » : aucune information
+        #    propre, elle existe PARCE QU'un RDV existe, et le RDV est déjà
+        #    compté via MEETING. Non comptée.
+        #  - optimization_declined : étape terminale pilotée par le CS. Le flow
+        #    n8n ne l'écrit plus et la protège, donc elle efface l'information
+        #    de parcours. Non comptée : le contact reste activable par un RDV,
+        #    sinon il part en attente de qualification.
+        # Le client a agi si le produit compte au moins une étape franchie,
+        # OU si l'étape du pipe le dit. Les deux, parce que la propriété n'est
+        # pas encore remplie partout : le OU récupère les 34 dossiers refusés
+        # qui portaient une vraie simulation, sans perdre les 68 transactions
+        # en étape de parcours que le rattrapage n'a pas encore touchées.
+        try:
+            etapes = int(float(props.get(ETAPES_PROP) or 0))
+        except (TypeError, ValueError):
+            etapes = 0
+        has_simu = etapes >= 1 or stage in SIMU_STAGES
+        for c in dmap.get(did, []):
+            if c not in keep:
+                continue
+            if not has_simu:
+                continue
+            # LA FENÊTRE S'APPLIQUE AUSSI À LA SIMULATION, depuis le 25/09.
+            # Elle ne portait avant que sur le total activé : simulated et
+            # process étaient renseignés en amont du test. Cinq contacts se
+            # retrouvaient classés « a simulé » alors que leur transaction
+            # était hors fenêtre — activés par leur rendez-vous, mais rangés
+            # dans la mauvaise catégorie. Un signal hors fenêtre ne compte
+            # nulle part, c'est la même règle partout.
+            tag = deal_engages(props, wins[c])
+            if not tag:
+                continue
+            simulated.add(c)
+            if stage in STAGE_PROCESS:
+                process.add(c)
+            dset.add(c)
+            niveau[c] = max(niveau.get(c, 0), niveau_de(stage))
+            if d_wave.get(c) != "v2":
+                d_wave[c] = tag
+            # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
+            # transactions vient de l'INTÉGRATION : c'est le signal le plus fort
+            # dont on dispose sur un parcours réellement produit.
+            # Le test portait avant sur « différent de CRM_UI », ce qui rangeait
+            # les transactions créées par un workflow HubSpot
+            # (AUTOMATION_PLATFORM) du côté n8n — alors qu'aucun client n'avait
+            # simulé. Corrigé le 25/09 après la mise en place du workflow
+            # « RDV sans simu ».
+            if props.get("hs_object_source_label") == "INTEGRATION":
+                d_auto.add(c)
+
+    # ---- rendez-vous, périmètre ACTIVATION (filtre d'intitulé)
+    meets = _objects_assoc(MEETINGS, ids, meet_f,
+                           ["hubspot_owner_id", "hs_timestamp", "hs_createdate"])
+    mmap = _contacts_of("meetings", list(meets.keys()))
+    mset, m_owner, m_wave = set(), {}, {}
+    # Tri chronologique : un contact ayant plusieurs RDV est attribué au
+    # propriétaire du PREMIER, celui qui a converti.
+    for mid, p in sorted(meets.items(),
+                         key=lambda x: x[1].get("hs_createdate") or ""):
+        booked = to_dt(p.get("hs_createdate")) or to_dt(p.get("hs_timestamp"))
+        for c in mmap.get(mid, []):
+            if c not in keep:
+                continue
+            tag = in_windows(booked, wins[c])
+            if not tag:
+                continue
+            mset.add(c)
+            m_owner.setdefault(c, p.get("hubspot_owner_id"))
+            if m_wave.get(c) != "v2":
+                m_wave[c] = tag
+
+    # ---- rendez-vous, périmètre ATTRIBUTION (sans filtre d'intitulé)
+    # On retient la date de RÉSERVATION du premier RDV self-service.
+    meets_a = _objects_assoc(MEETINGS, ids, meet_f_attr,
+                             ["hs_meeting_source", "hs_createdate"])
+    amap = _contacts_of("meetings", list(meets_a.keys()))
+    rdv_pub = {}
+    for mid, p in meets_a.items():
+        if (p.get("hs_meeting_source") or "").upper() != MEETING_PUBLIC:
+            continue
+        booked = to_dt(p.get("hs_createdate"))
+        if not booked:
+            continue
+        for c in amap.get(mid, []):
+            if c in keep and (c not in rdv_pub or booked < rdv_pub[c]):
+                rdv_pub[c] = booked
+
+    return (dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub,
+            process, niveau)
+
+
+# -------------------------------------------------------------------- build
+def load_config():
+    with open("cohorts.json", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def cumulative_curve(delays, enrolled, send, horizon_max=None):
+    """Part des CONTACTS ayant répondu au plus tard à J+n.
+
+    Le dénominateur est l'effectif ciblé, pas le nombre de répondants : une
+    courbe rapportée aux répondants finit toujours à 100 %, ce qui se lit comme
+    « tout le monde a répondu » alors que c'est une tautologie.
+    """
+    if not delays or not enrolled:
+        return []
+    elapsed = (dt.datetime.now(dt.timezone.utc) - send).days
+    # L'horizon suit la fenêtre d'attribution : afficher la courbe au-delà
+    # montrerait des réponses qui ne sont pas comptées. Sans fenêtre, on borne
+    # à 90 jours pour que le graphe reste lisible.
+    plafond = horizon_max if horizon_max is not None else (ATTRIB_DAYS or 90)
+    horizon = max(0, min(plafond, elapsed))
+    return [dict(day=j, count=sum(1 for x in delays if x <= j),
+                 share=round(100 * sum(1 for x in delays if x <= j) / enrolled, 2))
+            for j in range(horizon + 1)]
+
+
+def activation_split(mset, dset, auto):
+    """Décomposition de l'activation, en CONTACTS uniques.
+
+    - les deux totaux qui se recoupent : `meet` et `deal` ;
+    - les trois sous-ensembles disjoints : `both`, `meet_only`, `deal_only` ;
+    - le total : `activated` = meet + deal − both, JAMAIS meet + deal.
+    """
+    return dict(
+        meet=len(mset), deal=len(dset), both=len(mset & dset),
+        meet_only=len(mset - dset), deal_only=len(dset - mset),
+        activated=len(mset | dset),
+        deal_auto=len(auto), deal_manual=len(dset - auto),
+        deal_only_manual=len((dset - mset) - auto),
+    )
+
+
+def build():
+    cfg = load_config()
+    owners = owners_map()
+    pipeline = cfg["deal_pipeline"]
+    frozen = cfg.get("frozen_metrics", {})
+    all_lists = [c["list_id"] for co in cfg["cohorts"] for c in co["cells"]]
+
+    # Vagues de relance : contact -> date du dernier envoi qui l'a touché.
+    rmap = build_relance_map(cfg)
+    if rmap:
+        print(f"relances : {len(rmap)} contact(s) relancé(s) sur "
+              f"{len(cfg.get('relances', []))} liste(s)")
+
+    camp_meet, camp_deal, camp_deal_auto = set(), set(), set()
+    camp_v2 = set()
+
+    # Attribution sales / marketing. Trois cas DISJOINTS dont la somme fait le
+    # total activé : le total ne change pas, seule sa décomposition est ajoutée.
+    camp_attr = empty_attr()
+    attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
+    camp_qual, qual_cells = empty_qual(), {}
+    camp_process = set()
+    camp_fin = {}
+    last_sync = last_integration_move(pipeline)
+    sync_stale = business_hours_between(last_sync,
+                                        dt.datetime.now(dt.timezone.utc)) > 24
+    if sync_stale:
+        print(f"\n   /!\\ SYNC OBSOLETE : dernier mouvement n8n sur le pipe "
+              f"{last_sync.isoformat() if last_sync else 'jamais'}. "
+              f"Les contacts ayant simulé depuis n'ont pas de dossier remonté : "
+              f"ils basculent a tort en sales.\n")
+
+    cohorts = []
+    for co in cfg["cohorts"]:
+        send = iso(co["sent_at"])
+        since_ms = int(send.timestamp() * 1000)
+        forced = (co.get("status") or "AUTO").upper()
+        cells, all_delays = [], []
+        coh_meet, coh_deal, coh_deal_auto, coh_v2 = set(), set(), set(), set()
+        coh_process = set()
+
+        for c in co["cells"]:
+            members = list_members(c["list_id"])
+            ids = [m[0] for m in members]
+
+            agg, steps = emails_for(ids, [c["sequence_id"]], since_ms)
+
+            # Réponses, ouvertures et clics au CONTACT, pas à l'e-mail.
+            delays = []
+            n_open = n_click = 0
+            for _, _, rep, op, cl in members:
+                w = to_dt(rep)
+                if w and w >= send:
+                    delays.append((w - send).days)
+                wo = to_dt(op)
+                if wo and wo >= send:
+                    n_open += 1
+                wc = to_dt(cl)
+                if wc and wc >= send:
+                    n_click += 1
+            all_delays += delays
+
+            # MÉTRIQUES GELÉES. hs_sales_email_last_opened et
+            # hs_sales_email_last_clicked sont des propriétés « dernière fois »
+            # sans mémoire : une ouverture de relance écrase la date d'août et
+            # reste comptée comme une ouverture d'août, puisque la comparaison
+            # est >= date d'envoi. Borner en haut ne réglerait rien — un vrai
+            # ouvreur d'août sortirait alors du compte. La donnée d'origine
+            # n'existe plus : on fige le dernier relevé propre.
+            fz = frozen.get(str(c["list_id"]))
+            if fz:
+                n_open = fz.get("opens", n_open)
+                n_click = fz.get("clicks", n_click)
+                agg["opens"] = fz.get("opens_emails", agg["opens"])
+                agg["clicks"] = fz.get("clicks_emails", agg["clicks"])
+
+            meet_f = [{"propertyName": "hs_createdate", "operator": "GTE",
+                       "value": str(since_ms)},
+                      {"propertyName": "hubspot_owner_id", "operator": "IN",
+                       "values": AE_MEETING_OWNERS}]
+            # Périmètre ATTRIBUTION : même bornes, SANS filtre d'intitulé.
+            meet_f_attr = list(meet_f)
+            mf = cfg.get("meeting_filter")
+            if mf:
+                meet_f.append({"propertyName": mf["property"],
+                               "operator": mf["operator"], "value": mf["value"]})
+
+            (dset, mset, m_owner, d_auto, d_wave, m_wave,
+             simulated, rdv_pub, process, niveau) = engagement_sets(
+                ids, send, pipeline, meet_f, meet_f_attr, rmap)
+
+            # Signaux d'attribution restants : réponses et premier appel sortant.
+            reply_at = {}
+            for cid, _, rep, _, _ in members:
+                w = to_dt(rep)
+                if w and w >= send:
+                    reply_at[cid] = w
+            calls_at = first_outbound_call(ids, since_ms)
+
+            cell_attr, cell_qual = empty_attr(), empty_qual()
+            attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
+                        "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
+            # Classement fin des activés : profondeur du parcours × présence
+            # d'un RDV. Catégories disjointes, leur somme fait le total activé.
+            fin_ids = {}
+            for cid in (dset | mset):
+                rang = niveau.get(cid, 0)
+                a_rdv = cid in mset
+                if rang == 0:
+                    cle = "RDV seul"
+                else:
+                    cle = ("RDV + " if a_rdv else "") + NIVEAU_LABEL[rang]
+                fin_ids.setdefault(cle, []).append(cid)
+
+            qual_ids = {"certain_rdv_client": [], "certain_parcours": [],
+                        "certain_rdv_sales": [], "attente_carte_seule": []}
+            for cid in (dset | mset):
+                bucket, sub = attribute(cid, simulated, reply_at, rdv_pub, calls_at)
+                attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
+                add_attr(cell_attr, bucket, sub)
+                add_attr(camp_attr, bucket, sub)
+                q, qsub = qualify(cid, bucket, sub, mset)
+                for acc in (cell_qual, camp_qual):
+                    acc[q] += 1
+                    acc[f"{q}_{qsub}"] += 1
+                qual_ids[f"{q}_{qsub}"].append(cid)
+                add_attr(attr_v2 if cid in ({x for x, t in d_wave.items() if t == "v2"} |
+                                            {x for x, t in m_wave.items() if t == "v2"})
+                         else attr_v1, bucket, sub)
+            attr_cells[c["list_id"]] = cell_attr
+            qual_cells[c["list_id"]] = cell_qual
+            for k, v in fin_ids.items():
+                camp_fin.setdefault(k, set()).update(v)
+
+            # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
+            # de relance, donc attribuable à la relance et non au batch.
+            v2 = {x for x, t in d_wave.items() if t == "v2"} | \
+                 {x for x, t in m_wave.items() if t == "v2"}
+            relanced = {x for x in ids if x in rmap}
+
+            split = dict(both=len(dset & mset), meet_only=len(mset - dset),
+                         deal_only=len(dset - mset), engaged=len(dset | mset),
+                         deal_n8n=len(d_auto), deal_manual=len(dset - d_auto),
+                         deal_only_manual=len((dset - mset) - d_auto),
+                         relanced=len(relanced), engaged_v2=len(v2),
+                         engaged_v1=len((dset | mset) - v2),
+                         marketing=cell_attr["marketing"]["total"],
+                         sales=cell_attr["sales"]["total"],
+                         non_attribuable=cell_attr["non_attribuable"]["total"],
+                         simule=cell_attr["marketing"]["simulation"],
+                         certain=cell_qual["certain"],
+                         attente=cell_qual["attente"],
+                         process=len(process))
+            n_meet, n_deal = len(mset), len(dset)
+
+            coh_meet |= mset
+            coh_deal |= dset
+            coh_deal_auto |= d_auto
+            coh_v2 |= v2
+            coh_process |= process
+
+            m_own = {}
+            for cid in mset:
+                k = m_owner.get(cid)
+                m_own[k] = m_own.get(k, 0) + 1
+
+            active = count_active(c["list_id"], [c["sequence_id"]])
+
+            cells.append(dict(
+                list_id=c["list_id"], list_name=c.get("list_name"),
+                sequence_id=c["sequence_id"], audience=c["audience"],
+                version=c.get("version"),
+                enrolled=len(members), active=active,
+                status=(forced if forced in ("TERMINE", "EN_COURS")
+                        else ("EN_COURS" if active > 0 else "TERMINE")),
+                sent=agg["sent"], bounced=agg["bounced"],
+                opens=n_open, clicks=n_click,
+                opens_emails=agg["opens"], clicks_emails=agg["clicks"],
+                opens_frozen=bool(fz),
+                # replies_non_fiable : conservé pour mémoire, JAMAIS affiché.
+                # hs_sales_email_last_replied enregistre la dernière réponse du
+                # contact à n'importe quel e-mail commercial, et la date glisse
+                # à chaque nouvel échange. La cellule RP du 13 août est passée
+                # de 68 à 110 entre le 15 et le 25/09, sur une campagne
+                # terminée. Le nom dit explicitement de ne pas s'en servir.
+                replies_non_fiable=len(delays),
+                meetings=n_meet, deals_ae=n_deal,
+                engaged=split["engaged"], split=split,
+                # Détail par contact, RETIRÉ avant l'écriture de data.json :
+                # ce fichier est servi publiquement par GitHub Pages.
+                _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
+                          deal_only=sorted(dset - mset), v2=sorted(v2),
+                          attr={k: sorted(v) for k, v in attr_ids.items()},
+                          qual={k: sorted(v) for k, v in qual_ids.items()},
+                          fin={k: sorted(v) for k, v in fin_ids.items()}),
+                steps=steps,
+                by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
+                               meetings=n)
+                          for o, n in sorted(m_own.items(), key=lambda x: str(x[0]))],
+            ))
+
+        n_act = sum(c["active"] for c in cells)
+        done = [c for c in cells if c["status"] == "TERMINE"]
+        status = ("TERMINE" if n_act == 0 else ("PARTIEL" if done else "EN_COURS"))
+        note = None if n_act == 0 else (
+            f"{n_act} contact(s) encore en séquence sur cette cohorte"
+            + (f", mais la cellule {done[0]['audience']} a fini d'envoyer "
+               f"et alimente déjà la référence." if done
+               else ". Les chiffres vont encore monter."))
+        camp_meet |= coh_meet
+        camp_deal |= coh_deal
+        camp_deal_auto |= coh_deal_auto
+        camp_v2 |= coh_v2
+        camp_process |= coh_process
+
+        act = activation_split(coh_meet, coh_deal, coh_deal_auto)
+        act["activated_v2"] = len(coh_v2)
+        act["activated_v1"] = act["activated"] - len(coh_v2)
+        act["relanced"] = sum(c["split"]["relanced"] for c in cells)
+        act["process"] = len(coh_process)
+
+        cohorts.append(dict(id=co["id"], label=co["label"], sent_at=co["sent_at"],
+                            status=status, active=n_act, status_note=note,
+                            ab_test=co.get("ab_test", True), ab_note=co.get("ab_note"),
+                            targeting=co.get("targeting"),
+                            cells=cells, activation=act,
+                            # Courbe de réponses RETIRÉE le 25/09 : sa source,
+                            # hs_sales_email_last_replied, enregistre la dernière
+                            # réponse à n'importe quel e-mail commercial et glisse
+                            # à chaque nouvel échange. La cellule RP du 13 août est
+                            # passée de 68 à 110 réponses en dix jours sur une
+                            # campagne terminée. Aucune source fiable n'existe : les
+                            # e-mails entrants ne portent pas hs_sequence_id.
+                            reply_curve=[]))
+    cohorts.sort(key=lambda x: x["id"])
+
+    # Union dédupliquée : les cohortes peuvent se recouper
+    dedup = dict(contacts=count_lists(all_lists))
+    somme = sum(c["enrolled"] for co in cohorts for c in co["cells"])
+    ecart = somme - dedup["contacts"]
+
+    dedup["activation"] = activation_split(camp_meet, camp_deal, camp_deal_auto)
+    somme_act = sum(c["split"]["engaged"] for co in cohorts for c in co["cells"])
+    dedup["activation"]["sum_cells"] = somme_act
+    dedup["activation"]["overlap"] = somme_act - dedup["activation"]["activated"]
+    dedup["activation"]["activated_v2"] = len(camp_v2)
+    dedup["activation"]["activated_v1"] = (dedup["activation"]["activated"]
+                                           - len(camp_v2))
+    dedup["relanced"] = len(rmap)
+    # Bas de funnel : contacts dont un dossier est entré en souscription.
+    dedup["process"] = len(camp_process)
+
+    # Décomposition sales / marketing. Nouvel axe, sans rupture : le total
+    # activé est inchangé, marketing + sales + non attribuable = activés.
+    dedup["attribution"] = dict(
+        marketing=camp_attr["marketing"], sales=camp_attr["sales"],
+        non_attribuable=camp_attr["non_attribuable"],
+        par_cellule=attr_cells, par_vague=dict(v1=attr_v1, v2=attr_v2),
+        qualification=dict(camp_qual, par_cellule=qual_cells),
+        sync_stale=sync_stale,
+        last_sync=last_sync.isoformat() if last_sync else None)
+
+    data = dict(
+        meta=dict(
+            campaign=cfg["campaign"],
+            generated_at=dt.datetime.now(dt.timezone.utc).isoformat(),
+            collected=True,
+            primary_axis=cfg.get("primary_axis", "cohort"),
+            primary_kpi=cfg.get("primary_kpi"),
+            source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
+                    "· MEETING_EVENT ∪ DEAL pipeline " + pipeline
+                    + (" · contacts uniques, SANS borne haute d'attribution"
+                       if ATTRIB_DAYS is None
+                       else f" · contacts uniques, fenêtre J+{ATTRIB_DAYS} par contact")),
+            attribution_note=cfg["notes"]["attribution"],
+            relance_note=cfg["notes"].get("relances"),
+            meeting_window_note=cfg["notes"].get("meeting_window"),
+            attribution_window_note=cfg["notes"].get("attribution_window"),
+            frozen_note=cfg.get("frozen_metrics", {}).get("_doc"),
+            attribution_sm_note=cfg["notes"].get("attribution_sales_marketing"),
+            overlap_note=(
+                f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
+                f"plusieurs batchs. Le niveau 1 utilise l'union dédupliquée."
+                if ecart > 0 else "Aucun recoupement entre les cohortes."),
+            fix_note=("Attribution par appartenance aux listes. Les séquences étant "
+                      "réutilisées d'un batch à l'autre, une attribution par "
+                      "hs_sequence_id imputerait les envois d'un batch au précédent."),
+        ),
+        kpis=cfg["kpis"],
+        audience_labels=cfg["audience_labels"],
+        stats_config=cfg["stats"],
+        objectif=cfg.get("objectif"),
+        relances=[dict(r) for r in cfg.get("relances", [])],
+        dedup=dedup,
+        cohorts=cohorts,
+    )
+
+    # Détail nominatif : dans les logs du run, JAMAIS dans data.json.
+    # Le pop() ci-dessous est ce qui garantit que _ids ne fuite pas dans le
+    # JSON — ne pas le déplacer après json.dump.
+    print("\n--- détail des contacts engagés ---")
+    for co in cohorts:
+        for c in co["cells"]:
+            ids = c.pop("_ids")
+            v2 = set(ids["v2"])
+            print(f"\n{co['id']} · {c['audience']}-{c['version']} "
+                  f"· {c['split']['engaged']} engagés sur {c['enrolled']} ciblés")
+            # Classement par profondeur de parcours, du plus loin au plus près.
+            # Catégories disjointes : un contact n'apparaît qu'une fois.
+            fin = ids.get("fin") or {}
+            for cat in ORDRE_FIN:
+                if fin.get(cat):
+                    print(f"  {cat} ({len(fin[cat])})")
+                    for cid in fin[cat]:
+                        flag = "  [vague 2]" if cid in v2 else ""
+                        print(f"    https://app-eu1.hubspot.com/contacts/"
+                              f"{PORTAL}/contact/{cid}{flag}")
+            # Mêmes contacts, relus par ORIGINE de l'activation. Les cinq
+            # catégories sont disjointes : un contact apparaît une seule fois.
+            # C'est ici qu'on vérifie un arbitrage douteux, fiche par fiche.
+            qua = ids.get("qual") or {}
+            if any(qua.values()):
+                print(f"  — qualification —")
+                for cat, label in (("certain_rdv_client", "confirmé · cas 1, RDV pris par le client"),
+                                   ("certain_parcours", "confirmé · cas 2, parcours démarré"),
+                                   ("certain_rdv_sales", "confirmé · cas 3, RDV organisé après appel"),
+                                   ("attente_carte_seule", "EN ATTENTE · carte seule, À ARBITRER")):
+                    if qua.get(cat):
+                        print(f"  {label} ({len(qua[cat])})")
+                        for cid in qua[cat]:
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}")
+            att = ids.get("attr") or {}
+            if any(att.values()):
+                print(f"  — origine de l'activation —")
+                for cat, label in (("marketing_simulation", "marketing · a simulé"),
+                                   ("marketing_reponse", "marketing · a répondu"),
+                                   ("marketing_rdv_public", "marketing · RDV self-service"),
+                                   ("sales", "sales · appel sortant d'abord"),
+                                   ("non_attribuable", "non attribuable")):
+                    if att.get(cat):
+                        print(f"  {label} ({len(att[cat])})")
+                        for cid in att[cat]:
+                            flag = "  [vague 2]" if cid in v2 else ""
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}{flag}")
+    print("--- fin du détail ---\n")
+
+    with open("data.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+
+    n_cells = sum(len(c["cells"]) for c in cohorts)
+    tot = {k["key"]: sum(c[k["key"]] for co in cohorts for c in co["cells"])
+           for k in cfg["kpis"]}
+    print(f"OK · {len(cohorts)} cohortes · {n_cells} cellules · "
+          f"{dedup['contacts']} contacts ciblés · {len(rmap)} relancés")
+    print("   " + " · ".join(f"{k['label']} {tot[k['key']]}" for k in cfg["kpis"]))
+    for co in cohorts:
+        for c in co["cells"]:
+            s = c["split"]
+            fz = " [ouvertures gelées]" if c.get("opens_frozen") else ""
+            print(f"   {co['id']} {c['audience']}-{c['version']} "
+                  f"n={c['enrolled']} · both {s['both']} · rdv seul {s['meet_only']} "
+                  f"· deal seul {s['deal_only']} · engagés {s['engaged']} "
+                  f"(v1 {s['engaged_v1']} · v2 {s['engaged_v2']} "
+                  f"sur {s['relanced']} relancés)"
+                  f" | deals n8n {s['deal_n8n']} · manuels {s['deal_manual']}"
+                  f"{fz}")
+    if ecart > 0:
+        print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
+
+    a = dedup["activation"]
+    print("\n--- clients activés · campagne, dédupliqué ---")
+    print(f"   RDV pris (uniques)        {a['meet']:5d}")
+    print(f"   Dossiers AE (uniques)     {a['deal']:5d}"
+          f"   dont n8n {a['deal_auto']} · à la main {a['deal_manual']}")
+    print(f"   Les deux                  {a['both']:5d}")
+    print(f"   = TOTAL ACTIVÉS           {a['activated']:5d}"
+          f"   soit {100 * a['activated'] / dedup['contacts']:.2f} % des ciblés")
+    obj = (cfg.get("objectif") or {}).get("clients_actives")
+    if obj:
+        ecart = a["activated"] - obj
+        print(f"   objectif                  {obj:5d}"
+              f"   {'atteint' if ecart >= 0 else 'restant : ' + str(-ecart)}"
+              f" · {pcts(a['activated'], obj)} de l'objectif")
+    print(f"   dont en souscription      {dedup['process']:5d}"
+          f"   dossier en process_started ou au-delà")
+    print(f"   dont RDV seul {a['meet_only']} · dossier seul {a['deal_only']}"
+          f" (dont {a['deal_only_manual']} créé(s) à la main)")
+    if rmap:
+        print(f"\n   vague 1 (envoi initial)   {a['activated_v1']:5d}")
+        print(f"   vague 2 (relance 11/09)   {a['activated_v2']:5d}"
+              f"   sur {len(rmap)} relancés"
+              f" · {100 * a['activated_v2'] / len(rmap):.2f} %")
+        print("   ATTENTION : les listes de relance ne contiennent QUE des")
+        print("   contacts non activés. Ce taux n'est PAS comparable à celui")
+        print("   d'un batch initial — c'est un gain marginal pur.")
+    if a["overlap"]:
+        print(f"   ⚠ somme des cellules {a['sum_cells']} vs union {a['activated']} :"
+              f" {a['overlap']} contact(s) activé(s) ciblé(s) dans deux batchs")
+
+    if ATTRIB_DAYS is None:
+        print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
+        print("   comparables entre elles — un batch ancien accumule plus longtemps —")
+        print("   et tout chiffre publié remontera au fil du temps.")
+
+    at = dedup["attribution"]
+    mk, sl, na = at["marketing"], at["sales"], at["non_attribuable"]
+    tot = mk["total"] + sl["total"] + na["total"]
+    print("\n--- origine de l'activation · sales contre marketing ---")
+    print(f"   MARKETING                 {mk['total']:5d}   {pcts(mk['total'], tot)}")
+    print(f"     dont simulation         {mk['simulation']:5d}")
+    print(f"     dont réponse séquence   {mk['reponse']:5d}")
+    print(f"     dont RDV self-service   {mk['rdv_public']:5d}")
+    print(f"   SALES                     {sl['total']:5d}   {pcts(sl['total'], tot)}")
+    print(f"   NON ATTRIBUABLE           {na['total']:5d}   {pcts(na['total'], tot)}")
+    print(f"   = TOTAL                   {tot:5d}   doit égaler {a['activated']} activés"
+          f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
+    q = at["qualification"]
+    if camp_fin:
+        print("\n--- activés par profondeur de parcours ---")
+        tot_fin = 0
+        for cat in ORDRE_FIN:
+            v = len(camp_fin.get(cat, ()))
+            if v:
+                tot_fin += v
+                print(f"   {cat:30} {v:5d}   {pcts(v, a['activated'])}")
+        print(f"   = TOTAL                        {tot_fin:5d}"
+              f"   doit égaler {a['activated']} activés"
+              f" · {'OK' if tot_fin == a['activated'] else 'ÉCART'}")
+
+    print("\n--- qualification · définition du 17/09 ---")
+    print(f"   ACTIVÉS CONFIRMÉS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
+    print(f"     cas 1 · RDV pris par le client   {q['certain_rdv_client']:5d}")
+    print(f"     cas 2 · parcours démarré         {q['certain_parcours']:5d}")
+    print(f"     cas 3 · RDV organisé après appel {q['certain_rdv_sales']:5d}")
+    print(f"   EN ATTENTE DE QUALIFICATION   {q['attente']:5d}   {pcts(q['attente'], tot)}")
+    print(f"     carte ouverte, aucun RDV         {q['attente_carte_seule']:5d}"
+          f"   accord ou refus : à arbitrer")
+    print(f"   = TOTAL POTENTIEL         {q['certain'] + q['attente']:5d}"
+          f"   doit égaler {a['activated']} activés"
+          f" · {'OK' if q['certain'] + q['attente'] == a['activated'] else 'ÉCART'}")
+    print("   Une réponse à un mail NE SUFFIT PAS : la propriété HubSpot ne")
+    print("   distingue pas « ça m'intéresse » d'un refus ou d'un message")
+    print("   d'absence. Ces contacts vont en attente, pas en activés.")
+    v1a, v2a = at["par_vague"]["v1"], at["par_vague"]["v2"]
+    print(f"   vague 1 : marketing {v1a['marketing']['total']} · "
+          f"sales {v1a['sales']['total']} · na {v1a['non_attribuable']['total']}")
+    print(f"   vague 2 : marketing {v2a['marketing']['total']} · "
+          f"sales {v2a['sales']['total']} · na {v2a['non_attribuable']['total']}")
+    if at["sync_stale"]:
+        print("   ⚠ sync_stale : aucun mouvement n8n depuis plus de 24 h ouvrées.")
+        print("     Les contacts ayant simulé depuis n'ont pas de dossier remonté")
+        print("     et basculent à tort en sales. Chiffres à ne pas publier.")
+
+
+if __name__ == "__main__":
+    build()
