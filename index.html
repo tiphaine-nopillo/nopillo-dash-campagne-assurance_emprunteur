@@ -471,6 +471,13 @@
             e-mails entrants ne portent pas l'identifiant de séquence. Le compteur a été retiré
             plutôt que d'afficher un chiffre faux.</td></tr>
 
+        <tr><td>RDV sans simulation entamée</td>
+          <td>activé par le rendez-vous seul</td>
+          <td><strong>Ne veut pas dire « aucune transaction ».</strong> Ces contacts ont presque tous
+            une fiche dans le pipe : carte créée par le workflow « RDV sans simu », ou fiche en
+            « accès au simulateur » ou « optimisation refusée » sans aucune étape franchie. Aucune
+            ne prouve que le client a rempli quelque chose, donc seul le rendez-vous compte.</td></tr>
+
         <tr><td>RDV pris</td>
           <td>personnes ayant un rendez-vous</td>
           <td>Rendez-vous dont le titre contient « emprunteur », posé par Clara, Lilian ou Mathieu,
@@ -998,7 +1005,7 @@ function render(){
         Object.entries(PH).map(([lib,v])=>
           `<tr><td class="left">${lib}</td><td><strong>${fmt(v)}</strong></td>
            <td>${pct(v,totH)}</td></tr>`).join('')+
-        (rdvH?`<tr><td class="left">RDV seul, aucune transaction</td>
+        (rdvH?`<tr><td class="left">RDV sans simulation entamée</td>
            <td><strong>${fmt(rdvH)}</strong></td><td>${pct(rdvH,totH)}</td></tr>`:'')+
         `<tr class="totrow"><td class="left">TOTAL HORS CAMPAGNE</td>
            <td><strong>${fmt(totH)}</strong></td><td>100 %</td></tr>`;
@@ -1054,8 +1061,8 @@ function render(){
   const MO=(D.dedup||{}).motifs;
   if(MO){
     const lignes=[
-      ['RDV « emprunteur » posé, sans simulation',MO.rdv_seul,
-       'Un rendez-vous avec Clara, Lilian ou Mathieu. Aucune transaction dans le pipe.'],
+      ['RDV « emprunteur » posé, sans simulation entamée',MO.rdv_seul,
+       'Un rendez-vous avec Clara, Lilian ou Mathieu. Le contact peut avoir une transaction — carte du workflow « RDV sans simu », ou fiche sans étape franchie — elle ne prouve simplement aucune simulation.'],
       ['RDV posé <strong>et</strong> simulation',MO.rdv_et_simu,
        'Les deux signaux. Le contact ne compte qu\'une fois.'],
       ['Simulation seule · étapes produit',MO.simu_seule_etapes,
