@@ -216,6 +216,23 @@
   .dt td:first-child{font-weight:600;width:24%}
   .dt td:nth-child(2){font-family:var(--font-mono);color:var(--indigo);font-size:10.5px;width:28%}
   .dt td:nth-child(3){color:var(--muted);font-size:11px}
+
+  /* Table à 4 colonnes. Ne PAS réutiliser .dt : ses largeurs sont calées sur
+     3 colonnes, et l'en-tête s'y désaligne des chiffres. */
+  .dt4{width:100%;border-collapse:collapse;table-layout:fixed}
+  .dt4 th{padding:8px 11px;text-align:right;font-family:var(--font-mono);
+    font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.04em;
+    text-transform:uppercase;border-bottom:1px solid var(--border2);white-space:nowrap}
+  .dt4 th:first-child{text-align:left;width:34%}
+  .dt4 td{padding:9px 11px;border-bottom:1px solid var(--border);
+    text-align:right;font-family:var(--font-mono);font-size:11.5px;
+    font-variant-numeric:tabular-nums}
+  .dt4 td:first-child{text-align:left;font-family:var(--font-sans);
+    font-weight:600;white-space:normal}
+  .dt4 td:nth-child(2){color:var(--indigo)}
+  .dt4 td:nth-child(3){color:var(--muted)}
+  .dt4 td:last-child{font-weight:700}
+  .dt4 tr.totrow td{background:var(--surface2);border-bottom:none}
 </style>
 </head>
 <body>
@@ -271,8 +288,8 @@
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
       <div id="creaWrap" style="display:none;margin-top:20px">
         <div class="rlab">D'où viennent les activés — <strong>qui a saisi la transaction</strong></div>
-        <div class="twrap"><table class="dt">
-          <thead><tr><th class="left">Origine</th><th>Campagnes</th><th>Hors campagnes</th>
+        <div class="twrap"><table class="dt4">
+          <thead><tr><th>Origine</th><th>Campagnes</th><th>Hors campagnes</th>
             <th>Total</th></tr></thead>
           <tbody id="creaRows"></tbody></table></div>
         <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
@@ -994,15 +1011,15 @@ function render(){
       .sort((x,y)=>((PCC[y]||0)+(PCH[y]||0))-((PCC[x]||0)+(PCH[x]||0)));
     if(libs.length){
       document.getElementById('creaWrap').style.display='block';
-      const ligne=(lab,c,hh)=>`<tr><td class="left">${lab}</td>
-        <td>${fmt(c)}</td><td>${fmt(hh)}</td><td><strong>${fmt(c+hh)}</strong></td></tr>`;
+      const ligne=(lab,c,hh)=>`<tr><td>${lab}</td>
+        <td>${fmt(c)}</td><td>${fmt(hh)}</td><td>${fmt(c+hh)}</td></tr>`;
       const totC=Object.values(PCC).reduce((a,b)=>a+b,0)+rdvC;
       const totH=Object.values(PCH).reduce((a,b)=>a+b,0)+rdvH;
       document.getElementById('creaRows').innerHTML=
         libs.map(l=>ligne(l,PCC[l]||0,PCH[l]||0)).join('')+
         (rdvC+rdvH?ligne('RDV sans simulation entamée',rdvC,rdvH):'')+
-        `<tr class="totrow"><td class="left">TOTAL</td><td><strong>${fmt(totC)}</strong></td>
-         <td><strong>${fmt(totH)}</strong></td><td><strong>${fmt(totC+totH)}</strong></td></tr>`;
+        `<tr class="totrow"><td>TOTAL</td><td>${fmt(totC)}</td>
+         <td>${fmt(totH)}</td><td>${fmt(totC+totH)}</td></tr>`;
     }
 
     document.getElementById('globNote').innerHTML=
