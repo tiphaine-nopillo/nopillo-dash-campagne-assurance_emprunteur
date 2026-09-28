@@ -701,7 +701,7 @@ def activation_globale(pipeline, meet_f_global):
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["dealstage", ETAPES_PROP, "hs_object_source_label",
          "hs_created_by_user_id", "origine_creation_deal_ae"])
-    ok_deals, par_createur = [], {}
+    ok_deals, deal_lib = [], {}
     for d in deals:
         p = d.get("properties") or {}
         try:
@@ -713,17 +713,23 @@ def activation_globale(pipeline, meet_f_global):
                            and not rdv_only):
             ok_deals.append(d["id"])
             src = str(p.get("hs_object_source_label") or "")
-            lib = CREATEUR_AUTO.get(src) or CREATEURS.get(
+            deal_lib[d["id"]] = CREATEUR_AUTO.get(src) or CREATEURS.get(
                 str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
-            par_createur[lib] = par_createur.get(lib, 0) + 1
     dmap = _contacts_of("deals", ok_deals)
     simu = {c for ids in dmap.values() for c in ids}
+    # Qui a saisi, par contact. Un contact avec plusieurs transactions garde la
+    # première rencontrée : on situe l'origine, on ne retrace pas chaque carte.
+    createur_par_contact = {}
+    for did, cids in dmap.items():
+        for cid in cids:
+            createur_par_contact.setdefault(
+                cid, deal_lib.get(did, "Saisie non identifiée"))
 
     meets = _search_all(MEETINGS, meet_f_global, ["hs_timestamp"])
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
 
-    return simu, rdv, par_createur
+    return simu, rdv, createur_par_contact
 
 
 def _search_all(endpoint, filters, props):
@@ -739,6 +745,16 @@ def _search_all(endpoint, filters, props):
         after = ((data.get("paging") or {}).get("next") or {}).get("after")
         if not after:
             return out
+
+
+def _ventile(createur_par_contact, perimetre):
+    """Compte les contacts d'un périmètre par auteur de leur transaction."""
+    out = {}
+    for cid in perimetre:
+        lib = createur_par_contact.get(cid)
+        if lib:
+            out[lib] = out.get(lib, 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
 
 
 def last_integration_move(pipeline):
@@ -1209,7 +1225,7 @@ def build():
     if mf:
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
-    g_simu, g_rdv, g_createurs = activation_globale(pipeline, meet_f_global)
+    g_simu, g_rdv, g_crea = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1218,22 +1234,12 @@ def build():
         campagne=len(camp & g_all),
         hors_campagne=len(g_all - camp),
         campagne_hors_global=len(camp - g_all),
-        par_createur=dict(sorted(g_createurs.items(),
-                                 key=lambda kv: -kv[1])))
-
-    # Entonnoir du parcours produit. Une étape est ATTEINTE dès qu'un contact
-    # est allé au moins aussi loin : les paliers décroissent donc forcément.
-    # Ce n'est pas une décomposition en cas disjoints — un même contact compte
-    # dans toutes les étapes qu'il a franchies. Ne jamais additionner.
-    dedup["funnel"] = [
-        dict(rang=rang, etape=lbl,
-             contacts=sum(1 for r in camp_niveau.values() if r >= rang))
-        for rang, lbl, _ in NIVEAU_PARCOURS]
+        par_createur=_ventile(g_crea, g_all),
+        par_createur_hors=_ventile(g_crea, g_all - camp),
+        rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}))
 
     # POURQUOI CHAQUE CLIENT EST COMPTÉ. Quatre cas EXCLUSIFS dont la somme
-    # fait le total activé. Sert à localiser précisément un écart avec un
-    # autre comptage : si deux chiffres divergent, c'est forcément sur l'une
-    # de ces quatre lignes.
+    # fait le total : sert à localiser un écart avec un autre comptage.
     dedup["motifs"] = dict(
         rdv_seul=len(camp_meet - camp_deal),
         rdv_et_simu=len(camp_meet & camp_deal),
@@ -1415,19 +1421,6 @@ def build():
         print("   Cas exclusifs : un écart avec un autre comptage se situe")
         print("   forcément sur l'une de ces quatre lignes.")
 
-    fun = dedup.get("funnel") or []
-    if fun and fun[0]["contacts"]:
-        print("\n--- entonnoir du parcours produit ---")
-        base = fun[0]["contacts"]
-        prec = None
-        for e in fun:
-            v = e["contacts"]
-            perte = "" if prec is None else f"   -{prec - v} depuis l'étape précédente"
-            print(f"   {e['etape']:22} {v:5d}   {pcts(v, base)} de ceux qui ont démarré{perte}")
-            prec = v
-        print("   Paliers CUMULÉS : un contact compte dans toutes les étapes")
-        print("   qu'il a franchies. Ne jamais les additionner.")
-
     g = dedup.get("global") or {}
     if g:
         print("\n--- activation assurance emprunteur · tout le portefeuille ---")
@@ -1440,13 +1433,18 @@ def build():
         if g.get("campagne_hors_global"):
             print(f"   /!\\ {g['campagne_hors_global']} contact(s) comptés en campagne mais"
                   f" absents du global — incohérence à investiguer")
-        pc = g.get("par_createur") or {}
-        if pc:
+        for cle, titre in (("par_createur", "qui a saisi la transaction · tous"),
+                           ("par_createur_hors", "d'où viennent les activés HORS campagne")):
+            pc = g.get(cle) or {}
+            if not pc:
+                continue
             tot_pc = sum(pc.values())
-            print("   — qui a saisi la transaction —")
+            print(f"   — {titre} —")
             for lib, v in pc.items():
-                print(f"     {lib:28} {v:5d}   {pcts(v, tot_pc)}")
-            print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
+                print(f"     {lib:34} {v:5d}   {pcts(v, tot_pc)}")
+            if cle == "par_createur_hors" and g.get("rdv_seul_hors"):
+                print(f"     {'RDV seul, aucune transaction':34} {g['rdv_seul_hors']:5d}")
+        print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
         print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
         print("   Il se lit comme un cumul, jamais comme un taux.")
 
