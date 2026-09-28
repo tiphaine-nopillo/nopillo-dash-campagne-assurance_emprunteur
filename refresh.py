@@ -142,6 +142,11 @@ BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
 # rattrapage est complet, l'étape pourra être retirée du test.
 ETAPES_PROP = "ae_etapes_simu"
 
+# Comptes internes. Ils remontent dans la question Metabase 4687 et créent de
+# vraies transactions de test dans le pipe. Exclus partout, campagne comme
+# global : henri.chabrand@nopillo.com était compté parmi les activés.
+DOMAINE_INTERNE = "@nopillo.com"
+
 SIMU_STAGES = {
     "5363445963",   # simulation_started
     "5363445964",   # simulation_completed
@@ -325,7 +330,7 @@ def list_members(list_id):
                 {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
                  "values": [str(list_id)]},
             ]}],
-            "properties": ["hubspot_owner_id", "hs_sales_email_last_replied",
+            "properties": ["hubspot_owner_id", "email", "hs_sales_email_last_replied",
                            "hs_sales_email_last_opened", "hs_sales_email_last_clicked"],
             "limit": CHUNK,
         }
@@ -334,6 +339,8 @@ def list_members(list_id):
         d = post(CONTACTS, body)
         for r in d.get("results", []):
             p = r["properties"]
+            if (p.get("email") or "").lower().endswith(DOMAINE_INTERNE):
+                continue
             out.append((r["id"], p.get("hubspot_owner_id"),
                         p.get("hs_sales_email_last_replied"),
                         p.get("hs_sales_email_last_opened"),
@@ -786,6 +793,10 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
     dmap = _contacts_of("deals", list(deals.keys()))
     dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
     niveau = {}
+    # Pourquoi ce contact est compté : « etapes » si le produit atteste au
+    # moins une étape franchie, « pipe » si seule la position de la carte le
+    # justifie. Sert à localiser un écart avec un autre comptage.
+    motif = {}
     for did, props in deals.items():
         stage = str(props.get("dealstage") or "")
         # SEULE une étape de parcours prouve une activation.
@@ -830,6 +841,9 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if not tag:
                 continue
             simulated.add(c)
+            m = "etapes" if etapes >= 1 else "pipe"
+            if motif.get(c) != "etapes":
+                motif[c] = m
             if stage in STAGE_PROCESS:
                 process.add(c)
             dset.add(c)
@@ -885,7 +899,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
                 rdv_pub[c] = booked
 
     return (dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub,
-            process, niveau)
+            process, niveau, motif)
 
 
 # -------------------------------------------------------------------- build
@@ -954,6 +968,7 @@ def build():
     camp_process = set()
     camp_fin = {}
     camp_niveau = {}   # contact -> profondeur maximale atteinte
+    camp_motif = {}    # contact -> « etapes » ou « pipe »
     last_sync = last_integration_move(pipeline)
     sync_stale = business_hours_between(last_sync,
                                         dt.datetime.now(dt.timezone.utc)) > 24
@@ -1019,7 +1034,7 @@ def build():
                                "operator": mf["operator"], "value": mf["value"]})
 
             (dset, mset, m_owner, d_auto, d_wave, m_wave,
-             simulated, rdv_pub, process, niveau) = engagement_sets(
+             simulated, rdv_pub, process, niveau, motif) = engagement_sets(
                 ids, send, pipeline, meet_f, meet_f_attr, rmap)
 
             # Signaux d'attribution restants : réponses et premier appel sortant.
@@ -1064,8 +1079,14 @@ def build():
             qual_cells[c["list_id"]] = cell_qual
             for k, v in fin_ids.items():
                 camp_fin.setdefault(k, set()).update(v)
-            for c, r in niveau.items():
-                camp_niveau[c] = max(camp_niveau.get(c, 0), r)
+            # NE PAS nommer la variable « c » ici : c'est déjà la cellule
+            # dans la boucle englobante, et l'écraser fait planter la
+            # cellule suivante avec « string indices must be integers ».
+            for cid_m, m_m in motif.items():
+                if camp_motif.get(cid_m) != "etapes":
+                    camp_motif[cid_m] = m_m
+            for cid_n, rang_n in niveau.items():
+                camp_niveau[cid_n] = max(camp_niveau.get(cid_n, 0), rang_n)
 
             # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
             # de relance, donc attribuable à la relance et non au batch.
@@ -1208,6 +1229,18 @@ def build():
         dict(rang=rang, etape=lbl,
              contacts=sum(1 for r in camp_niveau.values() if r >= rang))
         for rang, lbl, _ in NIVEAU_PARCOURS]
+
+    # POURQUOI CHAQUE CLIENT EST COMPTÉ. Quatre cas EXCLUSIFS dont la somme
+    # fait le total activé. Sert à localiser précisément un écart avec un
+    # autre comptage : si deux chiffres divergent, c'est forcément sur l'une
+    # de ces quatre lignes.
+    dedup["motifs"] = dict(
+        rdv_seul=len(camp_meet - camp_deal),
+        rdv_et_simu=len(camp_meet & camp_deal),
+        simu_seule_etapes=len({c for c in camp_deal - camp_meet
+                               if camp_motif.get(c) == "etapes"}),
+        simu_seule_pipe=len({c for c in camp_deal - camp_meet
+                             if camp_motif.get(c) != "etapes"}))
 
     dedup["relanced"] = len(rmap)
     # Bas de funnel : contacts dont un dossier est entré en souscription.
@@ -1366,6 +1399,21 @@ def build():
         print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
         print("   comparables entre elles — un batch ancien accumule plus longtemps —")
         print("   et tout chiffre publié remontera au fil du temps.")
+
+    mo = dedup.get("motifs") or {}
+    if mo:
+        tot_mo = sum(mo.values())
+        print("\n--- pourquoi chaque client est compté ---")
+        for cle, lib in (("rdv_seul", "RDV seul"),
+                         ("rdv_et_simu", "RDV + simulation"),
+                         ("simu_seule_etapes", "Simulation seule · étapes produit"),
+                         ("simu_seule_pipe", "Simulation seule · position pipe")):
+            print(f"   {lib:38} {mo[cle]:5d}   {pcts(mo[cle], tot_mo)}")
+        print(f"   = TOTAL                                {tot_mo:5d}"
+              f"   doit égaler {a['activated']} activés"
+              f" · {'OK' if tot_mo == a['activated'] else 'ÉCART'}")
+        print("   Cas exclusifs : un écart avec un autre comptage se situe")
+        print("   forcément sur l'une de ces quatre lignes.")
 
     fun = dedup.get("funnel") or []
     if fun and fun[0]["contacts"]:
