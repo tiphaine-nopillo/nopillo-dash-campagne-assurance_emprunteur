@@ -270,11 +270,11 @@
       <div class="split-bar" id="globBar" style="margin-top:16px"></div>
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
       <div id="creaWrap" style="display:none;margin-top:20px">
-        <div class="rlab">Qui a saisi la transaction — <strong>produit contre commercial</strong></div>
-        <div class="twrap"><table class="dt"><tbody id="creaRows"></tbody></table></div>
-        <div class="rlab" style="margin-top:18px">D'où viennent les activés —
-          <strong>hors campagne</strong></div>
-        <div class="twrap"><table class="dt"><tbody id="creaHorsRows"></tbody></table></div>
+        <div class="rlab">D'où viennent les activés — <strong>qui a saisi la transaction</strong></div>
+        <div class="twrap"><table class="dt">
+          <thead><tr><th class="left">Origine</th><th>Campagnes</th><th>Hors campagnes</th>
+            <th>Total</th></tr></thead>
+          <tbody id="creaRows"></tbody></table></div>
         <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
           fiche, pas qui a provoqué la simulation : une carte ouverte à la main par un commercial
           compte ici alors que c'est le client qui a rempli le simulateur de son côté.</div>
@@ -985,30 +985,24 @@ function render(){
       `<div class="sb-both" style="width:${100*G.campagne/G.activated}%">Campagnes · ${fmt(G.campagne)}</div>`+
       `<div class="sb-deal" style="width:${100*G.hors_campagne/G.activated}%">Hors campagnes · ${fmt(G.hors_campagne)}</div>`;
 
-    const PC=G.par_createur||{};
-    const totPC=Object.values(PC).reduce((a,b)=>a+b,0);
-    if(totPC){
+    /* Une seule table, deux colonnes de périmètre. Les deux tableaux séparés
+       obligeaient à faire la soustraction de tête, et le premier portait un
+       total qui mélangeait campagne et hors campagne. */
+    const PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
+    const rdvC=G.rdv_seul_camp||0, rdvH=G.rdv_seul_hors||0;
+    const libs=[...new Set([...Object.keys(PCC),...Object.keys(PCH)])]
+      .sort((x,y)=>((PCC[y]||0)+(PCH[y]||0))-((PCC[x]||0)+(PCH[x]||0)));
+    if(libs.length){
       document.getElementById('creaWrap').style.display='block';
-      document.getElementById('creaRows').innerHTML=Object.entries(PC).map(([lib,v])=>
-        `<tr><td class="left">${lib}</td><td><strong>${fmt(v)}</strong></td>
-         <td>${pct(v,totPC)}</td></tr>`).join('');
-    }
-
-    /* Origine des activés HORS campagne. Sans ce détail, « 137 hors campagne »
-       ne dit rien : on ne sait pas si ces clients viennent du produit, d'un CS,
-       ou d'un rendez-vous pris sans qu'aucune fiche n'ait été ouverte. */
-    const PH=G.par_createur_hors||{};
-    const rdvH=G.rdv_seul_hors||0;
-    const totH=Object.values(PH).reduce((a,b)=>a+b,0)+rdvH;
-    if(totH){
-      document.getElementById('creaHorsRows').innerHTML=
-        Object.entries(PH).map(([lib,v])=>
-          `<tr><td class="left">${lib}</td><td><strong>${fmt(v)}</strong></td>
-           <td>${pct(v,totH)}</td></tr>`).join('')+
-        (rdvH?`<tr><td class="left">RDV sans simulation entamée</td>
-           <td><strong>${fmt(rdvH)}</strong></td><td>${pct(rdvH,totH)}</td></tr>`:'')+
-        `<tr class="totrow"><td class="left">TOTAL HORS CAMPAGNE</td>
-           <td><strong>${fmt(totH)}</strong></td><td>100 %</td></tr>`;
+      const ligne=(lab,c,hh)=>`<tr><td class="left">${lab}</td>
+        <td>${fmt(c)}</td><td>${fmt(hh)}</td><td><strong>${fmt(c+hh)}</strong></td></tr>`;
+      const totC=Object.values(PCC).reduce((a,b)=>a+b,0)+rdvC;
+      const totH=Object.values(PCH).reduce((a,b)=>a+b,0)+rdvH;
+      document.getElementById('creaRows').innerHTML=
+        libs.map(l=>ligne(l,PCC[l]||0,PCH[l]||0)).join('')+
+        (rdvC+rdvH?ligne('RDV sans simulation entamée',rdvC,rdvH):'')+
+        `<tr class="totrow"><td class="left">TOTAL</td><td><strong>${fmt(totC)}</strong></td>
+         <td><strong>${fmt(totH)}</strong></td><td><strong>${fmt(totC+totH)}</strong></td></tr>`;
     }
 
     document.getElementById('globNote').innerHTML=
