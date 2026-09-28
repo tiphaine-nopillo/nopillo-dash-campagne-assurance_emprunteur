@@ -1235,7 +1235,14 @@ def build():
         hors_campagne=len(g_all - camp),
         campagne_hors_global=len(camp - g_all),
         par_createur=_ventile(g_crea, g_all),
+        par_createur_camp=_ventile(g_crea, g_all & camp),
         par_createur_hors=_ventile(g_crea, g_all - camp),
+        # Activés par leur RDV sans simulation entamée. Ils ont presque tous
+        # une transaction — carte du workflow « RDV sans simu », ou fiche en
+        # optimization_activated ou declined sans étape franchie. Ce n'est
+        # donc PAS « aucune transaction », c'est « aucune preuve de
+        # simulation ». Le libellé précédent induisait en erreur.
+        rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
         rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}))
 
     # POURQUOI CHAQUE CLIENT EST COMPTÉ. Quatre cas EXCLUSIFS dont la somme
@@ -1433,17 +1440,22 @@ def build():
         if g.get("campagne_hors_global"):
             print(f"   /!\\ {g['campagne_hors_global']} contact(s) comptés en campagne mais"
                   f" absents du global — incohérence à investiguer")
-        for cle, titre in (("par_createur", "qui a saisi la transaction · tous"),
-                           ("par_createur_hors", "d'où viennent les activés HORS campagne")):
-            pc = g.get(cle) or {}
-            if not pc:
-                continue
-            tot_pc = sum(pc.values())
-            print(f"   — {titre} —")
-            for lib, v in pc.items():
-                print(f"     {lib:34} {v:5d}   {pcts(v, tot_pc)}")
-            if cle == "par_createur_hors" and g.get("rdv_seul_hors"):
-                print(f"     {'RDV seul, aucune transaction':34} {g['rdv_seul_hors']:5d}")
+        pcc, pch = g.get("par_createur_camp") or {}, g.get("par_createur_hors") or {}
+        libs = list(dict.fromkeys(list(pcc) + list(pch)))
+        if libs:
+            print("   — d'où viennent les activés —")
+            print(f"     {'':34} {'camp.':>6} {'hors':>6} {'total':>6}")
+            for lib in libs:
+                a_, b_ = pcc.get(lib, 0), pch.get(lib, 0)
+                print(f"     {lib:34} {a_:6d} {b_:6d} {a_ + b_:6d}")
+            rc, rh = g.get("rdv_seul_camp", 0), g.get("rdv_seul_hors", 0)
+            print(f"     {'RDV sans simulation entamée':34} {rc:6d} {rh:6d} {rc + rh:6d}")
+            tc = sum(pcc.values()) + rc
+            th = sum(pch.values()) + rh
+            print(f"     {'= TOTAL':34} {tc:6d} {th:6d} {tc + th:6d}")
+            ok = tc == g["campagne"] and th == g["hors_campagne"]
+            print(f"     contrôle : {g['campagne']} campagne et {g['hors_campagne']} hors"
+                  f" · {'OK' if ok else 'ÉCART'}")
         print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
         print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
         print("   Il se lit comme un cumul, jamais comme un taux.")
