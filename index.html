@@ -278,7 +278,15 @@
           chiffres ne se comparent pas en performance.</div>
       </div></div>
       <div class="eq" id="globEq"></div>
+      <div class="split-bar" id="globBar" style="margin-top:16px"></div>
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
+      <div id="creaWrap" style="display:none;margin-top:20px">
+        <div class="rlab">Qui a saisi la transaction — <strong>produit contre commercial</strong></div>
+        <div class="twrap"><table class="dt"><tbody id="creaRows"></tbody></table></div>
+        <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
+          fiche, pas qui a provoqué la simulation : une carte ouverte à la main par un commercial
+          compte ici alors que c'est le client qui a rempli le simulateur de son côté.</div>
+      </div>
     </div>
 
     <div class="lvl"><span class="lvl-n">1</span>Performance de la campagne</div>
@@ -481,7 +489,9 @@
           <td>personnes ayant commencé à simuler</td>
           <td>Le produit compte au moins une étape franchie (<code>ae_etapes_simu</code>), ou leur
             dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire qu'elles
-            ont rempli au moins le premier champ.<br>
+            ont rempli au moins le premier champ. Une carte créée par le workflow « RDV sans simu »
+            fait exception : son étape ne compte jamais, seul le nombre d'étapes franchies peut la
+            faire entrer.<br>
             <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
             simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
             rendez-vous existe.</td></tr>
@@ -975,6 +985,22 @@ function render(){
       tile('','Hors campagnes',G.hors_campagne,`${pct(G.hors_campagne,G.activated)} du total`)+
       `<div class="eq-op">=</div>`+
       tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`);
+    /* Barre empilée : la proportion se lit d'un coup, ce que trois nombres
+       alignés ne donnent pas. C'est la question de Growth — quelle part de
+       l'activation AE vient des campagnes. */
+    document.getElementById('globBar').innerHTML=
+      `<div class="sb-both" style="width:${100*G.campagne/G.activated}%">Campagnes · ${fmt(G.campagne)}</div>`+
+      `<div class="sb-deal" style="width:${100*G.hors_campagne/G.activated}%">Hors campagnes · ${fmt(G.hors_campagne)}</div>`;
+
+    const PC=G.par_createur||{};
+    const totPC=Object.values(PC).reduce((a,b)=>a+b,0);
+    if(totPC){
+      document.getElementById('creaWrap').style.display='block';
+      document.getElementById('creaRows').innerHTML=Object.entries(PC).map(([lib,v])=>
+        `<tr><td class="left">${lib}</td><td><strong>${fmt(v)}</strong></td>
+         <td>${pct(v,totPC)}</td></tr>`).join('');
+    }
+
     document.getElementById('globNote').innerHTML=
       `<strong>Hors campagnes</strong> : des clients arrivés par l'acquisition — Paid Search, Paid `+
       `Social, direct — qui ont simulé sans avoir reçu nos e-mails. Ils s'étalent sur tout `+
