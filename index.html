@@ -369,6 +369,17 @@
         <tbody></tbody></table></div>
     </div>
 
+    <div class="block" id="motifBlock" style="display:none">
+      <div class="bhead"><div>
+        <h3 class="btitle">Pourquoi chaque client est compté</h3>
+        <div class="bsub">Quatre cas <strong>exclusifs</strong> : un contact tombe dans un seul, et
+          leur somme fait le total. Si un autre comptage donne un chiffre différent,
+          <strong>l'écart se situe forcément sur l'une de ces lignes.</strong></div>
+      </div></div>
+      <div class="twrap"><table class="dt"><tbody id="motifRows"></tbody></table></div>
+      <div class="bsub" id="motifNote" style="margin-top:12px"></div>
+    </div>
+
     <div class="block" id="funBlock" style="display:none">
       <div class="bhead"><div>
         <h3 class="btitle">Où s'arrêtent les clients dans le simulateur<span class="src">ae_etapes_simu</span></h3>
@@ -1045,6 +1056,35 @@ function render(){
       `transaction créée à la main`+(ACT.deal_only_manual?`, dont ${fmt(ACT.deal_only_manual)} sans RDV tracé`:'')+`.`:'')+
     (ACT.overlap?` Recoupement : ${fmt(ACT.overlap)} contact(s) activé(s) ciblé(s) dans deux batchs.`:'');
 
+
+  /* Motifs de comptage. Quatre cas exclusifs, pensés pour localiser un écart :
+     les gens ne divergent pas sur « qui a fait », ils divergent sur « qu'est-ce
+     qui compte ». Chaque ligne dit précisément ce qui a déclenché le comptage. */
+  const MO=(D.dedup||{}).motifs;
+  if(MO){
+    const lignes=[
+      ['RDV « emprunteur » posé, sans simulation',MO.rdv_seul,
+       'Un rendez-vous avec Clara, Lilian ou Mathieu. Aucune transaction dans le pipe.'],
+      ['RDV posé <strong>et</strong> simulation',MO.rdv_et_simu,
+       'Les deux signaux. Le contact ne compte qu\'une fois.'],
+      ['Simulation seule · étapes produit',MO.simu_seule_etapes,
+       'Le produit atteste au moins une étape franchie dans le simulateur.'],
+      ['Simulation seule · position dans le pipe',MO.simu_seule_pipe,
+       'Pas d\'étape côté produit, mais un CS a fait avancer le dossier. Engagement réel, passé par téléphone ou par mail.'],
+    ];
+    const tot=lignes.reduce((a,l)=>a+l[1],0);
+    document.getElementById('motifBlock').style.display='block';
+    document.getElementById('motifRows').innerHTML=
+      lignes.map(([lab,v,exp])=>`<tr><td class="left">${lab}<br>
+        <span class="m" style="font-weight:400">${exp}</span></td>
+        <td><strong>${fmt(v)}</strong></td><td>${pct(v,tot)}</td></tr>`).join('')+
+      `<tr class="totrow"><td class="left">TOTAL ACTIVÉS</td>
+        <td><strong>${fmt(tot)}</strong></td><td>100 %</td></tr>`;
+    document.getElementById('motifNote').innerHTML=
+      `<strong>Ne comptent pas</strong> : une carte en « optimisation refusée » ou en « accès au `+
+      `simulateur » sans rendez-vous ni étape franchie, et les comptes @nopillo.com, qui créent de `+
+      `vraies transactions de test dans le pipe.`;
+  }
 
   /* Entonnoir. Paliers CUMULÉS et non cas disjoints : la barre décroît
      forcément, et la colonne de droite montre la perte entre deux étapes.
