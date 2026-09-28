@@ -1,7 +1,7 @@
 {
  "meta": {
-  "campaign": "Assurance emprunteur · cross-sell",
-  "generated_at": "2026-09-28T16:09:15.522249+00:00",
+  "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
+  "generated_at": "2026-09-28T16:18:18.768161+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -48,7 +48,7 @@
    "label": "Simulations entamées",
    "source": "deal",
    "base": "enrolled",
-   "note": "Contacts uniques ayant réellement commencé à simuler. Deux preuves acceptées, en OU : la propriété ae_etapes_simu vaut au moins 1 — le produit compte au moins une étape franchie — ou l'étape du pipe est simulation_started ou au-delà. POURQUOI LES DEUX : ae_etapes_simu est le marqueur sûr, il vient du produit et survit à un déplacement d'étape manuel. Mais au 28/09 le flow n8n ne l'a pas encore écrite partout : 256 transactions l'ont vide, dont 68 sur une étape de parcours. Le OU récupère les 34 dossiers refusés qui portaient une vraie simulation, sans perdre ces 68. Dès que le rattrapage est complet, l'étape pourra être retirée du test. Ne comptent pas : optimization_activated sans étape franchie, et les cartes créées par le workflow « RDV sans simu » — le RDV est déjà compté."
+   "note": "Contacts uniques ayant réellement commencé à simuler. Deux preuves acceptées, en OU : la propriété ae_etapes_simu vaut au moins 1 — le produit compte au moins une étape franchie — ou l'étape du pipe est simulation_started ou au-delà. POURQUOI ae_etapes_simu : elle vient du produit et survit à un déplacement d'étape manuel, donc un dossier passé en optimization_declined garde la trace de sa simulation. 34 dossiers refusés sont ainsi récupérés. POURQUOI L'ÉTAPE EST GARDÉE EN SECOND RECOURS : 68 transactions sont sur une étape de parcours sans que la propriété soit renseignée. Les perdre serait un recul. PROPRIÉTÉ VIDE = AUCUNE OPTIMISATION CÔTÉ PRODUIT, ce n'est pas un défaut de remplissage : sur les 117 dossiers refusés sans propriété, 114 sont des fiches créées à la main, donc des cartes ouvertes après un appel, sans parcours derrière. Le collecteur traite une propriété vide comme un zéro, ce qui est le bon comportement. Ne comptent pas : optimization_activated sans étape franchie, et les cartes créées par le workflow « RDV sans simu » — le RDV est déjà compté."
   },
   {
    "key": "engaged",
@@ -118,6 +118,15 @@
    "overlap": 0,
    "activated_v2": 96,
    "activated_v1": 147
+  },
+  "global": {
+   "activated": 380,
+   "meet": 178,
+   "deal": 285,
+   "both": 83,
+   "campagne": 243,
+   "hors_campagne": 137,
+   "campagne_hors_global": 0
   },
   "relanced": 1070,
   "process": 6,
