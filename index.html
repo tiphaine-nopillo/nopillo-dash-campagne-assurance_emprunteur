@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suivi de performance · campagne Assurance Emprunteur · Nopillo</title>
+<title>Suivi du lancement cross-sell Assurance Emprunteur · Nopillo</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🛡️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -258,7 +258,19 @@
     <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
 
     <!-- NIVEAU 1 -->
-    <div class="lvl"><span class="lvl-n">1</span>Performance globale</div>
+    <div class="lvl"><span class="lvl-n">0</span>Activation Assurance Emprunteur</div>
+    <div class="block" id="globWrap" style="display:none">
+      <div class="bhead"><div>
+        <h3 class="btitle">Tous les clients activés, campagne ou non<span class="src">MEETING_EVENT ∪ DEAL</span></h3>
+        <div class="bsub">Même règle que la campagne, sans restriction de liste ni de date.
+          <strong>Cumul de tout l'historique</strong> — la campagne court depuis le 5 août : les deux
+          chiffres ne se comparent pas en performance.</div>
+      </div></div>
+      <div class="eq" id="globEq"></div>
+      <div class="bsub" id="globNote" style="margin-top:12px"></div>
+    </div>
+
+    <div class="lvl"><span class="lvl-n">1</span>Performance de la campagne</div>
     <div class="kgrid" id="kpiGlobal"></div>
 
     <div class="block">
@@ -920,6 +932,26 @@ function render(){
       `Toutes cohortes confondues, en contacts uniques. <strong>Sans limite de délai `+
       `d'attribution, ce compteur monte tout seul</strong> : l'objectif sera atteint avec le temps, `+
       `même sans nouvel envoi. Ce qui compte est la vitesse, pas le franchissement.`;
+  }
+
+  /* Activation globale, placée avant la campagne parce qu'elle donne l'échelle :
+     sans elle, personne ne sait si le chiffre de campagne est l'essentiel du
+     sujet ou une fraction. Les deux cas sont disjoints, leur somme fait le total. */
+  const G=(D.dedup||{}).global;
+  if(G&&G.activated){
+    document.getElementById('globWrap').style.display='block';
+    document.getElementById('globEq').innerHTML=
+      tile('','Issus des campagnes',G.campagne,`${pct(G.campagne,G.activated)} du total`)+
+      `<div class="eq-op">+</div>`+
+      tile('','Hors campagnes',G.hors_campagne,`${pct(G.hors_campagne,G.activated)} du total`)+
+      `<div class="eq-op">=</div>`+
+      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`);
+    document.getElementById('globNote').innerHTML=
+      `<strong>Hors campagnes</strong> : des clients arrivés par l'acquisition — Paid Search, Paid `+
+      `Social, direct — qui ont simulé sans avoir reçu nos e-mails. Ils s'étalent sur tout `+
+      `l'historique, pas sur une période. `+
+      (G.campagne_hors_global?`<strong>Alerte : ${fmt(G.campagne_hors_global)} contact(s) comptés en `+
+        `campagne sont absents du global, la règle diverge entre les deux périmètres.</strong>`:'');
   }
 
   const segs=[['sb-both','Les deux',ACT.both],['sb-meet','RDV seul',ACT.meet_only],
