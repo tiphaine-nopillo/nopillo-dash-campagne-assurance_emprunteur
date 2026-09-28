@@ -920,6 +920,7 @@ def build():
     camp_qual, qual_cells = empty_qual(), {}
     camp_process = set()
     camp_fin = {}
+    camp_niveau = {}   # contact -> profondeur maximale atteinte
     last_sync = last_integration_move(pipeline)
     sync_stale = business_hours_between(last_sync,
                                         dt.datetime.now(dt.timezone.utc)) > 24
@@ -1030,6 +1031,8 @@ def build():
             qual_cells[c["list_id"]] = cell_qual
             for k, v in fin_ids.items():
                 camp_fin.setdefault(k, set()).update(v)
+            for c, r in niveau.items():
+                camp_niveau[c] = max(camp_niveau.get(c, 0), r)
 
             # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
             # de relance, donc attribuable à la relance et non au batch.
@@ -1161,6 +1164,15 @@ def build():
         campagne=len(camp & g_all),
         hors_campagne=len(g_all - camp),
         campagne_hors_global=len(camp - g_all))
+
+    # Entonnoir du parcours produit. Une étape est ATTEINTE dès qu'un contact
+    # est allé au moins aussi loin : les paliers décroissent donc forcément.
+    # Ce n'est pas une décomposition en cas disjoints — un même contact compte
+    # dans toutes les étapes qu'il a franchies. Ne jamais additionner.
+    dedup["funnel"] = [
+        dict(rang=rang, etape=lbl,
+             contacts=sum(1 for r in camp_niveau.values() if r >= rang))
+        for rang, lbl, _ in NIVEAU_PARCOURS]
 
     dedup["relanced"] = len(rmap)
     # Bas de funnel : contacts dont un dossier est entré en souscription.
@@ -1319,6 +1331,19 @@ def build():
         print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
         print("   comparables entre elles — un batch ancien accumule plus longtemps —")
         print("   et tout chiffre publié remontera au fil du temps.")
+
+    fun = dedup.get("funnel") or []
+    if fun and fun[0]["contacts"]:
+        print("\n--- entonnoir du parcours produit ---")
+        base = fun[0]["contacts"]
+        prec = None
+        for e in fun:
+            v = e["contacts"]
+            perte = "" if prec is None else f"   -{prec - v} depuis l'étape précédente"
+            print(f"   {e['etape']:22} {v:5d}   {pcts(v, base)} de ceux qui ont démarré{perte}")
+            prec = v
+        print("   Paliers CUMULÉS : un contact compte dans toutes les étapes")
+        print("   qu'il a franchies. Ne jamais les additionner.")
 
     g = dedup.get("global") or {}
     if g:
