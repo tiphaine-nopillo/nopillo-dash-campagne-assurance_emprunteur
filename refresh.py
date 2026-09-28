@@ -132,6 +132,16 @@ BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
 # simulateur et n'a rien rempli ». Ce n'est pas une activation.
 # simulation_started correspond littéralement à « a rempli au minimum le
 # premier champ » de la définition du 17/09.
+# Nombre d'étapes réellement franchies dans le simulateur, écrit par n8n depuis
+# completed_steps. C'est le marqueur le plus sûr : il vient du produit, et il
+# survit à un déplacement d'étape manuel — un dossier passé en
+# optimization_declined le porte toujours.
+# COUVERTURE INCOMPLÈTE au 28/09 : le flow ne repasse que sur les optimisations
+# actives, 256 transactions ont encore la propriété vide dont 68 sur une étape
+# de parcours. D'où la règle additive ci-dessous, transitoire : dès que le
+# rattrapage est complet, l'étape pourra être retirée du test.
+ETAPES_PROP = "ae_etapes_simu"
+
 SIMU_STAGES = {
     "5363445963",   # simulation_started
     "5363445964",   # simulation_completed
@@ -693,7 +703,8 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         DEALS, ids,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
-         "hs_object_source_label", "origine_creation_deal_ae", SIMU_PROP])
+         "hs_object_source_label", "origine_creation_deal_ae",
+         ETAPES_PROP, SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
     dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
     niveau = {}
@@ -708,7 +719,16 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         #    n8n ne l'écrit plus et la protège, donc elle efface l'information
         #    de parcours. Non comptée : le contact reste activable par un RDV,
         #    sinon il part en attente de qualification.
-        has_simu = stage in SIMU_STAGES
+        # Le client a agi si le produit compte au moins une étape franchie,
+        # OU si l'étape du pipe le dit. Les deux, parce que la propriété n'est
+        # pas encore remplie partout : le OU récupère les 34 dossiers refusés
+        # qui portaient une vraie simulation, sans perdre les 68 transactions
+        # en étape de parcours que le rattrapage n'a pas encore touchées.
+        try:
+            etapes = int(float(props.get(ETAPES_PROP) or 0))
+        except (TypeError, ValueError):
+            etapes = 0
+        has_simu = etapes >= 1 or stage in SIMU_STAGES
         for c in dmap.get(did, []):
             if c not in keep:
                 continue
