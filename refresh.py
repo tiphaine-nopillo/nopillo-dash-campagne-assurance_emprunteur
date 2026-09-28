@@ -656,6 +656,58 @@ def business_hours_between(a, b):
     return h
 
 
+def activation_globale(pipeline, meet_f_global):
+    """Tous les clients activés sur l'assurance emprunteur, campagne ou non.
+
+    MÊME RÈGLE que la campagne : un RDV « emprunteur » posé par les trois
+    commerciaux, ou une simulation réellement commencée. Ce qui saute, c'est
+    l'appartenance aux listes et la borne basse de l'envoi — on compte donc
+    tout l'historique, pas une période.
+
+    À QUOI ÇA SERT : le chiffre de campagne ne dit pas quelle part de
+    l'activation AE elle représente. Sans ce total, personne ne sait si 243
+    contacts sont l'essentiel du sujet ou une fraction.
+
+    RÉSERVE : ce total mélange des clients acquis depuis 2023 avec sept
+    semaines de campagne. Il se lit comme un cumul, jamais comme un taux.
+    """
+    deals = _search_all(DEALS,
+        [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
+        ["dealstage", ETAPES_PROP])
+    ok_deals = []
+    for d in deals:
+        p = d.get("properties") or {}
+        try:
+            etapes = int(float(p.get(ETAPES_PROP) or 0))
+        except (TypeError, ValueError):
+            etapes = 0
+        if etapes >= 1 or str(p.get("dealstage") or "") in SIMU_STAGES:
+            ok_deals.append(d["id"])
+    dmap = _contacts_of("deals", ok_deals)
+    simu = {c for ids in dmap.values() for c in ids}
+
+    meets = _search_all(MEETINGS, meet_f_global, ["hs_timestamp"])
+    mmap = _contacts_of("meetings", [m["id"] for m in meets])
+    rdv = {c for ids in mmap.values() for c in ids}
+
+    return simu, rdv
+
+
+def _search_all(endpoint, filters, props):
+    """Pagine une recherche sans filtre d'association, jusqu'à épuisement."""
+    out, after = [], None
+    while True:
+        body = {"filterGroups": [{"filters": filters}],
+                "properties": props, "limit": 100}
+        if after:
+            body["after"] = after
+        data = post(endpoint, body)
+        out.extend(data.get("results") or [])
+        after = ((data.get("paging") or {}).get("next") or {}).get("after")
+        if not after:
+            return out
+
+
 def last_integration_move(pipeline):
     """Date du dernier signe de vie de n8n sur ce pipe.
 
@@ -1093,6 +1145,23 @@ def build():
     dedup["activation"]["activated_v2"] = len(camp_v2)
     dedup["activation"]["activated_v1"] = (dedup["activation"]["activated"]
                                            - len(camp_v2))
+    # ---- périmètre global : tous les activés AE, campagne ou non
+    meet_f_global = [{"propertyName": "hubspot_owner_id", "operator": "IN",
+                      "values": AE_MEETING_OWNERS}]
+    mf = cfg.get("meeting_filter")
+    if mf:
+        meet_f_global.append({"propertyName": mf["property"],
+                              "operator": mf["operator"], "value": mf["value"]})
+    g_simu, g_rdv = activation_globale(pipeline, meet_f_global)
+    g_all = g_simu | g_rdv
+    camp = camp_meet | camp_deal
+    dedup["global"] = dict(
+        activated=len(g_all), meet=len(g_rdv), deal=len(g_simu),
+        both=len(g_simu & g_rdv),
+        campagne=len(camp & g_all),
+        hors_campagne=len(g_all - camp),
+        campagne_hors_global=len(camp - g_all))
+
     dedup["relanced"] = len(rmap)
     # Bas de funnel : contacts dont un dossier est entré en souscription.
     dedup["process"] = len(camp_process)
@@ -1250,6 +1319,21 @@ def build():
         print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
         print("   comparables entre elles — un batch ancien accumule plus longtemps —")
         print("   et tout chiffre publié remontera au fil du temps.")
+
+    g = dedup.get("global") or {}
+    if g:
+        print("\n--- activation assurance emprunteur · tout le portefeuille ---")
+        print(f"   TOTAL ACTIVÉS AE         {g['activated']:5d}"
+              f"   RDV {g['meet']} · simulations {g['deal']} · les deux {g['both']}")
+        print(f"     issus des campagnes    {g['campagne']:5d}"
+              f"   {pcts(g['campagne'], g['activated'])} du total")
+        print(f"     hors campagnes         {g['hors_campagne']:5d}"
+              f"   {pcts(g['hors_campagne'], g['activated'])} du total")
+        if g.get("campagne_hors_global"):
+            print(f"   /!\\ {g['campagne_hors_global']} contact(s) comptés en campagne mais"
+                  f" absents du global — incohérence à investiguer")
+        print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
+        print("   Il se lit comme un cumul, jamais comme un taux.")
 
     at = dedup["attribution"]
     mk, sl, na = at["marketing"], at["sales"], at["non_attribuable"]
