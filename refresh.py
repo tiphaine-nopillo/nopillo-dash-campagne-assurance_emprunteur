@@ -1244,6 +1244,12 @@ def build():
         # simulation ». Le libellé précédent induisait en erreur.
         rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
         rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}))
+    # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
+    # publiés dans data.json : le fichier est servi publiquement par GitHub
+    # Pages. C'est la seule liste fiable — une requête HubSpot avec « liste NOT
+    # IN » ne fait pas de vraie négation et remonte des contacts de campagne.
+    hors_ids = sorted(g_all - camp)
+    hors_avec_simu = g_simu
 
     # POURQUOI CHAQUE CLIENT EST COMPTÉ. Quatre cas EXCLUSIFS dont la somme
     # fait le total : sert à localiser un écart avec un autre comptage.
@@ -1427,6 +1433,13 @@ def build():
               f" · {'OK' if tot_mo == a['activated'] else 'ÉCART'}")
         print("   Cas exclusifs : un écart avec un autre comptage se situe")
         print("   forcément sur l'une de ces quatre lignes.")
+
+    hors = locals().get("hors_ids") or []
+    if hors:
+        print(f"\n--- activés HORS campagne · {len(hors)} contacts ---")
+        for cid in hors:
+            marque = "" if cid in hors_avec_simu else "   [RDV sans simulation entamée]"
+            print(f"   https://app-eu1.hubspot.com/contacts/{PORTAL}/contact/{cid}{marque}")
 
     g = dedup.get("global") or {}
     if g:
