@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-29T18:00:28.136666+00:00",
+  "generated_at": "2026-09-29T22:11:44.169339+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -120,12 +120,12 @@
    "activated_v1": 149
   },
   "global": {
-   "activated": 384,
-   "meet": 180,
+   "activated": 385,
+   "meet": 181,
    "deal": 283,
    "both": 79,
    "campagne": 246,
-   "hors_campagne": 138,
+   "hors_campagne": 139,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 202,
@@ -149,7 +149,7 @@
     "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 92,
-   "rdv_seul_hors": 9
+   "rdv_seul_hors": 10
   },
   "motifs": {
    "rdv_seul": 95,
