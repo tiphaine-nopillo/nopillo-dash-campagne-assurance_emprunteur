@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T09:09:13.084062+00:00",
+  "generated_at": "2026-09-30T09:19:43.590842+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -133,8 +133,8 @@
     "Team CS · Lilian Maudet": 26,
     "Team CS · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 79,
@@ -156,7 +156,74 @@
     "Origine inconnue": 7,
     "Enquête NPS": 1,
     "Signature e-mail CS": 1
-   }
+   },
+   "par_semaine": [
+    {
+     "semaine": "2026-05-11",
+     "campagne": 0,
+     "hors": 1
+    },
+    {
+     "semaine": "2026-05-18",
+     "campagne": 0,
+     "hors": 2
+    },
+    {
+     "semaine": "2026-06-01",
+     "campagne": 0,
+     "hors": 6
+    },
+    {
+     "semaine": "2026-07-20",
+     "campagne": 0,
+     "hors": 1
+    },
+    {
+     "semaine": "2026-08-03",
+     "campagne": 20,
+     "hors": 2
+    },
+    {
+     "semaine": "2026-08-10",
+     "campagne": 34,
+     "hors": 4
+    },
+    {
+     "semaine": "2026-08-17",
+     "campagne": 5,
+     "hors": 0
+    },
+    {
+     "semaine": "2026-08-24",
+     "campagne": 7,
+     "hors": 0
+    },
+    {
+     "semaine": "2026-08-31",
+     "campagne": 4,
+     "hors": 0
+    },
+    {
+     "semaine": "2026-09-07",
+     "campagne": 45,
+     "hors": 3
+    },
+    {
+     "semaine": "2026-09-14",
+     "campagne": 79,
+     "hors": 74
+    },
+    {
+     "semaine": "2026-09-21",
+     "campagne": 47,
+     "hors": 34
+    },
+    {
+     "semaine": "2026-09-28",
+     "campagne": 5,
+     "hors": 14
+    }
+   ]
   },
   "motifs": {
    "rdv_seul": 95,
