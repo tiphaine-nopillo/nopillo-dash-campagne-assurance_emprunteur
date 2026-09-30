@@ -197,6 +197,17 @@ STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
 # 153 optimisations courtage AE ont des events sans aucune étape complétée.
 # La propriété prouve qu'il s'est passé quelque chose, pas que le client a
 # rempli un champ. Conservée pour information seulement.
+# Date de la PREMIÈRE étape franchie dans le simulateur, écrite par n8n et
+# jamais écrasée. C'est la seule date qui dit quand le client a réellement agi.
+# POURQUOI ELLE EST INDISPENSABLE : le collecteur datait une activation par
+# simulation à la CRÉATION de la transaction. Or n8n a été en panne du 13/08 au
+# 16/09 : 195 dossiers créés le 16/09 portent une date de simulation en juillet
+# ou août. Sans cette propriété, le graphe hebdomadaire affichait un pic
+# artificiel à la semaine du 14 septembre.
+# ELLE NE DIT PAS QUE LE CLIENT A AGI : une optimisation ouverte sans étape
+# franchie en porte une aussi. Seul ae_etapes_simu >= 1 prouve une action.
+DEBUT_SIMU_PROP = "ae_date_debut_simu"
+
 SIMU_PROP = "last_step_date"
 
 # Réservation en self-service via un lien public. Distingue un RDV que le
@@ -597,26 +608,36 @@ def first_outbound_call(contact_ids, since_ms):
     return out
 
 
-def attribute(cid, simulated, replies, rdv_pub, calls):
+def attribute(cid, simulated, replies, rdv_pub, calls, simu_at=None):
     """Origine de l'activation d'un contact : marketing, sales, ou ni l'un ni l'autre.
 
-    Ordre volontaire, la simulation prime sur tout :
-      1. une simulation réelle (last_step_date) → marketing, même si un appel
-         a suivi : le client était déjà entré dans le parcours produit ;
-      2. une réponse à une séquence OU un RDV réservé en self-service,
-         ANTÉRIEUR au premier appel sortant → marketing ;
-      3. un appel sortant loggé → sales ;
-      4. rien de tout ça → non attribuable.
+    RÈGLE : le PREMIER qui agit l'emporte. Un signal du client — simulation,
+    réponse, RDV réservé — antérieur au premier appel sortant donne marketing.
+    Sinon, un appel sortant loggé donne sales.
 
-    PIÈGE CENTRAL sur le RDV : on compare la date de RÉSERVATION
-    (hs_createdate) au premier appel, JAMAIS la date de tenue
-    (hs_meeting_start_time). Cas réel : réservation le 11/09, rendez-vous le
-    15/09, appel commercial le 15/09 à l'heure du rendez-vous. Avec la date de
-    tenue, le contact bascule à tort en sales — 5 erreurs sur 57 venaient de là.
+    LA SIMULATION EST DATÉE depuis le 30/09, grâce à ae_date_debut_simu. Avant,
+    faute de date, elle l'emportait systématiquement : un client appelé le 12 et
+    simulant le 15 comptait en marketing. Le sales était donc sous-estimé.
+    Une simulation SANS date conserve l'ancien comportement et prime, faute de
+    pouvoir la situer.
+
+    PIÈGE SUR LE RDV : on compare la date de RÉSERVATION (hs_createdate) au
+    premier appel, JAMAIS la date de tenue. Réservation le 11, rendez-vous le
+    15, appel le 15 à l'heure du rendez-vous : avec la date de tenue, le contact
+    bascule à tort en sales — 5 erreurs sur 57 venaient de là.
+
+    GRANULARITÉ : ae_date_debut_simu est au JOUR, pas à l'heure. Un client
+    appelé et simulant le même jour est indépartageable ; il part en marketing,
+    par cohérence avec le traitement d'une simulation sans date.
     """
-    if cid in simulated:
-        return ("marketing", "simulation")
+    simu_at = simu_at or {}
     call = calls.get(cid)
+    d_simu = simu_at.get(cid)
+
+    if cid in simulated and (call is None or d_simu is None
+                             or d_simu.date() <= call.date()):
+        return ("marketing", "simulation")
+
     sigs = []
     if replies.get(cid):
         sigs.append((replies[cid], "reponse"))
@@ -629,43 +650,9 @@ def attribute(cid, simulated, replies, rdv_pub, calls):
             return ("marketing", kind)
     if call:
         return ("sales", None)
+    if cid in simulated:
+        return ("marketing", "simulation")
     return ("non_attribuable", None)
-
-
-def qualify(cid, bucket, sub, mset):
-    """Statut de qualification d'un contact activé : certain, ou en attente.
-
-    Définition arrêtée le 17/09/2026 avec Clémence. Un client est un lead dans
-    trois cas, et uniquement dans ces trois cas :
-      1. il prend lui-même un créneau, suite à nos e-mails ou depuis l'app ;
-      2. il démarre son parcours de son propre chef ;
-      3. outbound : on l'a eu au téléphone, ça peut l'intéresser, ET il veut
-         qu'on organise un RDV pour en parler.
-
-    LECTURE DU CAS 3 : le résultat attendu d'un outbound qualifié est un RDV
-    organisé. Un contact qui a un rendez-vous posé par un commercial a donc,
-    par construction, franchi les deux conditions — il a été joint, et il a
-    voulu qu'on lui cale un créneau. Il est CERTAIN.
-    Réserve : rien dans HubSpot ne dit si le créneau a été honoré. La règle
-    porte sur l'intention exprimée au téléphone, pas sur la tenue du RDV.
-
-    RESTE EN ATTENTE : les contacts qui n'ont qu'une fiche ouverte dans
-    HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un
-    accord ou un refus. C'est la population que Clémence pointe : sur
-    151 contacts appelés, 37 avaient une carte dont 21 en optimization_declined.
-
-    POURQUOI UNE RÉPONSE NE SUFFIT PAS : hs_sales_email_last_replied enregistre
-    n'importe quelle réponse, y compris « ça ne m'intéresse pas », un message
-    d'absence ou une demande de désinscription. Rien ne distingue un refus d'un
-    signal d'intérêt. Une réponse sans RDV ni parcours reste en attente.
-    """
-    if sub == "rdv_public":
-        return "certain", "rdv_client"      # cas 1
-    if sub == "simulation":
-        return "certain", "parcours"        # cas 2
-    if cid in mset:
-        return "certain", "rdv_sales"       # cas 3, RDV organisé
-    return "attente", "carte_seule"
 
 
 def empty_qual():
@@ -713,8 +700,8 @@ def activation_globale(pipeline, meet_f_global):
     """
     deals = _search_all(DEALS,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
-        ["dealstage", ETAPES_PROP, "hs_object_source_label", "createdate",
-         "hs_created_by_user_id", "origine_creation_deal_ae"])
+        ["dealstage", ETAPES_PROP, DEBUT_SIMU_PROP, "hs_object_source_label",
+         "createdate", "hs_created_by_user_id", "origine_creation_deal_ae"])
     ok_deals, deal_lib, deals_props = [], {}, {}
     for d in deals:
         p = d.get("properties") or {}
@@ -756,7 +743,9 @@ def activation_globale(pipeline, meet_f_global):
             premier[cid] = quand
 
     for did, cids in dmap.items():
-        d = to_dt((deals_props.get(did) or {}).get("createdate"))
+        p = deals_props.get(did) or {}
+        # La vraie date de simulation prime sur la date de création de la fiche.
+        d = to_dt(p.get(DEBUT_SIMU_PROP)) or to_dt(p.get("createdate"))
         for cid in cids:
             _garde(cid, d)
 
@@ -804,18 +793,26 @@ def _contact_props(ids, props):
 def origine_rdv(url, source, dans_campagne):
     """Catégorie d'origine d'un rendez-vous, première règle qui matche.
 
-    L'UTM prime parce qu'il prouve un clic. L'appartenance à une liste n'est
-    qu'une présomption : le contact a été ciblé, rien ne dit qu'il a réservé
-    depuis l'e-mail. Le mode de réservation vient en dernier — c'est un fait,
-    mais il ne dit rien du canal qui a déclenché la prise de rendez-vous.
+    L'UTM prime parce qu'il prouve un clic. Vient ensuite le MODE de
+    réservation, qui est un fait : une réservation publique dit que le client a
+    cliqué un lien, même si on ignore lequel. L'appartenance à une liste ne
+    passe qu'après — c'est la plus faible des trois, le contact a été ciblé,
+    rien ne dit qu'il a réservé depuis l'e-mail.
+
+    « Lien public, sans UTM » NE PROUVE PAS que c'est le lien roundrobin AE :
+    MEETINGS_PUBLIC couvre tous les liens de réservation, et l'API HubSpot
+    n'expose pas l'identifiant de la page. C'est un faisceau, pas une preuve.
     """
     u = (url or "").lower()
     if LIEN_RDV in u:
         for lib, motif in RDV_ORIGINES:
             if motif in u:
                 return lib
+    if source == MEETING_PUBLIC:
+        return ("Lien public · ciblé par la campagne" if dans_campagne
+                else "Lien public · hors campagne")
     if dans_campagne:
-        return "Ciblé par la campagne AE"
+        return "Calé par un commercial · ciblé par la campagne"
     if source == "BIDIRECTIONAL_SYNC":
         return "Calé par un commercial"
     return "Origine inconnue"
@@ -909,10 +906,11 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
         ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
          "hs_object_source_label", "origine_creation_deal_ae",
-         ETAPES_PROP, SIMU_PROP])
+         ETAPES_PROP, DEBUT_SIMU_PROP, SIMU_PROP])
     dmap = _contacts_of("deals", list(deals.keys()))
     dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
     niveau = {}
+    simu_at = {}   # contact -> date de première étape franchie
     # Pourquoi ce contact est compté : « etapes » si le produit atteste au
     # moins une étape franchie, « pipe » si seule la position de la carte le
     # justifie. Sert à localiser un écart avec un autre comptage.
@@ -961,6 +959,9 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
             if not tag:
                 continue
             simulated.add(c)
+            d_simu = to_dt(props.get(DEBUT_SIMU_PROP))
+            if d_simu and (c not in simu_at or d_simu < simu_at[c]):
+                simu_at[c] = d_simu
             m = "etapes" if etapes >= 1 else "pipe"
             if motif.get(c) != "etapes":
                 motif[c] = m
@@ -1019,7 +1020,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
                 rdv_pub[c] = booked
 
     return (dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub,
-            process, niveau, motif)
+            process, niveau, motif, simu_at)
 
 
 # -------------------------------------------------------------------- build
@@ -1154,7 +1155,8 @@ def build():
                                "operator": mf["operator"], "value": mf["value"]})
 
             (dset, mset, m_owner, d_auto, d_wave, m_wave,
-             simulated, rdv_pub, process, niveau, motif) = engagement_sets(
+             simulated, rdv_pub, process, niveau, motif,
+             simu_at) = engagement_sets(
                 ids, send, pipeline, meet_f, meet_f_attr, rmap)
 
             # Signaux d'attribution restants : réponses et premier appel sortant.
@@ -1183,7 +1185,8 @@ def build():
             qual_ids = {"certain_rdv_client": [], "certain_parcours": [],
                         "certain_rdv_sales": [], "attente_carte_seule": []}
             for cid in (dset | mset):
-                bucket, sub = attribute(cid, simulated, reply_at, rdv_pub, calls_at)
+                bucket, sub = attribute(cid, simulated, reply_at, rdv_pub,
+                                        calls_at, simu_at)
                 attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
                 add_attr(cell_attr, bucket, sub)
                 add_attr(camp_attr, bucket, sub)
