@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T13:28:56.761314+00:00",
+  "generated_at": "2026-09-30T13:47:45.406638+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -106,12 +106,12 @@
   "contacts": 2075,
   "activation": {
    "meet": 171,
-   "deal": 152,
-   "both": 77,
-   "meet_only": 94,
+   "deal": 151,
+   "both": 76,
+   "meet_only": 95,
    "deal_only": 75,
    "activated": 246,
-   "deal_auto": 77,
+   "deal_auto": 76,
    "deal_manual": 75,
    "deal_only_manual": 13,
    "sum_cells": 246,
@@ -133,8 +133,8 @@
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 79,
@@ -547,11 +547,49 @@
      "campagne": 0,
      "hors": 3
     }
+   ],
+   "par_phase": [
+    {
+     "phase": "Simulation démarrée",
+     "transactions": 169
+    },
+    {
+     "phase": "Simulation terminée",
+     "transactions": 46
+    },
+    {
+     "phase": "Simulation prête",
+     "transactions": 7
+    },
+    {
+     "phase": "Offre vue",
+     "transactions": 17
+    },
+    {
+     "phase": "Offre acceptée",
+     "transactions": 4
+    },
+    {
+     "phase": "Souscription démarrée",
+     "transactions": 7
+    },
+    {
+     "phase": "Souscription terminée",
+     "transactions": 2
+    },
+    {
+     "phase": "Accès au simulateur",
+     "transactions": 1
+    },
+    {
+     "phase": "Optimisation refusée",
+     "transactions": 35
+    }
    ]
   },
   "motifs": {
-   "rdv_seul": 94,
-   "rdv_et_simu": 77,
+   "rdv_seul": 95,
+   "rdv_et_simu": 76,
    "simu_seule_etapes": 64,
    "simu_seule_pipe": 11
   },
@@ -560,9 +598,9 @@
   "attribution": {
    "marketing": {
     "total": 224,
-    "simulation": 132,
+    "simulation": 131,
     "reponse": 7,
-    "rdv_public": 85
+    "rdv_public": 86
    },
    "sales": {
     "total": 22
@@ -574,9 +612,9 @@
     "14319": {
      "marketing": {
       "total": 27,
-      "simulation": 16,
+      "simulation": 15,
       "reponse": 0,
-      "rdv_public": 11
+      "rdv_public": 12
      },
      "sales": {
       "total": 6
@@ -688,9 +726,9 @@
     "v2": {
      "marketing": {
       "total": 81,
-      "simulation": 53,
+      "simulation": 52,
       "reponse": 5,
-      "rdv_public": 23
+      "rdv_public": 24
      },
      "sales": {
       "total": 16
@@ -703,16 +741,16 @@
    "qualification": {
     "certain": 237,
     "attente": 9,
-    "certain_rdv_client": 85,
-    "certain_parcours": 132,
+    "certain_rdv_client": 86,
+    "certain_parcours": 131,
     "certain_rdv_sales": 20,
     "attente_carte_seule": 9,
     "par_cellule": {
      "14319": {
       "certain": 30,
       "attente": 3,
-      "certain_rdv_client": 11,
-      "certain_parcours": 16,
+      "certain_rdv_client": 12,
+      "certain_parcours": 15,
       "certain_rdv_sales": 3,
       "attente_carte_seule": 3
      },
@@ -800,14 +838,14 @@
      "opens_frozen": true,
      "replies_non_fiable": 51,
      "meetings": 24,
-     "deals_ae": 22,
+     "deals_ae": 21,
      "engaged": 33,
      "split": {
-      "both": 13,
-      "meet_only": 11,
+      "both": 12,
+      "meet_only": 12,
       "deal_only": 9,
       "engaged": 33,
-      "deal_n8n": 9,
+      "deal_n8n": 8,
       "deal_manual": 13,
       "deal_only_manual": 2,
       "relanced": 173,
@@ -816,7 +854,7 @@
       "marketing": 27,
       "sales": 6,
       "non_attribuable": 0,
-      "simule": 16,
+      "simule": 15,
       "certain": 30,
       "attente": 3,
       "process": 2
@@ -1105,12 +1143,12 @@
    ],
    "activation": {
     "meet": 63,
-    "deal": 59,
-    "both": 31,
-    "meet_only": 32,
+    "deal": 58,
+    "both": 30,
+    "meet_only": 33,
     "deal_only": 28,
     "activated": 91,
-    "deal_auto": 28,
+    "deal_auto": 27,
     "deal_manual": 31,
     "deal_only_manual": 7,
     "activated_v2": 36,
