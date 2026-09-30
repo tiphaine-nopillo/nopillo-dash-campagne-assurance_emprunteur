@@ -1350,6 +1350,8 @@ def build():
         rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
         rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}),
         rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp),
+        rdv_origine_camp=_origines_rdv(sorted(g_rdv & camp), g_src, camp),
+        rdv_origine_hors=_origines_rdv(sorted(g_rdv - camp), g_src, camp),
         par_semaine=_par_semaine(g_all, g_premier, camp))
     # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
     # publiés dans data.json : le fichier est servi publiquement par GitHub
@@ -1593,9 +1595,13 @@ def build():
         ro = g.get("rdv_origine") or {}
         if ro:
             tot_ro = sum(ro.values())
+            roc = g.get("rdv_origine_camp") or {}
+            roh = g.get("rdv_origine_hors") or {}
             print("   — d'où viennent les rendez-vous —")
+            print(f"     {'':34} {'camp.':>6} {'hors':>6} {'total':>6}")
             for lib, v in ro.items():
-                print(f"     {lib:34} {v:5d}   {pcts(v, tot_ro)}")
+                print(f"     {lib:34} {roc.get(lib, 0):6d}"
+                      f" {roh.get(lib, 0):6d} {v:6d}")
             print("     Les trois premières lignes prouvent un clic. Les autres sont")
             print("     des présomptions : l'URL de dernière page est écrasée dès que")
             print("     le client navigue ailleurs, ces catégories sont un plancher.")
