@@ -1095,11 +1095,9 @@ function render(){
       const sect=t=>`<tr class="totrow"><td colspan="4"><strong>${t}</strong></td></tr>`;
       const ligne=(lab,c,hh,pr)=>`<tr><td>${lab}</td><td>${fmt(c)}</td>
         <td>${fmt(hh)}</td><td class="m">${pr}</td></tr>`;
-      /* L'origine des RDV n'est pas ventilée campagne/hors : la catégorie
-         « Ciblé par la campagne » porte déjà cette information. */
-      const lignesRDV=Object.entries(RO).map(([lib,v])=>
-        `<tr><td>${lib}</td><td colspan="2">${fmt(v)}</td>
-         <td class="m">${PREUVE[lib]||'—'}</td></tr>`).join('');
+      const ROC=G.rdv_origine_camp||{}, ROH=G.rdv_origine_hors||{};
+      const lignesRDV=Object.entries(RO).map(([lib])=>
+        ligne(lib,ROC[lib]||0,ROH[lib]||0,PREUVE[lib]||'—')).join('');
       document.getElementById('origRows').innerHTML=
         sect(`Rendez-vous · ${fmt(totRO)} contacts`)+lignesRDV+
         sect(`Simulations · ${fmt(G.deal)} contacts`)+
