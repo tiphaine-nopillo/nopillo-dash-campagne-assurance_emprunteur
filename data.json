@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T09:19:43.590842+00:00",
+  "generated_at": "2026-09-30T09:27:05.530319+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -155,6 +155,16 @@
     "Lien de campagne AE": 14,
     "Origine inconnue": 7,
     "Enquête NPS": 1,
+    "Signature e-mail CS": 1
+   },
+   "rdv_origine_camp": {
+    "Ciblé par la campagne AE": 159,
+    "Lien de campagne AE": 11,
+    "Enquête NPS": 1
+   },
+   "rdv_origine_hors": {
+    "Origine inconnue": 7,
+    "Lien de campagne AE": 3,
     "Signature e-mail CS": 1
    },
    "par_semaine": [
