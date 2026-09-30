@@ -190,6 +190,21 @@ def niveau_de(stage):
     return 0
 
 
+# Toutes les phases du pipe, dans l'ordre. Sert au décompte « où en sont les
+# transactions ». Les deux dernières ne sont pas des étapes de parcours :
+# l'accès au simulateur le précède, le refus le termine.
+PHASES_PIPE = [
+    ("5363445963", "Simulation démarrée"),
+    ("5363445964", "Simulation terminée"),
+    ("5783848147", "Simulation prête"),
+    ("5363445965", "Offre vue"),
+    ("5363445966", "Offre acceptée"),
+    ("5363445967", "Souscription démarrée"),
+    ("5378179265", "Souscription terminée"),
+    ("5363445962", "Accès au simulateur"),
+    ("5363445968", "Optimisation refusée"),
+]
+
 STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
 STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
 
@@ -773,6 +788,15 @@ def activation_globale(pipeline, meet_f_global):
         if quand and (cid not in premier or quand < premier[cid]):
             premier[cid] = quand
 
+    # Phase de chaque transaction retenue. On compte des TRANSACTIONS, pas des
+    # contacts : cinq contacts en ont plusieurs — une par bien — donc le total
+    # dépasse légèrement le nombre de clients activés. C'est assumé et dit sous
+    # le graphe.
+    par_phase = {}
+    for did in ok_deals:
+        st = str((deals_props.get(did) or {}).get("dealstage") or "")
+        par_phase[st] = par_phase.get(st, 0) + 1
+
     for did, cids in dmap.items():
         p = deals_props.get(did) or {}
         # La vraie date de simulation prime sur la date de création de la fiche.
@@ -791,7 +815,8 @@ def activation_globale(pipeline, meet_f_global):
             if src_par_contact.get(cid) != MEETING_PUBLIC:
                 src_par_contact[cid] = src
 
-    return simu, rdv, createur_par_contact, src_par_contact, premier
+    return (simu, rdv, createur_par_contact, src_par_contact, premier,
+            par_phase)
 
 
 def _search_all(endpoint, filters, props):
@@ -1414,8 +1439,8 @@ def build():
     if mf:
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
-    (g_simu, g_rdv, g_crea, g_src,
-     g_premier) = activation_globale(pipeline, meet_f_global)
+    (g_simu, g_rdv, g_crea, g_src, g_premier,
+     g_phases) = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1438,7 +1463,9 @@ def build():
         rdv_origine_camp=_origines_rdv(sorted(g_rdv & camp), g_src, camp),
         rdv_origine_hors=_origines_rdv(sorted(g_rdv - camp), g_src, camp),
         par_semaine=_par_periode(g_all, g_premier, camp, "semaine"),
-        par_jour=_par_periode(g_all, g_premier, camp, "jour"))
+        par_jour=_par_periode(g_all, g_premier, camp, "jour"),
+        par_phase=[dict(phase=lbl, transactions=g_phases.get(sid, 0))
+                   for sid, lbl in PHASES_PIPE if g_phases.get(sid)])
     # DÉTAIL NOMINATIF NON PUBLIÉ. data.json est servi publiquement par GitHub
     # Pages : y écrire des noms et des e-mails les rendrait accessibles à
     # quiconque connaît l'URL. Le dépôt a été passé en privé le 30/09 puis
@@ -1690,6 +1717,17 @@ def build():
             print(f"     contrôle : {g['campagne']} campagne et {g['hors_campagne']} hors"
                   f" · {'OK' if ok else 'ÉCART'}")
         print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
+        pp = g.get("par_phase") or []
+        if pp:
+            tot_pp = sum(e["transactions"] for e in pp)
+            print("   — où en sont les transactions des clients activés —")
+            for e in pp:
+                barre = "█" * min(40, e["transactions"])
+                print(f"     {e['phase']:24} {e['transactions']:5d}"
+                      f"   {pcts(e['transactions'], tot_pp)}  {barre}")
+            print(f"     {tot_pp} transactions pour {g['deal']} contacts —")
+            print("     quelques clients en ont plusieurs, une par bien.")
+
         ps = g.get("par_semaine") or []
         if ps:
             tot_ps = sum(e["campagne"] + e["hors"] for e in ps)
