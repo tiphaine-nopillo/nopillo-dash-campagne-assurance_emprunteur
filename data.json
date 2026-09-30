@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-29T22:11:44.169339+00:00",
+  "generated_at": "2026-09-30T09:09:13.084062+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -120,21 +120,21 @@
    "activated_v1": 149
   },
   "global": {
-   "activated": 385,
-   "meet": 181,
-   "deal": 283,
+   "activated": 387,
+   "meet": 182,
+   "deal": 284,
    "both": 79,
    "campagne": 246,
-   "hors_campagne": 139,
+   "hors_campagne": 141,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 202,
+    "Simulation produit · n8n": 203,
     "Team CS · Clara Baekelandt": 27,
     "Team CS · Lilian Maudet": 26,
     "Team CS · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 79,
@@ -143,13 +143,20 @@
     "Team CS · Mathieu d'Ornellas": 22
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 123,
+    "Simulation produit · n8n": 124,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 92,
-   "rdv_seul_hors": 10
+   "rdv_seul_hors": 11,
+   "rdv_origine": {
+    "Ciblé par la campagne AE": 159,
+    "Lien de campagne AE": 14,
+    "Origine inconnue": 7,
+    "Enquête NPS": 1,
+    "Signature e-mail CS": 1
+   }
   },
   "motifs": {
    "rdv_seul": 95,
@@ -473,7 +480,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 63,
+     "replies_non_fiable": 64,
      "meetings": 22,
      "deals_ae": 21,
      "engaged": 35,
@@ -749,7 +756,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 116,
+     "replies_non_fiable": 117,
      "meetings": 51,
      "deals_ae": 35,
      "engaged": 61,
