@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T15:58:46.516865+00:00",
+  "generated_at": "2026-09-30T16:04:42.455914+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,6 +72,42 @@
   "clients_actives": 200,
   "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
  },
+ "origine_simu_posthog": {
+  "releve_le": "2026-09-30",
+  "clients": 261,
+  "source": "PostHog production, lecture seule",
+  "repartition": [
+   {
+    "origine": "E-mail campagne AE (marqué)",
+    "clients": 31
+   },
+   {
+    "origine": "Accès direct",
+    "clients": 30
+   },
+   {
+    "origine": "Recherche Google / Bing",
+    "clients": 11
+   },
+   {
+    "origine": "E-mail sans marquage",
+    "clients": 3
+   },
+   {
+    "origine": "Outil interne (Retool)",
+    "clients": 2
+   },
+   {
+    "origine": "Autre site",
+    "clients": 1
+   },
+   {
+    "origine": "Inconnue (arrivé déjà connecté)",
+    "clients": 183
+   }
+  ],
+  "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
+ },
  "relances": [
   {
    "list_id": "14880",
@@ -106,29 +142,29 @@
   "contacts": 2075,
   "activation": {
    "meet": 175,
-   "deal": 151,
+   "deal": 152,
    "both": 78,
    "meet_only": 97,
-   "deal_only": 73,
-   "activated": 248,
-   "deal_auto": 75,
+   "deal_only": 74,
+   "activated": 249,
+   "deal_auto": 76,
    "deal_manual": 76,
    "deal_only_manual": 12,
-   "sum_cells": 248,
+   "sum_cells": 249,
    "overlap": 0,
    "activated_v2": 97,
-   "activated_v1": 151
+   "activated_v1": 152
   },
   "global": {
-   "activated": 385,
+   "activated": 387,
    "meet": 182,
-   "deal": 284,
+   "deal": 286,
    "both": 81,
-   "campagne": 248,
-   "hors_campagne": 137,
+   "campagne": 249,
+   "hors_campagne": 138,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 202,
+    "Simulation produit · n8n": 204,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
@@ -137,14 +173,14 @@
     "Autre utilisateur": 1
    },
    "par_createur_camp": {
-    "Simulation produit · n8n": 78,
+    "Simulation produit · n8n": 79,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
     "Workflow HubSpot · RDV sans simu": 1
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 124,
+    "Simulation produit · n8n": 125,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1,
     "Workflow HubSpot · RDV sans simu": 1
@@ -248,8 +284,8 @@
     },
     {
      "periode": "2026-09-28",
-     "campagne": 4,
-     "hors": 9
+     "campagne": 5,
+     "hors": 10
     }
    ],
    "par_jour": [
@@ -535,14 +571,14 @@
     },
     {
      "periode": "2026-09-30",
-     "campagne": 0,
-     "hors": 3
+     "campagne": 1,
+     "hors": 4
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 177
+     "transactions": 180
     },
     {
      "phase": "simulation_completed",
@@ -570,7 +606,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 49
+     "transactions": 48
     },
     {
      "phase": "optimization_declined",
@@ -581,15 +617,15 @@
   "motifs": {
    "rdv_seul": 97,
    "rdv_et_simu": 78,
-   "simu_seule_etapes": 63,
+   "simu_seule_etapes": 64,
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
   "process": 6,
   "attribution": {
    "marketing": {
-    "total": 226,
-    "simulation": 132,
+    "total": 227,
+    "simulation": 133,
     "reponse": 7,
     "rdv_public": 87
    },
@@ -686,8 +722,8 @@
     },
     "14951": {
      "marketing": {
-      "total": 72,
-      "simulation": 42,
+      "total": 73,
+      "simulation": 43,
       "reponse": 2,
       "rdv_public": 28
      },
@@ -702,8 +738,8 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 145,
-      "simulation": 80,
+      "total": 146,
+      "simulation": 81,
       "reponse": 2,
       "rdv_public": 63
      },
@@ -730,10 +766,10 @@
     }
    },
    "qualification": {
-    "certain": 239,
+    "certain": 240,
     "attente": 9,
     "certain_rdv_client": 87,
-    "certain_parcours": 132,
+    "certain_parcours": 133,
     "certain_rdv_sales": 20,
     "attente_carte_seule": 9,
     "par_cellule": {
@@ -786,17 +822,17 @@
       "attente_carte_seule": 0
      },
      "14951": {
-      "certain": 72,
+      "certain": 73,
       "attente": 0,
       "certain_rdv_client": 28,
-      "certain_parcours": 42,
+      "certain_parcours": 43,
       "certain_rdv_sales": 2,
       "attente_carte_seule": 0
      }
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-09-30T15:01:46.510000+00:00"
+   "last_sync": "2026-09-30T16:00:08.259000+00:00"
   }
  },
  "cohorts": [
@@ -1353,24 +1389,24 @@
      "opens_frozen": false,
      "replies_non_fiable": 66,
      "meetings": 43,
-     "deals_ae": 44,
-     "engaged": 72,
+     "deals_ae": 45,
+     "engaged": 73,
      "split": {
       "both": 15,
       "meet_only": 28,
-      "deal_only": 29,
-      "engaged": 72,
-      "deal_n8n": 31,
+      "deal_only": 30,
+      "engaged": 73,
+      "deal_n8n": 32,
       "deal_manual": 13,
       "deal_only_manual": 3,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 72,
-      "marketing": 72,
+      "engaged_v1": 73,
+      "marketing": 73,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 42,
-      "certain": 72,
+      "simule": 43,
+      "certain": 73,
       "attente": 0,
       "process": 0
      },
@@ -1418,16 +1454,16 @@
    ],
    "activation": {
     "meet": 43,
-    "deal": 44,
+    "deal": 45,
     "both": 15,
     "meet_only": 28,
-    "deal_only": 29,
-    "activated": 72,
-    "deal_auto": 31,
+    "deal_only": 30,
+    "activated": 73,
+    "deal_auto": 32,
     "deal_manual": 13,
     "deal_only_manual": 3,
     "activated_v2": 0,
-    "activated_v1": 72,
+    "activated_v1": 73,
     "relanced": 0,
     "process": 0
    },
