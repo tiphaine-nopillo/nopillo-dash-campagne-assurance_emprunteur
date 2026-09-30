@@ -1210,10 +1210,10 @@ function render(){
     const RO=G.rdv_origine||{}, PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
     const PREUVE={'Lien de campagne AE':'clic prouvé','Signature e-mail CS':'clic prouvé',
                   'Enquête NPS':'clic prouvé',
-                  'Lien public · ciblé par la campagne':'réservation autonome',
-                  'Lien public · hors campagne':'réservation autonome',
-                  'Calé par un commercial · ciblé par la campagne':'constat',
-                  'Calé par un commercial':'constat','Origine inconnue':'—'};
+                  'Lien roundrobin AE · ciblé par la campagne':'réservation autonome',
+                  'Lien roundrobin AE · hors campagne':'réservation autonome',
+                  'Posé par la Team AE · contact ciblé':'constat',
+                  'Posé par la Team AE · hors campagne':'constat','Origine inconnue':'—'};
     const SIMU_LIB={'Simulation produit · n8n':'Détectée par le produit',
                     'Workflow HubSpot · RDV sans simu':'Créée par un workflow'};
     const totRO=Object.values(RO).reduce((a,b)=>a+b,0);
