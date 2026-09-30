@@ -655,6 +655,36 @@ def attribute(cid, simulated, replies, rdv_pub, calls, simu_at=None):
     return ("non_attribuable", None)
 
 
+def qualify(cid, bucket, sub, mset):
+    """Statut de qualification d'un contact activé : confirmé, ou en attente.
+
+    Définition arrêtée le 17/09/2026 avec Clémence. Un client est un lead dans
+    trois cas, et uniquement dans ces trois cas :
+      1. il prend lui-même un créneau, suite à nos e-mails ou depuis l'app ;
+      2. il démarre son parcours de son propre chef ;
+      3. outbound : on l'a eu au téléphone, ça peut l'intéresser, ET il veut
+         qu'on organise un RDV pour en parler.
+
+    LECTURE DU CAS 3 : le résultat attendu d'un outbound qualifié est un RDV
+    organisé. Un contact qui a un rendez-vous posé par un commercial a donc,
+    par construction, franchi les deux conditions — il a été joint, et il a
+    voulu qu'on lui cale un créneau. Il est CONFIRMÉ.
+    Réserve : rien dans HubSpot ne dit si le créneau a été honoré. La règle
+    porte sur l'intention exprimée au téléphone, pas sur la tenue du RDV.
+
+    RESTE EN ATTENTE : les contacts qui n'ont qu'une fiche ouverte dans
+    HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un
+    accord ou un refus.
+    """
+    if sub == "rdv_public":
+        return "certain", "rdv_client"      # cas 1
+    if sub == "simulation":
+        return "certain", "parcours"        # cas 2
+    if cid in mset:
+        return "certain", "rdv_sales"       # cas 3, RDV organisé
+    return "attente", "carte_seule"
+
+
 def empty_qual():
     return dict(certain=0, attente=0, certain_rdv_client=0, certain_parcours=0,
                 certain_rdv_sales=0, attente_carte_seule=0)
