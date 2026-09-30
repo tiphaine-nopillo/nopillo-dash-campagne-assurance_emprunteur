@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T13:47:45.406638+00:00",
+  "generated_at": "2026-09-30T13:51:40.827733+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -133,8 +133,8 @@
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 79,
@@ -145,27 +145,27 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 125,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 92,
    "rdv_seul_hors": 12,
    "rdv_origine": {
-    "Lien public · ciblé par la campagne": 146,
+    "Lien roundrobin AE · ciblé par la campagne": 146,
     "Lien de campagne AE": 14,
-    "Calé par un commercial · ciblé par la campagne": 13,
-    "Lien public · hors campagne": 8,
+    "Posé par la Team AE · contact ciblé": 13,
+    "Lien roundrobin AE · hors campagne": 8,
     "Enquête NPS": 1,
     "Signature e-mail CS": 1
    },
    "rdv_origine_camp": {
-    "Lien public · ciblé par la campagne": 146,
-    "Calé par un commercial · ciblé par la campagne": 13,
+    "Lien roundrobin AE · ciblé par la campagne": 146,
+    "Posé par la Team AE · contact ciblé": 13,
     "Lien de campagne AE": 11,
     "Enquête NPS": 1
    },
    "rdv_origine_hors": {
-    "Lien public · hors campagne": 8,
+    "Lien roundrobin AE · hors campagne": 8,
     "Lien de campagne AE": 3,
     "Signature e-mail CS": 1
    },
