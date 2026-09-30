@@ -307,10 +307,13 @@
           <tbody id="origRows"></tbody></table></div>
         <div class="bsub" style="margin-top:10px">
           <strong>Clic prouvé</strong> : le client a cliqué un lien portant un identifiant de
-          campagne. <strong>Présomption</strong> : il était ciblé, rien ne dit qu'il a réservé depuis
-          l'e-mail. <strong>Constat</strong> : on sait qui a saisi, pas ce qui a déclenché.<br>
+          campagne. <strong>Réservation autonome</strong> : il a réservé lui-même sur un lien
+          public — très probablement le roundrobin AE, mais l'API HubSpot n'expose pas
+          l'identifiant de la page, donc c'est un faisceau et non une preuve.
+          <strong>Constat</strong> : un commercial a posé le créneau depuis son agenda.<br>
           Les catégories à clic prouvé sont un <strong>plancher</strong> — l'URL de dernière page
-          consultée est écrasée dès que le client navigue ailleurs.<br>
+          consultée est écrasée dès que le client navigue ailleurs, et un rendez-vous réellement
+          issu d'un lien tagué retombe alors en « réservation autonome ».<br>
           Pour les simulations, le canal qui a amené le client au simulateur n'est pas mesuré
           aujourd'hui : « détectée par le produit » dit que n8n l'a remontée, pas d'où venait le
           client.</div>
@@ -801,13 +804,38 @@ const valueLabels={
     const ctx=chart.ctx, area=chart.chartArea;
     const fmtFn=(po&&po.fmt)||(v=>fmt(v));
     ctx.save(); ctx.font="600 10.5px 'JetBrains Mono',monospace";
+    /* Sur un graphe EMPILÉ, une étiquette par segment se superpose dès qu'un
+       segment est petit ou nul. On n'affiche alors que le TOTAL, une seule
+       fois, au sommet de la pile. Le détail reste dans l'infobulle. */
+    const empile=chart.data.datasets.length>1
+      && chart.data.datasets.every(d=>d.stack)
+      && new Set(chart.data.datasets.map(d=>d.stack)).size===1;
+    ctx.textAlign='center';
+    if(empile){
+      const vus=chart.getDatasetMeta(0).data;
+      vus.forEach((_,i)=>{
+        let tot=0, haut=null;
+        chart.data.datasets.forEach((ds,di)=>{
+          if(chart.getDatasetMeta(di).hidden)return;
+          const v=ds.data[i]; if(v==null)return;
+          tot+=v;
+          const el=chart.getDatasetMeta(di).data[i];
+          if(haut===null||el.y<haut)haut=el.y;
+        });
+        if(!tot||haut===null)return;
+        const txt=fmtFn(tot);
+        if(haut-6>=area.top+2){ctx.fillStyle=INK;ctx.textBaseline='bottom';ctx.fillText(txt,vus[i].x,haut-6);}
+        else{ctx.fillStyle=INK;ctx.textBaseline='top';ctx.fillText(txt,vus[i].x,haut+6);}
+      });
+      ctx.restore(); return;
+    }
     chart.data.datasets.forEach((ds,di)=>{
       const meta=chart.getDatasetMeta(di);
       if(meta.hidden)return;
       const col=(typeof ds.borderColor==='string'?ds.borderColor:null)||INK;
       meta.data.forEach((el,i)=>{
         const v=ds.data[i]; if(v==null)return;
-        const txt=fmtFn(v); ctx.textAlign='center';
+        const txt=fmtFn(v);
         if(el.y-6>=area.top+2){ctx.fillStyle=col;ctx.textBaseline='bottom';ctx.fillText(txt,el.x,el.y-6);}
         else{ctx.fillStyle=INK;ctx.textBaseline='top';ctx.fillText(txt,el.x,el.y+6);}
       });
@@ -1063,14 +1091,14 @@ function render(){
            borderRadius:3,stack:'a'}]},
         options:{responsive:true,maintainAspectRatio:false,
           plugins:{legend:{position:'bottom',labels:{boxWidth:11,font:{size:11}}},
-            tooltip:{callbacks:{footer:it=>'total '+it.reduce((a,b)=>a+b.raw,0)}}},
+            tooltip:{callbacks:{footer:it=>'Total '+fmt(it.reduce((a,b)=>a+b.raw,0))+' activés'}}},
           scales:{x:{stacked:true,grid:{display:false},
               ticks:{font:{size:10},maxRotation:0,autoSkipPadding:12}},
             y:{stacked:true,beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}});
       const totPS=PS.reduce((a,e)=>a+e.campagne+e.hors,0);
       document.getElementById('weekNote').innerHTML=
         `Semaine du <strong>premier signal</strong> de chaque contact : réservation du `+
-        `rendez-vous, ou création de sa transaction. ${fmt(totPS)} contacts datés sur `+
+        `rendez-vous, ou date de début de simulation. ${fmt(totPS)} contacts datés sur `+
         `${fmt(G.activated)} activés`+
         (totPS<G.activated?` — ${fmt(G.activated-totPS)} sans date exploitable.`:'.')+
         ` Les barres cumulent tout l'historique, pas une période de campagne.`;
@@ -1082,7 +1110,10 @@ function render(){
        recoller les morceaux de tête. */
     const RO=G.rdv_origine||{}, PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
     const PREUVE={'Lien de campagne AE':'clic prouvé','Signature e-mail CS':'clic prouvé',
-                  'Enquête NPS':'clic prouvé','Ciblé par la campagne AE':'présomption',
+                  'Enquête NPS':'clic prouvé',
+                  'Lien public · ciblé par la campagne':'réservation autonome',
+                  'Lien public · hors campagne':'réservation autonome',
+                  'Calé par un commercial · ciblé par la campagne':'constat',
                   'Calé par un commercial':'constat','Origine inconnue':'—'};
     const SIMU_LIB={'Simulation produit · n8n':'Détectée par le produit',
                     'Workflow HubSpot · RDV sans simu':'Créée par un workflow'};
