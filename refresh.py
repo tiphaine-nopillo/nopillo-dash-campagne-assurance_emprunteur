@@ -859,71 +859,24 @@ def _ventile(createur_par_contact, perimetre):
     return dict(sorted(out.items(), key=lambda kv: -kv[1]))
 
 
-def _par_semaine(activated, premier, camp):
-    """Activations par semaine, campagne contre hors campagne.
+def _par_periode(activated, premier, camp, pas):
+    """Activations par jour ou par semaine, campagne contre hors campagne.
 
-    La semaine est celle du LUNDI du premier signal. Un contact sans date —
-    cas théorique, une transaction sans createdate — est ignoré plutôt que
-    rangé dans une semaine arbitraire : le total du graphe peut donc être
-    légèrement inférieur au total activé, l'écart est affiché.
+    Le pas « semaine » regroupe au LUNDI. Un contact sans date exploitable est
+    ignoré plutôt que rangé dans une période arbitraire : le total du graphe
+    peut donc être inférieur au total activé, l'écart est affiché sous le
+    graphe.
     """
     par = {}
     for cid in activated:
         d = premier.get(cid)
         if not d:
             continue
-        lundi = (d - dt.timedelta(days=d.weekday())).date().isoformat()
-        e = par.setdefault(lundi, {"campagne": 0, "hors": 0})
+        j = d - dt.timedelta(days=d.weekday()) if pas == "semaine" else d
+        cle = j.date().isoformat()
+        e = par.setdefault(cle, {"campagne": 0, "hors": 0})
         e["campagne" if cid in camp else "hors"] += 1
-    return [dict(semaine=k, **v) for k, v in sorted(par.items())]
-
-
-def _utm(url):
-    """Extrait les 4 paramètres UTM de l'URL du lien de réservation.
-
-    On ne lit la query string QUE si l'URL est celle du lien de rendez-vous.
-    Un UTM présent sur une autre page — article d'aide, e-mail CS — ne dit
-    pas par quoi CE rendez-vous a été déclenché.
-    """
-    u = url or ""
-    if LIEN_RDV not in u.lower() or "?" not in u:
-        return {}
-    out = {}
-    for pair in u.split("?", 1)[1].split("&"):
-        if "=" not in pair:
-            continue
-        k, v = pair.split("=", 1)
-        if k.lower() in ("utm_source", "utm_medium", "utm_campaign", "utm_content"):
-            out[k.lower()] = unquote(v)
-    return out
-
-
-def liste_clients(activated, rdv, simu, camp, src_par_contact, premier):
-    """Détail nominatif des clients activés, pour la table du dashboard.
-
-    PUBLIÉ DANS data.json, ce qui n'est possible que depuis le passage du
-    dépôt en privé le 30/09. Avant, le fichier était servi publiquement par
-    GitHub Pages et le détail restait dans les logs.
-    """
-    props = _contact_props(sorted(activated),
-                           ["firstname", "lastname", "email",
-                            "hs_analytics_last_url"])
-    out = []
-    for cid in sorted(activated):
-        p = props.get(cid) or {}
-        url = p.get("hs_analytics_last_url")
-        u = _utm(url)
-        d = premier.get(cid)
-        nom = " ".join(x for x in (p.get("firstname"), p.get("lastname")) if x)
-        out.append(dict(
-            id=cid, nom=nom or (p.get("email") or cid), email=p.get("email"),
-            camp=cid in camp, rdv=cid in rdv, simu=cid in simu,
-            origine=(origine_rdv(url, src_par_contact.get(cid), cid in camp)
-                     if cid in rdv else None),
-            date=d.date().isoformat() if d else None,
-            utm_source=u.get("utm_source"), utm_medium=u.get("utm_medium"),
-            utm_campaign=u.get("utm_campaign"), utm_content=u.get("utm_content")))
-    return out
+    return [dict(periode=k, **v) for k, v in sorted(par.items())]
 
 
 def _origines_rdv(rdv_ids, src_par_contact, camp):
@@ -1434,8 +1387,15 @@ def build():
         rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp),
         rdv_origine_camp=_origines_rdv(sorted(g_rdv & camp), g_src, camp),
         rdv_origine_hors=_origines_rdv(sorted(g_rdv - camp), g_src, camp),
-        par_semaine=_par_semaine(g_all, g_premier, camp))
-    dedup["clients"] = liste_clients(g_all, g_rdv, g_simu, camp, g_src, g_premier)
+        par_semaine=_par_periode(g_all, g_premier, camp, "semaine"),
+        par_jour=_par_periode(g_all, g_premier, camp, "jour"))
+    # DÉTAIL NOMINATIF NON PUBLIÉ. data.json est servi publiquement par GitHub
+    # Pages : y écrire des noms et des e-mails les rendrait accessibles à
+    # quiconque connaît l'URL. Le dépôt a été passé en privé le 30/09 puis
+    # remis en public dans la foulée, GitHub Pages ne fonctionnant pas sur un
+    # dépôt privé en plan gratuit. La liste est donc imprimée dans les LOGS,
+    # qui supposent un accès au dépôt.
+    clients = liste_clients(g_all, g_rdv, g_simu, camp, g_src, g_premier)
     # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
     # publiés dans data.json : le fichier est servi publiquement par GitHub
     # Pages. C'est la seule liste fiable — une requête HubSpot avec « liste NOT
@@ -1626,6 +1586,24 @@ def build():
         print("   Cas exclusifs : un écart avec un autre comptage se situe")
         print("   forcément sur l'une de ces quatre lignes.")
 
+    cli = locals().get("clients") or []
+    if cli:
+        print(f"\n--- détail des clients activés · {len(cli)} ---")
+        print(f"   {'nom':34} {'signal':18} {'périmètre':14} {'origine du RDV':46} "
+              f"{'utm_source':14} {'utm_medium':12} {'utm_campaign':16} utm_content")
+        for c in cli:
+            sig = ("RDV + simulation" if c["rdv"] and c["simu"]
+                   else "RDV seul" if c["rdv"] else "Simulation seule")
+            print(f"   {(c['nom'] or '')[:33]:34} {sig:18} "
+                  f"{'Campagnes' if c['camp'] else 'Hors campagnes':14} "
+                  f"{(c['origine'] or '—')[:45]:46} "
+                  f"{(c['utm_source'] or '—')[:13]:14} "
+                  f"{(c['utm_medium'] or '—')[:11]:12} "
+                  f"{(c['utm_campaign'] or '—')[:15]:16} {c['utm_content'] or '—'}")
+        print("   Les colonnes UTM ne sont lues que sur l'URL du lien de réservation.")
+        print("   Elles sont vides pour la plupart : cette URL est écrasée dès que")
+        print("   le client navigue ailleurs après avoir réservé.")
+
     hors = locals().get("hors_ids") or []
     if hors:
         print(f"\n--- activés HORS campagne · {len(hors)} contacts ---")
@@ -1669,10 +1647,10 @@ def build():
             for e in ps[-12:]:
                 tot_s = e["campagne"] + e["hors"]
                 barre = "█" * min(40, tot_s)
-                print(f"     {e['semaine']}  {tot_s:4d}  "
+                print(f"     {e['periode']}  {tot_s:4d}  "
                       f"camp {e['campagne']:3d} · hors {e['hors']:3d}  {barre}")
-            print(f"     {len(ps)} semaines · {tot_ps} contacts datés"
-                  f" sur {g['activated']} activés"
+            print(f"     {len(ps)} semaines · {len(g.get('par_jour') or [])} jours actifs"
+                  f" · {tot_ps} contacts datés sur {g['activated']} activés"
                   f"{'' if tot_ps == g['activated'] else ' · ÉCART'}")
 
         ro = g.get("rdv_origine") or {}
