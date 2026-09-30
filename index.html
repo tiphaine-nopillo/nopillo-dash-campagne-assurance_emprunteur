@@ -298,6 +298,16 @@
           <thead><tr><th>Origine</th><th>Campagnes</th><th>Hors campagnes</th>
             <th>Total</th></tr></thead>
           <tbody id="creaRows"></tbody></table></div>
+        <div class="rlab" style="margin-top:22px">D'où viennent les rendez-vous —
+          <strong>clic prouvé ou présomption</strong></div>
+        <div class="twrap"><table class="dt4">
+          <thead><tr><th>Origine</th><th>Contacts</th><th>Part</th><th>Preuve</th></tr></thead>
+          <tbody id="rdvOrigRows"></tbody></table></div>
+        <div class="bsub" style="margin-top:10px">Les trois premières lignes reposent sur l'UTM
+          porté par l'URL de réservation : le clic est <strong>prouvé</strong>. Les autres sont des
+          présomptions. <strong>Ces catégories sont un plancher</strong> — l'URL de dernière page
+          est écrasée dès que le client navigue ailleurs, donc un rendez-vous réellement issu d'un
+          lien tagué peut retomber plus bas.</div>
         <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
           fiche, pas qui a provoqué la simulation : une carte ouverte à la main par un commercial
           compte ici alors que c'est le client qui a rempli le simulateur de son côté.</div>
@@ -1047,6 +1057,22 @@ function render(){
         (rdvC+rdvH?ligne('RDV sans simulation entamée',rdvC,rdvH):'')+
         `<tr class="totrow"><td>TOTAL</td><td>${fmt(totC)}</td>
          <td>${fmt(totH)}</td><td>${fmt(totC+totH)}</td></tr>`;
+    }
+
+    /* Origine des rendez-vous, mêmes règles de lecture des UTM que le dashboard
+       « lien de réunion », catégories renommées : son « Team AE » mélangeait
+       clic prouvé et simple ciblage, deux niveaux de preuve différents. */
+    const RO=G.rdv_origine||{};
+    const PREUVE={'Lien de campagne AE':'clic prouvé','Signature e-mail CS':'clic prouvé',
+                  'Enquête NPS':'clic prouvé','Ciblé par la campagne AE':'présomption',
+                  'Calé par un commercial':'constat','Origine inconnue':'—'};
+    const totRO=Object.values(RO).reduce((a,b)=>a+b,0);
+    if(totRO){
+      document.getElementById('rdvOrigRows').innerHTML=
+        Object.entries(RO).map(([lib,v])=>
+          `<tr><td>${lib}</td><td>${fmt(v)}</td><td>${pct(v,totRO)}</td>
+           <td>${PREUVE[lib]||'—'}</td></tr>`).join('')+
+        `<tr class="totrow"><td>TOTAL RDV</td><td>${fmt(totRO)}</td><td>100 %</td><td></td></tr>`;
     }
 
     document.getElementById('globNote').innerHTML=
