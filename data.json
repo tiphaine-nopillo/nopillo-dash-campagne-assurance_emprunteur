@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T09:59:43.435623+00:00",
+  "generated_at": "2026-09-30T11:04:41.382011+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -120,15 +120,15 @@
    "activated_v1": 149
   },
   "global": {
-   "activated": 387,
+   "activated": 388,
    "meet": 182,
-   "deal": 284,
+   "deal": 285,
    "both": 79,
    "campagne": 246,
-   "hors_campagne": 141,
+   "hors_campagne": 142,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 203,
+    "Simulation produit · n8n": 204,
     "Team CS · Clara Baekelandt": 27,
     "Team CS · Lilian Maudet": 26,
     "Team CS · Mathieu d'Ornellas": 22,
@@ -143,7 +143,7 @@
     "Team CS · Mathieu d'Ornellas": 22
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 124,
+    "Simulation produit · n8n": 125,
     "Marc Chevalier · CGP": 4,
     "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1
@@ -238,12 +238,12 @@
     {
      "semaine": "2026-09-07",
      "campagne": 51,
-     "hors": 19
+     "hors": 20
     },
     {
      "semaine": "2026-09-14",
      "campagne": 64,
-     "hors": 32
+     "hors": 31
     },
     {
      "semaine": "2026-09-21",
@@ -253,7 +253,7 @@
     {
      "semaine": "2026-09-28",
      "campagne": 4,
-     "hors": 7
+     "hors": 8
     }
    ]
   },
@@ -475,7 +475,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-09-29T17:00:45.281000+00:00"
+   "last_sync": "2026-09-30T11:00:08.681000+00:00"
   }
  },
  "cohorts": [
@@ -1025,12 +1025,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 431,
+     "opens": 432,
      "clicks": 26,
-     "opens_emails": 821,
+     "opens_emails": 823,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 64,
+     "replies_non_fiable": 65,
      "meetings": 41,
      "deals_ae": 43,
      "engaged": 71,
@@ -1065,14 +1065,14 @@
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 578,
-       "opens": 285,
+       "opens": 286,
        "clicks": 6
       },
       {
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 210,
+       "opens": 211,
        "clicks": 15
       }
      ],
