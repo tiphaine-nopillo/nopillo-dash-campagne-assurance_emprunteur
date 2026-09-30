@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T16:04:42.455914+00:00",
+  "generated_at": "2026-09-30T17:56:08.846733+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -142,29 +142,29 @@
   "contacts": 2075,
   "activation": {
    "meet": 175,
-   "deal": 152,
+   "deal": 153,
    "both": 78,
    "meet_only": 97,
-   "deal_only": 74,
-   "activated": 249,
-   "deal_auto": 76,
+   "deal_only": 75,
+   "activated": 250,
+   "deal_auto": 77,
    "deal_manual": 76,
    "deal_only_manual": 12,
-   "sum_cells": 249,
+   "sum_cells": 250,
    "overlap": 0,
-   "activated_v2": 97,
+   "activated_v2": 98,
    "activated_v1": 152
   },
   "global": {
-   "activated": 387,
+   "activated": 388,
    "meet": 182,
-   "deal": 286,
+   "deal": 287,
    "both": 81,
-   "campagne": 249,
+   "campagne": 250,
    "hors_campagne": 138,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 204,
+    "Simulation produit · n8n": 205,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
@@ -173,7 +173,7 @@
     "Autre utilisateur": 1
    },
    "par_createur_camp": {
-    "Simulation produit · n8n": 79,
+    "Simulation produit · n8n": 80,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
@@ -270,7 +270,7 @@
     {
      "periode": "2026-09-07",
      "campagne": 52,
-     "hors": 18
+     "hors": 19
     },
     {
      "periode": "2026-09-14",
@@ -280,11 +280,11 @@
     {
      "periode": "2026-09-21",
      "campagne": 36,
-     "hors": 30
+     "hors": 29
     },
     {
      "periode": "2026-09-28",
-     "campagne": 5,
+     "campagne": 6,
      "hors": 10
     }
    ],
@@ -460,6 +460,11 @@
      "hors": 2
     },
     {
+     "periode": "2026-09-07",
+     "campagne": 0,
+     "hors": 1
+    },
+    {
      "periode": "2026-09-08",
      "campagne": 5,
      "hors": 2
@@ -537,7 +542,7 @@
     {
      "periode": "2026-09-23",
      "campagne": 2,
-     "hors": 4
+     "hors": 3
     },
     {
      "periode": "2026-09-24",
@@ -571,14 +576,14 @@
     },
     {
      "periode": "2026-09-30",
-     "campagne": 1,
+     "campagne": 2,
      "hors": 4
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 180
+     "transactions": 181
     },
     {
      "phase": "simulation_completed",
@@ -617,15 +622,15 @@
   "motifs": {
    "rdv_seul": 97,
    "rdv_et_simu": 78,
-   "simu_seule_etapes": 64,
+   "simu_seule_etapes": 65,
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
   "process": 6,
   "attribution": {
    "marketing": {
-    "total": 227,
-    "simulation": 133,
+    "total": 228,
+    "simulation": 134,
     "reponse": 7,
     "rdv_public": 87
    },
@@ -694,8 +699,8 @@
     },
     "14412": {
      "marketing": {
-      "total": 60,
-      "simulation": 33,
+      "total": 61,
+      "simulation": 34,
       "reponse": 2,
       "rdv_public": 25
      },
@@ -752,8 +757,8 @@
     },
     "v2": {
      "marketing": {
-      "total": 81,
-      "simulation": 52,
+      "total": 82,
+      "simulation": 53,
       "reponse": 5,
       "rdv_public": 24
      },
@@ -766,10 +771,10 @@
     }
    },
    "qualification": {
-    "certain": 240,
+    "certain": 241,
     "attente": 9,
     "certain_rdv_client": 87,
-    "certain_parcours": 133,
+    "certain_parcours": 134,
     "certain_rdv_sales": 20,
     "attente_carte_seule": 9,
     "par_cellule": {
@@ -806,10 +811,10 @@
       "attente_carte_seule": 0
      },
      "14412": {
-      "certain": 62,
+      "certain": 63,
       "attente": 0,
       "certain_rdv_client": 25,
-      "certain_parcours": 33,
+      "certain_parcours": 34,
       "certain_rdv_sales": 4,
       "attente_carte_seule": 0
      },
@@ -832,7 +837,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-09-30T16:00:08.259000+00:00"
+   "last_sync": "2026-09-30T17:00:06.906000+00:00"
   }
  },
  "cohorts": [
@@ -1214,24 +1219,24 @@
      "opens_frozen": true,
      "replies_non_fiable": 117,
      "meetings": 52,
-     "deals_ae": 34,
-     "engaged": 62,
+     "deals_ae": 35,
+     "engaged": 63,
      "split": {
       "both": 24,
       "meet_only": 28,
-      "deal_only": 10,
-      "engaged": 62,
-      "deal_n8n": 8,
+      "deal_only": 11,
+      "engaged": 63,
+      "deal_n8n": 9,
       "deal_manual": 26,
       "deal_only_manual": 2,
       "relanced": 532,
-      "engaged_v2": 46,
+      "engaged_v2": 47,
       "engaged_v1": 16,
-      "marketing": 60,
+      "marketing": 61,
       "sales": 2,
       "non_attribuable": 0,
-      "simule": 33,
-      "certain": 62,
+      "simule": 34,
+      "certain": 63,
       "attente": 0,
       "process": 1
      },
@@ -1345,15 +1350,15 @@
    ],
    "activation": {
     "meet": 68,
-    "deal": 49,
+    "deal": 50,
     "both": 32,
     "meet_only": 36,
-    "deal_only": 17,
-    "activated": 85,
-    "deal_auto": 17,
+    "deal_only": 18,
+    "activated": 86,
+    "deal_auto": 18,
     "deal_manual": 32,
     "deal_only_manual": 3,
-    "activated_v2": 61,
+    "activated_v2": 62,
     "activated_v1": 24,
     "relanced": 657,
     "process": 2
@@ -1387,7 +1392,7 @@
      "opens_emails": 824,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 66,
+     "replies_non_fiable": 67,
      "meetings": 43,
      "deals_ae": 45,
      "engaged": 73,
