@@ -1208,8 +1208,13 @@ function render(){
        et une simulation. Les trois tableaux séparés d'avant obligeaient à
        recoller les morceaux de tête. */
     const RO=G.rdv_origine||{}, PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
-    const PREUVE={'Lien de campagne AE':'clic prouvé','Signature e-mail CS':'clic prouvé',
-                  'Enquête NPS':'clic prouvé',
+    /* Les trois premières portent le nom exact de l'UTM, pour se raccorder
+       sans traduction au dashboard « lien de réunion » et aux liens eux-mêmes. */
+    const UTM_DETAIL={'signature_rdv':'signature Team AE · utm_content = prénom de l\'expéditeur',
+                      'signature':'signature Customer Care',
+                      'nps':'enquête de satisfaction'};
+    const PREUVE={'signature_rdv':'clic prouvé','signature':'clic prouvé',
+                  'nps':'clic prouvé',
                   'Lien roundrobin AE · ciblé par la campagne':'réservation autonome',
                   'Lien roundrobin AE · hors campagne':'réservation autonome',
                   'Posé par la Team AE · contact ciblé':'constat',
@@ -1227,7 +1232,9 @@ function render(){
         <td>${fmt(hh)}</td><td class="m">${pr}</td></tr>`;
       const ROC=G.rdv_origine_camp||{}, ROH=G.rdv_origine_hors||{};
       const lignesRDV=Object.entries(RO).map(([lib])=>
-        ligne(lib,ROC[lib]||0,ROH[lib]||0,PREUVE[lib]||'—')).join('');
+        ligne(UTM_DETAIL[lib]?`<code>${lib}</code><br>
+          <span class="m" style="font-weight:400">${UTM_DETAIL[lib]}</span>`:lib,
+          ROC[lib]||0,ROH[lib]||0,PREUVE[lib]||'—')).join('');
       document.getElementById('origRows').innerHTML=
         sect(`Rendez-vous · ${fmt(totRO)} contacts`)+lignesRDV+
         sect(`Simulations · ${fmt(G.deal)} contacts`)+
