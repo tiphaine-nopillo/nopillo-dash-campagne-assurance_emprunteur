@@ -855,9 +855,11 @@ def origine_rdv(url, source, dans_campagne):
     passe qu'après — c'est la plus faible des trois, le contact a été ciblé,
     rien ne dit qu'il a réservé depuis l'e-mail.
 
-    « Lien public, sans UTM » NE PROUVE PAS que c'est le lien roundrobin AE :
-    MEETINGS_PUBLIC couvre tous les liens de réservation, et l'API HubSpot
-    n'expose pas l'identifiant de la page. C'est un faisceau, pas une preuve.
+    « Lien roundrobin AE » est un raccourci assumé : on teste MEETINGS_PUBLIC,
+    qui couvre tous les liens de réservation, l'API HubSpot n'exposant pas
+    l'identifiant de la page. Mesuré le 30/09 : sur 178 réunions publiques,
+    177 portent le titre du roundrobin AE. Le raccourci est donc juste à une
+    réunion près.
     """
     u = (url or "").lower()
     if LIEN_RDV in u:
@@ -865,12 +867,12 @@ def origine_rdv(url, source, dans_campagne):
             if motif in u:
                 return lib
     if source == MEETING_PUBLIC:
-        return ("Lien public · ciblé par la campagne" if dans_campagne
-                else "Lien public · hors campagne")
+        return ("Lien roundrobin AE · ciblé par la campagne" if dans_campagne
+                else "Lien roundrobin AE · hors campagne")
     if dans_campagne:
-        return "Calé par un commercial · ciblé par la campagne"
+        return "Posé par la Team AE · contact ciblé"
     if source == "BIDIRECTIONAL_SYNC":
-        return "Calé par un commercial"
+        return "Posé par la Team AE · hors campagne"
     return "Origine inconnue"
 
 
