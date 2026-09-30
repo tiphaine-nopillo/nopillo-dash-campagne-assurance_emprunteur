@@ -269,9 +269,9 @@ CREATEUR_AUTO = {
 # minimum, jamais un compte exact — 19 contacts sur 180 en portent une.
 LIEN_RDV = "roundrobinassuranceemprunteur"
 RDV_ORIGINES = [
-    ("Lien de campagne AE", "utm_campaign=signature_rdv"),
-    ("Signature e-mail CS", "utm_medium=signature"),
-    ("Enquête NPS", "utm_medium=nps"),
+    ("signature_rdv", "utm_campaign=signature_rdv"),
+    ("signature", "utm_medium=signature"),
+    ("nps", "utm_medium=nps"),
 ]
 
 AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
