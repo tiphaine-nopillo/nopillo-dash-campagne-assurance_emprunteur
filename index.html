@@ -283,6 +283,12 @@
           <strong>Cumul de tout l'historique</strong> — la campagne court depuis le 5 août : les deux
           chiffres ne se comparent pas en performance.</div>
       </div></div>
+      <div class="rlab">Comment se décomposent les activés — <strong>tous périmètres</strong></div>
+      <div class="eq" id="globSplitEq"></div>
+      <div class="split-bar" id="globSplitBar" style="margin-top:14px"></div>
+      <div class="bsub" id="globSplitNote" style="margin-top:12px"></div>
+
+      <div class="rlab" style="margin-top:22px">Campagne ou non — <strong>d'où viennent-ils</strong></div>
       <div class="eq" id="globEq"></div>
       <div class="split-bar" id="globBar" style="margin-top:16px"></div>
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
@@ -989,6 +995,27 @@ function render(){
   const G=(D.dedup||{}).global;
   if(G&&G.activated){
     document.getElementById('globWrap').style.display='block';
+    /* Même décomposition que pour la campagne, mais sur tout le portefeuille.
+       Trois cas disjoints dont la somme fait le total — à ne pas confondre
+       avec les deux totaux RDV et simulations, qui se recoupent. */
+    const gBoth=G.both||0, gRdvSeul=(G.meet||0)-gBoth, gSimuSeule=(G.deal||0)-gBoth;
+    document.getElementById('globSplitEq').innerHTML=
+      tile('','RDV seul',gRdvSeul,`${pct(gRdvSeul,G.activated)} des activés`)+
+      `<div class="eq-op">+</div>`+
+      tile('','Simulation seule',gSimuSeule,`${pct(gSimuSeule,G.activated)} des activés`)+
+      `<div class="eq-op">+</div>`+
+      tile('','RDV et simulation',gBoth,`${pct(gBoth,G.activated)} des activés`)+
+      `<div class="eq-op">=</div>`+
+      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`);
+    document.getElementById('globSplitBar').innerHTML=
+      `<div class="sb-both" style="width:${100*gBoth/G.activated}%">Les deux · ${fmt(gBoth)}</div>`+
+      `<div class="sb-meet" style="width:${100*gRdvSeul/G.activated}%">RDV seul · ${fmt(gRdvSeul)}</div>`+
+      `<div class="sb-deal" style="width:${100*gSimuSeule/G.activated}%">Simulation seule · ${fmt(gSimuSeule)}</div>`;
+    document.getElementById('globSplitNote').innerHTML=
+      `${fmt(G.meet)} RDV et ${fmt(G.deal)} simulations, mais ${fmt(G.activated)} contacts : `+
+      `<strong>${fmt(gBoth)} sont dans les deux</strong>. Les deux totaux se recoupent, les trois `+
+      `cas ci-dessus non.`;
+
     document.getElementById('globEq').innerHTML=
       tile('','Issus des campagnes',G.campagne,`${pct(G.campagne,G.activated)} du total`)+
       `<div class="eq-op">+</div>`+
