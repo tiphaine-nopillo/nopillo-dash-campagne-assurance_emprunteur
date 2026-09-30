@@ -275,6 +275,25 @@
     <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
 
     <!-- NIVEAU 1 -->
+    <div class="block" style="border-left:3px solid var(--indigo)">
+      <h3 class="btitle">Ce qu'on appelle un client activé</h3>
+      <div class="bsub">
+        Un client est <strong>activé</strong> s'il a, après l'envoi qui l'a touché :<br>
+        &nbsp;&nbsp;• un <strong>rendez-vous assurance emprunteur</strong> avec Clara, Lilian ou
+        Mathieu — qu'il l'ait réservé lui-même sur le lien roundrobin, ou qu'un commercial le lui
+        ait calé après un échange ;<br>
+        &nbsp;&nbsp;• ou une <strong>simulation commencée</strong> : le produit compte au moins une
+        étape franchie dans le simulateur, ou sa fiche est dans le pipe actif.<br>
+        S'il fait les deux, <strong>il compte une seule fois</strong>.<br><br>
+        <strong>Ne comptent pas</strong> : un accès au simulateur sans rien remplir, un dossier
+        refusé sans rendez-vous ni étape franchie, une fiche créée automatiquement parce qu'un
+        rendez-vous existe, une réponse à un e-mail.<br>
+        <strong>Aucune limite de délai</strong> : un signal compte quel que soit le temps écoulé
+        depuis l'envoi. Les cohortes ne se comparent donc pas entre elles, et les chiffres montent
+        au fil du temps — horodater ce qu'on annonce.
+      </div>
+    </div>
+
     <div class="lvl"><span class="lvl-n">0</span>Activation Assurance Emprunteur</div>
     <div class="block" id="globWrap" style="display:none">
       <div class="bhead"><div>
@@ -448,6 +467,42 @@
     </div>
 
     <!-- NIVEAU 3 -->
+    <div class="lvl"><span class="lvl-n">4</span>Détail des clients activés</div>
+    <div class="block" id="cliBlock" style="display:none">
+      <div class="bhead"><div>
+        <h3 class="btitle">Les clients activés, un par un<span class="src">HubSpot</span></h3>
+        <div class="bsub">Cliquer un nom ouvre sa fiche HubSpot. Les colonnes UTM ne sont remplies
+          que si l'URL de réservation portait des paramètres de suivi — c'est le cas d'une minorité,
+          l'URL de dernière page consultée étant écrasée dès que le client navigue ailleurs.</div>
+      </div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <input id="cliQ" placeholder="Rechercher un nom ou un e-mail"
+          style="flex:1;min-width:220px;padding:8px 11px;border:1px solid var(--border2);
+                 border-radius:7px;font-family:var(--font-sans);font-size:12px">
+        <select id="cliF" style="padding:8px 11px;border:1px solid var(--border2);
+          border-radius:7px;font-family:var(--font-mono);font-size:11px">
+          <option value="">Tous les signaux</option>
+          <option value="rdv">RDV seul</option>
+          <option value="simu">Simulation seule</option>
+          <option value="both">RDV et simulation</option>
+        </select>
+        <select id="cliP" style="padding:8px 11px;border:1px solid var(--border2);
+          border-radius:7px;font-family:var(--font-mono);font-size:11px">
+          <option value="">Tous périmètres</option>
+          <option value="1">Campagnes</option>
+          <option value="0">Hors campagnes</option>
+        </select>
+      </div>
+      <div class="twrap" style="max-height:620px;overflow-y:auto">
+        <table class="dt4" id="cliTable">
+          <thead><tr><th>Client</th><th>Signal</th><th>Périmètre</th><th>Origine du RDV</th>
+            <th>Activé le</th><th>utm_source</th><th>utm_medium</th><th>utm_campaign</th>
+            <th>utm_content</th></tr></thead>
+          <tbody id="cliRows"></tbody></table>
+      </div>
+      <div class="bsub" id="cliNote" style="margin-top:10px"></div>
+    </div>
+
     <div class="lvl"><span class="lvl-n">3</span>Détail par cohorte</div>
     <div id="cohDetail"></div>
 
@@ -1548,6 +1603,45 @@ function render(){
   }
 
   /* ---------- Méthodo ---------- */
+  /* ---------- DÉTAIL DES CLIENTS ACTIVÉS ----------
+     Publié dans data.json, ce qui n'est possible que depuis le passage du dépôt
+     en privé. La table filtre côté client : la liste tient en mémoire et évite
+     un aller-retour à chaque frappe. */
+  const CLI=(D.dedup||{}).clients||[];
+  /* Identifiant du portail HubSpot, pour construire les liens vers les fiches.
+     Il n'est référencé nulle part ailleurs dans la page. */
+  const PORTAL='26173790';
+  if(CLI.length){
+    document.getElementById('cliBlock').style.display='block';
+    const sig=c=>c.rdv&&c.simu?'both':(c.rdv?'rdv':'simu');
+    const SIGLAB={both:'RDV + simulation',rdv:'RDV seul',simu:'Simulation seule'};
+    const dessine=()=>{
+      const q=(document.getElementById('cliQ').value||'').toLowerCase().trim();
+      const f=document.getElementById('cliF').value;
+      const p=document.getElementById('cliP').value;
+      const vus=CLI.filter(c=>
+        (!q||(c.nom||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q))
+        &&(!f||sig(c)===f)&&(p===''||String(c.camp?1:0)===p));
+      document.getElementById('cliRows').innerHTML=vus.map(c=>
+        `<tr><td><a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/contact/${c.id}"
+           target="_blank" rel="noopener">${c.nom||c.id}</a></td>
+          <td>${SIGLAB[sig(c)]}</td>
+          <td>${c.camp?'Campagnes':'Hors campagnes'}</td>
+          <td>${c.origine||VOID}</td>
+          <td>${c.date||VOID}</td>
+          <td>${c.utm_source||VOID}</td><td>${c.utm_medium||VOID}</td>
+          <td>${c.utm_campaign||VOID}</td><td>${c.utm_content||VOID}</td></tr>`).join('')
+        ||`<tr><td colspan="9" class="m">Aucun client ne correspond.</td></tr>`;
+      const avecUtm=vus.filter(c=>c.utm_source||c.utm_campaign).length;
+      document.getElementById('cliNote').innerHTML=
+        `${fmt(vus.length)} client(s) affiché(s) sur ${fmt(CLI.length)} activés · `+
+        `${fmt(avecUtm)} portent un UTM exploitable.`;
+    };
+    ['cliQ','cliF','cliP'].forEach(id=>
+      document.getElementById(id).addEventListener('input',dessine));
+    dessine();
+  }
+
   document.getElementById('limits').innerHTML=[
     {level:'high',title:'Un dossier ne prouve pas toujours un parcours',
      body:`Le pipe est alimenté par le produit ET à la main par les commerciaux. Une fiche créée `
