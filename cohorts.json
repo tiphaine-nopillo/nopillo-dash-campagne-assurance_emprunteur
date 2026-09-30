@@ -252,5 +252,41 @@
  "objectif": {
   "clients_actives": 200,
   "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
+ },
+ "origine_simu_posthog": {
+  "releve_le": "2026-09-30",
+  "clients": 261,
+  "source": "PostHog production, lecture seule",
+  "repartition": [
+   {
+    "origine": "E-mail campagne AE (marqué)",
+    "clients": 31
+   },
+   {
+    "origine": "Accès direct",
+    "clients": 30
+   },
+   {
+    "origine": "Recherche Google / Bing",
+    "clients": 11
+   },
+   {
+    "origine": "E-mail sans marquage",
+    "clients": 3
+   },
+   {
+    "origine": "Outil interne (Retool)",
+    "clients": 2
+   },
+   {
+    "origine": "Autre site",
+    "clients": 1
+   },
+   {
+    "origine": "Inconnue (arrivé déjà connecté)",
+    "clients": 183
+   }
+  ],
+  "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
  }
 }
