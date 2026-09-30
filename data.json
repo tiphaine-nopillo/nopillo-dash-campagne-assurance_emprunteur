@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T09:27:05.530319+00:00",
+  "generated_at": "2026-09-30T09:59:43.435623+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -11,7 +11,7 @@
   "meeting_window_note": "Les RDV suivent exactement la même règle de délai que les simulations, quelle qu'elle soit. Avant le 11/09, le filtre des réunions n'avait qu'une borne basse alors que les transactions étaient bornées : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close. Les deux signaux sont alignés depuis.",
   "attribution_window_note": "AUCUNE LIMITE DE DÉLAI. Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après l'envoi. La borne BASSE subsiste : rien d'antérieur à l'envoi n'est compté, et un contact relancé conserve deux périodes étiquetées v1 et v2. HISTORIQUE : cumul ouvert jusqu'au 22/08 ; J+21 du 22/08 au 25/09 ; aucune limite depuis. CE QUE ÇA COÛTE, à dire à chaque publication : 1) LES COHORTES NE SE COMPARENT PAS — une cohorte ancienne accumule plus longtemps et gagne toujours ; 2) LES CHIFFRES PUBLIÉS REMONTENT EN PERMANENCE, horodater ce qu'on annonce ; 3) l'attribution s'affaiblit avec le temps. POURQUOI ON N'A PAS CALIBRÉ UNE LIMITE : le seul moyen aurait été de regarder quand les réponses cessent d'arriver. Cette mesure s'est révélée fausse et a été retirée (voir replies_retirees). RÉVERSIBLE : ATTRIB_DAYS dans refresh.py.",
   "frozen_note": "Ouvertures et clics FIGÉS pour les six cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Ces valeurs sont écrites dans frozen_metrics et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne.",
-  "attribution_sm_note": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. Le total activé ne change pas, seule sa décomposition est ajoutée. RÈGLE, dans cet ordre : 1) le contact a une simulation commencée → marketing ; 2) sinon, réponse ou RDV réservé par le client ANTÉRIEUR au premier appel sortant → marketing ; 3) sinon, appel sortant loggé → sales ; 4) sinon, non attribuable. CHOIX ASSUMÉ : la simulation prime, même si un appel a suivi. PIÈGE : pour le RDV on compare la date de RÉSERVATION au premier appel, jamais la date de tenue. LIMITE CONNUE : le sous-cas « réponse » s'appuie sur hs_sales_email_last_replied, dont la date glisse à chaque nouvel e-mail commercial. Ce signal est peu fiable, mais il ne s'applique qu'aux contacts sans simulation ni RDV self-service, donc à une minorité. LIMITE STRUCTURELLE : faute de date de PREMIÈRE étape de simulation, on ne sait pas si une simulation précède ou suit l'appel. La répartition sous-estime probablement le sales.",
+  "attribution_sm_note": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. RÈGLE : LE PREMIER QUI AGIT L'EMPORTE. Un signal du client — simulation, réponse, RDV réservé — antérieur au premier appel sortant donne marketing. Sinon, un appel sortant loggé donne sales. CHANGEMENT DU 30/09 : la simulation est enfin DATÉE, grâce à ae_date_debut_simu écrite par n8n. Avant, faute de date, elle l'emportait systématiquement — un client appelé le 12 et simulant le 15 comptait en marketing. Le sales était donc sous-estimé, et le dashboard le signalait comme une limite structurelle. Elle est levée. CAS SANS DATE : une simulation non datée conserve l'ancien comportement et prime, faute de pouvoir la situer par rapport à l'appel. GRANULARITÉ : ae_date_debut_simu est au JOUR, pas à l'heure. Un client appelé et simulant le même jour est indépartageable ; il part en marketing, par cohérence avec le traitement d'une simulation sans date. PIÈGE SUR LE RDV : on compare la date de RÉSERVATION au premier appel, jamais la date de tenue. LIMITE RESTANTE : le sous-cas « réponse » s'appuie sur hs_sales_email_last_replied, dont la date glisse à chaque nouvel e-mail commercial. Ce signal ne s'applique qu'aux contacts sans simulation ni RDV self-service, donc à une minorité.",
   "overlap_note": "Recoupement entre cohortes : 8 contact(s) ciblés dans plusieurs batchs. Le niveau 1 utilise l'union dédupliquée.",
   "fix_note": "Attribution par appartenance aux listes. Les séquences étant réutilisées d'un batch à l'autre, une attribution par hs_sequence_id imputerait les envois d'un batch au précédent."
  },
@@ -133,8 +133,8 @@
     "Team CS · Lilian Maudet": 26,
     "Team CS · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 79,
@@ -151,37 +151,54 @@
    "rdv_seul_camp": 92,
    "rdv_seul_hors": 11,
    "rdv_origine": {
-    "Ciblé par la campagne AE": 159,
+    "Lien public · ciblé par la campagne": 146,
     "Lien de campagne AE": 14,
-    "Origine inconnue": 7,
+    "Calé par un commercial · ciblé par la campagne": 13,
+    "Lien public · hors campagne": 7,
     "Enquête NPS": 1,
     "Signature e-mail CS": 1
    },
    "rdv_origine_camp": {
-    "Ciblé par la campagne AE": 159,
+    "Lien public · ciblé par la campagne": 146,
+    "Calé par un commercial · ciblé par la campagne": 13,
     "Lien de campagne AE": 11,
     "Enquête NPS": 1
    },
    "rdv_origine_hors": {
-    "Origine inconnue": 7,
+    "Lien public · hors campagne": 7,
     "Lien de campagne AE": 3,
     "Signature e-mail CS": 1
    },
    "par_semaine": [
     {
-     "semaine": "2026-05-11",
+     "semaine": "2026-04-27",
      "campagne": 0,
      "hors": 1
     },
     {
+     "semaine": "2026-05-04",
+     "campagne": 0,
+     "hors": 5
+    },
+    {
      "semaine": "2026-05-18",
      "campagne": 0,
-     "hors": 2
+     "hors": 1
     },
     {
      "semaine": "2026-06-01",
      "campagne": 0,
-     "hors": 6
+     "hors": 1
+    },
+    {
+     "semaine": "2026-06-08",
+     "campagne": 0,
+     "hors": 1
+    },
+    {
+     "semaine": "2026-07-13",
+     "campagne": 0,
+     "hors": 1
     },
     {
      "semaine": "2026-07-20",
@@ -189,49 +206,54 @@
      "hors": 1
     },
     {
+     "semaine": "2026-07-27",
+     "campagne": 0,
+     "hors": 1
+    },
+    {
      "semaine": "2026-08-03",
-     "campagne": 20,
-     "hors": 2
-    },
-    {
-     "semaine": "2026-08-10",
-     "campagne": 34,
-     "hors": 4
-    },
-    {
-     "semaine": "2026-08-17",
-     "campagne": 5,
-     "hors": 0
-    },
-    {
-     "semaine": "2026-08-24",
-     "campagne": 7,
-     "hors": 0
-    },
-    {
-     "semaine": "2026-08-31",
-     "campagne": 4,
-     "hors": 0
-    },
-    {
-     "semaine": "2026-09-07",
-     "campagne": 45,
+     "campagne": 23,
      "hors": 3
     },
     {
+     "semaine": "2026-08-10",
+     "campagne": 31,
+     "hors": 2
+    },
+    {
+     "semaine": "2026-08-17",
+     "campagne": 8,
+     "hors": 1
+    },
+    {
+     "semaine": "2026-08-24",
+     "campagne": 17,
+     "hors": 12
+    },
+    {
+     "semaine": "2026-08-31",
+     "campagne": 12,
+     "hors": 22
+    },
+    {
+     "semaine": "2026-09-07",
+     "campagne": 51,
+     "hors": 19
+    },
+    {
      "semaine": "2026-09-14",
-     "campagne": 79,
-     "hors": 74
+     "campagne": 64,
+     "hors": 32
     },
     {
      "semaine": "2026-09-21",
-     "campagne": 47,
-     "hors": 34
+     "campagne": 36,
+     "hors": 31
     },
     {
      "semaine": "2026-09-28",
-     "campagne": 5,
-     "hors": 14
+     "campagne": 4,
+     "hors": 7
     }
    ]
   },
@@ -245,13 +267,13 @@
   "process": 6,
   "attribution": {
    "marketing": {
-    "total": 237,
-    "simulation": 151,
-    "reponse": 6,
-    "rdv_public": 80
+    "total": 224,
+    "simulation": 131,
+    "reponse": 7,
+    "rdv_public": 86
    },
    "sales": {
-    "total": 9
+    "total": 22
    },
    "non_attribuable": {
     "total": 0
@@ -259,10 +281,38 @@
    "par_cellule": {
     "14319": {
      "marketing": {
-      "total": 31,
-      "simulation": 21,
+      "total": 27,
+      "simulation": 15,
       "reponse": 0,
+      "rdv_public": 12
+     },
+     "sales": {
+      "total": 6
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14334": {
+     "marketing": {
+      "total": 27,
+      "simulation": 14,
+      "reponse": 3,
       "rdv_public": 10
+     },
+     "sales": {
+      "total": 8
+     },
+     "non_attribuable": {
+      "total": 0
+     }
+    },
+    "14336": {
+     "marketing": {
+      "total": 8,
+      "simulation": 4,
+      "reponse": 0,
+      "rdv_public": 4
      },
      "sales": {
       "total": 2
@@ -271,43 +321,15 @@
       "total": 0
      }
     },
-    "14334": {
-     "marketing": {
-      "total": 32,
-      "simulation": 21,
-      "reponse": 2,
-      "rdv_public": 9
-     },
-     "sales": {
-      "total": 3
-     },
-     "non_attribuable": {
-      "total": 0
-     }
-    },
-    "14336": {
-     "marketing": {
-      "total": 10,
-      "simulation": 6,
-      "reponse": 0,
-      "rdv_public": 4
-     },
-     "sales": {
-      "total": 0
-     },
-     "non_attribuable": {
-      "total": 0
-     }
-    },
     "14337": {
      "marketing": {
-      "total": 13,
-      "simulation": 10,
+      "total": 12,
+      "simulation": 9,
       "reponse": 0,
       "rdv_public": 3
      },
      "sales": {
-      "total": 0
+      "total": 1
      },
      "non_attribuable": {
       "total": 0
@@ -315,13 +337,13 @@
     },
     "14412": {
      "marketing": {
-      "total": 60,
-      "simulation": 35,
+      "total": 59,
+      "simulation": 33,
       "reponse": 2,
-      "rdv_public": 23
+      "rdv_public": 24
      },
      "sales": {
-      "total": 1
+      "total": 2
      },
      "non_attribuable": {
       "total": 0
@@ -344,9 +366,9 @@
     "14951": {
      "marketing": {
       "total": 71,
-      "simulation": 43,
+      "simulation": 41,
       "reponse": 2,
-      "rdv_public": 26
+      "rdv_public": 28
      },
      "sales": {
       "total": 0
@@ -359,13 +381,13 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 145,
-      "simulation": 86,
+      "total": 143,
+      "simulation": 79,
       "reponse": 2,
-      "rdv_public": 57
+      "rdv_public": 62
      },
      "sales": {
-      "total": 4
+      "total": 6
      },
      "non_attribuable": {
       "total": 0
@@ -373,13 +395,13 @@
     },
     "v2": {
      "marketing": {
-      "total": 92,
-      "simulation": 65,
-      "reponse": 4,
-      "rdv_public": 23
+      "total": 81,
+      "simulation": 52,
+      "reponse": 5,
+      "rdv_public": 24
      },
      "sales": {
-      "total": 5
+      "total": 16
      },
      "non_attribuable": {
       "total": 0
@@ -387,51 +409,51 @@
     }
    },
    "qualification": {
-    "certain": 246,
-    "attente": 0,
-    "certain_rdv_client": 80,
-    "certain_parcours": 151,
-    "certain_rdv_sales": 15,
-    "attente_carte_seule": 0,
+    "certain": 237,
+    "attente": 9,
+    "certain_rdv_client": 86,
+    "certain_parcours": 131,
+    "certain_rdv_sales": 20,
+    "attente_carte_seule": 9,
     "par_cellule": {
      "14319": {
-      "certain": 33,
-      "attente": 0,
-      "certain_rdv_client": 10,
-      "certain_parcours": 21,
-      "certain_rdv_sales": 2,
-      "attente_carte_seule": 0
+      "certain": 30,
+      "attente": 3,
+      "certain_rdv_client": 12,
+      "certain_parcours": 15,
+      "certain_rdv_sales": 3,
+      "attente_carte_seule": 3
      },
      "14334": {
-      "certain": 35,
-      "attente": 0,
-      "certain_rdv_client": 9,
-      "certain_parcours": 21,
-      "certain_rdv_sales": 5,
-      "attente_carte_seule": 0
+      "certain": 30,
+      "attente": 5,
+      "certain_rdv_client": 10,
+      "certain_parcours": 14,
+      "certain_rdv_sales": 6,
+      "attente_carte_seule": 5
      },
      "14336": {
-      "certain": 10,
-      "attente": 0,
+      "certain": 9,
+      "attente": 1,
       "certain_rdv_client": 4,
-      "certain_parcours": 6,
-      "certain_rdv_sales": 0,
-      "attente_carte_seule": 0
+      "certain_parcours": 4,
+      "certain_rdv_sales": 1,
+      "attente_carte_seule": 1
      },
      "14337": {
       "certain": 13,
       "attente": 0,
       "certain_rdv_client": 3,
-      "certain_parcours": 10,
-      "certain_rdv_sales": 0,
+      "certain_parcours": 9,
+      "certain_rdv_sales": 1,
       "attente_carte_seule": 0
      },
      "14412": {
       "certain": 61,
       "attente": 0,
-      "certain_rdv_client": 23,
-      "certain_parcours": 35,
-      "certain_rdv_sales": 3,
+      "certain_rdv_client": 24,
+      "certain_parcours": 33,
+      "certain_rdv_sales": 4,
       "attente_carte_seule": 0
      },
      "14413": {
@@ -445,8 +467,8 @@
      "14951": {
       "certain": 71,
       "attente": 0,
-      "certain_rdv_client": 26,
-      "certain_parcours": 43,
+      "certain_rdv_client": 28,
+      "certain_parcours": 41,
       "certain_rdv_sales": 2,
       "attente_carte_seule": 0
      }
@@ -499,12 +521,12 @@
       "relanced": 173,
       "engaged_v2": 14,
       "engaged_v1": 19,
-      "marketing": 31,
-      "sales": 2,
+      "marketing": 27,
+      "sales": 6,
       "non_attribuable": 0,
-      "simule": 21,
-      "certain": 33,
-      "attente": 0,
+      "simule": 15,
+      "certain": 30,
+      "attente": 3,
       "process": 2
      },
      "steps": [
@@ -572,12 +594,12 @@
       "relanced": 165,
       "engaged_v2": 18,
       "engaged_v1": 17,
-      "marketing": 32,
-      "sales": 3,
+      "marketing": 27,
+      "sales": 8,
       "non_attribuable": 0,
-      "simule": 21,
-      "certain": 35,
-      "attente": 0,
+      "simule": 14,
+      "certain": 30,
+      "attente": 5,
       "process": 2
      },
      "steps": [
@@ -652,12 +674,12 @@
       "relanced": 42,
       "engaged_v2": 3,
       "engaged_v1": 7,
-      "marketing": 10,
-      "sales": 0,
+      "marketing": 8,
+      "sales": 2,
       "non_attribuable": 0,
-      "simule": 6,
-      "certain": 10,
-      "attente": 0,
+      "simule": 4,
+      "certain": 9,
+      "attente": 1,
       "process": 0
      },
      "steps": [
@@ -732,10 +754,10 @@
       "relanced": 33,
       "engaged_v2": 1,
       "engaged_v1": 12,
-      "marketing": 13,
-      "sales": 0,
+      "marketing": 12,
+      "sales": 1,
       "non_attribuable": 0,
-      "simule": 10,
+      "simule": 9,
       "certain": 13,
       "attente": 0,
       "process": 0
@@ -848,10 +870,10 @@
       "relanced": 532,
       "engaged_v2": 46,
       "engaged_v1": 15,
-      "marketing": 60,
-      "sales": 1,
+      "marketing": 59,
+      "sales": 2,
       "non_attribuable": 0,
-      "simule": 35,
+      "simule": 33,
       "certain": 61,
       "attente": 0,
       "process": 1
@@ -1026,7 +1048,7 @@
       "marketing": 71,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 43,
+      "simule": 41,
       "certain": 71,
       "attente": 0,
       "process": 0
