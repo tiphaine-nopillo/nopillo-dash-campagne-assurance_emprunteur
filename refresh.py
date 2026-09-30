@@ -713,9 +713,9 @@ def activation_globale(pipeline, meet_f_global):
     """
     deals = _search_all(DEALS,
         [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
-        ["dealstage", ETAPES_PROP, "hs_object_source_label",
+        ["dealstage", ETAPES_PROP, "hs_object_source_label", "createdate",
          "hs_created_by_user_id", "origine_creation_deal_ae"])
-    ok_deals, deal_lib = [], {}
+    ok_deals, deal_lib, deals_props = [], {}, {}
     for d in deals:
         p = d.get("properties") or {}
         try:
@@ -726,6 +726,7 @@ def activation_globale(pipeline, meet_f_global):
         if etapes >= 1 or (str(p.get("dealstage") or "") in SIMU_STAGES
                            and not rdv_only):
             ok_deals.append(d["id"])
+            deals_props[d["id"]] = p
             src = str(p.get("hs_object_source_label") or "")
             deal_lib[d["id"]] = CREATEUR_AUTO.get(src) or CREATEURS.get(
                 str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
@@ -740,19 +741,37 @@ def activation_globale(pipeline, meet_f_global):
                 cid, deal_lib.get(did, "Saisie non identifiée"))
 
     meets = _search_all(MEETINGS, meet_f_global,
-                        ["hs_timestamp", "hs_meeting_source"])
+                        ["hs_timestamp", "hs_createdate", "hs_meeting_source"])
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
     # Source par contact. MEETINGS_PUBLIC l'emporte : un client qui a réservé
     # lui-même au moins une fois n'est pas « calé par un commercial ».
+    # Date d'activation = PREMIER signal du contact, RDV ou transaction.
+    # Pour le RDV c'est la RÉSERVATION (hs_createdate), pas la tenue : un
+    # créneau posé le 11 et honoré le 25 active le contact le 11.
+    premier = {}
+
+    def _garde(cid, quand):
+        if quand and (cid not in premier or quand < premier[cid]):
+            premier[cid] = quand
+
+    for did, cids in dmap.items():
+        d = to_dt((deals_props.get(did) or {}).get("createdate"))
+        for cid in cids:
+            _garde(cid, d)
+
     src_par_contact = {}
+    for m in meets:
+        booked = to_dt((m.get("properties") or {}).get("hs_createdate"))
+        for cid in mmap.get(m["id"], []):
+            _garde(cid, booked)
     for m in meets:
         src = (m.get("properties") or {}).get("hs_meeting_source")
         for cid in mmap.get(m["id"], []):
             if src_par_contact.get(cid) != MEETING_PUBLIC:
                 src_par_contact[cid] = src
 
-    return simu, rdv, createur_par_contact, src_par_contact
+    return simu, rdv, createur_par_contact, src_par_contact, premier
 
 
 def _search_all(endpoint, filters, props):
@@ -810,6 +829,25 @@ def _ventile(createur_par_contact, perimetre):
         if lib:
             out[lib] = out.get(lib, 0) + 1
     return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def _par_semaine(activated, premier, camp):
+    """Activations par semaine, campagne contre hors campagne.
+
+    La semaine est celle du LUNDI du premier signal. Un contact sans date —
+    cas théorique, une transaction sans createdate — est ignoré plutôt que
+    rangé dans une semaine arbitraire : le total du graphe peut donc être
+    légèrement inférieur au total activé, l'écart est affiché.
+    """
+    par = {}
+    for cid in activated:
+        d = premier.get(cid)
+        if not d:
+            continue
+        lundi = (d - dt.timedelta(days=d.weekday())).date().isoformat()
+        e = par.setdefault(lundi, {"campagne": 0, "hors": 0})
+        e["campagne" if cid in camp else "hors"] += 1
+    return [dict(semaine=k, **v) for k, v in sorted(par.items())]
 
 
 def _origines_rdv(rdv_ids, src_par_contact, camp):
@@ -1291,7 +1329,8 @@ def build():
     if mf:
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
-    g_simu, g_rdv, g_crea, g_src = activation_globale(pipeline, meet_f_global)
+    (g_simu, g_rdv, g_crea, g_src,
+     g_premier) = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1310,7 +1349,8 @@ def build():
         # simulation ». Le libellé précédent induisait en erreur.
         rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
         rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}),
-        rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp))
+        rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp),
+        par_semaine=_par_semaine(g_all, g_premier, camp))
     # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
     # publiés dans data.json : le fichier est servi publiquement par GitHub
     # Pages. C'est la seule liste fiable — une requête HubSpot avec « liste NOT
@@ -1537,6 +1577,19 @@ def build():
             print(f"     contrôle : {g['campagne']} campagne et {g['hors_campagne']} hors"
                   f" · {'OK' if ok else 'ÉCART'}")
         print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
+        ps = g.get("par_semaine") or []
+        if ps:
+            tot_ps = sum(e["campagne"] + e["hors"] for e in ps)
+            print("   — activations par semaine —")
+            for e in ps[-12:]:
+                tot_s = e["campagne"] + e["hors"]
+                barre = "█" * min(40, tot_s)
+                print(f"     {e['semaine']}  {tot_s:4d}  "
+                      f"camp {e['campagne']:3d} · hors {e['hors']:3d}  {barre}")
+            print(f"     {len(ps)} semaines · {tot_ps} contacts datés"
+                  f" sur {g['activated']} activés"
+                  f"{'' if tot_ps == g['activated'] else ' · ÉCART'}")
+
         ro = g.get("rdv_origine") or {}
         if ro:
             tot_ro = sum(ro.values())
