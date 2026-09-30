@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T15:05:03.615715+00:00",
+  "generated_at": "2026-09-30T15:09:06.089296+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -146,8 +146,8 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 124,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 95,
    "rdv_seul_hors": 7,
@@ -570,7 +570,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 52
+     "transactions": 50
     },
     {
      "phase": "optimization_declined",
@@ -796,7 +796,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-09-30T13:00:07.375000+00:00"
+   "last_sync": "2026-09-30T15:01:46.510000+00:00"
   }
  },
  "cohorts": [
