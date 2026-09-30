@@ -233,6 +233,20 @@ CREATEUR_AUTO = {
     "AUTOMATION_PLATFORM": "Workflow HubSpot · RDV sans simu",
 }
 
+# Origine d'un rendez-vous, dans l'ordre d'application. Les trois premières
+# reposent sur l'UTM porté par hs_analytics_last_url : c'est un CLIC PROUVÉ.
+# Les suivantes sont des présomptions ou des constats de mode de réservation.
+# PLANCHER ASSUMÉ : hs_analytics_last_url est une propriété « dernière page ».
+# Si le client navigue après avoir réservé, l'URL disparaît et le rendez-vous
+# retombe dans une catégorie plus faible. Les catégories UTM sont donc un
+# minimum, jamais un compte exact — 19 contacts sur 180 en portent une.
+LIEN_RDV = "roundrobinassuranceemprunteur"
+RDV_ORIGINES = [
+    ("Lien de campagne AE", "utm_campaign=signature_rdv"),
+    ("Signature e-mail CS", "utm_medium=signature"),
+    ("Enquête NPS", "utm_medium=nps"),
+]
+
 AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
                      "75453551",    # Lilian Maudet
                      "650299108"]   # Mathieu d'Ornellas
@@ -725,11 +739,20 @@ def activation_globale(pipeline, meet_f_global):
             createur_par_contact.setdefault(
                 cid, deal_lib.get(did, "Saisie non identifiée"))
 
-    meets = _search_all(MEETINGS, meet_f_global, ["hs_timestamp"])
+    meets = _search_all(MEETINGS, meet_f_global,
+                        ["hs_timestamp", "hs_meeting_source"])
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
+    # Source par contact. MEETINGS_PUBLIC l'emporte : un client qui a réservé
+    # lui-même au moins une fois n'est pas « calé par un commercial ».
+    src_par_contact = {}
+    for m in meets:
+        src = (m.get("properties") or {}).get("hs_meeting_source")
+        for cid in mmap.get(m["id"], []):
+            if src_par_contact.get(cid) != MEETING_PUBLIC:
+                src_par_contact[cid] = src
 
-    return simu, rdv, createur_par_contact
+    return simu, rdv, createur_par_contact, src_par_contact
 
 
 def _search_all(endpoint, filters, props):
@@ -747,6 +770,38 @@ def _search_all(endpoint, filters, props):
             return out
 
 
+def _contact_props(ids, props):
+    """Lit des propriétés de contact par lot de 100."""
+    out = {}
+    for i in range(0, len(ids), 100):
+        data = post("/crm/v3/objects/contacts/batch/read",
+                    {"inputs": [{"id": x} for x in ids[i:i + 100]],
+                     "properties": props})
+        for r in data.get("results", []):
+            out[r["id"]] = r.get("properties") or {}
+    return out
+
+
+def origine_rdv(url, source, dans_campagne):
+    """Catégorie d'origine d'un rendez-vous, première règle qui matche.
+
+    L'UTM prime parce qu'il prouve un clic. L'appartenance à une liste n'est
+    qu'une présomption : le contact a été ciblé, rien ne dit qu'il a réservé
+    depuis l'e-mail. Le mode de réservation vient en dernier — c'est un fait,
+    mais il ne dit rien du canal qui a déclenché la prise de rendez-vous.
+    """
+    u = (url or "").lower()
+    if LIEN_RDV in u:
+        for lib, motif in RDV_ORIGINES:
+            if motif in u:
+                return lib
+    if dans_campagne:
+        return "Ciblé par la campagne AE"
+    if source == "BIDIRECTIONAL_SYNC":
+        return "Calé par un commercial"
+    return "Origine inconnue"
+
+
 def _ventile(createur_par_contact, perimetre):
     """Compte les contacts d'un périmètre par auteur de leur transaction."""
     out = {}
@@ -754,6 +809,17 @@ def _ventile(createur_par_contact, perimetre):
         lib = createur_par_contact.get(cid)
         if lib:
             out[lib] = out.get(lib, 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def _origines_rdv(rdv_ids, src_par_contact, camp):
+    """Ventile les contacts ayant un RDV par origine présumée."""
+    urls = _contact_props(rdv_ids, ["hs_analytics_last_url"])
+    out = {}
+    for cid in rdv_ids:
+        lib = origine_rdv((urls.get(cid) or {}).get("hs_analytics_last_url"),
+                          src_par_contact.get(cid), cid in camp)
+        out[lib] = out.get(lib, 0) + 1
     return dict(sorted(out.items(), key=lambda kv: -kv[1]))
 
 
@@ -1225,7 +1291,7 @@ def build():
     if mf:
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
-    g_simu, g_rdv, g_crea = activation_globale(pipeline, meet_f_global)
+    g_simu, g_rdv, g_crea, g_src = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1243,7 +1309,8 @@ def build():
         # donc PAS « aucune transaction », c'est « aucune preuve de
         # simulation ». Le libellé précédent induisait en erreur.
         rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
-        rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}))
+        rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}),
+        rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp))
     # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
     # publiés dans data.json : le fichier est servi publiquement par GitHub
     # Pages. C'est la seule liste fiable — une requête HubSpot avec « liste NOT
@@ -1470,6 +1537,15 @@ def build():
             print(f"     contrôle : {g['campagne']} campagne et {g['hors_campagne']} hors"
                   f" · {'OK' if ok else 'ÉCART'}")
         print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
+        ro = g.get("rdv_origine") or {}
+        if ro:
+            tot_ro = sum(ro.values())
+            print("   — d'où viennent les rendez-vous —")
+            for lib, v in ro.items():
+                print(f"     {lib:34} {v:5d}   {pcts(v, tot_ro)}")
+            print("     Les trois premières lignes prouvent un clic. Les autres sont")
+            print("     des présomptions : l'URL de dernière page est écrasée dès que")
+            print("     le client navigue ailleurs, ces catégories sont un plancher.")
         print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
         print("   Il se lit comme un cumul, jamais comme un taux.")
 
