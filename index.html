@@ -292,25 +292,29 @@
       <div class="eq" id="globEq"></div>
       <div class="split-bar" id="globBar" style="margin-top:16px"></div>
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
-      <div id="creaWrap" style="display:none;margin-top:20px">
-        <div class="rlab">D'où viennent les activés — <strong>qui a saisi la transaction</strong></div>
+      <div class="rlab" style="margin-top:22px">Quand les clients s'activent —
+        <strong>par semaine</strong></div>
+      <div class="chart" id="wrapWeek" style="height:280px"><canvas id="chWeek"></canvas></div>
+      <div class="bsub" id="weekNote" style="margin-top:10px"></div>
+
+      <div id="creaWrap" style="display:none;margin-top:22px">
+        <div class="rlab">D'où viennent les activations — <strong>rendez-vous et simulations</strong></div>
+        <div class="bsub" style="margin-bottom:10px">Compté en <strong>signaux</strong>, pas en
+          contacts : les deux sections se recoupent, un même client peut avoir un rendez-vous
+          <em>et</em> une simulation. Ne pas additionner les deux totaux.</div>
         <div class="twrap"><table class="dt4">
-          <thead><tr><th>Origine</th><th>Campagnes</th><th>Hors campagnes</th>
-            <th>Total</th></tr></thead>
-          <tbody id="creaRows"></tbody></table></div>
-        <div class="rlab" style="margin-top:22px">D'où viennent les rendez-vous —
-          <strong>clic prouvé ou présomption</strong></div>
-        <div class="twrap"><table class="dt4">
-          <thead><tr><th>Origine</th><th>Contacts</th><th>Part</th><th>Preuve</th></tr></thead>
-          <tbody id="rdvOrigRows"></tbody></table></div>
-        <div class="bsub" style="margin-top:10px">Les trois premières lignes reposent sur l'UTM
-          porté par l'URL de réservation : le clic est <strong>prouvé</strong>. Les autres sont des
-          présomptions. <strong>Ces catégories sont un plancher</strong> — l'URL de dernière page
-          est écrasée dès que le client navigue ailleurs, donc un rendez-vous réellement issu d'un
-          lien tagué peut retomber plus bas.</div>
-        <div class="bsub" style="margin-top:10px">Le créateur dit qui a <strong>saisi</strong> la
-          fiche, pas qui a provoqué la simulation : une carte ouverte à la main par un commercial
-          compte ici alors que c'est le client qui a rempli le simulateur de son côté.</div>
+          <thead><tr><th>Origine</th><th>Campagnes</th><th>Hors campagnes</th><th>Preuve</th></tr></thead>
+          <tbody id="origRows"></tbody></table></div>
+        <div class="bsub" style="margin-top:10px">
+          <strong>Clic prouvé</strong> : le client a cliqué un lien portant un identifiant de
+          campagne. <strong>Présomption</strong> : il était ciblé, rien ne dit qu'il a réservé depuis
+          l'e-mail. <strong>Constat</strong> : on sait qui a saisi, pas ce qui a déclenché.<br>
+          Les catégories à clic prouvé sont un <strong>plancher</strong> — l'URL de dernière page
+          consultée est écrasée dès que le client navigue ailleurs.<br>
+          Pour les simulations, le canal qui a amené le client au simulateur n'est pas mesuré
+          aujourd'hui : « détectée par le produit » dit que n8n l'a remontée, pas d'où venait le
+          client.</div>
+      </div>
       </div>
     </div>
 
@@ -1042,37 +1046,64 @@ function render(){
     /* Une seule table, deux colonnes de périmètre. Les deux tableaux séparés
        obligeaient à faire la soustraction de tête, et le premier portait un
        total qui mélangeait campagne et hors campagne. */
-    const PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
-    const rdvC=G.rdv_seul_camp||0, rdvH=G.rdv_seul_hors||0;
-    const libs=[...new Set([...Object.keys(PCC),...Object.keys(PCH)])]
-      .sort((x,y)=>((PCC[y]||0)+(PCH[y]||0))-((PCC[x]||0)+(PCH[x]||0)));
-    if(libs.length){
-      document.getElementById('creaWrap').style.display='block';
-      const ligne=(lab,c,hh)=>`<tr><td>${lab}</td>
-        <td>${fmt(c)}</td><td>${fmt(hh)}</td><td>${fmt(c+hh)}</td></tr>`;
-      const totC=Object.values(PCC).reduce((a,b)=>a+b,0)+rdvC;
-      const totH=Object.values(PCH).reduce((a,b)=>a+b,0)+rdvH;
-      document.getElementById('creaRows').innerHTML=
-        libs.map(l=>ligne(l,PCC[l]||0,PCH[l]||0)).join('')+
-        (rdvC+rdvH?ligne('RDV sans simulation entamée',rdvC,rdvH):'')+
-        `<tr class="totrow"><td>TOTAL</td><td>${fmt(totC)}</td>
-         <td>${fmt(totH)}</td><td>${fmt(totC+totH)}</td></tr>`;
+    /* Activations par semaine. Date du PREMIER signal du contact — réservation
+       du rendez-vous ou création de la transaction. Empilé campagne / hors
+       campagne : le seul découpage qui montre si les envois produisent des pics
+       ou si l'activation coule au même rythme. */
+    const PS=G.par_semaine||[];
+    if(PS.length&&window.Chart){
+      const fmtSem=s=>{const d=new Date(s+'T00:00:00');
+        return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});};
+      new Chart(document.getElementById('chWeek'),{type:'bar',data:{
+        labels:PS.map(e=>fmtSem(e.semaine)),
+        datasets:[
+          {label:'Campagnes',data:PS.map(e=>e.campagne),backgroundColor:'#5747FF',
+           borderRadius:3,stack:'a'},
+          {label:'Hors campagnes',data:PS.map(e=>e.hors),backgroundColor:'#11E28F',
+           borderRadius:3,stack:'a'}]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'bottom',labels:{boxWidth:11,font:{size:11}}},
+            tooltip:{callbacks:{footer:it=>'total '+it.reduce((a,b)=>a+b.raw,0)}}},
+          scales:{x:{stacked:true,grid:{display:false},
+              ticks:{font:{size:10},maxRotation:0,autoSkipPadding:12}},
+            y:{stacked:true,beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}});
+      const totPS=PS.reduce((a,e)=>a+e.campagne+e.hors,0);
+      document.getElementById('weekNote').innerHTML=
+        `Semaine du <strong>premier signal</strong> de chaque contact : réservation du `+
+        `rendez-vous, ou création de sa transaction. ${fmt(totPS)} contacts datés sur `+
+        `${fmt(G.activated)} activés`+
+        (totPS<G.activated?` — ${fmt(G.activated-totPS)} sans date exploitable.`:'.')+
+        ` Les barres cumulent tout l'historique, pas une période de campagne.`;
     }
 
-    /* Origine des rendez-vous, mêmes règles de lecture des UTM que le dashboard
-       « lien de réunion », catégories renommées : son « Team AE » mélangeait
-       clic prouvé et simple ciblage, deux niveaux de preuve différents. */
-    const RO=G.rdv_origine||{};
+    /* Tableau unique des origines. Deux sections qui SE RECOUPENT, donc compté
+       en signaux et non en contacts : un même client peut avoir un rendez-vous
+       et une simulation. Les trois tableaux séparés d'avant obligeaient à
+       recoller les morceaux de tête. */
+    const RO=G.rdv_origine||{}, PCC=G.par_createur_camp||{}, PCH=G.par_createur_hors||{};
     const PREUVE={'Lien de campagne AE':'clic prouvé','Signature e-mail CS':'clic prouvé',
                   'Enquête NPS':'clic prouvé','Ciblé par la campagne AE':'présomption',
                   'Calé par un commercial':'constat','Origine inconnue':'—'};
+    const SIMU_LIB={'Simulation produit · n8n':'Détectée par le produit',
+                    'Workflow HubSpot · RDV sans simu':'Créée par un workflow'};
     const totRO=Object.values(RO).reduce((a,b)=>a+b,0);
-    if(totRO){
-      document.getElementById('rdvOrigRows').innerHTML=
-        Object.entries(RO).map(([lib,v])=>
-          `<tr><td>${lib}</td><td>${fmt(v)}</td><td>${pct(v,totRO)}</td>
-           <td>${PREUVE[lib]||'—'}</td></tr>`).join('')+
-        `<tr class="totrow"><td>TOTAL RDV</td><td>${fmt(totRO)}</td><td>100 %</td><td></td></tr>`;
+    const libsC=[...new Set([...Object.keys(PCC),...Object.keys(PCH)])]
+      .sort((x,y)=>((PCC[y]||0)+(PCH[y]||0))-((PCC[x]||0)+(PCH[x]||0)));
+
+    if(totRO||libsC.length){
+      document.getElementById('creaWrap').style.display='block';
+      const sect=t=>`<tr class="totrow"><td colspan="4"><strong>${t}</strong></td></tr>`;
+      const ligne=(lab,c,hh,pr)=>`<tr><td>${lab}</td><td>${fmt(c)}</td>
+        <td>${fmt(hh)}</td><td class="m">${pr}</td></tr>`;
+      /* L'origine des RDV n'est pas ventilée campagne/hors : la catégorie
+         « Ciblé par la campagne » porte déjà cette information. */
+      const lignesRDV=Object.entries(RO).map(([lib,v])=>
+        `<tr><td>${lib}</td><td colspan="2">${fmt(v)}</td>
+         <td class="m">${PREUVE[lib]||'—'}</td></tr>`).join('');
+      document.getElementById('origRows').innerHTML=
+        sect(`Rendez-vous · ${fmt(totRO)} contacts`)+lignesRDV+
+        sect(`Simulations · ${fmt(G.deal)} contacts`)+
+        libsC.map(l=>ligne(SIMU_LIB[l]||l,PCC[l]||0,PCH[l]||0,'constat')).join('');
     }
 
     document.getElementById('globNote').innerHTML=
