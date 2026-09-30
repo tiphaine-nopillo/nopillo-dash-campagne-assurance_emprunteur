@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-09-30T14:11:31.590061+00:00",
+  "generated_at": "2026-09-30T14:36:36.965226+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -120,15 +120,15 @@
    "activated_v1": 149
   },
   "global": {
-   "activated": 389,
+   "activated": 388,
    "meet": 183,
-   "deal": 284,
+   "deal": 283,
    "both": 78,
    "campagne": 246,
-   "hors_campagne": 143,
+   "hors_campagne": 142,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 203,
+    "Simulation produit · n8n": 202,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
@@ -143,7 +143,7 @@
     "Team AE · Mathieu d'Ornellas": 22
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 125,
+    "Simulation produit · n8n": 124,
     "Marc Chevalier · CGP": 4,
     "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1
@@ -202,11 +202,6 @@
     },
     {
      "periode": "2026-07-20",
-     "campagne": 0,
-     "hors": 1
-    },
-    {
-     "periode": "2026-07-27",
      "campagne": 0,
      "hors": 1
     },
@@ -294,11 +289,6 @@
     },
     {
      "periode": "2026-07-24",
-     "campagne": 0,
-     "hors": 1
-    },
-    {
-     "periode": "2026-07-29",
      "campagne": 0,
      "hors": 1
     },
@@ -551,15 +541,15 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 177
+     "transactions": 176
     },
     {
      "phase": "simulation_completed",
-     "transactions": 46
+     "transactions": 45
     },
     {
      "phase": "simulation_ready",
-     "transactions": 7
+     "transactions": 8
     },
     {
      "phase": "offer_viewed",
