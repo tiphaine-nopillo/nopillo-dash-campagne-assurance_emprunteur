@@ -194,15 +194,15 @@ def niveau_de(stage):
 # transactions ». Les deux dernières ne sont pas des étapes de parcours :
 # l'accès au simulateur le précède, le refus le termine.
 PHASES_PIPE = [
-    ("5363445963", "Simulation démarrée"),
-    ("5363445964", "Simulation terminée"),
-    ("5783848147", "Simulation prête"),
-    ("5363445965", "Offre vue"),
-    ("5363445966", "Offre acceptée"),
-    ("5363445967", "Souscription démarrée"),
-    ("5378179265", "Souscription terminée"),
-    ("5363445962", "Accès au simulateur"),
-    ("5363445968", "Optimisation refusée"),
+    ("5363445963", "simulation_started"),
+    ("5363445964", "simulation_completed"),
+    ("5783848147", "simulation_ready"),
+    ("5363445965", "offer_viewed"),
+    ("5363445966", "offer_accepted"),
+    ("5363445967", "process_started"),
+    ("5378179265", "process_completed"),
+    ("5363445962", "optimization_activated"),
+    ("5363445968", "optimization_declined"),
 ]
 
 STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
@@ -765,6 +765,15 @@ def activation_globale(pipeline, meet_f_global):
                 str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
     dmap = _contacts_of("deals", ok_deals)
     simu = {c for ids in dmap.values() for c in ids}
+    # Association contact -> transactions, sur TOUT le pipe et pas seulement
+    # sur les transactions prouvant une simulation : un client activé par son
+    # seul rendez-vous a bien un dossier, en optimization_activated, et il doit
+    # apparaître dans le décompte par phase.
+    tous = _contacts_of("deals", [d["id"] for d in deals])
+    deals_par_contact = {}
+    for did, cids in tous.items():
+        for cid in cids:
+            deals_par_contact.setdefault(cid, []).append(did)
     # Qui a saisi, par contact. Un contact avec plusieurs transactions garde la
     # première rencontrée : on situe l'origine, on ne retrace pas chaque carte.
     createur_par_contact = {}
@@ -788,15 +797,6 @@ def activation_globale(pipeline, meet_f_global):
         if quand and (cid not in premier or quand < premier[cid]):
             premier[cid] = quand
 
-    # Phase de chaque transaction retenue. On compte des TRANSACTIONS, pas des
-    # contacts : cinq contacts en ont plusieurs — une par bien — donc le total
-    # dépasse légèrement le nombre de clients activés. C'est assumé et dit sous
-    # le graphe.
-    par_phase = {}
-    for did in ok_deals:
-        st = str((deals_props.get(did) or {}).get("dealstage") or "")
-        par_phase[st] = par_phase.get(st, 0) + 1
-
     for did, cids in dmap.items():
         p = deals_props.get(did) or {}
         # La vraie date de simulation prime sur la date de création de la fiche.
@@ -816,7 +816,7 @@ def activation_globale(pipeline, meet_f_global):
                 src_par_contact[cid] = src
 
     return (simu, rdv, createur_par_contact, src_par_contact, premier,
-            par_phase)
+            deals, deals_par_contact)
 
 
 def _search_all(endpoint, filters, props):
@@ -934,6 +934,29 @@ def liste_clients(activated, rdv, simu, camp, src_par_contact, premier):
             utm_source=u.get("utm_source"), utm_medium=u.get("utm_medium"),
             utm_campaign=u.get("utm_campaign"), utm_content=u.get("utm_content")))
     return out
+
+
+def _phases_des_actives(activated, deals_par_contact, deals):
+    """Phase de TOUTES les transactions des clients activés.
+
+    Pas seulement celles qui prouvent une simulation : un client activé par son
+    seul rendez-vous a bien un dossier, en optimization_activated, et il doit
+    apparaître ici. Le graphe répond à « où sont les dossiers de mes clients
+    activés », pas à « où sont les simulations ».
+
+    UNITÉ : des TRANSACTIONS. Quelques clients en ont plusieurs, une par bien,
+    donc le total dépasse le nombre de clients activés.
+    """
+    stage = {d["id"]: str((d.get("properties") or {}).get("dealstage") or "")
+             for d in deals}
+    par = {}
+    for cid in activated:
+        for did in deals_par_contact.get(cid, []):
+            st = stage.get(did)
+            if st:
+                par[st] = par.get(st, 0) + 1
+    return [dict(phase=lbl, transactions=par.get(sid, 0))
+            for sid, lbl in PHASES_PIPE if par.get(sid)]
 
 
 def _par_periode(activated, premier, camp, pas):
@@ -1442,7 +1465,7 @@ def build():
         meet_f_global.append({"propertyName": mf["property"],
                               "operator": mf["operator"], "value": mf["value"]})
     (g_simu, g_rdv, g_crea, g_src, g_premier,
-     g_phases) = activation_globale(pipeline, meet_f_global)
+     g_deals, g_deals_par_contact) = activation_globale(pipeline, meet_f_global)
     g_all = g_simu | g_rdv
     camp = camp_meet | camp_deal
     dedup["global"] = dict(
@@ -1466,8 +1489,7 @@ def build():
         rdv_origine_hors=_origines_rdv(sorted(g_rdv - camp), g_src, camp),
         par_semaine=_par_periode(g_all, g_premier, camp, "semaine"),
         par_jour=_par_periode(g_all, g_premier, camp, "jour"),
-        par_phase=[dict(phase=lbl, transactions=g_phases.get(sid, 0))
-                   for sid, lbl in PHASES_PIPE if g_phases.get(sid)])
+        par_phase=_phases_des_actives(g_all, g_deals_par_contact, g_deals))
     # DÉTAIL NOMINATIF NON PUBLIÉ. data.json est servi publiquement par GitHub
     # Pages : y écrire des noms et des e-mails les rendrait accessibles à
     # quiconque connaît l'URL. Le dépôt a été passé en privé le 30/09 puis
@@ -1727,8 +1749,9 @@ def build():
                 barre = "█" * min(40, e["transactions"])
                 print(f"     {e['phase']:24} {e['transactions']:5d}"
                       f"   {pcts(e['transactions'], tot_pp)}  {barre}")
-            print(f"     {tot_pp} transactions pour {g['deal']} contacts —")
-            print("     quelques clients en ont plusieurs, une par bien.")
+            print(f"     {tot_pp} transactions pour {g['activated']} clients activés —")
+            print("     quelques clients en ont plusieurs, une par bien ;")
+            print("     les clients activés par leur seul RDV n'ont pas tous un dossier.")
 
         ps = g.get("par_semaine") or []
         if ps:
