@@ -234,9 +234,9 @@ ORIGINE_RDV_SANS_SIMU = "rdv_sans_simu"
 # fiche ouverte à la main qui porte ae_etapes_simu >= 1 signifie que le
 # commercial a créé la carte ET que le client a réellement simulé de son côté.
 CREATEURS = {
-    "63030630": "Team CS · Clara Baekelandt",
-    "48921115": "Team CS · Mathieu d'Ornellas",
-    "75453551": "Team CS · Lilian Maudet",
+    "63030630": "Team AE · Clara Baekelandt",
+    "48921115": "Team AE · Mathieu d'Ornellas",
+    "75453551": "Team AE · Lilian Maudet",
     "33766697": "Marc Chevalier · CGP",
     "31714049": "Autre utilisateur",
 }
