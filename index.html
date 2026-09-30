@@ -876,6 +876,21 @@ const valueLabels={
       });
       ctx.restore(); return;
     }
+    /* Barres HORIZONTALES : l'étiquette va au BOUT de la barre, pas au-dessus.
+       La logique verticale place le chiffre en haut à gauche de la barre, ce
+       qui le détache visuellement de la ligne qu'il décrit. */
+    if(chart.options.indexAxis==='y'){
+      ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle=INK;
+      chart.data.datasets.forEach((ds,di)=>{
+        const meta=chart.getDatasetMeta(di);
+        if(meta.hidden)return;
+        meta.data.forEach((el,i)=>{
+          const v=ds.data[i]; if(v==null)return;
+          ctx.fillText(fmtFn(v),el.x+7,el.y);
+        });
+      });
+      ctx.restore(); return;
+    }
     chart.data.datasets.forEach((ds,di)=>{
       const meta=chart.getDatasetMeta(di);
       if(meta.hidden)return;
@@ -1180,26 +1195,29 @@ function render(){
       new Chart(document.getElementById('chPhase'),{type:'bar',data:{
         labels:PP.map(e=>e.phase),
         datasets:[{data:PP.map(e=>e.transactions),
-          backgroundColor:PP.map(e=>e.phase==='Optimisation refusée'?'#DB3352'
-            :e.phase==='Accès au simulateur'?'#6B6B85':'#5747FF'),
+          backgroundColor:PP.map(e=>e.phase==='optimization_declined'?'#DB3352'
+            :e.phase==='optimization_activated'?'#6B6B85':'#5747FF'),
           borderRadius:3}]},
         options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{right:34}},
           plugins:{legend:{display:false},
             tooltip:{callbacks:{label:it=>fmt(it.raw)+' transactions · '
               +pct(it.raw,totPP)}}},
           scales:{x:{beginAtZero:true,grid:{display:false},
               ticks:{precision:0,font:{size:10}}},
-            y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+            y:{grid:{display:false},
+              ticks:{font:{size:10.5,family:"'JetBrains Mono',monospace"}}}}}});
       document.getElementById('phaseNote').innerHTML=
         `Où chaque dossier se trouve <strong>aujourd'hui</strong> dans le pipe.<br>`+
-        `<strong>${fmt(totPP)} transactions</strong> pour ${fmt(G.deal)} clients ayant simulé : `+
-        `quelques clients en ont plusieurs, une par bien. Ce graphe compte donc des `+
-        `<strong>transactions</strong>, pas des contacts — son total ne se rapproche pas des `+
-        `${fmt(G.activated)} activés.<br>`+
-        `Les sept premières lignes sont des étapes du parcours. `+
-        `<strong>« Accès au simulateur »</strong> le précède : ces fiches ne comptent comme `+
+        `<strong>${fmt(totPP)} transactions</strong> pour ${fmt(G.activated)} clients activés. `+
+        `Ce graphe compte des <strong>transactions</strong>, pas des contacts : quelques clients en `+
+        `ont plusieurs, une par bien, et ceux qui sont activés par leur seul rendez-vous n'ont pas `+
+        `tous un dossier.<br>`+
+        `Les phases portent leur <strong>nom exact dans HubSpot</strong>, sans traduction.<br>`+
+        `Les sept premières sont des étapes du parcours. `+
+        `<code>optimization_activated</code> le précède : ces fiches ne comptent comme `+
         `activation que si le contact a un rendez-vous. `+
-        `<strong>« Optimisation refusée »</strong> le termine : ces fiches comptent dès qu'elles `+
+        `<code>optimization_declined</code> le termine : ces fiches comptent dès qu'elles `+
         `portent une étape franchie — le client avait bien simulé, le refus est venu ensuite.`;
     }
 
