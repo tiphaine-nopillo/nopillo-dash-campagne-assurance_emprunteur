@@ -1571,6 +1571,9 @@ def build():
         audience_labels=cfg["audience_labels"],
         stats_config=cfg["stats"],
         objectif=cfg.get("objectif"),
+        # Chiffres FIGÉS, saisis à la main dans cohorts.json depuis un export
+        # PostHog. Le collecteur ne les recalcule pas, il les recopie.
+        origine_simu_posthog=cfg.get("origine_simu_posthog"),
         relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
         cohorts=cohorts,
