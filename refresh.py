@@ -859,6 +859,56 @@ def _ventile(createur_par_contact, perimetre):
     return dict(sorted(out.items(), key=lambda kv: -kv[1]))
 
 
+def _utm(url):
+    """Extrait les 4 paramètres UTM de l'URL du lien de réservation.
+
+    On ne lit la query string QUE si l'URL est celle du lien de rendez-vous.
+    Un UTM présent sur une autre page — article d'aide, e-mail CS — ne dit
+    pas par quoi CE rendez-vous a été déclenché.
+
+    RÉSERVE : les liens de réservation ne portent des UTM que depuis le
+    10/09/2026. Tout rendez-vous antérieur est intraçable par construction.
+    """
+    u = url or ""
+    if LIEN_RDV not in u.lower() or "?" not in u:
+        return {}
+    out = {}
+    for pair in u.split("?", 1)[1].split("&"):
+        if "=" not in pair:
+            continue
+        k, v = pair.split("=", 1)
+        if k.lower() in ("utm_source", "utm_medium", "utm_campaign", "utm_content"):
+            out[k.lower()] = unquote(v)
+    return out
+
+
+def liste_clients(activated, rdv, simu, camp, src_par_contact, premier):
+    """Détail nominatif des clients activés, imprimé dans les LOGS.
+
+    JAMAIS publié dans data.json : ce fichier est servi publiquement par
+    GitHub Pages. Les logs, eux, supposent un accès au dépôt.
+    """
+    props = _contact_props(sorted(activated),
+                           ["firstname", "lastname", "email",
+                            "hs_analytics_last_url"])
+    out = []
+    for cid in sorted(activated):
+        p = props.get(cid) or {}
+        url = p.get("hs_analytics_last_url")
+        u = _utm(url)
+        d = premier.get(cid)
+        nom = " ".join(x for x in (p.get("firstname"), p.get("lastname")) if x)
+        out.append(dict(
+            id=cid, nom=nom or (p.get("email") or cid), email=p.get("email"),
+            camp=cid in camp, rdv=cid in rdv, simu=cid in simu,
+            origine=(origine_rdv(url, src_par_contact.get(cid), cid in camp)
+                     if cid in rdv else None),
+            date=d.date().isoformat() if d else None,
+            utm_source=u.get("utm_source"), utm_medium=u.get("utm_medium"),
+            utm_campaign=u.get("utm_campaign"), utm_content=u.get("utm_content")))
+    return out
+
+
 def _par_periode(activated, premier, camp, pas):
     """Activations par jour ou par semaine, campagne contre hors campagne.
 
