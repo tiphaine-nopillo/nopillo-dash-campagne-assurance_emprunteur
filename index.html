@@ -333,6 +333,13 @@
         <div class="bsub" id="phaseNote" style="margin-top:10px"></div>
       </div>
 
+      <div id="phWrap" style="display:none;margin-top:22px">
+        <div class="rlab">D'où viennent les clients qui simulent —
+          <strong>mesure PostHog</strong></div>
+        <div class="chart" style="height:250px"><canvas id="chPh"></canvas></div>
+        <div class="bsub" id="phNote" style="margin-top:10px"></div>
+      </div>
+
       <div id="creaWrap" style="display:none;margin-top:22px">
         <div class="rlab">D'où viennent les activations — <strong>rendez-vous et simulations</strong></div>
         <div class="bsub" style="margin-bottom:10px">Compté en <strong>signaux</strong>, pas en
@@ -1183,6 +1190,44 @@ function render(){
         b.classList.add('on'); dessineGraphe(b.dataset.pas);
       }));
       dessineGraphe('semaine');
+    }
+
+    /* Origine des simulations, mesurée dans PostHog. CHIFFRES FIGÉS, saisis à
+       la main depuis un export : le collecteur ne les recalcule pas. */
+    const PH=D.origine_simu_posthog;
+    if(PH&&window.Chart){
+      document.getElementById('phWrap').style.display='block';
+      const rep=PH.repartition||[];
+      const connu=rep.filter(e=>!e.origine.startsWith('Inconnue'))
+                     .reduce((a,e)=>a+e.clients,0);
+      new Chart(document.getElementById('chPh'),{type:'bar',data:{
+        labels:rep.map(e=>e.origine),
+        datasets:[{data:rep.map(e=>e.clients),
+          backgroundColor:rep.map(e=>e.origine.startsWith('Inconnue')?'#6B6B85'
+            :e.origine.startsWith('E-mail campagne')?'#5747FF':'#11E28F'),
+          borderRadius:3}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          layout:{padding:{right:34}},
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:it=>fmt(it.raw)+' clients · '+pct(it.raw,PH.clients)}}},
+          scales:{x:{beginAtZero:true,grid:{display:false},ticks:{precision:0,font:{size:10}}},
+            y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+      document.getElementById('phNote').innerHTML=
+        `<strong>Comment lire ce graphe.</strong> Il montre par quel chemin les clients sont `+
+        `arrivés sur le simulateur, d'après le suivi de navigation du site (PostHog). `+
+        `${fmt(PH.clients)} clients y sont passés entre mai et septembre.<br>`+
+        `<strong>Pour ${fmt(PH.repartition.find(e=>e.origine.startsWith('Inconnue')).clients)} `+
+        `d'entre eux, on ne sait pas d'où ils viennent</strong> : ils étaient déjà connectés à leur `+
+        `espace Nopillo en arrivant sur le simulateur, et le site ne garde pas la trace de ce qui `+
+        `les y a menés. Ce n'est pas une donnée de mauvaise qualité, c'est une information qui n'a `+
+        `jamais été enregistrée — et qui ne peut pas être retrouvée après coup.<br>`+
+        `L'origine n'est donc connue que pour ${fmt(connu)} clients. `+
+        `<strong>Les ${fmt(rep[0].clients)} rattachés à un e-mail de campagne AE sont un minimum</strong>, `+
+        `pas un total : d'autres s'y trouvent sûrement parmi les inconnus.<br>`+
+        `<span class="m">Chiffres figés au ${new Date(PH.releve_le).toLocaleDateString('fr-FR',
+          {day:'numeric',month:'long',year:'numeric'})}, saisis depuis un export manuel. `+
+        `Ils ne bougeront pas d'un rafraîchissement à l'autre, contrairement au reste du `+
+        `dashboard.</span>`;
     }
 
     /* Où en sont les transactions dans le pipe. Barres HORIZONTALES : neuf
