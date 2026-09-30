@@ -765,6 +765,11 @@ def activation_globale(pipeline, meet_f_global):
                 str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
     dmap = _contacts_of("deals", ok_deals)
     simu = {c for ids in dmap.values() for c in ids}
+    # Comptes internes. L'exclusion faite à la lecture des listes ne couvre PAS
+    # le périmètre global, qui part des transactions : « Test Henri Nopillo »
+    # comptait encore parmi les activés hors campagne au 30/09. On filtre donc
+    # ici aussi, sur les contacts rencontrés par les deux signaux.
+    vus = set(simu)
     # Association contact -> transactions, sur TOUT le pipe et pas seulement
     # sur les transactions prouvant une simulation : un client activé par son
     # seul rendez-vous a bien un dossier, en optimization_activated, et il doit
@@ -786,6 +791,14 @@ def activation_globale(pipeline, meet_f_global):
                         ["hs_timestamp", "hs_createdate", "hs_meeting_source"])
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
+    vus |= rdv
+    mails = _contact_props(sorted(vus), ["email"])
+    internes = {cid for cid, p in mails.items()
+                if (p.get("email") or "").lower().endswith(DOMAINE_INTERNE)}
+    simu -= internes
+    rdv -= internes
+    for cid in internes:
+        createur_par_contact.pop(cid, None)
     # Source par contact. MEETINGS_PUBLIC l'emporte : un client qui a réservé
     # lui-même au moins une fois n'est pas « calé par un commercial ».
     # Date d'activation = PREMIER signal du contact, RDV ou transaction.
