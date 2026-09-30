@@ -284,18 +284,18 @@
     <div class="block" style="border-left:3px solid var(--indigo)">
       <h3 class="btitle">Ce qu'on appelle un client activé</h3>
       <div class="bsub">
-        Un client est <strong>activé</strong> s'il a, après l'envoi qui l'a touché :<br>
-        &nbsp;&nbsp;• un <strong>rendez-vous assurance emprunteur</strong> avec la Team AE — qu'il
-        l'ait réservé lui-même sur le lien roundrobin, ou qu'il ait été posé par la Team AE ;<br>
-        &nbsp;&nbsp;• et/ou une <strong>simulation commencée</strong> : le produit compte au moins
+        Un client est <strong>activé</strong> s'il a :<br>
+        &nbsp;&nbsp;• un <strong>rendez-vous assurance emprunteur</strong> posé avec la Team AE —
+        qu'il l'ait réservé lui-même sur le lien roundrobin, ou qu'il ait été posé par la Team AE ;<br>
+        &nbsp;&nbsp;• <strong>et/ou une simulation commencée</strong> : le produit compte au moins
         une étape franchie dans le simulateur, ou sa fiche est dans le pipe actif.<br>
         S'il fait les deux, <strong>il compte une seule fois</strong>.<br><br>
-        <strong>Ne comptent pas</strong> : un accès au simulateur sans rien remplir, un dossier
-        refusé sans rendez-vous ni étape franchie, une fiche créée automatiquement parce qu'un
-        rendez-vous existe, une réponse à un e-mail.<br>
+        <strong>Ne comptent pas</strong> : un accès au simulateur sans rien remplir, une réponse à
+        un e-mail sans rendez-vous AE posé.<br>
         <strong>Aucune limite de délai</strong> : un signal compte quel que soit le temps écoulé
         depuis l'envoi. Les cohortes ne se comparent donc pas entre elles, et les chiffres montent
         au fil du temps — horodater ce qu'on annonce.
+      </div>
       </div>
     </div>
 
@@ -326,6 +326,12 @@
       </div>
       <div class="chart" id="wrapWeek" style="height:280px"><canvas id="chWeek"></canvas></div>
       <div class="bsub" id="weekNote" style="margin-top:10px"></div>
+
+      <div id="phaseWrap" style="display:none;margin-top:22px">
+        <div class="rlab">Où en sont nos clients activés — <strong>dans le pipe courtage AE</strong></div>
+        <div class="chart" style="height:300px"><canvas id="chPhase"></canvas></div>
+        <div class="bsub" id="phaseNote" style="margin-top:10px"></div>
+      </div>
 
       <div id="creaWrap" style="display:none;margin-top:22px">
         <div class="rlab">D'où viennent les activations — <strong>rendez-vous et simulations</strong></div>
@@ -564,9 +570,15 @@
           <td>Le produit compte au moins une étape franchie (<code>ae_etapes_simu</code>), ou leur
             dossier est à l'étape <code>simulation_started</code> ou plus loin. Ça veut dire qu'elles
             ont rempli au moins le premier champ, ou qu'un CS a fait avancer leur dossier après avoir
-            récolté les documents autrement. Une carte créée par le workflow « RDV sans simu » fait
-            exception : sa phase ne vaut jamais preuve, mais elle compte dès qu'elle porte des étapes
-            franchies — le client a alors simulé après avoir pris rendez-vous.<br>
+            récolté les documents autrement.<br>
+            <strong>Un dossier refusé compte normalement</strong> dès qu'il porte une étape franchie,
+            ou dès que le contact a un rendez-vous : le client a bien simulé ou pris rendez-vous, le
+            refus est venu ensuite. C'est <code>ae_etapes_simu</code> qui le permet — elle vient du
+            produit et survit au changement de phase. Seul le dossier refusé <em>sans</em> rendez-vous
+            <em>et sans</em> étape reste dehors.<br>
+            Une carte créée par le workflow « RDV sans simu » suit la même logique : sa phase ne vaut
+            jamais preuve, mais elle compte dès qu'elle porte des étapes franchies — le client a
+            alors simulé après avoir pris rendez-vous.<br>
             <strong>Ne comptent pas</strong> : un dossier qui dit seulement « a accès au
             simulateur », un dossier refusé, et les fiches créées automatiquement parce qu'un
             rendez-vous existe.</td></tr>
@@ -1156,6 +1168,39 @@ function render(){
         b.classList.add('on'); dessineGraphe(b.dataset.pas);
       }));
       dessineGraphe('semaine');
+    }
+
+    /* Où en sont les transactions dans le pipe. Barres HORIZONTALES : neuf
+       phases aux libellés longs, illisibles en vertical. L'ordre suit le pipe,
+       les deux dernières n'étant pas des étapes de parcours. */
+    const PP=G.par_phase||[];
+    if(PP.length&&window.Chart){
+      document.getElementById('phaseWrap').style.display='block';
+      const totPP=PP.reduce((a,e)=>a+e.transactions,0);
+      new Chart(document.getElementById('chPhase'),{type:'bar',data:{
+        labels:PP.map(e=>e.phase),
+        datasets:[{data:PP.map(e=>e.transactions),
+          backgroundColor:PP.map(e=>e.phase==='Optimisation refusée'?'#DB3352'
+            :e.phase==='Accès au simulateur'?'#6B6B85':'#5747FF'),
+          borderRadius:3}]},
+        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:it=>fmt(it.raw)+' transactions · '
+              +pct(it.raw,totPP)}}},
+          scales:{x:{beginAtZero:true,grid:{display:false},
+              ticks:{precision:0,font:{size:10}}},
+            y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+      document.getElementById('phaseNote').innerHTML=
+        `Où chaque dossier se trouve <strong>aujourd'hui</strong> dans le pipe.<br>`+
+        `<strong>${fmt(totPP)} transactions</strong> pour ${fmt(G.deal)} clients ayant simulé : `+
+        `quelques clients en ont plusieurs, une par bien. Ce graphe compte donc des `+
+        `<strong>transactions</strong>, pas des contacts — son total ne se rapproche pas des `+
+        `${fmt(G.activated)} activés.<br>`+
+        `Les sept premières lignes sont des étapes du parcours. `+
+        `<strong>« Accès au simulateur »</strong> le précède : ces fiches ne comptent comme `+
+        `activation que si le contact a un rendez-vous. `+
+        `<strong>« Optimisation refusée »</strong> le termine : ces fiches comptent dès qu'elles `+
+        `portent une étape franchie — le client avait bien simulé, le refus est venu ensuite.`;
     }
 
     /* Tableau unique des origines. Deux sections qui SE RECOUPENT, donc compté
