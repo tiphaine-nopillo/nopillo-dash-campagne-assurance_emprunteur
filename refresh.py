@@ -587,13 +587,47 @@ def deal_engages(props, wins):
 
     Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
     déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
+
+    REPLI SUR LES DATES PRODUIT, depuis le 01/10. Quand une date HubSpot tombe
+    dans une rafale de rattrapage, elle ne dit rien de l'activité : elle a
+    été écrite par la reprise du flux. La transaction n'était pourtant pas
+    forcément ancienne : n8n était en panne du 13/08 au 16/09, et les clients
+    qui ont simulé pendant la panne ont TOUS reçu leur dossier le 16/09 à 11h.
+    Les ignorer sortait de la campagne des activations réelles (cas vérifié :
+    contact de la liste 14951, simulation le 15/09, dossier créé le 16/09
+    11:00:19, compté hors campagne). On teste alors les dates écrites par le
+    produit : ae_date_debut_simu (début du parcours) puis last_step_date
+    (dernière étape, qui rattrape un dossier ancien réactivé). Une simulation
+    antérieure à l'envoi reste hors fenêtre : le repli ne rachète que ce que
+    le rattrapage masquait.
+    Ces deux propriétés sont au JOUR près. Comparaison au jour : une
+    simulation le jour même de l'envoi compte, même si elle a eu lieu avant
+    l'heure d'envoi.
     """
+    masque = False
     for key in ("createdate", "hs_v2_date_entered_current_stage"):
         d = to_dt(props.get(key))
         if in_backfill(d):
+            masque = True
             continue
         tag = in_windows(d, wins)
         if tag:
+            return tag
+    if masque:
+        for key in (DEBUT_SIMU_PROP, SIMU_PROP):
+            tag = in_windows_jour(to_dt(props.get(key)), wins)
+            if tag:
+                return tag
+    return None
+
+
+def in_windows_jour(when, wins):
+    """Comme in_windows, mais au jour près, pour les propriétés sans heure."""
+    if not when:
+        return None
+    jour = when.date()
+    for tag, start, end in reversed(wins):
+        if start.date() <= jour and (end is None or jour <= end.date()):
             return tag
     return None
 
@@ -1574,6 +1608,9 @@ def build():
         # Chiffres FIGÉS, saisis à la main dans cohorts.json depuis un export
         # PostHog. Le collecteur ne les recalcule pas, il les recopie.
         origine_simu_posthog=cfg.get("origine_simu_posthog"),
+        # Même principe : origine PostHog ventilée campagne / hors campagne,
+        # FIGÉE dans cohorts.json. Agrégats seulement, aucun identifiant.
+        origine_simu_perimetre=cfg.get("origine_simu_perimetre"),
         relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
         cohorts=cohorts,
@@ -1846,6 +1883,27 @@ def build():
         print("   ⚠ sync_stale : aucun mouvement n8n depuis plus de 24 h ouvrées.")
         print("     Les contacts ayant simulé depuis n'ont pas de dossier remonté")
         print("     et basculent à tort en sales. Chiffres à ne pas publier.")
+
+    # Bloc figé « D'où viennent les clients qui simulent ». Simple contrôle
+    # d'addition : le collecteur ne relit pas PostHog. Noms de variables
+    # préfixés osp_ pour ne rien écraser plus haut.
+    osp_bloc = cfg.get("origine_simu_perimetre") or {}
+    if osp_bloc:
+        osp_rep = osp_bloc.get("repartition") or []
+        osp_c = sum(e["campagne"] for e in osp_rep)
+        osp_h = sum(e["hors"] for e in osp_rep)
+        osp_ok = (osp_c == osp_bloc["clients_campagne"]
+                  and osp_h == osp_bloc["clients_hors"]
+                  and osp_c + osp_h == osp_bloc["clients"])
+        print(f"\n--- origine des clients qui simulent · figé au "
+              f"{osp_bloc['releve_le']} ---")
+        print(f"   {'origine':30} {'camp.':>6} {'hors':>6} {'total':>6}")
+        for osp_e in osp_rep:
+            print(f"   {osp_e['origine']:30} {osp_e['campagne']:6d} "
+                  f"{osp_e['hors']:6d} {osp_e['campagne'] + osp_e['hors']:6d}")
+        print(f"   {'= TOTAL':30} {osp_c:6d} {osp_h:6d} {osp_c + osp_h:6d}"
+              f"   sur {osp_bloc['base']} · {'OK' if osp_ok else 'ÉCART'}")
+        print("   Chiffres saisis à la main, pas recalculés par ce run.")
 
 
 if __name__ == "__main__":
