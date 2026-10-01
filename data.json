@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-01T10:58:54.772146+00:00",
+  "generated_at": "2026-10-01T11:30:54.458146+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -850,7 +850,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-10-01T08:00:06.641000+00:00"
+   "last_sync": "2026-10-01T11:00:07.073000+00:00"
   }
  },
  "cohorts": [
