@@ -168,7 +168,7 @@
   "par_semaine": "QUAND LES CLIENTS S'ACTIVENT : histogramme empilé campagne / hors campagne, sur le périmètre global, avec une bascule PAR SEMAINE ou PAR JOUR. DATE RETENUE : le PREMIER signal du contact — réservation du rendez-vous (hs_createdate, pas la date de tenue), ou date de début de simulation (ae_date_debut_simu). Un contact ayant les deux est daté au plus ancien. La vue hebdomadaire regroupe au lundi. PAS PAR DÉFAUT : la semaine. Le jour est trop bruité sur un volume de moins de 400 contacts — il sert à situer un pic autour d'un envoi, pas à lire une tendance. Les deux vues portent exactement les mêmes contacts, seul le regroupement change. CORRECTION DU 30/09 : la date de création de la transaction servait de repli. Or n8n a été en panne du 13/08 au 16/09 — 195 dossiers créés le 16/09 portent une date de simulation en juillet ou août. Le graphe affichait donc un pic artificiel à la semaine du 14 septembre. Avec ae_date_debut_simu, ces contacts se répartissent sur les semaines où ils ont réellement agi. REPLI : createdate reste utilisée si ae_date_debut_simu est absente. LECTURE : les barres cumulent tout l'historique AE, pas une période de campagne. Seul le TOTAL est affiché au sommet de chaque barre — une étiquette par segment se superposait dès qu'un segment était petit ou nul. Le détail campagne / hors campagne est dans l'infobulle. LIMITE : un contact sans date exploitable est ignoré plutôt que rangé dans une période arbitraire. Le total du graphe peut donc être inférieur au total activé ; l'écart est affiché sous le graphe.",
   "date_debut_simu": "ae_date_debut_simu : date de la PREMIÈRE étape franchie dans le simulateur, écrite par n8n et jamais écrasée. 386 transactions la portent au 30/09, du 30/04 au 29/09 — le rattrapage a couvert tout l'historique. CE QU'ELLE NE DIT PAS : qu'un client a agi. Une optimisation ouverte sans étape franchie en porte une aussi — Loïs Della Valle, date au 14/08 et ae_etapes_simu = 0. Seul ae_etapes_simu >= 1 prouve une action. La date sert uniquement à DATER une activation déjà établie. NE PAS CONFONDRE avec last_step_date, qui enregistre le DERNIER événement et bouge à chaque étape.",
   "detail_clients": "DÉTAIL NOMINATIF DES CLIENTS ACTIVÉS : imprimé dans les LOGS du collecteur, jamais dans data.json. POURQUOI : data.json est servi publiquement par GitHub Pages. Y écrire des noms et des e-mails les rendrait accessibles à quiconque connaît l'URL du dashboard. Les logs, eux, supposent un accès au dépôt. TENTATIVE DU 30/09 : le dépôt a été passé en privé pour pouvoir publier ce détail dans le dashboard. GitHub Pages ne fonctionne pas sur un dépôt privé en plan gratuit — le site est tombé en 404 et la configuration de Pages a été perdue. Le dépôt est revenu en public et Pages a été reconfiguré sur la branche main. POUR PUBLIER CE DÉTAIL DANS LE DASHBOARD, il faudrait GitHub Pro, ou déplacer le dépôt dans une organisation disposant d'un plan payant. CONTENU DU LOG : nom, signal, périmètre, origine du rendez-vous et les quatre paramètres UTM. Ces derniers ne sont lus que sur l'URL du lien de réservation — un UTM présent sur une autre page ne dit pas par quoi CE rendez-vous a été déclenché. Ils sont vides pour la plupart : hs_analytics_last_url est écrasée dès que le client navigue après avoir réservé.",
-  "faux_positifs": "FAUX POSITIFS SUR LES RENDEZ-VOUS : mesurés le 30/09, non filtrés automatiquement. LE MÉCANISME : la convocation à un rendez-vous de renouvellement ne porte aucun lien d'annulation ni de report. Un client dont ce rendez-vous n'a pas eu lieu clique donc sur « prendre RDV » dans la signature, qui pointe vers le lien assurance emprunteur. Son rendez-vous AE n'a alors rien à voir avec l'assurance emprunteur : c'est un report déguisé. MÉTHODE D'IDENTIFICATION, quatre étapes. 1) Lister les contacts ayant un rendez-vous « Rendez-vous téléphonique Nopillo » dont l'issue n'est PAS « Terminé », sur la période couverte par la campagne. Au 30/09 : 242 contacts. 2) Croiser cette liste avec celle des contacts ayant un rendez-vous AE. Au 30/09 : 6 candidats. 3) Pour chaque candidat, relever la date de RÉSERVATION de son rendez-vous AE (hs_createdate, jamais la date de tenue) et la date du CRÉNEAU de son renouvellement raté. 4) Retenir ceux dont le créneau raté tombe dans les 7 JOURS PRÉCÉDANT la réservation du RDV AE. RÉSULTAT AU 30/09 : 3 faux positifs sur 178 rendez-vous, soit 1,7 %. Long Pei Ching (raté le 14/09, RDV AE réservé le 17/09), Virginie Bonjour (raté le 23/09, réservé le 28/09), et l'un de Mélanie Peroz ou Pierre Gille (raté le 14/09, réservé le 14/09) — HubSpot supprime la colonne e-mail quand on la projette depuis les réunions, ce qui empêche de les départager. DEUX ERREURS À NE PAS REFAIRE. Ne pas se limiter aux contacts portant un UTM de signature : hs_analytics_last_url est écrasée dès que le client navigue après avoir réservé, et Virginie Bonjour a ainsi échappé à un premier calcul. Ne pas tester la seule condition d'issue : elle produit 6 candidats dont la moitié a des renouvellements vieux de plusieurs mois. POURQUOI CE N'EST PAS AUTOMATISÉ : il faudrait collecter les réunions de renouvellement à chaque run, découpées par mois à cause du plafond de 200 lignes, pour retirer 3 contacts sur 178. À REFAIRE si le volume de rendez-vous de renouvellement non honorés augmente, ou avant toute publication externe du chiffre.",
+  "faux_positifs": "FAUX POSITIFS SUR LES RENDEZ-VOUS : vérifiés à la main le 01/10, EXCLUS de l'activation depuis le 01/10 via la liste rdv_exclus. LE MÉCANISME : un rendez-vous porte le bon intitulé et le bon commercial, mais son sujet n'est pas l'assurance emprunteur — lien AE envoyé par erreur pour reprogrammer un renouvellement, ou lien de la signature AE utilisé pour un autre motif. RÉSULTAT AU 01/10 : 2 faux positifs sur 182 rendez-vous, tous deux hors campagne et sans autre signal : le total activé passe de 389 à 387, le hors campagne de 120 à 118, la campagne reste à 269. MÉTHODE DE RECHERCHE : sur tous les clients activés, lister les réunions dont le type d'activité est « RDV CS » ET l'intitulé « Rendez-vous téléphonique Nopillo », programmées depuis le 25/07 ; retenir celles dont le créneau tombe dans les 7 jours PRÉCÉDANT la réservation du RDV AE (hs_createdate) ; vérifier chaque cas à la main sur la fiche. Au 01/10 : 7 contacts, 2 faux positifs, 2 conformes, 3 activés par simulation seule donc non concernés. PIÈGES : le type « RDV CS » seul ne suffit pas, il est aussi posé sur les réunions du lien personnel d'un commercial AE (3 cas au 01/10, tous des suivis conformes) ; l'issue des réunions reste « Programmé » même quand elles n'ont pas eu lieu, elle ne peut pas servir de critère ; HubSpot supprime la colonne contact quand on la projette depuis les réunions. LIMITE : la recherche est manuelle. Un nouveau faux positif n'est retiré qu'une fois ajouté à rdv_exclus. À refaire avant toute publication du chiffre.",
   "definition_client_active": "DÉFINITION DU CLIENT ACTIVÉ, telle qu'affichée en tête du dashboard. Un client est activé s'il a un RENDEZ-VOUS assurance emprunteur posé avec la Team AE — réservé par lui-même sur le lien roundrobin, ou posé par la Team AE — ET/OU une SIMULATION COMMENCÉE : le produit compte au moins une étape franchie (ae_etapes_simu >= 1), ou sa fiche est dans le pipe actif. S'il fait les deux, il compte une seule fois. NE COMPTENT PAS : un accès au simulateur sans rien remplir (optimization_activated à zéro étape), une réponse à un e-mail sans rendez-vous AE posé. LA PHASE DU DOSSIER NE DÉCIDE JAMAIS À ELLE SEULE. Un dossier en optimization_declined compte normalement dès qu'il porte une étape franchie, ou dès que le contact a un rendez-vous : le client a bien simulé ou pris rendez-vous, le refus est venu ensuite. C'est ae_etapes_simu qui le permet — elle vient du produit et survit au changement de phase. 34 dossiers refusés sont ainsi comptés. Seul le dossier refusé SANS rendez-vous ET SANS étape reste dehors : rien n'y atteste un engagement du client, c'est une carte ouverte après un appel. AUCUNE LIMITE DE DÉLAI : un signal compte quel que soit le temps écoulé depuis l'envoi. CONSÉQUENCES à dire à chaque publication : les cohortes ne se comparent pas entre elles, une cohorte ancienne accumulant plus longtemps ; et les chiffres publiés montent en permanence, donc horodater ce qu'on annonce. NUANCE SUR LE PÉRIMÈTRE CAMPAGNE : la borne BASSE subsiste pour les cohortes — rien d'antérieur à l'envoi n'y est compté. Le périmètre global, lui, n'a aucune borne.",
   "par_phase": "OÙ EN SONT NOS CLIENTS ACTIVÉS : répartition par phase du pipe courtage AE de TOUTES les transactions des clients activés, en barres horizontales, dans l'ordre du pipe. La phase est celle où le dossier se trouve AUJOURD'HUI — c'est précisément la question posée. PÉRIMÈTRE : toutes les transactions, pas seulement celles qui prouvent une simulation. Un client activé par son seul rendez-vous a bien un dossier, en optimization_activated, souvent créé par le workflow « RDV sans simu » : il doit apparaître ici. Une première version ne comptait que les transactions de simulation et faisait disparaître ce bloc — corrigé le 30/09. UNITÉ : des TRANSACTIONS, pas des contacts. Quelques clients en ont plusieurs — une par bien, comme Aurélie Rougeron avec une fiche RP et une fiche Invest — et ceux qui sont activés par leur seul rendez-vous n'ont pas tous un dossier. Le total ne se rapproche donc pas exactement du nombre de clients activés. LIBELLÉS : les phases portent leur nom exact dans HubSpot, sans traduction, pour se raccorder directement au pipe. LECTURE DES DEUX DERNIÈRES LIGNES : optimization_activated précède le parcours — ces fiches ne comptent comme activation que si le contact a un rendez-vous. optimization_declined le termine — ces fiches comptent dès qu'elles portent une étape franchie, le client avait bien simulé et le refus est venu ensuite."
  },
@@ -253,42 +253,6 @@
   "clients_actives": 200,
   "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
  },
- "origine_simu_posthog": {
-  "releve_le": "2026-09-30",
-  "clients": 261,
-  "source": "PostHog production, lecture seule",
-  "repartition": [
-   {
-    "origine": "E-mail campagne AE (marqué)",
-    "clients": 31
-   },
-   {
-    "origine": "Accès direct",
-    "clients": 30
-   },
-   {
-    "origine": "Recherche Google / Bing",
-    "clients": 11
-   },
-   {
-    "origine": "E-mail sans marquage",
-    "clients": 3
-   },
-   {
-    "origine": "Outil interne (Retool)",
-    "clients": 2
-   },
-   {
-    "origine": "Autre site",
-    "clients": 1
-   },
-   {
-    "origine": "Inconnue (arrivé déjà connecté)",
-    "clients": 183
-   }
-  ],
-  "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
- },
  "origine_simu_perimetre": {
   "releve_le": "2026-09-30",
   "run_collecteur": "2026-10-01",
@@ -301,36 +265,50 @@
   "base_hors": 113,
   "repartition": [
    {
-    "origine": "Connexion, origine perdue",
+    "origine": "Referral · connexion Nopillo (origine perdue)",
     "campagne": 49,
     "hors": 74
    },
    {
-    "origine": "Accès direct",
+    "origine": "Direct · adresse tapée, favori, lien sans origine",
     "campagne": 18,
     "hors": 8
    },
    {
-    "origine": "E-mail campagne AE",
+    "origine": "Email · campagne AE (UTM)",
     "campagne": 25,
     "hors": 0
    },
    {
-    "origine": "Recherche Google",
+    "origine": "Organic Search · Google, Bing",
     "campagne": 1,
     "hors": 4
    },
    {
-    "origine": "E-mail sans UTM",
+    "origine": "Email · sans UTM",
     "campagne": 4,
     "hors": 0
    },
    {
-    "origine": "Lien depuis un autre site",
+    "origine": "Referral · site externe",
     "campagne": 1,
     "hors": 1
    }
   ],
-  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export."
- }
+  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
+ },
+ "rdv_exclus": [
+  {
+   "meeting_id": "522554056911",
+   "reserve_le": "2026-09-28",
+   "verifie_le": "2026-10-01",
+   "motif": "Lien de réservation AE envoyé par erreur par le CS pour reprogrammer un rendez-vous de renouvellement non honoré. Sujet hors assurance emprunteur."
+  },
+  {
+   "meeting_id": "519698150636",
+   "reserve_le": "2026-09-14",
+   "verifie_le": "2026-10-01",
+   "motif": "Lien de la signature AE utilisé pour un rendez-vous anti-churn. Sujet hors assurance emprunteur."
+  }
+ ]
 }
