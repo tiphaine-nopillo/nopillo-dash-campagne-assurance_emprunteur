@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-01T09:13:46.142071+00:00",
+  "generated_at": "2026-10-01T09:20:26.763562+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -108,7 +108,50 @@
   ],
   "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
  },
- "origine_simu_perimetre": null,
+ "origine_simu_perimetre": {
+  "releve_le": "2026-09-30",
+  "run_collecteur": "2026-10-01",
+  "source": "PostHog production, onglet « Détail visiteurs Conseil » de l'export du 30/09, croisé par e-mail avec les clients activés du run du 01/10",
+  "clients": 185,
+  "base": 288,
+  "clients_campagne": 98,
+  "base_campagne": 175,
+  "clients_hors": 87,
+  "base_hors": 113,
+  "repartition": [
+   {
+    "origine": "Connexion, origine perdue",
+    "campagne": 49,
+    "hors": 74
+   },
+   {
+    "origine": "Accès direct",
+    "campagne": 18,
+    "hors": 8
+   },
+   {
+    "origine": "E-mail campagne AE",
+    "campagne": 25,
+    "hors": 0
+   },
+   {
+    "origine": "Recherche Google",
+    "campagne": 1,
+    "hors": 4
+   },
+   {
+    "origine": "E-mail sans UTM",
+    "campagne": 4,
+    "hors": 0
+   },
+   {
+    "origine": "Lien depuis un autre site",
+    "campagne": 1,
+    "hors": 1
+   }
+  ],
+  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export."
+ },
  "relances": [
   {
    "list_id": "14880",
@@ -142,26 +185,26 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 175,
+   "meet": 176,
    "deal": 175,
    "both": 81,
-   "meet_only": 94,
+   "meet_only": 95,
    "deal_only": 94,
-   "activated": 269,
+   "activated": 270,
    "deal_auto": 99,
    "deal_manual": 76,
    "deal_only_manual": 12,
-   "sum_cells": 269,
+   "sum_cells": 270,
    "overlap": 0,
    "activated_v2": 102,
-   "activated_v1": 167
+   "activated_v1": 168
   },
   "global": {
-   "activated": 389,
-   "meet": 182,
+   "activated": 390,
+   "meet": 183,
    "deal": 288,
    "both": 81,
-   "campagne": 269,
+   "campagne": 270,
    "hors_campagne": 120,
    "campagne_hors_global": 0,
    "par_createur": {
@@ -186,10 +229,10 @@
     "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1
    },
-   "rdv_seul_camp": 94,
+   "rdv_seul_camp": 95,
    "rdv_seul_hors": 7,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 149,
+    "Lien roundrobin AE · ciblé par la campagne": 150,
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 13,
     "Lien roundrobin AE · hors campagne": 3,
@@ -197,7 +240,7 @@
     "signature": 1
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 149,
+    "Lien roundrobin AE · ciblé par la campagne": 150,
     "Posé par la Team AE · contact ciblé": 13,
     "signature_rdv": 12,
     "nps": 1
@@ -285,7 +328,7 @@
     },
     {
      "periode": "2026-09-28",
-     "campagne": 6,
+     "campagne": 7,
      "hors": 11
     }
    ],
@@ -582,7 +625,7 @@
     },
     {
      "periode": "2026-10-01",
-     "campagne": 0,
+     "campagne": 1,
      "hors": 1
     }
    ],
@@ -626,7 +669,7 @@
    ]
   },
   "motifs": {
-   "rdv_seul": 94,
+   "rdv_seul": 95,
    "rdv_et_simu": 81,
    "simu_seule_etapes": 84,
    "simu_seule_pipe": 10
@@ -635,10 +678,10 @@
   "process": 7,
   "attribution": {
    "marketing": {
-    "total": 245,
+    "total": 246,
     "simulation": 153,
     "reponse": 5,
-    "rdv_public": 87
+    "rdv_public": 88
    },
    "sales": {
     "total": 24
@@ -733,10 +776,10 @@
     },
     "14951": {
      "marketing": {
-      "total": 80,
+      "total": 81,
       "simulation": 51,
       "reponse": 1,
-      "rdv_public": 28
+      "rdv_public": 29
      },
      "sales": {
       "total": 0
@@ -749,10 +792,10 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 158,
+      "total": 159,
       "simulation": 94,
       "reponse": 1,
-      "rdv_public": 63
+      "rdv_public": 64
      },
      "sales": {
       "total": 9
@@ -777,9 +820,9 @@
     }
    },
    "qualification": {
-    "certain": 257,
+    "certain": 258,
     "attente": 12,
-    "certain_rdv_client": 87,
+    "certain_rdv_client": 88,
     "certain_parcours": 153,
     "certain_rdv_sales": 17,
     "attente_carte_seule": 12,
@@ -833,9 +876,9 @@
       "attente_carte_seule": 0
      },
      "14951": {
-      "certain": 80,
+      "certain": 81,
       "attente": 0,
-      "certain_rdv_client": 28,
+      "certain_rdv_client": 29,
       "certain_parcours": 51,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 0
@@ -1395,29 +1438,29 @@
      "bounced": 2,
      "opens": 434,
      "clicks": 26,
-     "opens_emails": 825,
+     "opens_emails": 826,
      "clicks_emails": 33,
      "opens_frozen": false,
      "replies_non_fiable": 68,
-     "meetings": 43,
+     "meetings": 44,
      "deals_ae": 53,
-     "engaged": 80,
+     "engaged": 81,
      "split": {
       "both": 16,
-      "meet_only": 27,
+      "meet_only": 28,
       "deal_only": 37,
-      "engaged": 80,
+      "engaged": 81,
       "deal_n8n": 40,
       "deal_manual": 13,
       "deal_only_manual": 3,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 80,
-      "marketing": 80,
+      "engaged_v1": 81,
+      "marketing": 81,
       "sales": 0,
       "non_attribuable": 0,
       "simule": 51,
-      "certain": 80,
+      "certain": 81,
       "attente": 0,
       "process": 0
      },
@@ -1440,7 +1483,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 212,
+       "opens": 213,
        "clicks": 15
       }
      ],
@@ -1458,23 +1501,23 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 18
+       "meetings": 19
       }
      ]
     }
    ],
    "activation": {
-    "meet": 43,
+    "meet": 44,
     "deal": 53,
     "both": 16,
-    "meet_only": 27,
+    "meet_only": 28,
     "deal_only": 37,
-    "activated": 80,
+    "activated": 81,
     "deal_auto": 40,
     "deal_manual": 13,
     "deal_only_manual": 3,
     "activated_v2": 0,
-    "activated_v1": 80,
+    "activated_v1": 81,
     "relanced": 0,
     "process": 0
    },
