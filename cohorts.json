@@ -288,5 +288,49 @@
    }
   ],
   "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
+ },
+ "origine_simu_perimetre": {
+  "releve_le": "2026-09-30",
+  "run_collecteur": "2026-10-01",
+  "source": "PostHog production, onglet « Détail visiteurs Conseil » de l'export du 30/09, croisé par e-mail avec les clients activés du run du 01/10",
+  "clients": 185,
+  "base": 288,
+  "clients_campagne": 98,
+  "base_campagne": 175,
+  "clients_hors": 87,
+  "base_hors": 113,
+  "repartition": [
+   {
+    "origine": "Connexion, origine perdue",
+    "campagne": 49,
+    "hors": 74
+   },
+   {
+    "origine": "Accès direct",
+    "campagne": 18,
+    "hors": 8
+   },
+   {
+    "origine": "E-mail campagne AE",
+    "campagne": 25,
+    "hors": 0
+   },
+   {
+    "origine": "Recherche Google",
+    "campagne": 1,
+    "hors": 4
+   },
+   {
+    "origine": "E-mail sans UTM",
+    "campagne": 4,
+    "hors": 0
+   },
+   {
+    "origine": "Lien depuis un autre site",
+    "campagne": 1,
+    "hors": 1
+   }
+  ],
+  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export."
  }
 }
