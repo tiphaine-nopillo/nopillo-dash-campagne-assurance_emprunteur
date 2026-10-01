@@ -1202,27 +1202,34 @@ function render(){
     if(OSP&&(OSP.repartition||[]).length){
       document.getElementById('ospWrap').style.display='block';
       document.getElementById('ospSub').textContent=
-        `Origine de la visite, ${fmt(OSP.clients)} clients activés sur ${fmt(OSP.base)} ayant simulé.`;
+        `Origine de la visite des ${fmt(OSP.base)} clients activés ayant simulé, `+
+        `dont ${fmt(OSP.clients)} retrouvés dans PostHog.`;
       document.getElementById('ospHead').innerHTML=
-        `<tr><th>Origine</th><th>Campagnes · ${fmt(OSP.clients_campagne)}</th>`+
-        `<th>Hors campagnes · ${fmt(OSP.clients_hors)}</th><th>Total</th></tr>`;
+        `<tr><th>Origine</th><th>Campagnes · ${fmt(OSP.base_campagne)}</th>`+
+        `<th>Hors campagnes · ${fmt(OSP.base_hors)}</th><th>Total · ${fmt(OSP.base)}</th></tr>`;
+      /* Pourcentages rapportés aux activés ayant simulé (bases), pas aux seuls
+         retrouvés : la ligne « non retrouvés » referme le tableau sur le total. */
       const cel=(n,d)=>`${fmt(n)} <span class="m" style="font-weight:400">${pct(n,d,0)}</span>`;
-      document.getElementById('ospRows').innerHTML=OSP.repartition.map(e=>
-        `<tr><td>${e.origine}</td><td>${cel(e.campagne,OSP.clients_campagne)}</td>`+
-        `<td>${cel(e.hors,OSP.clients_hors)}</td>`+
-        `<td>${cel(e.campagne+e.hors,OSP.clients)}</td></tr>`).join('')+
-        `<tr class="totrow"><td>Total</td><td>${fmt(OSP.clients_campagne)}</td>`+
-        `<td>${fmt(OSP.clients_hors)}</td><td>${fmt(OSP.clients)}</td></tr>`;
+      const ligne=(lib,c,h,style)=>`<tr${style||''}><td>${lib}</td>`+
+        `<td>${cel(c,OSP.base_campagne)}</td><td>${cel(h,OSP.base_hors)}</td>`+
+        `<td>${cel(c+h,OSP.base)}</td></tr>`;
+      const gras=' style="font-weight:600"';
+      document.getElementById('ospRows').innerHTML=
+        OSP.repartition.map(e=>ligne(e.origine,e.campagne,e.hors)).join('')+
+        ligne('Retrouvés dans PostHog',OSP.clients_campagne,OSP.clients_hors,gras)+
+        ligne('Non retrouvés dans PostHog',OSP.base_campagne-OSP.clients_campagne,
+          OSP.base_hors-OSP.clients_hors,gras)+
+        `<tr class="totrow"><td>Total · activés ayant simulé</td><td>${fmt(OSP.base_campagne)}</td>`+
+        `<td>${fmt(OSP.base_hors)}</td><td>${fmt(OSP.base)}</td></tr>`;
       document.getElementById('ospNote').innerHTML=
-        `<strong>Ce que ce tableau ne dit pas.</strong> Il ne compte que les clients activés, `+
-        `d'après le suivi de navigation du site, à leur 1re visite de la page Conseil — pas `+
-        `forcément celle où ils ont simulé. Pour « Referral · connexion Nopillo », le client est `+
-        `arrivé par la page de connexion : l'origine de sa visite n'a pas été enregistrée et ne `+
-        `peut pas être retrouvée. Les « Email · campagne AE » sont donc un minimum, pas un total. `+
-        `Les ${fmt(OSP.base-OSP.clients)} autres clients ayant simulé `+
-        `(${fmt(OSP.base_campagne-OSP.clients_campagne)} campagnes, `+
-        `${fmt(OSP.base_hors-OSP.clients_hors)} hors campagnes) n'apparaissent pas dans le `+
-        `suivi de navigation comme ayant ouvert le simulateur : leur origine est inconnue.<br>`+
+        `<strong>Ce que ce tableau ne dit pas.</strong> L'origine est celle de la 1re visite de la `+
+        `page Conseil, d'après le suivi de navigation du site — pas forcément celle où le client a `+
+        `simulé. Pour « Referral · connexion Nopillo », le client est arrivé par la page de `+
+        `connexion : l'origine de sa visite n'a pas été enregistrée et ne peut pas être retrouvée. `+
+        `Les « Email · campagne AE » sont donc un minimum, pas un total. « Non retrouvés dans `+
+        `PostHog » regroupe les clients sans trace exploitable : simulation saisie par l'équipe `+
+        `plutôt que par le client, navigation non identifiée, ou passage non enregistré. `+
+        `Leur origine est inconnue.<br>`+
         `<span class="m">Relevé PostHog du ${new Date(OSP.releve_le).toLocaleDateString('fr-FR',
           {day:'numeric',month:'long',year:'numeric'})}, croisé avec les clients activés du `+
         `${new Date(OSP.run_collecteur).toLocaleDateString('fr-FR',
