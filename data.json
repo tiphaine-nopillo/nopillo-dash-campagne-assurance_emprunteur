@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-01T09:37:37.135966+00:00",
+  "generated_at": "2026-10-01T10:58:54.772146+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -72,42 +72,6 @@
   "clients_actives": 200,
   "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
  },
- "origine_simu_posthog": {
-  "releve_le": "2026-09-30",
-  "clients": 261,
-  "source": "PostHog production, lecture seule",
-  "repartition": [
-   {
-    "origine": "E-mail campagne AE (marqué)",
-    "clients": 31
-   },
-   {
-    "origine": "Accès direct",
-    "clients": 30
-   },
-   {
-    "origine": "Recherche Google / Bing",
-    "clients": 11
-   },
-   {
-    "origine": "E-mail sans marquage",
-    "clients": 3
-   },
-   {
-    "origine": "Outil interne (Retool)",
-    "clients": 2
-   },
-   {
-    "origine": "Autre site",
-    "clients": 1
-   },
-   {
-    "origine": "Inconnue (arrivé déjà connecté)",
-    "clients": 183
-   }
-  ],
-  "_doc": "ORIGINE DES SIMULATIONS, relevée dans PostHog le 30/09/2026 sur la période du 04/05 au 30/09. 261 clients passés par le simulateur AE, comptes internes @nopillo.com exclus. CHIFFRES FIGÉS, PAS RECALCULÉS : cet export est une photo, pas une source que le collecteur relit. Il ne bougera pas d'un run à l'autre. À remplacer à la main après chaque nouvel export, ou à retirer dès que le produit écrira l'origine dans une propriété HubSpot — ce qui est la vraie solution, comme pour ae_etapes_simu et ae_date_debut_simu. POURQUOI 183 SONT INCONNUES : le client est arrivé sur le simulateur déjà connecté, ou via la page de connexion. PostHog voit alors Nopillo comme site précédent et l'UTM d'origine a disparu en route. La fonction captureUtmAttribution ne capte qu'à l'inscription et sur le tableau de bord, jamais sur le parcours d'optimisation. Ce n'est donc pas un défaut de qualité mais une absence de captation — rien ne se reconstitue rétroactivement. CE QUE LE CHIFFRE VAUT : 31 clients rattachés à un e-mail de campagne AE marqué, soit un PLANCHER solide. Sur 284 clients ayant simulé au 30/09, l'origine n'est connue que pour 11 % d'entre eux. Utilisable pour dire « au moins 31 », jamais pour comparer des canaux entre eux. PÉRIMÈTRE DIFFÉRENT DU RESTE DU DASHBOARD : PostHog compte les visiteurs du simulateur, le dashboard compte les clients ayant franchi une étape. Les deux totaux ne se rapprochent pas."
- },
  "origine_simu_perimetre": {
   "releve_le": "2026-09-30",
   "run_collecteur": "2026-10-01",
@@ -120,37 +84,37 @@
   "base_hors": 113,
   "repartition": [
    {
-    "origine": "Connexion, origine perdue",
+    "origine": "Referral · connexion Nopillo (origine perdue)",
     "campagne": 49,
     "hors": 74
    },
    {
-    "origine": "Accès direct",
+    "origine": "Direct · adresse tapée, favori, lien sans origine",
     "campagne": 18,
     "hors": 8
    },
    {
-    "origine": "E-mail campagne AE",
+    "origine": "Email · campagne AE (UTM)",
     "campagne": 25,
     "hors": 0
    },
    {
-    "origine": "Recherche Google",
+    "origine": "Organic Search · Google, Bing",
     "campagne": 1,
     "hors": 4
    },
    {
-    "origine": "E-mail sans UTM",
+    "origine": "Email · sans UTM",
     "campagne": 4,
     "hors": 0
    },
    {
-    "origine": "Lien depuis un autre site",
+    "origine": "Referral · site externe",
     "campagne": 1,
     "hors": 1
    }
   ],
-  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export."
+  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE : les 389 clients activés du run du 01/10 (269 campagne, 120 hors), après correction du rattrapage n8n du 16/09 ont été croisés par e-mail avec l'onglet « Détail visiteurs Conseil » de l'export PostHog du 30/09. Sont comptés ceux retrouvés avec « A ouvert le simulateur AE » = Oui : 185. BASES : 288 clients activés ayant simulé selon le collecteur (175 campagne, 113 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, comme le reste du dashboard. ORIGINE : celle de la 1re visite de la page /conseil sur la période, pas forcément celle de la visite où le client a simulé. AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
  },
  "relances": [
   {
@@ -200,12 +164,12 @@
    "activated_v1": 168
   },
   "global": {
-   "activated": 390,
-   "meet": 183,
+   "activated": 388,
+   "meet": 181,
    "deal": 288,
    "both": 81,
    "campagne": 270,
-   "hors_campagne": 120,
+   "hors_campagne": 118,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 206,
@@ -226,16 +190,16 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 107,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 95,
-   "rdv_seul_hors": 7,
+   "rdv_seul_hors": 5,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 150,
-    "signature_rdv": 15,
+    "signature_rdv": 14,
     "Posé par la Team AE · contact ciblé": 13,
-    "Lien roundrobin AE · hors campagne": 3,
+    "Lien roundrobin AE · hors campagne": 2,
     "nps": 1,
     "signature": 1
    },
@@ -246,8 +210,8 @@
     "nps": 1
    },
    "rdv_origine_hors": {
-    "signature_rdv": 3,
-    "Lien roundrobin AE · hors campagne": 3,
+    "Lien roundrobin AE · hors campagne": 2,
+    "signature_rdv": 2,
     "signature": 1
    },
    "par_semaine": [
@@ -319,7 +283,7 @@
     {
      "periode": "2026-09-14",
      "campagne": 71,
-     "hors": 23
+     "hors": 22
     },
     {
      "periode": "2026-09-21",
@@ -329,7 +293,7 @@
     {
      "periode": "2026-09-28",
      "campagne": 7,
-     "hors": 11
+     "hors": 10
     }
    ],
    "par_jour": [
@@ -541,7 +505,7 @@
     {
      "periode": "2026-09-14",
      "campagne": 6,
-     "hors": 4
+     "hors": 3
     },
     {
      "periode": "2026-09-15",
@@ -611,7 +575,7 @@
     {
      "periode": "2026-09-28",
      "campagne": 2,
-     "hors": 5
+     "hors": 4
     },
     {
      "periode": "2026-09-29",
@@ -640,7 +604,7 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 8
+     "transactions": 9
     },
     {
      "phase": "offer_viewed",
@@ -660,11 +624,11 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 49
+     "transactions": 47
     },
     {
      "phase": "optimization_declined",
-     "transactions": 80
+     "transactions": 79
     }
    ]
   },
@@ -917,7 +881,7 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 52,
+     "replies_non_fiable": 53,
      "meetings": 24,
      "deals_ae": 23,
      "engaged": 35,
@@ -1436,7 +1400,7 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 434,
+     "opens": 435,
      "clicks": 26,
      "opens_emails": 826,
      "clicks_emails": 33,
