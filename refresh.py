@@ -1625,6 +1625,9 @@ def build():
         # export : le collecteur ne les recalcule pas, il les recopie.
         # Agrégats seulement, aucun identifiant.
         origine_simu_perimetre=cfg.get("origine_simu_perimetre"),
+        # Nombre de RDV exclus comme faux positifs (liste rdv_exclus de
+        # cohorts.json). Le NOMBRE seulement : ni identifiant, ni motif.
+        rdv_exclus_n=len(RDV_EXCLUS),
         relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
         cohorts=cohorts,
