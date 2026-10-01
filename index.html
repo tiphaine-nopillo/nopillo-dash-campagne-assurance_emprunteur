@@ -340,6 +340,15 @@
         <div class="bsub" id="phNote" style="margin-top:10px"></div>
       </div>
 
+      <div id="ospWrap" style="display:none;margin-top:22px">
+        <div class="rlab">D'où viennent les clients qui simulent</div>
+        <div class="bsub" id="ospSub" style="margin-bottom:10px"></div>
+        <div class="twrap"><table class="dt4">
+          <thead id="ospHead"></thead>
+          <tbody id="ospRows"></tbody></table></div>
+        <div class="bsub" id="ospNote" style="margin-top:10px"></div>
+      </div>
+
       <div id="creaWrap" style="display:none;margin-top:22px">
         <div class="rlab">D'où viennent les activations — <strong>rendez-vous et simulations</strong></div>
         <div class="bsub" style="margin-bottom:10px">Compté en <strong>signaux</strong>, pas en
@@ -1228,6 +1237,39 @@ function render(){
           {day:'numeric',month:'long',year:'numeric'})}, saisis depuis un export manuel. `+
         `Ils ne bougeront pas d'un rafraîchissement à l'autre, contrairement au reste du `+
         `dashboard.</span>`;
+    }
+
+    /* Origine de la visite, ventilée campagne / hors campagne. CHIFFRES FIGÉS
+       dans cohorts.json (clé origine_simu_perimetre), recopiés par refresh.py.
+       Agrégats seulement : aucun identifiant de client dans data.json. */
+    const OSP=D.origine_simu_perimetre;
+    if(OSP&&(OSP.repartition||[]).length){
+      document.getElementById('ospWrap').style.display='block';
+      document.getElementById('ospSub').textContent=
+        `Origine de la visite, ${fmt(OSP.clients)} clients sur ${fmt(OSP.base)}.`;
+      document.getElementById('ospHead').innerHTML=
+        `<tr><th>Origine</th><th>Campagnes · ${fmt(OSP.clients_campagne)}</th>`+
+        `<th>Hors campagnes · ${fmt(OSP.clients_hors)}</th><th>Total</th></tr>`;
+      const cel=(n,d)=>`${fmt(n)} <span class="m" style="font-weight:400">${pct(n,d,0)}</span>`;
+      document.getElementById('ospRows').innerHTML=OSP.repartition.map(e=>
+        `<tr><td>${e.origine}</td><td>${cel(e.campagne,OSP.clients_campagne)}</td>`+
+        `<td>${cel(e.hors,OSP.clients_hors)}</td>`+
+        `<td>${cel(e.campagne+e.hors,OSP.clients)}</td></tr>`).join('')+
+        `<tr class="totrow"><td>Total</td><td>${fmt(OSP.clients_campagne)}</td>`+
+        `<td>${fmt(OSP.clients_hors)}</td><td>${fmt(OSP.clients)}</td></tr>`;
+      document.getElementById('ospNote').innerHTML=
+        `<strong>Ce que ce tableau ne dit pas.</strong> Pour « Connexion, origine perdue », `+
+        `on ne sait pas ce qui a amené le client à se connecter : l'origine n'a pas été `+
+        `enregistrée. L'origine est celle de la 1re visite de la page Conseil, pas forcément `+
+        `celle de la visite où le client a simulé. Les `+
+        `${fmt(OSP.base-OSP.clients)} autres clients ayant simulé `+
+        `(${fmt(OSP.base_campagne-OSP.clients_campagne)} campagnes, `+
+        `${fmt(OSP.base_hors-OSP.clients_hors)} hors campagnes) n'apparaissent pas dans le `+
+        `suivi de navigation comme ayant ouvert le simulateur : leur origine est inconnue.<br>`+
+        `<span class="m">Relevé PostHog du ${new Date(OSP.releve_le).toLocaleDateString('fr-FR',
+          {day:'numeric',month:'long',year:'numeric'})}, croisé avec les clients activés du `+
+        `${new Date(OSP.run_collecteur).toLocaleDateString('fr-FR',
+          {day:'numeric',month:'long',year:'numeric'})}. Chiffres figés.</span>`;
     }
 
     /* Où en sont les transactions dans le pipe. Barres HORIZONTALES : neuf
