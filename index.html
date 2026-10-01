@@ -279,6 +279,7 @@
     <div class="banner" id="bWindow" style="display:none"><span class="d"></span><span></span></div>
     <div class="banner" id="bOverlap" style="display:none"><span class="d"></span><span></span></div>
     <div class="banner" id="bSync" style="display:none"><span class="d"></span><span></span></div>
+    <div class="banner" id="bPosthog" style="display:none"><span class="d"></span><span></span></div>
 
     <!-- NIVEAU 1 -->
     <div class="block" style="border-left:3px solid var(--indigo)">
@@ -1205,10 +1206,26 @@ function render(){
        dans cohorts.json (clé origine_simu_perimetre), recopiés par refresh.py.
        Agrégats seulement : aucun identifiant de client dans data.json. */
     const OSP=D.origine_simu_perimetre;
+    /* Bandeau en tête de page : les chiffres PostHog sont FIGÉS et ne suivent
+       pas le run. Bleu tant que le relevé a moins de 7 jours, jaune ensuite :
+       le jaune signale à la RevOps qu'il est temps de refaire l'export. */
+    if(OSP&&OSP.releve_le){
+      const jRel=Math.floor((Date.now()-new Date(OSP.releve_le).getTime())/864e5);
+      const bP=document.getElementById('bPosthog');
+      bP.className='banner'+(jRel<7?' info':'');
+      bP.lastElementChild.innerHTML=
+        `<strong>Chiffres figés au ${new Date(OSP.releve_le).toLocaleDateString('fr-FR',
+          {day:'numeric',month:'long',year:'numeric'})}.</strong> Le bloc « D'où viennent les `+
+        `clients qui simulent » provient d'un export PostHog manuel : il ne suit pas le `+
+        `rafraîchissement automatique du dashboard. Un léger écart avec les totaux du haut de `+
+        `page est donc normal.`;
+      bP.style.display='flex';
+    }
     if(OSP&&(OSP.repartition||[]).length){
       document.getElementById('ospWrap').style.display='block';
       document.getElementById('ospSub').textContent=
-        `Origine de la visite des ${fmt(OSP.base)} clients activés ayant simulé, `+
+        `Origine de la visite des ${fmt(OSP.base)} clients activés ayant simulé au `+
+        `${new Date(OSP.run_collecteur).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}, `+
         `dont ${fmt(OSP.clients)} retrouvés dans PostHog.`;
       document.getElementById('ospHead').innerHTML=
         `<tr><th>Origine</th><th>Campagnes · ${fmt(OSP.base_campagne)}</th>`+
