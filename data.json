@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-01T18:21:34.960871+00:00",
+  "generated_at": "2026-10-01T23:05:16.260237+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -197,17 +197,17 @@
    "rdv_seul_camp": 96,
    "rdv_seul_hors": 5,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 151,
-    "signature_rdv": 14,
+    "Lien roundrobin AE · ciblé par la campagne": 150,
+    "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 13,
     "Lien roundrobin AE · hors campagne": 2,
     "nps": 1,
     "signature": 1
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 151,
+    "Lien roundrobin AE · ciblé par la campagne": 150,
     "Posé par la Team AE · contact ciblé": 13,
-    "signature_rdv": 12,
+    "signature_rdv": 13,
     "nps": 1
    },
    "rdv_origine_hors": {
@@ -1401,8 +1401,8 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 435,
-     "clicks": 26,
+     "opens": 436,
+     "clicks": 27,
      "opens_emails": 826,
      "clicks_emails": 33,
      "opens_frozen": false,
