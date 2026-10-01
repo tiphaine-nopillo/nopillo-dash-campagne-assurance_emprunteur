@@ -333,15 +333,9 @@
         <div class="bsub" id="phaseNote" style="margin-top:10px"></div>
       </div>
 
-      <div id="phWrap" style="display:none;margin-top:22px">
+      <div id="ospWrap" style="display:none;margin-top:22px">
         <div class="rlab">D'où viennent les clients qui simulent —
           <strong>mesure PostHog</strong></div>
-        <div class="chart" style="height:250px"><canvas id="chPh"></canvas></div>
-        <div class="bsub" id="phNote" style="margin-top:10px"></div>
-      </div>
-
-      <div id="ospWrap" style="display:none;margin-top:22px">
-        <div class="rlab">D'où viennent les clients qui simulent</div>
         <div class="bsub" id="ospSub" style="margin-bottom:10px"></div>
         <div class="twrap"><table class="dt4">
           <thead id="ospHead"></thead>
@@ -1201,44 +1195,6 @@ function render(){
       dessineGraphe('semaine');
     }
 
-    /* Origine des simulations, mesurée dans PostHog. CHIFFRES FIGÉS, saisis à
-       la main depuis un export : le collecteur ne les recalcule pas. */
-    const PH=D.origine_simu_posthog;
-    if(PH&&window.Chart){
-      document.getElementById('phWrap').style.display='block';
-      const rep=PH.repartition||[];
-      const connu=rep.filter(e=>!e.origine.startsWith('Inconnue'))
-                     .reduce((a,e)=>a+e.clients,0);
-      new Chart(document.getElementById('chPh'),{type:'bar',data:{
-        labels:rep.map(e=>e.origine),
-        datasets:[{data:rep.map(e=>e.clients),
-          backgroundColor:rep.map(e=>e.origine.startsWith('Inconnue')?'#6B6B85'
-            :e.origine.startsWith('E-mail campagne')?'#5747FF':'#11E28F'),
-          borderRadius:3}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-          layout:{padding:{right:34}},
-          plugins:{legend:{display:false},
-            tooltip:{callbacks:{label:it=>fmt(it.raw)+' clients · '+pct(it.raw,PH.clients)}}},
-          scales:{x:{beginAtZero:true,grid:{display:false},ticks:{precision:0,font:{size:10}}},
-            y:{grid:{display:false},ticks:{font:{size:11}}}}}});
-      document.getElementById('phNote').innerHTML=
-        `<strong>Comment lire ce graphe.</strong> Il montre par quel chemin les clients sont `+
-        `arrivés sur le simulateur, d'après le suivi de navigation du site (PostHog). `+
-        `${fmt(PH.clients)} clients y sont passés entre mai et septembre.<br>`+
-        `<strong>Pour ${fmt(PH.repartition.find(e=>e.origine.startsWith('Inconnue')).clients)} `+
-        `d'entre eux, on ne sait pas d'où ils viennent</strong> : ils étaient déjà connectés à leur `+
-        `espace Nopillo en arrivant sur le simulateur, et le site ne garde pas la trace de ce qui `+
-        `les y a menés. Ce n'est pas une donnée de mauvaise qualité, c'est une information qui n'a `+
-        `jamais été enregistrée — et qui ne peut pas être retrouvée après coup.<br>`+
-        `L'origine n'est donc connue que pour ${fmt(connu)} clients. `+
-        `<strong>Les ${fmt(rep[0].clients)} rattachés à un e-mail de campagne AE sont un minimum</strong>, `+
-        `pas un total : d'autres s'y trouvent sûrement parmi les inconnus.<br>`+
-        `<span class="m">Chiffres figés au ${new Date(PH.releve_le).toLocaleDateString('fr-FR',
-          {day:'numeric',month:'long',year:'numeric'})}, saisis depuis un export manuel. `+
-        `Ils ne bougeront pas d'un rafraîchissement à l'autre, contrairement au reste du `+
-        `dashboard.</span>`;
-    }
-
     /* Origine de la visite, ventilée campagne / hors campagne. CHIFFRES FIGÉS
        dans cohorts.json (clé origine_simu_perimetre), recopiés par refresh.py.
        Agrégats seulement : aucun identifiant de client dans data.json. */
@@ -1246,7 +1202,7 @@ function render(){
     if(OSP&&(OSP.repartition||[]).length){
       document.getElementById('ospWrap').style.display='block';
       document.getElementById('ospSub').textContent=
-        `Origine de la visite, ${fmt(OSP.clients)} clients sur ${fmt(OSP.base)}.`;
+        `Origine de la visite, ${fmt(OSP.clients)} clients activés sur ${fmt(OSP.base)} ayant simulé.`;
       document.getElementById('ospHead').innerHTML=
         `<tr><th>Origine</th><th>Campagnes · ${fmt(OSP.clients_campagne)}</th>`+
         `<th>Hors campagnes · ${fmt(OSP.clients_hors)}</th><th>Total</th></tr>`;
@@ -1258,11 +1214,12 @@ function render(){
         `<tr class="totrow"><td>Total</td><td>${fmt(OSP.clients_campagne)}</td>`+
         `<td>${fmt(OSP.clients_hors)}</td><td>${fmt(OSP.clients)}</td></tr>`;
       document.getElementById('ospNote').innerHTML=
-        `<strong>Ce que ce tableau ne dit pas.</strong> Pour « Connexion, origine perdue », `+
-        `on ne sait pas ce qui a amené le client à se connecter : l'origine n'a pas été `+
-        `enregistrée. L'origine est celle de la 1re visite de la page Conseil, pas forcément `+
-        `celle de la visite où le client a simulé. Les `+
-        `${fmt(OSP.base-OSP.clients)} autres clients ayant simulé `+
+        `<strong>Ce que ce tableau ne dit pas.</strong> Il ne compte que les clients activés, `+
+        `d'après le suivi de navigation du site, à leur 1re visite de la page Conseil — pas `+
+        `forcément celle où ils ont simulé. Pour « Referral · connexion Nopillo », le client est `+
+        `arrivé par la page de connexion : l'origine de sa visite n'a pas été enregistrée et ne `+
+        `peut pas être retrouvée. Les « Email · campagne AE » sont donc un minimum, pas un total. `+
+        `Les ${fmt(OSP.base-OSP.clients)} autres clients ayant simulé `+
         `(${fmt(OSP.base_campagne-OSP.clients_campagne)} campagnes, `+
         `${fmt(OSP.base_hors-OSP.clients_hors)} hors campagnes) n'apparaissent pas dans le `+
         `suivi de navigation comme ayant ouvert le simulateur : leur origine est inconnue.<br>`+
