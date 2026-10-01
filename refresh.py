@@ -230,6 +230,14 @@ SIMU_PROP = "last_step_date"
 # client a posé lui-même d'un RDV calé par un commercial au téléphone.
 MEETING_PUBLIC = "MEETINGS_PUBLIC"
 
+# RÉUNIONS EXCLUES DE L'ACTIVATION, depuis le 01/10. Faux positifs vérifiés à
+# la main : un RDV au bon intitulé et chez le bon commercial, mais dont le sujet
+# n'était PAS l'assurance emprunteur. La liste vit dans cohorts.json
+# (rdv_exclus), par identifiant de RÉUNION et non de contact : si le même
+# client simule ou prend un vrai RDV AE plus tard, il redevient activé.
+# Rempli par build() ; vide tant que la config n'est pas chargée.
+RDV_EXCLUS = set()
+
 # Transactions créées par un workflow HubSpot PARCE QU'un RDV existe, et non
 # parce qu'un client a fait quelque chose. Elles ne prouvent rien : le RDV est
 # déjà compté via l'objet MEETING. Les compter comme dossier reviendrait à
@@ -823,6 +831,7 @@ def activation_globale(pipeline, meet_f_global):
 
     meets = _search_all(MEETINGS, meet_f_global,
                         ["hs_timestamp", "hs_createdate", "hs_meeting_source"])
+    meets = [m for m in meets if str(m["id"]) not in RDV_EXCLUS]
     mmap = _contacts_of("meetings", [m["id"] for m in meets])
     rdv = {c for ids in mmap.values() for c in ids}
     vus |= rdv
@@ -1164,6 +1173,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
     # ---- rendez-vous, périmètre ACTIVATION (filtre d'intitulé)
     meets = _objects_assoc(MEETINGS, ids, meet_f,
                            ["hubspot_owner_id", "hs_timestamp", "hs_createdate"])
+    meets = {k: v for k, v in meets.items() if str(k) not in RDV_EXCLUS}
     mmap = _contacts_of("meetings", list(meets.keys()))
     mset, m_owner, m_wave = set(), {}, {}
     # Tri chronologique : un contact ayant plusieurs RDV est attribué au
@@ -1186,6 +1196,7 @@ def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
     # On retient la date de RÉSERVATION du premier RDV self-service.
     meets_a = _objects_assoc(MEETINGS, ids, meet_f_attr,
                              ["hs_meeting_source", "hs_createdate"])
+    meets_a = {k: v for k, v in meets_a.items() if str(k) not in RDV_EXCLUS}
     amap = _contacts_of("meetings", list(meets_a.keys()))
     rdv_pub = {}
     for mid, p in meets_a.items():
@@ -1245,7 +1256,11 @@ def activation_split(mset, dset, auto):
 
 
 def build():
+    global RDV_EXCLUS
     cfg = load_config()
+    RDV_EXCLUS = {str(r["meeting_id"]) for r in cfg.get("rdv_exclus", [])}
+    print(f"faux positifs exclus : {len(RDV_EXCLUS)} réunion(s) retirée(s) "
+          f"de l'activation (liste rdv_exclus de cohorts.json)")
     owners = owners_map()
     pipeline = cfg["deal_pipeline"]
     frozen = cfg.get("frozen_metrics", {})
@@ -1605,11 +1620,10 @@ def build():
         audience_labels=cfg["audience_labels"],
         stats_config=cfg["stats"],
         objectif=cfg.get("objectif"),
-        # Chiffres FIGÉS, saisis à la main dans cohorts.json depuis un export
-        # PostHog. Le collecteur ne les recalcule pas, il les recopie.
-        origine_simu_posthog=cfg.get("origine_simu_posthog"),
-        # Même principe : origine PostHog ventilée campagne / hors campagne,
-        # FIGÉE dans cohorts.json. Agrégats seulement, aucun identifiant.
+        # Origine PostHog des clients ACTIVÉS, ventilée campagne / hors
+        # campagne. Chiffres FIGÉS, saisis à la main dans cohorts.json depuis un
+        # export : le collecteur ne les recalcule pas, il les recopie.
+        # Agrégats seulement, aucun identifiant.
         origine_simu_perimetre=cfg.get("origine_simu_perimetre"),
         relances=[dict(r) for r in cfg.get("relances", [])],
         dedup=dedup,
