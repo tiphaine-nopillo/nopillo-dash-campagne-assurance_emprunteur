@@ -642,6 +642,12 @@
       <div class="bsub">Chaque changement de règle est daté ici. Un chiffre d'avant n'est pas
         comparable à un chiffre d'après.</div>
       <div class="twrap"><table class="dt"><tbody>
+        <tr><td>01/10/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Faux positifs</span></td>
+          <td>RDV exclus du comptage</td>
+          <td>Un RDV au bon intitulé et chez le bon commercial peut porter sur un autre sujet : lien AE envoyé par erreur pour reprogrammer un renouvellement, ou lien de la signature AE utilisé pour un rendez-vous anti-churn. Ces RDV sont <strong>vérifiés à la main et exclus</strong> : 2 au 01/10, sur 182, tous deux hors campagne. L'exclusion porte sur la réunion, pas sur le client : il redevient activé s'il simule ou prend un vrai RDV AE plus tard. <strong>La recherche est manuelle</strong> : à refaire avant toute publication du chiffre.</td></tr>
+        <tr><td>01/10/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Rattrapage n8n</span></td>
+          <td>dossiers du 16/09 réintégrés</td>
+          <td>Les dossiers remontés par la reprise de n8n du 16/09 étaient écartés de la campagne, alors qu'ils contenaient de vraies simulations faites pendant la panne. Le collecteur lit désormais la date de simulation produit pour ces dossiers. <strong>Campagne : 250 → 269 activés</strong> au run du 01/10. Ce n'est pas une hausse : ces 19 contacts étaient déjà activés, mais comptés hors campagne.</td></tr>
         <tr><td>25/09/2026<br><span class="m" style="font-weight:400;font-family:var(--font-mono);font-size:10px">Réponses</span></td>
           <td>retirées du dashboard</td>
           <td>HubSpot enregistre la dernière réponse du contact à <strong>n'importe quel</strong> e-mail, et la date glisse à chaque nouvel échange. La cellule RP du 13 août est passée de 68 à 110 réponses en dix jours, sur une campagne terminée depuis. Aucune source fiable n'existe : les e-mails entrants ne portent pas l'identifiant de séquence. Le compteur et la courbe sont retirés plutôt que d'afficher un chiffre faux.</td></tr>
@@ -1120,7 +1126,7 @@ function render(){
       `<div class="eq-op">+</div>`+
       tile('','RDV et simulation',gBoth,`${pct(gBoth,G.activated)} des activés`)+
       `<div class="eq-op">=</div>`+
-      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`);
+      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`+(D.rdv_exclus_n?` · ${fmt(D.rdv_exclus_n)} RDV exclus (faux positifs)`:''));
     document.getElementById('globSplitBar').innerHTML=
       `<div class="sb-both" style="width:${100*gBoth/G.activated}%">Les deux · ${fmt(gBoth)}</div>`+
       `<div class="sb-meet" style="width:${100*gRdvSeul/G.activated}%">RDV seul · ${fmt(gRdvSeul)}</div>`+
@@ -1135,7 +1141,7 @@ function render(){
       `<div class="eq-op">+</div>`+
       tile('','Hors campagnes',G.hors_campagne,`${pct(G.hors_campagne,G.activated)} du total`)+
       `<div class="eq-op">=</div>`+
-      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`);
+      tile('res','Total activés AE',G.activated,`RDV ${fmt(G.meet)} · simulations ${fmt(G.deal)}`+(D.rdv_exclus_n?` · ${fmt(D.rdv_exclus_n)} RDV exclus (faux positifs)`:''));
     /* Barre empilée : la proportion se lit d'un coup, ce que trois nombres
        alignés ne donnent pas. C'est la question de Growth — quelle part de
        l'activation AE vient des campagnes. */
