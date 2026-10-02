@@ -637,6 +637,20 @@
             quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
             ils sont écartés (06/08 et 16/09).</td></tr>
 
+        <tr><td>Visiteurs de l'app<br>Visiteurs de Conseil</td>
+          <td>Entonnoir · mesure PostHog</td>
+          <td>Personnes uniques <strong>identifiées</strong> dans PostHog (e-mail connu, comptes
+            @nopillo exclus) ayant au moins une page vue sur l'espace client (my.nopillo.com), ou sur
+            l'onglet Conseil, pendant la période indiquée. Les visiteurs anonymes ne sont pas comptés.
+            <strong>Identifié ne veut pas dire client</strong> : un compte ouvert sans liasse peut y
+            figurer. Le dénominateur est donc un peu large, et les taux un peu sous-estimés.</td></tr>
+        <tr><td>Taux de conversion<br>Conseil → activé</td>
+          <td>Activés parmi les visiteurs ÷ visiteurs</td>
+          <td>Parmi les visiteurs de l'étape, part de ceux qui figurent dans la liste des clients
+            activés, rapprochés par e-mail. C'est une <strong>association, pas un parcours
+            prouvé</strong> : un activé compte même s'il a visité Conseil après s'être activé.
+            L'affichage de la bannière AE n'étant pas tracé, l'onglet Conseil sert d'indicateur de
+            remplacement. Chiffres figés, issus d'un export PostHog manuel.</td></tr>
       </tbody></table></div>
     </div>
 
@@ -1219,8 +1233,8 @@ function render(){
       document.getElementById('funWrap').style.display='block';
       const dfr=x=>new Date(x).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
       document.getElementById('funSub').textContent=
-        `Clients identifiés venus sur l'espace client du ${dfr(FUN.periode_debut)} au `+
-        `${dfr(FUN.periode_fin)}, et part d'entre eux devenus activés.`;
+        `Personnes identifiées venues sur l'espace client du ${dfr(FUN.periode_debut)} au `+
+        `${dfr(FUN.periode_fin)}, et part d'entre elles devenues clientes activées.`;
       const ft=(cls,lab,val,sub)=>`<div class="eq-t ${cls||''}"><div class="l">${lab}</div>`+
         `<div class="v">${val}</div><div class="s">${sub}</div></div>`;
       const pc=(n,d)=>(100*n/d).toFixed(1).replace('.',',')+' %';
@@ -1231,7 +1245,8 @@ function render(){
         `<div class="eq-op">→</div>`+
         ft('res','Conversion Conseil → activé',pc(FUN.conseil_actives,FUN.conseil_visiteurs),`${fmt(FUN.conseil_actives)} activés sur ${fmt(FUN.conseil_visiteurs)} visiteurs`);
       document.getElementById('funNote').innerHTML=
-        `<strong>Ce que ces taux ne disent pas.</strong> Seuls les visiteurs identifiés sont comptés. `+
+        `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées, `+
+        `clientes ou non (définitions dans l'onglet Méthodo). `+
         `Un activé compte même s'il a visité Conseil après s'être activé : c'est une association, pas un `+
         `parcours prouvé. L'affichage de la bannière AE n'est pas tracé : l'onglet Conseil sert `+
         `d'indicateur de remplacement. Chiffres figés, issus d'un export PostHog manuel.`;
