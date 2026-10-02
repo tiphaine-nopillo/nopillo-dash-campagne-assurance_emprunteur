@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-01T23:05:16.260237+00:00",
+  "generated_at": "2026-10-02T11:01:08.809616+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -151,50 +151,50 @@
   "contacts": 2075,
   "activation": {
    "meet": 177,
-   "deal": 175,
-   "both": 81,
-   "meet_only": 96,
-   "deal_only": 94,
-   "activated": 271,
-   "deal_auto": 100,
-   "deal_manual": 75,
+   "deal": 177,
+   "both": 82,
+   "meet_only": 95,
+   "deal_only": 95,
+   "activated": 272,
+   "deal_auto": 101,
+   "deal_manual": 76,
    "deal_only_manual": 12,
-   "sum_cells": 271,
+   "sum_cells": 272,
    "overlap": 0,
    "activated_v2": 103,
-   "activated_v1": 168
+   "activated_v1": 169
   },
   "global": {
-   "activated": 389,
+   "activated": 390,
    "meet": 182,
-   "deal": 288,
-   "both": 81,
-   "campagne": 271,
+   "deal": 290,
+   "both": 82,
+   "campagne": 272,
    "hors_campagne": 118,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 207,
+    "Simulation produit · n8n": 208,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 25,
     "Team AE · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 2,
+    "Workflow HubSpot · RDV sans simu": 3,
     "Autre utilisateur": 1
    },
    "par_createur_camp": {
-    "Simulation produit · n8n": 100,
+    "Simulation produit · n8n": 101,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 25,
     "Team AE · Mathieu d'Ornellas": 22,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 2
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 107,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Autre utilisateur": 1
    },
-   "rdv_seul_camp": 96,
+   "rdv_seul_camp": 95,
    "rdv_seul_hors": 5,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 150,
@@ -293,7 +293,7 @@
     },
     {
      "periode": "2026-09-28",
-     "campagne": 8,
+     "campagne": 9,
      "hors": 10
     }
    ],
@@ -590,7 +590,7 @@
     },
     {
      "periode": "2026-10-01",
-     "campagne": 2,
+     "campagne": 3,
      "hors": 1
     }
    ],
@@ -605,7 +605,7 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 10
+     "transactions": 11
     },
     {
      "phase": "offer_viewed",
@@ -634,17 +634,17 @@
    ]
   },
   "motifs": {
-   "rdv_seul": 96,
-   "rdv_et_simu": 81,
-   "simu_seule_etapes": 84,
+   "rdv_seul": 95,
+   "rdv_et_simu": 82,
+   "simu_seule_etapes": 85,
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
   "process": 7,
   "attribution": {
    "marketing": {
-    "total": 247,
-    "simulation": 154,
+    "total": 248,
+    "simulation": 155,
     "reponse": 6,
     "rdv_public": 87
    },
@@ -741,8 +741,8 @@
     },
     "14951": {
      "marketing": {
-      "total": 81,
-      "simulation": 51,
+      "total": 82,
+      "simulation": 52,
       "reponse": 1,
       "rdv_public": 29
      },
@@ -757,8 +757,8 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 159,
-      "simulation": 94,
+      "total": 160,
+      "simulation": 95,
       "reponse": 1,
       "rdv_public": 64
      },
@@ -785,10 +785,10 @@
     }
    },
    "qualification": {
-    "certain": 259,
+    "certain": 260,
     "attente": 12,
     "certain_rdv_client": 87,
-    "certain_parcours": 154,
+    "certain_parcours": 155,
     "certain_rdv_sales": 18,
     "attente_carte_seule": 12,
     "par_cellule": {
@@ -841,17 +841,17 @@
       "attente_carte_seule": 0
      },
      "14951": {
-      "certain": 81,
+      "certain": 82,
       "attente": 0,
       "certain_rdv_client": 29,
-      "certain_parcours": 51,
+      "certain_parcours": 52,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 0
      }
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-10-01T14:00:05.800000+00:00"
+   "last_sync": "2026-10-02T08:00:09.934000+00:00"
   }
  },
  "cohorts": [
@@ -955,7 +955,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 64,
+     "replies_non_fiable": 65,
      "meetings": 23,
      "deals_ae": 23,
      "engaged": 37,
@@ -1403,29 +1403,29 @@
      "bounced": 2,
      "opens": 436,
      "clicks": 27,
-     "opens_emails": 826,
+     "opens_emails": 827,
      "clicks_emails": 33,
      "opens_frozen": false,
      "replies_non_fiable": 68,
      "meetings": 44,
-     "deals_ae": 53,
-     "engaged": 81,
+     "deals_ae": 55,
+     "engaged": 82,
      "split": {
-      "both": 16,
-      "meet_only": 28,
-      "deal_only": 37,
-      "engaged": 81,
-      "deal_n8n": 40,
-      "deal_manual": 13,
+      "both": 17,
+      "meet_only": 27,
+      "deal_only": 38,
+      "engaged": 82,
+      "deal_n8n": 41,
+      "deal_manual": 14,
       "deal_only_manual": 3,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 81,
-      "marketing": 81,
+      "engaged_v1": 82,
+      "marketing": 82,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 51,
-      "certain": 81,
+      "simule": 52,
+      "certain": 82,
       "attente": 0,
       "process": 0
      },
@@ -1448,7 +1448,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 213,
+       "opens": 214,
        "clicks": 15
       }
      ],
@@ -1473,16 +1473,16 @@
    ],
    "activation": {
     "meet": 44,
-    "deal": 53,
-    "both": 16,
-    "meet_only": 28,
-    "deal_only": 37,
-    "activated": 81,
-    "deal_auto": 40,
-    "deal_manual": 13,
+    "deal": 55,
+    "both": 17,
+    "meet_only": 27,
+    "deal_only": 38,
+    "activated": 82,
+    "deal_auto": 41,
+    "deal_manual": 14,
     "deal_only_manual": 3,
     "activated_v2": 0,
-    "activated_v1": 81,
+    "activated_v1": 82,
     "relanced": 0,
     "process": 0
    },
