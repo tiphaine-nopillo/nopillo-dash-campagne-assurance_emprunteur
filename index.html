@@ -308,7 +308,14 @@
           <strong>Cumul de tout l'historique</strong> — la campagne court depuis le 5 août : les deux
           chiffres ne se comparent pas en performance.</div>
       </div></div>
-      <div class="rlab">Comment se décomposent les activés — <strong>tous périmètres</strong></div>
+      <div id="funWrap" style="display:none;margin-top:4px">
+        <div class="rlab">Entonnoir de conversion — <strong>mesure PostHog</strong></div>
+        <div class="bsub" id="funSub" style="margin-bottom:10px"></div>
+        <div class="eq" id="funEq"></div>
+        <div class="bsub" id="funNote" style="margin-top:12px"></div>
+      </div>
+
+      <div class="rlab" style="margin-top:22px">Comment se décomposent les activés — <strong>tous périmètres</strong></div>
       <div class="eq" id="globSplitEq"></div>
       <div class="split-bar" id="globSplitBar" style="margin-top:14px"></div>
       <div class="bsub" id="globSplitNote" style="margin-top:12px"></div>
@@ -317,33 +324,6 @@
       <div class="eq" id="globEq"></div>
       <div class="split-bar" id="globBar" style="margin-top:16px"></div>
       <div class="bsub" id="globNote" style="margin-top:12px"></div>
-      <div class="rlab" style="margin-top:22px;display:flex;align-items:center;gap:12px">
-        <span>Quand les clients s'activent</span>
-        <span style="display:inline-flex;border:1px solid var(--border2);border-radius:7px;
-          overflow:hidden;font-family:var(--font-mono);font-size:10.5px">
-          <button id="pasSem" class="pas on" data-pas="semaine">Par semaine</button>
-          <button id="pasJour" class="pas" data-pas="jour">Par jour</button>
-        </span>
-      </div>
-      <div class="chart" id="wrapWeek" style="height:280px"><canvas id="chWeek"></canvas></div>
-      <div class="bsub" id="weekNote" style="margin-top:10px"></div>
-
-      <div id="phaseWrap" style="display:none;margin-top:22px">
-        <div class="rlab">Où en sont nos clients activés — <strong>dans le pipe courtage AE</strong></div>
-        <div class="chart" style="height:300px"><canvas id="chPhase"></canvas></div>
-        <div class="bsub" id="phaseNote" style="margin-top:10px"></div>
-      </div>
-
-      <div id="ospWrap" style="display:none;margin-top:22px">
-        <div class="rlab">D'où viennent les clients qui simulent —
-          <strong>mesure PostHog</strong></div>
-        <div class="bsub" id="ospSub" style="margin-bottom:10px"></div>
-        <div class="twrap"><table class="dt4">
-          <thead id="ospHead"></thead>
-          <tbody id="ospRows"></tbody></table></div>
-        <div class="bsub" id="ospNote" style="margin-top:10px"></div>
-      </div>
-
       <div id="creaWrap" style="display:none;margin-top:22px">
         <div class="rlab">D'où viennent les activations — <strong>rendez-vous et simulations</strong></div>
         <div class="bsub" style="margin-bottom:10px">Compté en <strong>signaux</strong>, pas en
@@ -366,10 +346,37 @@
           Même après le 10 septembre, ces catégories restent un <strong>plancher</strong> : l'URL de
           dernière page consultée est écrasée dès que le client navigue ailleurs, et un rendez-vous
           réellement issu d'un lien tagué retombe alors en « réservation autonome ».<br>
-          Pour les simulations, le canal qui a amené le client au simulateur n'est pas mesuré
-          aujourd'hui : « détectée par le produit » dit que n8n l'a remontée, pas d'où venait le
-          client.</div>
+          Pour les simulations, « détectée par le produit » dit que n8n l'a remontée, pas d'où
+          venait le client : l'origine de la visite est mesurée dans PostHog, bloc suivant.</div>
       </div>
+
+      <div id="ospWrap" style="display:none;margin-top:22px">
+        <div class="rlab">D'où viennent les clients qui simulent —
+          <strong>mesure PostHog</strong></div>
+        <div class="bsub" id="ospSub" style="margin-bottom:10px"></div>
+        <div class="twrap"><table class="dt4">
+          <thead id="ospHead"></thead>
+          <tbody id="ospRows"></tbody></table></div>
+        <div class="bsub" id="ospNote" style="margin-top:10px"></div>
+      </div>
+
+      <div class="rlab" style="margin-top:22px;display:flex;align-items:center;gap:12px">
+        <span>Quand les clients s'activent</span>
+        <span style="display:inline-flex;border:1px solid var(--border2);border-radius:7px;
+          overflow:hidden;font-family:var(--font-mono);font-size:10.5px">
+          <button id="pasSem" class="pas on" data-pas="semaine">Par semaine</button>
+          <button id="pasJour" class="pas" data-pas="jour">Par jour</button>
+        </span>
+      </div>
+      <div class="chart" id="wrapWeek" style="height:280px"><canvas id="chWeek"></canvas></div>
+      <div class="bsub" id="weekNote" style="margin-top:10px"></div>
+
+      <div id="phaseWrap" style="display:none;margin-top:22px">
+        <div class="rlab">Où en sont nos clients activés — <strong>dans le pipe courtage AE</strong></div>
+        <div class="chart" style="height:300px"><canvas id="chPhase"></canvas></div>
+        <div class="bsub" id="phaseNote" style="margin-top:10px"></div>
+      </div>
+
       </div>
     </div>
 
@@ -1205,6 +1212,30 @@ function render(){
     /* Origine de la visite, ventilée campagne / hors campagne. CHIFFRES FIGÉS
        dans cohorts.json (clé origine_simu_perimetre), recopiés par refresh.py.
        Agrégats seulement : aucun identifiant de client dans data.json. */
+    /* Entonnoir app → Conseil → activé, FIGÉ dans cohorts.json (PostHog).
+       Taux = activés parmi les visiteurs de l'étape ÷ visiteurs de l'étape. */
+    const FUN=D.entonnoir_posthog;
+    if(FUN&&FUN.app_visiteurs){
+      document.getElementById('funWrap').style.display='block';
+      const dfr=x=>new Date(x).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+      document.getElementById('funSub').textContent=
+        `Clients identifiés venus sur l'espace client du ${dfr(FUN.periode_debut)} au `+
+        `${dfr(FUN.periode_fin)}, et part d'entre eux devenus activés.`;
+      const ft=(cls,lab,val,sub)=>`<div class="eq-t ${cls||''}"><div class="l">${lab}</div>`+
+        `<div class="v">${val}</div><div class="s">${sub}</div></div>`;
+      const pc=(n,d)=>(100*n/d).toFixed(1).replace('.',',')+' %';
+      document.getElementById('funEq').innerHTML=
+        ft('','Visiteurs de l\'app',fmt(FUN.app_visiteurs),`dont ${fmt(FUN.app_actives)} activés · ${pc(FUN.app_actives,FUN.app_visiteurs)}`)+
+        `<div class="eq-op">→</div>`+
+        ft('','Visiteurs de Conseil',fmt(FUN.conseil_visiteurs),`${pc(FUN.conseil_visiteurs,FUN.app_visiteurs)} des visiteurs de l'app`)+
+        `<div class="eq-op">→</div>`+
+        ft('res','Conversion Conseil → activé',pc(FUN.conseil_actives,FUN.conseil_visiteurs),`${fmt(FUN.conseil_actives)} activés sur ${fmt(FUN.conseil_visiteurs)} visiteurs`);
+      document.getElementById('funNote').innerHTML=
+        `<strong>Ce que ces taux ne disent pas.</strong> Seuls les visiteurs identifiés sont comptés. `+
+        `Un activé compte même s'il a visité Conseil après s'être activé : c'est une association, pas un `+
+        `parcours prouvé. L'affichage de la bannière AE n'est pas tracé : l'onglet Conseil sert `+
+        `d'indicateur de remplacement. Chiffres figés, issus d'un export PostHog manuel.`;
+    }
     const OSP=D.origine_simu_perimetre;
     /* Bandeau en tête de page : les chiffres PostHog sont FIGÉS et ne suivent
        pas le run. Bleu tant que le relevé a moins de 7 jours, jaune ensuite :
