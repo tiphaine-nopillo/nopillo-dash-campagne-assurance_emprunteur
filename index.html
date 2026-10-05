@@ -1250,7 +1250,15 @@ function render(){
       eqF.innerHTML=ligneFun(FUN,`Pendant la campagne · ${fenetre(FUN)}`)+
         (FUN.depuis_lancement?ligneFun(FUN.depuis_lancement,
           `Depuis le premier usage du simulateur · ${fenetre(FUN.depuis_lancement)}`):'');
-      document.getElementById('funNote').innerHTML=
+      const L=FUN.depuis_lancement||FUN;
+      const raccord=FUN.actives_total?
+        `<strong>Raccord avec le total activé.</strong> Sur les ${fmt(FUN.actives_total)} clients activés `+
+        `au ${dfr(FUN.run_collecteur)}, ${fmt(L.app_actives)} se sont connectés à leur espace depuis le `+
+        `${dfr(L.periode_debut)}, dont ${fmt(FUN.app_actives)} pendant la campagne. Les `+
+        `${fmt(FUN.actives_total-L.app_actives)} autres sont activés sans connexion identifiée : `+
+        `rendez-vous pris sans passer par l'app, simulation saisie par l'équipe, ou navigation non `+
+        `reconnue par PostHog.<br>`:'';
+      document.getElementById('funNote').innerHTML=raccord+
         `<strong>Source.</strong> Visiteurs : PostHog, projet newpillo - production. `+
         `<em>Visiteurs de l'app</em> = personnes uniques connectées ayant vu au moins une page de `+
         `l'espace client (my.nopillo.com) ; <em>visiteurs de Conseil</em> = même règle sur l'onglet `+
