@@ -319,6 +319,14 @@
   "conseil_visiteurs": 983,
   "app_actives": 269,
   "conseil_actives": 226,
-  "_doc": "ENTONNOIR APP → CONSEIL → ACTIVÉ, mesure PostHog. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas. VISITEURS : personnes uniques IDENTIFIÉES (e-mail connu de PostHog, comptes @nopillo exclus) ayant au moins une page vue sur my.nopillo.com (app) ou sur /conseil, du 05/08 au 02/10, projet newpillo - production. ACTIVÉS PARMI EUX : les 392 activés du run du 02/10 (18h37), rapprochés par e-mail. TAUX = activés parmi les visiteurs ÷ visiteurs de l'étape. LIMITES : visiteurs anonymes exclus ; le taux est une association, pas un parcours prouvé (un activé compte même s'il a visité Conseil après s'être activé) ; aucun événement d'affichage de la bannière AE n'existe, d'où l'étape Conseil comme indicateur de remplacement. À refaire à la main avec l'export PostHog."
+  "_doc": "ENTONNOIR APP → CONSEIL → ACTIVÉ, mesure PostHog. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas. VISITEURS : personnes uniques IDENTIFIÉES (e-mail connu de PostHog, comptes @nopillo exclus) ayant au moins une page vue sur my.nopillo.com (app) ou sur /conseil, du 05/08 au 02/10, projet newpillo - production. ACTIVÉS PARMI EUX : les 392 activés du run du 02/10 (18h37), rapprochés par e-mail. TAUX = activés parmi les visiteurs ÷ visiteurs de l'étape. LIMITES : visiteurs anonymes exclus ; le taux est une association, pas un parcours prouvé (un activé compte même s'il a visité Conseil après s'être activé) ; aucun événement d'affichage de la bannière AE n'existe, d'où l'étape Conseil comme indicateur de remplacement. À refaire à la main avec l'export PostHog. DEUX FENÊTRES (05/10) : la fenêtre principale part du 1er envoi de la campagne (05/08) ; depuis_lancement part du 30/04, première trace d'usage du simulateur AE dans la base produit (table optimization) — date déduite des données, pas une date de mise en ligne confirmée. Même méthode et même liste d'activés pour les deux.",
+  "depuis_lancement": {
+   "periode_debut": "2026-04-30",
+   "periode_fin": "2026-10-02",
+   "app_visiteurs": 2882,
+   "conseil_visiteurs": 1084,
+   "app_actives": 277,
+   "conseil_actives": 230
+  }
  }
 }
