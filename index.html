@@ -634,7 +634,7 @@
             quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
             ils sont écartés (06/08 et 16/09).</td></tr>
 
-        <tr><td>Visiteurs de l'app<br>Visiteurs de Conseil</td>
+        <tr><td>Visiteurs uniques de l'app<br>Visiteurs uniques de Conseil</td>
           <td>Entonnoir · mesure PostHog</td>
           <td>Personnes uniques <strong>identifiées</strong> dans PostHog (e-mail connu, comptes
             @nopillo exclus) ayant au moins une page vue sur l'espace client (my.nopillo.com), ou sur
@@ -1238,11 +1238,11 @@ function render(){
       const ligneFun=(F,titre)=>
         `<div class="rlab" style="margin:14px 0 8px;font-size:11px">${titre}</div>`+
         `<div class="eq">`+
-        ft('','Visiteurs de l\'app',fmt(F.app_visiteurs),`dont ${fmt(F.app_actives)} activés · ${pc(F.app_actives,F.app_visiteurs)}`)+
+        ft('','Visiteurs uniques de l\'app',fmt(F.app_visiteurs),`dont ${fmt(F.app_actives)} activés · ${pc(F.app_actives,F.app_visiteurs)}`)+
         `<div class="eq-op">→</div>`+
-        ft('','Visiteurs de Conseil',fmt(F.conseil_visiteurs),`${pc(F.conseil_visiteurs,F.app_visiteurs)} des visiteurs de l'app`)+
+        ft('','Visiteurs uniques de Conseil',fmt(F.conseil_visiteurs),`${pc(F.conseil_visiteurs,F.app_visiteurs)} des visiteurs uniques de l'app`)+
         `<div class="eq-op">→</div>`+
-        ft('res','Conversion Conseil → activé',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs`)+
+        ft('res','Conversion Conseil → activé',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs uniques`)+
         `</div>`;
       const fenetre=F=>`du ${dfr(F.periode_debut)} au ${dfr(F.periode_fin)}`;
       const eqF=document.getElementById('funEq');
