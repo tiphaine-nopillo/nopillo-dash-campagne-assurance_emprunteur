@@ -308,7 +308,7 @@
           chiffres ne se comparent pas en performance.</div>
       </div></div>
       <div id="funWrap" style="display:none;margin-top:4px">
-        <div class="rlab">Entonnoir de conversion — <strong>mesure PostHog</strong></div>
+        <div class="rlab">Connexion à l'espace client → activation — <strong>mesure PostHog</strong></div>
         <div class="bsub" id="funSub" style="margin-bottom:10px"></div>
         <div class="eq" id="funEq"></div>
         <div class="bsub" id="funNote" style="margin-top:12px"></div>
@@ -634,20 +634,20 @@
             quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
             ils sont écartés (06/08 et 16/09).</td></tr>
 
-        <tr><td>Visiteurs uniques de l'app<br>Visiteurs uniques de Conseil</td>
+        <tr><td>Visiteurs uniques de l'app</td>
           <td>Entonnoir · mesure PostHog</td>
           <td>Personnes uniques <strong>identifiées</strong> dans PostHog (e-mail connu, comptes
-            @nopillo exclus) ayant au moins une page vue sur l'espace client (my.nopillo.com), ou sur
-            l'onglet Conseil, pendant la période indiquée. Les visiteurs anonymes ne sont pas comptés.
+            @nopillo exclus) ayant au moins une page vue sur l'espace client (my.nopillo.com)
+            pendant la période indiquée. Les visiteurs anonymes ne sont pas comptés.
             <strong>Identifié ne veut pas dire client</strong> : un compte ouvert sans liasse peut y
             figurer. Le dénominateur est donc un peu large, et les taux un peu sous-estimés.</td></tr>
-        <tr><td>Taux de conversion<br>Conseil → activé</td>
+        <tr><td>Taux de conversion<br>connexion → activation</td>
           <td>Activés parmi les visiteurs ÷ visiteurs</td>
-          <td>Parmi les visiteurs de l'étape, part de ceux qui figurent dans la liste des clients
+          <td>Parmi les visiteurs uniques de l'app, part de ceux qui figurent dans la liste des clients
             activés, rapprochés par e-mail. C'est une <strong>association, pas un parcours
-            prouvé</strong> : un activé compte même s'il a visité Conseil après s'être activé.
-            L'affichage de la bannière AE n'étant pas tracé, l'onglet Conseil sert d'indicateur de
-            remplacement. Chiffres figés, issus d'un export PostHog manuel.</td></tr>
+            prouvé</strong> : un activé compte même s'il s'est connecté après s'être activé. Une
+            vérification ne retient que les clients connectés avant leur activation (premier RDV AE
+            réservé ou ouverture du simulateur). Chiffres figés, issus d'un export PostHog manuel.</td></tr>
       </tbody></table></div>
     </div>
 
@@ -1223,15 +1223,17 @@ function render(){
     /* Origine de la visite, ventilée campagne / hors campagne. CHIFFRES FIGÉS
        dans cohorts.json (clé origine_simu_perimetre), recopiés par refresh.py.
        Agrégats seulement : aucun identifiant de client dans data.json. */
-    /* Entonnoir app → Conseil → activé, FIGÉ dans cohorts.json (PostHog).
-       Taux = activés parmi les visiteurs de l'étape ÷ visiteurs de l'étape. */
+    /* Entonnoir connexion → activé, FIGÉ dans cohorts.json (PostHog).
+       Taux = activés parmi les visiteurs uniques de l'app ÷ visiteurs uniques.
+       Le taux Conseil → activé a été retiré le 05/10 : hors question posée, et l'onglet Conseil
+       n'était pas accessible à tous les clients sur une partie de la période. */
     const FUN=D.entonnoir_posthog;
     if(FUN&&FUN.app_visiteurs){
       document.getElementById('funWrap').style.display='block';
       const dfr=x=>new Date(x).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
       document.getElementById('funSub').textContent=
-        `Personnes identifiées venues sur l'espace client, et part d'entre elles devenues `+
-        `clientes activées. Deux fenêtres : pendant la campagne, et depuis le premier usage du simulateur.`;
+        `Personnes uniques connectées à leur espace client, et part d'entre elles devenues clientes `+
+        `activées. Deux fenêtres : pendant la campagne, et depuis le premier usage du simulateur.`;
       const ft=(cls,lab,val,sub)=>`<div class="eq-t ${cls||''}"><div class="l">${lab}</div>`+
         `<div class="v">${val}</div><div class="s">${sub}</div></div>`;
       const pc=(n,d)=>(100*n/d).toFixed(1).replace('.',',')+' %';
@@ -1240,11 +1242,9 @@ function render(){
         `<div class="eq">`+
         ft('','Visiteurs uniques de l\'app',fmt(F.app_visiteurs),`connectés à leur espace client`)+
         `<div class="eq-op">→</div>`+
+        ft('','Dont clients activés',fmt(F.app_actives),`rapprochés par e-mail`)+
+        `<div class="eq-op">=</div>`+
         ft('res','Connexion → activation',pc(F.app_actives,F.app_visiteurs),`${fmt(F.app_actives)} activés sur ${fmt(F.app_visiteurs)} visiteurs uniques`)+
-        `<div class="eq-op">·</div>`+
-        ft('','Visiteurs uniques de Conseil',fmt(F.conseil_visiteurs),`${pc(F.conseil_visiteurs,F.app_visiteurs)} des visiteurs uniques de l'app`)+
-        `<div class="eq-op">→</div>`+
-        ft('res','Conseil → activation',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs uniques`)+
         `</div>`;
       const fenetre=F=>`du ${dfr(F.periode_debut)} au ${dfr(F.periode_fin)}`;
       const eqF=document.getElementById('funEq');
@@ -1265,20 +1265,18 @@ function render(){
         `<strong>Vérification.</strong> En ne comptant que les clients connectés <em>avant</em> de `+
         `s'activer, la conversion connexion → activation est de ${pc(S.app_actives,FUN.app_visiteurs)} `+
         `pendant la campagne`+(SL?` et de ${pc(SL.app_actives,FUN.depuis_lancement.app_visiteurs)} depuis le `+
-        `${dfr(FUN.depuis_lancement.periode_debut)}`:'')+` (${pc(S.conseil_actives,FUN.conseil_visiteurs)}`+
-        (SL?` et ${pc(SL.conseil_actives,FUN.depuis_lancement.conseil_visiteurs)}`:'')+` via Conseil). `+
+        `${dfr(FUN.depuis_lancement.periode_debut)}`:'')+`. `+
         `Date d'activation : premier RDV AE réservé (HubSpot) ou ouverture du simulateur (base produit).<br>`:'';
       document.getElementById('funNote').innerHTML=raccord+verif+
         `<strong>Source.</strong> Visiteurs : PostHog, projet newpillo - production. `+
         `<em>Visiteurs de l'app</em> = personnes uniques connectées ayant vu au moins une page de `+
-        `l'espace client (my.nopillo.com) ; <em>visiteurs de Conseil</em> = même règle sur l'onglet `+
-        `Conseil ; comptes @nopillo exclus. Activés : liste des clients activés du collecteur `+
+        `l'espace client (my.nopillo.com), comptes @nopillo exclus. Activés : liste des clients activés du collecteur `+
         `HubSpot (run du ${dfr(FUN.run_collecteur)}), rapprochée par e-mail.<br>`+
         `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées, `+
         `clientes ou non (définitions dans l'onglet Méthodo). `+
-        `Un activé compte même s'il a visité Conseil après s'être activé : c'est une association, pas un `+
-        `parcours prouvé. L'affichage de la bannière AE n'est pas tracé : l'onglet Conseil sert `+
-        `d'indicateur de remplacement. Chiffres figés, issus d'un export PostHog manuel.`;
+        `Un activé compte même s'il s'est connecté après s'être activé : c'est une association, pas un `+
+        `parcours prouvé (voir la vérification ci-dessus). L'affichage de la bannière AE n'est pas tracé. `+
+        `Chiffres figés, issus d'un export PostHog manuel.`;
     }
     const OSP=D.origine_simu_perimetre;
     /* Bandeau en tête de page : les chiffres PostHog sont FIGÉS et ne suivent
