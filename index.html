@@ -1251,6 +1251,11 @@ function render(){
         (FUN.depuis_lancement?ligneFun(FUN.depuis_lancement,
           `Depuis le premier usage du simulateur · ${fenetre(FUN.depuis_lancement)}`):'');
       document.getElementById('funNote').innerHTML=
+        `<strong>Source.</strong> Visiteurs : PostHog, projet newpillo - production. `+
+        `<em>Visiteurs de l'app</em> = personnes uniques connectées ayant vu au moins une page de `+
+        `l'espace client (my.nopillo.com) ; <em>visiteurs de Conseil</em> = même règle sur l'onglet `+
+        `Conseil ; comptes @nopillo exclus. Activés : liste des clients activés du collecteur `+
+        `HubSpot (run du ${dfr(FUN.run_collecteur)}), rapprochée par e-mail.<br>`+
         `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées, `+
         `clientes ou non (définitions dans l'onglet Méthodo). `+
         `Un activé compte même s'il a visité Conseil après s'être activé : c'est une association, pas un `+
