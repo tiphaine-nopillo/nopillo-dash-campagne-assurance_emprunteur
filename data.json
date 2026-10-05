@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-05T13:58:42.918975+00:00",
+  "generated_at": "2026-10-05T14:02:19.638670+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -116,7 +116,16 @@
   ],
   "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE (relevé du 05/10) : les 396 clients activés du run du 05/10 à 14h12 (273 campagne, 123 hors) ont été croisés par e-mail avec les personnes identifiées de PostHog production. Le partage campagne / hors campagne vient du log du run (section « activés HORS campagne »), pas des UTM. Sont comptés les activés AYANT SIMULÉ selon le collecteur qui ont, depuis le 01/05, une page vue /conseil ET une page vue sur une URL contenant courtage-ae : 190. Les activés par leur seul rendez-vous ne sont pas comptés (3 au relevé du 02/10), pour que les retrouvés restent inclus dans les bases. BASES : 294 clients activés ayant simulé selon le collecteur (176 campagne, 118 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, et activation après l'envoi du batch, comme le reste du dashboard. ORIGINE : celle de la 1re page vue /conseil sur la période, pas forcément celle de la visite où le client a simulé. RÈGLE DE CLASSEMENT (depuis le 02/10), appliquée dans cet ordre : 1) utm_campaign de la page vue /conseil ou de l'entrée de session contenant assurance_emprunteur → Email · campagne AE (UTM) ; 2) autre utm_campaign → Autre campagne UTM ; 3) site précédent d'entrée de session = webmail, appli Gmail ou Outlook → Email · sans UTM ; 4) Google, Bing… → Organic Search ; 5) Retool → exclu (sessions internes) ; 6) site précédent = domaine nopillo → Referral · connexion Nopillo (origine perdue) ; 7) aucun site précédent ($direct) → Direct ; 8) sinon → Referral · site externe. CHANGEMENT PAR RAPPORT AU 30/09 : l'export du 30/09 classait selon la page vue avant Conseil ; la règle du 02/10 lit l'entrée de session. Une arrivée directe sur /sign-in sans site précédent est classée Direct et non origine perdue : la version de la règle qui la rangeait en origine perdue contredisait un cas vérifié à la main et basculait 18 clients de Direct vers origine perdue. Les webmails SFR et Orange, classés Referral par PostHog, passent en Email · sans UTM : d'où « site externe » à 0. Le rattachement de l'UTM à la page vue /conseil, et pas seulement à l'entrée de session, ajoute 5 clients en Email · campagne AE : leur UTM a survécu à la redirection de connexion. LIMITE : le croisement se fait sur l'e-mail ; un client dont l'e-mail diffère entre HubSpot et PostHog n'est pas retrouvé (au moins un cas vérifié). AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
  },
- "entonnoir_posthog": null,
+ "entonnoir_posthog": {
+  "periode_debut": "2026-08-05",
+  "periode_fin": "2026-10-02",
+  "run_collecteur": "2026-10-02",
+  "app_visiteurs": 2539,
+  "conseil_visiteurs": 983,
+  "app_actives": 269,
+  "conseil_actives": 226,
+  "_doc": "ENTONNOIR APP → CONSEIL → ACTIVÉ, mesure PostHog. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas. VISITEURS : personnes uniques IDENTIFIÉES (e-mail connu de PostHog, comptes @nopillo exclus) ayant au moins une page vue sur my.nopillo.com (app) ou sur /conseil, du 05/08 au 02/10, projet newpillo - production. ACTIVÉS PARMI EUX : les 392 activés du run du 02/10 (18h37), rapprochés par e-mail. TAUX = activés parmi les visiteurs ÷ visiteurs de l'étape. LIMITES : visiteurs anonymes exclus ; le taux est une association, pas un parcours prouvé (un activé compte même s'il a visité Conseil après s'être activé) ; aucun événement d'affichage de la bannière AE n'existe, d'où l'étape Conseil comme indicateur de remplacement. À refaire à la main avec l'export PostHog."
+ },
  "rdv_exclus_n": 2,
  "relances": [
   {
@@ -193,8 +202,8 @@
     "Simulation produit · n8n": 112,
     "Marc Chevalier · CGP": 4,
     "Workflow HubSpot · RDV sans simu": 1,
-    "Team AE · Clara Baekelandt": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Team AE · Clara Baekelandt": 1
    },
    "rdv_seul_camp": 98,
    "rdv_seul_hors": 5,
