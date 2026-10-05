@@ -1,314 +1,1929 @@
-{
- "_doc": "Config de la campagne Assurance Emprunteur. Une cellule = une liste STATIQUE + son audience et sa version. Mapping explicite volontaire. Ajouter un batch = ajouter un bloc ici, aucune ligne de code à toucher.",
- "_attribution": "ATTENTION — les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 sert le RP du 5 août ET du 13 août. L'attribution des e-mails passe donc obligatoirement par l'appartenance aux listes, JAMAIS par hs_sequence_id. La version précédente du collecteur attribuait par séquence et surévaluait le batch du 5 août.",
- "_statut": "status: \"AUTO\" = dérivé de HubSpot via contact.hs_sequences_is_enrolled, au niveau de chaque CELLULE. Une cellule sans contact encore enrôlé passe en TERMINE et alimente le taux de référence.",
- "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
- "primary_axis": "cohort",
- "deal_pipeline": "3817233652",
- "kpis": [
-  {
-   "key": "sent",
-   "label": "Envois",
-   "source": "email",
-   "base": "enrolled"
-  },
-  {
-   "key": "opens",
-   "label": "Ouvertures",
-   "source": "contact",
-   "base": "enrolled",
-   "note": "Contacts uniques. HubSpot ne garde que la DERNIÈRE ouverture ou le dernier clic de chaque personne, pas l'historique : les valeurs des six cellules d'août sont figées au relevé du 11/09, sinon les relances de septembre les auraient fait dériver."
-  },
-  {
-   "key": "clicks",
-   "label": "Clics",
-   "source": "contact",
-   "base": "enrolled",
-   "note": "Contacts uniques. HubSpot ne garde que la DERNIÈRE ouverture ou le dernier clic de chaque personne, pas l'historique : les valeurs des six cellules d'août sont figées au relevé du 11/09, sinon les relances de septembre les auraient fait dériver."
-  },
-  {
-   "key": "meetings",
-   "label": "RDV pris",
-   "source": "meeting",
-   "base": "enrolled",
-   "note": "Contacts uniques ayant un rendez-vous dont l'intitulé contient « emprunteur », posé par Clara, Lilian ou Mathieu, après l'envoi. Un contact avec plusieurs rendez-vous compte une fois. Réservé par le client ou calé par un commercial : les deux comptent."
-  },
-  {
-   "key": "deals_ae",
-   "label": "Simulations entamées",
-   "source": "deal",
-   "base": "enrolled",
-   "note": "Contacts uniques ayant commencé à simuler. Deux preuves acceptées, en OU : la propriété ae_etapes_simu vaut au moins 1 — le produit atteste au moins une étape franchie dans le simulateur — ou la transaction est dans le pipe actif, de simulation_started à process_completed. POURQUOI ae_etapes_simu : elle vient du produit et survit à un déplacement de phase, donc un dossier passé en optimization_declined garde la trace de sa simulation. 34 dossiers refusés sont ainsi récupérés. POURQUOI LA PHASE DU PIPE COMPTE AUSSI : au-delà de simulation_completed, ce sont les CS qui font avancer les dossiers, parfois avant que le client ait fini son parcours, quand les documents sont récoltés par téléphone ou par mail. L'engagement est réel, il a seulement transité par un autre canal. Ce cas ne concerne que 11 contacts. CARTES « RDV SANS SIMU » : créées par un workflow HubSpot quand un contact a un rendez-vous sans simulation. Leur PHASE ne vaut jamais preuve — elles existent parce qu'un rendez-vous existe, et celui-ci est déjà compté. Elles comptent en revanche dès qu'elles portent ae_etapes_simu >= 1 : le client a alors simulé APRÈS avoir pris rendez-vous. NE COMPTENT PAS : optimization_activated et optimization_declined sans étape franchie ni rendez-vous, et les comptes @nopillo.com, qui créent de vraies transactions de test."
-  },
-  {
-   "key": "engaged",
-   "label": "Clients activés",
-   "source": "union",
-   "base": "enrolled",
-   "note": "Union dédupliquée des contacts avec RDV et des contacts avec une simulation commencée. Jamais la somme : un contact ayant les deux compte une fois. Calculé au niveau campagne sur les identifiants de contact."
-  }
- ],
- "primary_kpi": "engaged",
- "attribution_window_days": 21,
- "cohorts": [
-  {
-   "id": "2026-08-05",
-   "label": "Batch du 5 août 2026",
-   "sent_at": "2026-08-05T08:31:00Z",
-   "status": "AUTO",
-   "cells": [
-    {
-     "list_id": "14319",
-     "sequence_id": "841303267",
-     "audience": "RP",
-     "version": "A",
-     "list_name": "OPS - AssEmp - Campagne pour leur RP - Batch du 5 août 2026 - Version A"
-    },
-    {
-     "list_id": "14334",
-     "sequence_id": "841303268",
-     "audience": "RP",
-     "version": "B",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Version B - Batch du 5 août 2026"
-    },
-    {
-     "list_id": "14336",
-     "sequence_id": "841303243",
-     "audience": "LMNP",
-     "version": "A",
-     "list_name": "OPS - Assurance Emprunteur - Batch 5 août 2026 - Campagne pour leur LMNP - Version A"
-    },
-    {
-     "list_id": "14337",
-     "sequence_id": "841252078",
-     "audience": "LMNP",
-     "version": "B",
-     "list_name": "OPS - Batch 5 août 2026 - Assurance Emprunteur - Campagne pour leur LMNP - Version B"
-    }
-   ]
-  },
-  {
-   "id": "2026-08-13",
-   "label": "Batch du 13 août 2026",
-   "sent_at": "2026-08-13T09:31:00Z",
-   "status": "AUTO",
-   "ab_test": false,
-   "ab_note": "Plus d'A/B sur ce batch : seule la version A a été renvoyée, sur les deux audiences. L'axe comparatif devient la cohorte.",
-   "cells": [
-    {
-     "list_id": "14412",
-     "sequence_id": "841303267",
-     "audience": "RP",
-     "version": "A",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur RP - Batch du 13 août 2026"
-    },
-    {
-     "list_id": "14413",
-     "sequence_id": "841303243",
-     "audience": "LMNP",
-     "version": "A",
-     "list_name": "OPS - Assurance Emprunteur - Campagne pour leur LMNP - Batch du 13 août 2026"
-    }
-   ]
-  },
-  {
-   "id": "2026-09-10",
-   "label": "Batch du 10 septembre 2026",
-   "sent_at": "2026-09-10T09:00:00Z",
-   "status": "AUTO",
-   "ab_test": false,
-   "ab_note": "Pas d'A/B sur ce batch : une seule liste, une seule version. L'axe comparatif reste la cohorte. Ciblage construit sur l'éligibilité au courtage AE et non sur la typologie de bien — cette cohorte n'est donc pas comparable aux précédentes sur l'axe audience.",
-   "cells": [
-    {
-     "list_id": "14951",
-     "sequence_id": "841303267",
-     "audience": "V3",
-     "version": "A",
-     "list_name": "Campagne Assurance Emprunteur - Nouveaux clients - Batch du 10/09/2026"
-    }
-   ],
-   "targeting": "Liste statique 14951, construite dans HubSpot par intersection de cinq critères : phase de cycle de vie = Client ; entrée en phase Client il y a plus de 600 jours ; produit_version = V3 ; propriétaire « Assurance Emprunteur » parmi Clara Baekelandt, Mathieu d'Ornellas ou Lilian Maudet ; appartenance à l'import « Import HS OPS x AE - All Eligibles avec v3 HS au 10/09/26 ». Cet import provient de la table Metabase « [Optimisation] Segment - Courtage Assurance Emprunteur », filtrée sur eligible = true. GRAIN : la table Metabase est au grain EMPRUNT, la cible est au grain CLIENT. Les données ont été croisées et agrégées par client, un client étant retenu dès qu'AU MOINS UN de ses emprunts est éligible. Règle inclusive et assumée, identique à celle retenue pour la Liste 1 du 04/09 : elle maximise la couverture commerciale, mais un client ciblé peut n'avoir qu'un prêt sur plusieurs réellement finançable — à signaler au commercial qui reprend le dossier. Trois segments sont exclus de la liste : « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte »."
-  }
- ],
- "audience_labels": {
-  "RP": "Résidence principale",
-  "LMNP": "LMNP",
-  "V3": "Clients V3 éligibles AE"
- },
- "stats": {
-  "min_n_for_rate": 100,
-  "alpha": 0.05,
-  "power": 0.8
- },
- "notes": {
-  "attribution": "RDV et simulations rattachés par appartenance aux listes statiques, à partir de l'envoi et sans limite de délai pour l'instant. Les transactions ouvertes AVANT la campagne mais déplacées d'étape après l'envoi sont comptées : c'est ce qui rattrape les réactivations. Attribution temporelle, non causale.",
-  "overlap": "Recoupement mesuré entre les deux batchs : 2 contacts en RP, 0 en LMNP. Les cohortes sont quasi disjointes, mais le total campagne reste calculé par union dédupliquée. Aucun de ces contacts recoupés n'est engagé à ce jour. Batch du 10 septembre : la liste statique 14951 est construite avec trois exclusions de segments — « [OPS] - Total shooté - Assurance Emprunteur », « OPS - Clients avec deal dans pipe courtage AE » et « [OPS] - Total shooté - CGP - Campagne collecte ». Le recoupement avec les cohortes d'août devrait donc être nul. Réserve : la liste d'exclusion « Total shooté assurance » comptait 1 291 contacts au 04/09 alors que les six listes de cellules d'août en totalisent 1 323 en union dédupliquée. L'écart d'une trentaine de contacts n'est pas couvert par l'exclusion et peut apparaître dans dedup.activation.overlap.",
-  "baseline": "Sur la même période, 12 contacts hors campagne ont ouvert un dossier dans le pipe courtage AE, et 25 des 51 contacts avec un RDV « emprunteur » n'appartiennent à aucune des 6 listes. Un vrai groupe témoin est impossible — la population ciblée est sélectionnée sur critères, pas tirée au hasard — ces chiffres sont un ordre de grandeur, pas une preuve causale.",
-  "activation": "Définition métier retenue le 25/08/2026 : un client est ACTIVÉ s'il a pris un RDV, s'il a un dossier dans le pipe courtage AE, ou les deux. Trois lectures du même ensemble sont publiées : les deux totaux qui se recoupent (RDV, simulations), les trois sous-ensembles disjoints (les deux, RDV seul, simulation seule), et le total activé. L'équation à retenir : RDV + simulations − les deux = activés.",
-  "activation_dedup": "Le total campagne est une union dédupliquée sur les identifiants de contact, calculée par refresh.py, jamais une somme des cellules. Au 25/08 les deux coïncident — aucun des 2 contacts ciblés dans deux batchs n'est activé — mais la coïncidence n'est pas une garantie : dedup.activation.overlap la surveille.",
-  "relances": "Vague 2 du 11/09/2026 : 1 070 contacts relancés sur 4 listes. RATTACHEMENT CALCULÉ : refresh.py croise chaque contact relancé avec les listes de cellules pour retrouver sa cohorte. Un contact relancé n'est PAS une nouvelle cohorte — il est déjà dans le dénominateur de son batch. PÉRIODE PAR CONTACT : deux périodes, celle ouverte par l'envoi du batch et celle ouverte par la relance, étiquetées v1 et v2. BIAIS ASSUMÉ : les 4 listes ne contiennent QUE des contacts non activés, le taux de la vague 2 n'est donc pas comparable à celui d'un batch initial.",
-  "meeting_window": "Les RDV suivent exactement la même règle de délai que les simulations, quelle qu'elle soit. Avant le 11/09, le filtre des réunions n'avait qu'une borne basse alors que les transactions étaient bornées : un RDV pris des mois après l'envoi restait imputé au batch. Preuve mesurée le 11/09 — dans les 2 h suivant l'envoi des relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était close. Les deux signaux sont alignés depuis.",
-  "attribution_window": "AUCUNE LIMITE DE DÉLAI. Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après l'envoi. La borne BASSE subsiste : rien d'antérieur à l'envoi n'est compté, et un contact relancé conserve deux périodes étiquetées v1 et v2. HISTORIQUE : cumul ouvert jusqu'au 22/08 ; J+21 du 22/08 au 25/09 ; aucune limite depuis. CE QUE ÇA COÛTE, à dire à chaque publication : 1) LES COHORTES NE SE COMPARENT PAS — une cohorte ancienne accumule plus longtemps et gagne toujours ; 2) LES CHIFFRES PUBLIÉS REMONTENT EN PERMANENCE, horodater ce qu'on annonce ; 3) l'attribution s'affaiblit avec le temps. POURQUOI ON N'A PAS CALIBRÉ UNE LIMITE : le seul moyen aurait été de regarder quand les réponses cessent d'arriver. Cette mesure s'est révélée fausse et a été retirée (voir replies_retirees). RÉVERSIBLE : ATTRIB_DAYS dans refresh.py.",
-  "attribution_sales_marketing": "Décomposition de l'activation en 3 cas DISJOINTS dont la somme fait le total : marketing, sales, non attribuable. RÈGLE : LE PREMIER QUI AGIT L'EMPORTE. Un signal du client — simulation, réponse, RDV réservé — antérieur au premier appel sortant donne marketing. Sinon, un appel sortant loggé donne sales. CHANGEMENT DU 30/09 : la simulation est enfin DATÉE, grâce à ae_date_debut_simu écrite par n8n. Avant, faute de date, elle l'emportait systématiquement — un client appelé le 12 et simulant le 15 comptait en marketing. Le sales était donc sous-estimé, et le dashboard le signalait comme une limite structurelle. Elle est levée. CAS SANS DATE : une simulation non datée conserve l'ancien comportement et prime, faute de pouvoir la situer par rapport à l'appel. GRANULARITÉ : ae_date_debut_simu est au JOUR, pas à l'heure. Un client appelé et simulant le même jour est indépartageable ; il part en marketing, par cohérence avec le traitement d'une simulation sans date. PIÈGE SUR LE RDV : on compare la date de RÉSERVATION au premier appel, jamais la date de tenue. LIMITE RESTANTE : le sous-cas « réponse » s'appuie sur hs_sales_email_last_replied, dont la date glisse à chaque nouvel e-mail commercial. Ce signal ne s'applique qu'aux contacts sans simulation ni RDV self-service, donc à une minorité.",
-  "backfill": "Rafales de rattrapage n8n exclues du comptage, car elles importent de l'antériorité et non de l'activité : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h02 (~190 transactions, reprise du flux après 33 jours d'arrêt), plus l'essai isolé du 16/09 09h57. DEPUIS LE 16/09 l'exclusion porte sur CHAQUE date prise isolément — createdate ET hs_v2_date_entered_current_stage — et non plus sur la transaction entière. Sans ce changement, les 248 mouvements d'étape du rattrapage auraient été comptés comme autant d'activations. Un dossier créé pendant une rafale mais réellement déplacé d'étape plus tard reste compté.",
-  "sync_stale": "Drapeau publié dans dedup.attribution.sync_stale : vrai si aucune transaction INTEGRATION n'a bougé sur le pipe depuis plus de 24 heures ouvrées. Sans lui, une panne du flux produit des faux « sales » EN SILENCE : un client qui a simulé n'a pas de dossier remonté, donc aucun signal marketing, donc il bascule sur l'appel du commercial. Cas vécu du 13/08 au 16/09. Quand le drapeau est levé, la décomposition sales/marketing ne doit pas être publiée.",
-  "qualification": "DÉFINITION DU LEAD arrêtée le 17/09/2026 avec Clémence : un client est un lead s'il prend un RDV lui-même, s'il démarre son parcours, ou si un commercial l'a eu au téléphone et qu'il a voulu qu'on lui organise un RDV. CE QUE LE DASHBOARD MESURE : les trois cas. Le cas 3 est reconnu par la présence d'un RDV — le résultat attendu d'un outbound qualifié étant un rendez-vous organisé. FILE D'ATTENTE VIDE depuis le 25/09 : un contact sans RDV et sans étape de parcours n'est plus activé du tout, il sort du total au lieu d'attendre un arbitrage. La question « est-ce un lead ? » est désormais tranchée par l'étape du pipe, plus par le sales. Le bloc « confirmés contre en attente » ne s'affiche que si la file se remplit à nouveau.",
-  "deals_workflow": "WORKFLOW « RDV SANS SIMU », en place depuis le 24/09/2026. Un workflow HubSpot crée une transaction quand un contact a un RDV sans simulation, avec origine_creation_deal_ae = rdv_sans_simu. CES CARTES NE VALENT JAMAIS SIMULATION PAR LEUR ÉTAPE, quelle qu'elle soit. Elles sont créées PARCE QU'un rendez-vous existe, et celui-ci est déjà compté via l'objet MEETING : les compter reviendrait à compter deux fois le même signal. CORRECTIF DU 28/09 : cinq d'entre elles se sont retrouvées en simulation_started après un déplacement d'étape manuel, sans qu'aucune étape n'ait été franchie. Elles étaient comptées comme simulations à tort. La règle teste désormais l'origine avant l'étape. SEULE EXCEPTION : si la carte finit par porter ae_etapes_simu >= 1, le client a réellement simulé depuis, et elle compte normalement. Le workflow ne bloque donc rien pour l'avenir. CORRECTIF ANNEXE : le test « tracé par n8n » portait sur « source différente de CRM_UI », ce qui rangeait ces cartes du côté n8n ; il porte désormais sur « source = INTEGRATION ».",
-  "souscription": "DOSSIERS EN SOUSCRIPTION : contacts dont au moins une transaction du pipe courtage AE est à l'étape process_started ou process_completed. C'est le bas de funnel — le client ne simule plus, il monte un dossier. Ces contacts sont un SOUS-ENSEMBLE des activés, pas un axe supplémentaire : ne pas les additionner au total. Les deux étapes sont comptées ensemble parce qu'une transaction en process_completed est nécessairement passée par process_started, et que le flow n8n protège ces étapes — il ne les fait jamais reculer. Compter process_started seul sous-estimerait les dossiers les plus avancés.",
-  "replies_retirees": "LES RÉPONSES NE SONT PLUS AFFICHÉES, décision du 25/09/2026. hs_sales_email_last_replied enregistre la dernière réponse du contact à N'IMPORTE QUEL e-mail commercial, et la date glisse à chaque nouvel échange. Un contact qui a répondu en août puis répondu à autre chose en septembre voit sa réponse recomptée en septembre. PREUVE : la cellule RP du 13 août affichait 68 réponses le 15/09 et 110 le 25/09, pour un batch envoyé le 13 août — 42 réponses apparues en dix jours sur une campagne terminée. Soit 20 % des 560 contacts, un taux invraisemblable. AUCUNE SOURCE FIABLE N'EXISTE : les objets EMAIL entrants portent leur propre date mais PAS hs_sequence_id — vérifié le 25/09, les 4 815 e-mails des séquences de campagne sont tous sortants. On ne peut donc pas isoler les réponses à la campagne. CONSÉQUENCE : la courbe « quand les contacts répondent » est retirée, et avec elle le seul moyen de calibrer un délai d'attribution. Toute valeur retenue serait un choix, pas un optimum démontré. Les valeurs restent collectées dans data.json pour qui veut creuser, mais ne sont plus affichées.",
-  "fenetre_appliquee_partout": "La règle de délai s'applique DE LA MÊME FAÇON à tous les signaux : RDV, simulation, souscription, et à toutes les décompositions qui en dérivent. CORRIGÉ LE 25/09 : les ensembles « a simulé » et « en souscription » étaient renseignés AVANT le test de période. Le décalage était visible quand une borne existait — cinq contacts classés « a simulé » alors que leur transaction était hors période, activés en réalité par leur rendez-vous. Sans borne haute l'écart est nul, mais la correction reste : le jour où une limite est rétablie, elle s'appliquera partout.",
-  "frozen": "Ouvertures et clics FIGÉS pour les six cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Ces valeurs sont écrites dans frozen_metrics et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne.",
-  "marqueur_simulation": "MARQUEUR DE SIMULATION, historique des trois versions : 1) hs_object_source_label jusqu'au 16/09 — disait qui avait créé la fiche, pas si le client avait simulé ; un deal CRM_UI pouvait cacher une vraie simulation. 2) last_step_date du 16/09 au 25/09 — vient de last_event_at, qui existe dès l'activation de l'optimisation : 153 optimisations courtage AE ont des events sans aucune étape complétée. Elle prouvait qu'il s'était passé quelque chose, pas qu'un champ avait été rempli. 3) étape du pipe du 25/09 au 28/09 — correspond à la définition (« a rempli au moins le premier champ » = étape intro franchie = simulation_started), mais une étape se déplace à la main, et optimization_declined efface la trace du parcours. 4) ae_etapes_simu depuis le 28/09 — nombre d'étapes réellement franchies, écrit par n8n depuis completed_steps. Vient du produit, survit à un déplacement d'étape. CAS QUI A DÉCLENCHÉ LE CHANGEMENT : Chloé Landat, transaction 522453619910. completed_steps = [\"intro\"], une étape franchie le 22/09 à 14h41, une minute d'activité. n8n crée la carte en simulation_started, un CS la passe en optimization_declined, le dashboard cesse de la compter. 43 transactions étaient dans ce cas. RÈGLE ACTUELLE : ae_etapes_simu >= 1 OU étape de parcours. Le second terme couvre 68 transactions sur une étape de parcours dont la propriété est vide. UNE PROPRIÉTÉ VIDE SIGNIFIE QU'IL N'Y A PAS D'OPTIMISATION CÔTÉ PRODUIT, pas que le rattrapage n'a pas eu lieu : le flow a bien écrit la propriété sur des dossiers anciens, y compris de mai et d'août. Sur les 117 dossiers refusés sans propriété, 114 sont des fiches créées à la main. EFFET MESURÉ le 28/09 : 226 → 243 clients activés, dont 123 → 154 simulations.",
-  "activation_globale": "TOTAL ACTIVÉS AE, tout le portefeuille : même règle que la campagne — un RDV « emprunteur » posé par Clara, Lilian ou Mathieu, ou une simulation réellement commencée — mais SANS restriction d'appartenance aux listes et SANS borne basse d'envoi. À QUOI ÇA SERT : situer la campagne dans l'ensemble. Le chiffre de campagne seul ne dit pas quelle part de l'activation AE il représente. DISPATCH : « issus des campagnes » = contacts présents dans les deux ensembles ; « hors campagnes » = activés AE jamais ciblés par un batch. RÉSERVE DE LECTURE : ce total cumule tout l'historique, des clients acquis depuis 2023, alors que la campagne court depuis le 5 août. Il se lit comme un CUMUL, jamais comme un taux, et les deux chiffres ne se comparent pas en performance. CONTRÔLE : un contact compté en campagne doit toujours être dans le global. Si l'écart campagne_hors_global est non nul, il y a une incohérence de règle entre les deux périmètres.",
-  "createurs": "QUI A SAISI LA TRANSACTION, sur le périmètre global. Libellés : « Simulation produit · n8n » pour l'intégration, « Team AE » suivi du nom pour Clara Baekelandt, Mathieu d'Ornellas et Lilian Maudet, « Marc Chevalier · CGP », et « Workflow HubSpot · RDV sans simu ». RÉSERVE DE LECTURE ESSENTIELLE : le créateur dit qui a SAISI la fiche, pas qui a PROVOQUÉ la simulation. Une carte ouverte à la main qui porte ae_etapes_simu >= 1 signifie que le commercial a créé la carte ET que le client a réellement rempli le simulateur de son côté. IDENTIFIANTS : ce sont des User IDs, distincts des Owner IDs. Clara et Mathieu sont déduits de l'appariement avec le propriétaire des transactions, pas confirmés par la table utilisateurs, qui n'est pas interrogeable via l'API.",
-  "motifs": "POURQUOI CHAQUE CLIENT EST COMPTÉ : quatre cas EXCLUSIFS dont la somme fait le total activé. 1) RDV seul — rendez-vous « emprunteur » posé par Clara, Lilian ou Mathieu, sans simulation entamée. ATTENTION : cela ne veut pas dire « aucune transaction ». Ces contacts ont presque tous une fiche dans le pipe, elle ne prouve simplement aucune simulation. Voir la note rdv_sans_simulation. 2) RDV + simulation — les deux signaux, le contact ne compte qu'une fois. 3) Simulation seule · étapes produit — ae_etapes_simu >= 1, le produit atteste au moins une étape franchie. 4) Simulation seule · position pipe — pas d'étape côté produit, mais un CS a fait avancer le dossier dans le pipe actif. Engagement réel passé par téléphone ou par mail : le produit pilote jusqu'à simulation_completed, le CS pilote au-delà. À QUOI ÇA SERT : localiser un écart. Les comptages divergent sur « qu'est-ce qui compte », pas sur « qui a fait ». Si un autre chiffre diffère, la ligne en cause est forcément l'une de ces quatre. NE COMPTENT PAS : une carte en optimization_declined ou optimization_activated sans rendez-vous ni étape franchie, et les comptes @nopillo.com, qui remontent dans la question Metabase 4687 et créent de vraies transactions de test.",
-  "origine_hors_campagne": "D'OÙ VIENNENT LES ACTIVÉS : ventilation des contacts activés selon l'auteur de leur transaction — simulation produit via n8n, saisie par la Team AE, Marc Chevalier côté CGP, ou workflow HubSpot — en deux colonnes, campagne et hors campagne, plus le total. Une ligne compte ceux qui sont activés par leur rendez-vous sans simulation entamée. À QUOI ÇA SERT : sans ce détail, le nombre d'activés hors campagne ne dit rien. On ne sait pas si ces clients sont venus seuls par le produit ou s'ils ont été travaillés par un commercial. RÉSERVE : l'auteur dit qui a SAISI la fiche, pas qui a provoqué l'activation. Un contact ayant plusieurs transactions est rattaché à la première rencontrée. CONTRÔLE : la somme de chaque colonne doit égaler le nombre d'activés du périmètre correspondant. Le log affiche OK ou ÉCART.",
-  "rdv_sans_simulation": "« RDV SANS SIMULATION ENTAMÉE » NE VEUT PAS DIRE « AUCUNE TRANSACTION ». Vérifié le 28/09 sur un échantillon de 20 contacts : tous avaient une fiche dans le pipe. Sept portaient une carte du workflow « RDV sans simu », huit étaient en optimization_declined sans étape franchie, cinq en optimization_activated sans étape. Aucune ne prouvait qu'un client avait rempli quoi que ce soit. Ces contacts sont donc activés par leur RENDEZ-VOUS seul, ce qui est correct — mais le libellé précédent, « RDV sans simulation entamée », était faux et laissait croire à un dysfonctionnement du workflow. Le workflow fonctionne : il crée bien une carte quand un rendez-vous existe.",
-  "origine_rdv": "D'OÙ VIENNENT LES RENDEZ-VOUS : catégories exclusives, appliquées dans l'ordre. 1) UTM sur l'URL du lien de réservation — signature_rdv (signature_rdv), signature, nps. Ces trois prouvent un CLIC. 2) MODE DE RÉSERVATION — « Lien roundrobin AE », scindé selon que le contact est ciblé par la campagne ou non. Le client a cliqué un lien de réservation, on ignore lequel. 3) « Posé par la Team AE · hors campagne » — réunion créée depuis l'agenda, scindée de la même façon. 4) Origine inconnue. LIMITE MAJEURE — LES UTM N'EXISTENT QUE DEPUIS LE 10/09/2026 : les liens de réservation n'en portaient pas avant cette date. Tout rendez-vous antérieur est donc INTRAÇABLE par construction, et tombe mécaniquement en « Lien roundrobin AE » ou « Posé par la Team AE · hors campagne ». Les batchs du 5 et du 13 août sont entièrement dans ce cas. NE PAS LIRE l'absence d'UTM comme l'absence de campagne sur ces cohortes, et NE PAS COMPARER la part « clic prouvé » entre un batch d'août et celui de septembre — la différence mesure la pose des UTM, pas le comportement des clients. SECONDE LIMITE, sur la période tracée : hs_analytics_last_url est une propriété « dernière page consultée ». Si le client navigue après avoir réservé, l'URL disparaît. Même après le 10/09, les catégories à clic prouvé restent donc un PLANCHER. MESURE AU 30/09 : 19 contacts sur 180 portent un UTM exploitable, dont 15 sur le lien de réservation. Ce chiffre s'interprète sur le seul périmètre post-10/09. « LIEN ROUNDROBIN AE » EST UN RACCOURCI ASSUMÉ : le test porte sur MEETINGS_PUBLIC, qui couvre tous les liens de réservation, l'API HubSpot n'exposant pas l'identifiant de la page. Mesuré le 30/09 : sur 178 réunions publiques, 177 portent le titre du roundrobin AE et une seule un autre titre. Le raccourci est donc juste à une réunion près. PÉRIMÈTRE DIFFÉRENT DU DASHBOARD « LIEN DE RÉUNION », volontairement : celui-ci compte tout rendez-vous « emprunteur » posé par la Team AE, y compris ceux calés par un commercial. L'autre les exclut. Les aligner supprimerait le cas 3 de la définition du lead.",
-  "par_semaine": "QUAND LES CLIENTS S'ACTIVENT : histogramme empilé campagne / hors campagne, sur le périmètre global, avec une bascule PAR SEMAINE ou PAR JOUR. DATE RETENUE : le PREMIER signal du contact — réservation du rendez-vous (hs_createdate, pas la date de tenue), ou date de début de simulation (ae_date_debut_simu). Un contact ayant les deux est daté au plus ancien. La vue hebdomadaire regroupe au lundi. PAS PAR DÉFAUT : la semaine. Le jour est trop bruité sur un volume de moins de 400 contacts — il sert à situer un pic autour d'un envoi, pas à lire une tendance. Les deux vues portent exactement les mêmes contacts, seul le regroupement change. CORRECTION DU 30/09 : la date de création de la transaction servait de repli. Or n8n a été en panne du 13/08 au 16/09 — 195 dossiers créés le 16/09 portent une date de simulation en juillet ou août. Le graphe affichait donc un pic artificiel à la semaine du 14 septembre. Avec ae_date_debut_simu, ces contacts se répartissent sur les semaines où ils ont réellement agi. REPLI : createdate reste utilisée si ae_date_debut_simu est absente. LECTURE : les barres cumulent tout l'historique AE, pas une période de campagne. Seul le TOTAL est affiché au sommet de chaque barre — une étiquette par segment se superposait dès qu'un segment était petit ou nul. Le détail campagne / hors campagne est dans l'infobulle. LIMITE : un contact sans date exploitable est ignoré plutôt que rangé dans une période arbitraire. Le total du graphe peut donc être inférieur au total activé ; l'écart est affiché sous le graphe.",
-  "date_debut_simu": "ae_date_debut_simu : date de la PREMIÈRE étape franchie dans le simulateur, écrite par n8n et jamais écrasée. 386 transactions la portent au 30/09, du 30/04 au 29/09 — le rattrapage a couvert tout l'historique. CE QU'ELLE NE DIT PAS : qu'un client a agi. Une optimisation ouverte sans étape franchie en porte une aussi — Loïs Della Valle, date au 14/08 et ae_etapes_simu = 0. Seul ae_etapes_simu >= 1 prouve une action. La date sert uniquement à DATER une activation déjà établie. NE PAS CONFONDRE avec last_step_date, qui enregistre le DERNIER événement et bouge à chaque étape.",
-  "detail_clients": "DÉTAIL NOMINATIF DES CLIENTS ACTIVÉS : imprimé dans les LOGS du collecteur, jamais dans data.json. POURQUOI : data.json est servi publiquement par GitHub Pages. Y écrire des noms et des e-mails les rendrait accessibles à quiconque connaît l'URL du dashboard. Les logs, eux, supposent un accès au dépôt. TENTATIVE DU 30/09 : le dépôt a été passé en privé pour pouvoir publier ce détail dans le dashboard. GitHub Pages ne fonctionne pas sur un dépôt privé en plan gratuit — le site est tombé en 404 et la configuration de Pages a été perdue. Le dépôt est revenu en public et Pages a été reconfiguré sur la branche main. POUR PUBLIER CE DÉTAIL DANS LE DASHBOARD, il faudrait GitHub Pro, ou déplacer le dépôt dans une organisation disposant d'un plan payant. CONTENU DU LOG : nom, signal, périmètre, origine du rendez-vous et les quatre paramètres UTM. Ces derniers ne sont lus que sur l'URL du lien de réservation — un UTM présent sur une autre page ne dit pas par quoi CE rendez-vous a été déclenché. Ils sont vides pour la plupart : hs_analytics_last_url est écrasée dès que le client navigue après avoir réservé.",
-  "faux_positifs": "FAUX POSITIFS SUR LES RENDEZ-VOUS : vérifiés à la main le 01/10, EXCLUS de l'activation depuis le 01/10 via la liste rdv_exclus. LE MÉCANISME : un rendez-vous porte le bon intitulé et le bon commercial, mais son sujet n'est pas l'assurance emprunteur — lien AE envoyé par erreur pour reprogrammer un renouvellement, ou lien de la signature AE utilisé pour un autre motif. RÉSULTAT AU 01/10 : 2 faux positifs sur 182 rendez-vous, tous deux hors campagne et sans autre signal : le total activé passe de 389 à 387, le hors campagne de 120 à 118, la campagne reste à 269. MÉTHODE DE RECHERCHE : sur tous les clients activés, lister les réunions dont le type d'activité est « RDV CS » ET l'intitulé « Rendez-vous téléphonique Nopillo », programmées depuis le 25/07 ; retenir celles dont le créneau tombe dans les 7 jours PRÉCÉDANT la réservation du RDV AE (hs_createdate) ; vérifier chaque cas à la main sur la fiche. Au 01/10 : 7 contacts, 2 faux positifs, 2 conformes, 3 activés par simulation seule donc non concernés. PIÈGES : le type « RDV CS » seul ne suffit pas, il est aussi posé sur les réunions du lien personnel d'un commercial AE (3 cas au 01/10, tous des suivis conformes) ; l'issue des réunions reste « Programmé » même quand elles n'ont pas eu lieu, elle ne peut pas servir de critère ; HubSpot supprime la colonne contact quand on la projette depuis les réunions. LIMITE : la recherche est manuelle. Un nouveau faux positif n'est retiré qu'une fois ajouté à rdv_exclus. À refaire avant toute publication du chiffre.",
-  "definition_client_active": "DÉFINITION DU CLIENT ACTIVÉ, telle qu'affichée en tête du dashboard. Un client est activé s'il a un RENDEZ-VOUS assurance emprunteur posé avec la Team AE — réservé par lui-même sur le lien roundrobin, ou posé par la Team AE — ET/OU une SIMULATION COMMENCÉE : le produit compte au moins une étape franchie (ae_etapes_simu >= 1), ou sa fiche est dans le pipe actif. S'il fait les deux, il compte une seule fois. NE COMPTENT PAS : un accès au simulateur sans rien remplir (optimization_activated à zéro étape), une réponse à un e-mail sans rendez-vous AE posé. LA PHASE DU DOSSIER NE DÉCIDE JAMAIS À ELLE SEULE. Un dossier en optimization_declined compte normalement dès qu'il porte une étape franchie, ou dès que le contact a un rendez-vous : le client a bien simulé ou pris rendez-vous, le refus est venu ensuite. C'est ae_etapes_simu qui le permet — elle vient du produit et survit au changement de phase. 34 dossiers refusés sont ainsi comptés. Seul le dossier refusé SANS rendez-vous ET SANS étape reste dehors : rien n'y atteste un engagement du client, c'est une carte ouverte après un appel. AUCUNE LIMITE DE DÉLAI : un signal compte quel que soit le temps écoulé depuis l'envoi. CONSÉQUENCES à dire à chaque publication : les cohortes ne se comparent pas entre elles, une cohorte ancienne accumulant plus longtemps ; et les chiffres publiés montent en permanence, donc horodater ce qu'on annonce. NUANCE SUR LE PÉRIMÈTRE CAMPAGNE : la borne BASSE subsiste pour les cohortes — rien d'antérieur à l'envoi n'y est compté. Le périmètre global, lui, n'a aucune borne.",
-  "par_phase": "OÙ EN SONT NOS CLIENTS ACTIVÉS : répartition par phase du pipe courtage AE de TOUTES les transactions des clients activés, en barres horizontales, dans l'ordre du pipe. La phase est celle où le dossier se trouve AUJOURD'HUI — c'est précisément la question posée. PÉRIMÈTRE : toutes les transactions, pas seulement celles qui prouvent une simulation. Un client activé par son seul rendez-vous a bien un dossier, en optimization_activated, souvent créé par le workflow « RDV sans simu » : il doit apparaître ici. Une première version ne comptait que les transactions de simulation et faisait disparaître ce bloc — corrigé le 30/09. UNITÉ : des TRANSACTIONS, pas des contacts. Quelques clients en ont plusieurs — une par bien, comme Aurélie Rougeron avec une fiche RP et une fiche Invest — et ceux qui sont activés par leur seul rendez-vous n'ont pas tous un dossier. Le total ne se rapproche donc pas exactement du nombre de clients activés. LIBELLÉS : les phases portent leur nom exact dans HubSpot, sans traduction, pour se raccorder directement au pipe. LECTURE DES DEUX DERNIÈRES LIGNES : optimization_activated précède le parcours — ces fiches ne comptent comme activation que si le contact a un rendez-vous. optimization_declined le termine — ces fiches comptent dès qu'elles portent une étape franchie, le client avait bien simulé et le refus est venu ensuite."
- },
- "meeting_filter": {
-  "property": "hs_meeting_title",
-  "operator": "CONTAINS_TOKEN",
-  "value": "emprunteur",
-  "_note": "Filtre sur l'intitulé du RDV. Trois intitulés coexistent pour un même créneau de 15 min : « Rendez-vous courtage Assurance Emprunteur avec Nopillo » (11), « Devis assurance emprunteur Nopillo » (1) et « Nopillo » (1). Le jeton « emprunteur » attrape les deux premiers et manque le troisième. Problème de nommage à la source : normaliser le lien de réservation supprimerait le besoin de filtre.",
-  "_owners": "Le collecteur restreint en plus aux réunions posées par Clara Baekelandt (1722214870), Lilian Maudet (75453551) et Mathieu d'Ornellas (650299108) — voir AE_MEETING_OWNERS dans refresh.py. Sans effet au 22/08 : les 62 RDV leur appartiennent déjà. Attention, il s'agit du propriétaire de la RÉUNION, alors que le graphe du niveau 3 utilise celui du CONTACT : les deux vues peuvent diverger."
- },
- "relances": [
-  {
-   "list_id": "14880",
-   "sequence_id": "859442418",
-   "sent_at": "2026-09-11T07:30:00Z",
-   "label": "Relance · toujours pas éligibles",
-   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Toujours pas éligibles"
-  },
-  {
-   "list_id": "14876",
-   "sequence_id": "858857721",
-   "sent_at": "2026-09-11T07:30:00Z",
-   "label": "Relance · déjà éligibles au batch précédent",
-   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Déjà éligible batch précédent"
-  },
-  {
-   "list_id": "14872",
-   "sequence_id": "859230400",
-   "sent_at": "2026-09-11T07:30:00Z",
-   "label": "Relance · page erreur, éligibles aujourd'hui",
-   "list_name": "A shooter batch Septembre AE - Déjà shooté entier AE - Page erreur - Eligibles auj"
-  },
-  {
-   "list_id": "14863",
-   "sequence_id": "860100852",
-   "sent_at": "2026-09-11T07:30:00Z",
-   "label": "Relance · campagne interrompue",
-   "list_name": "20260906 - Total shooté campagne AE interrompus"
-  }
- ],
- "frozen_metrics": {
-  "_doc": "Ouvertures et clics FIGÉS pour les six cellules d'août, relevés le 11/09/2026 à 11h30 Paris. hs_sales_email_last_opened et hs_sales_email_last_clicked ne gardent qu'une date, écrasée à chaque nouvel e-mail commercial : les 1 070 contacts relancés le 11/09 auraient fait dériver les compteurs d'août sans qu'aucun contact d'août n'ait rouvert quoi que ce soit. Ces valeurs sont écrites dans frozen_metrics et refresh.py les lit au lieu de les recalculer. RÉSERVE : le relevé est postérieur de 2 h à l'envoi des relances — le total campagne est passé de 1 214 à 1 236 ouvertures entre 9h55 et 11h30. Ces valeurs sont donc surestimées d'une vingtaine d'ouvertures. C'est le meilleur relevé disponible, pas un relevé propre. CORRECTIF DURABLE : horodater une propriété contact custom à chaque ouverture de campagne.",
-  "_as_of": "2026-09-11T09:30:00Z",
-  "14319": {
-   "opens": 192,
-   "clicks": 5,
-   "opens_emails": 379,
-   "clicks_emails": 5
-  },
-  "14334": {
-   "opens": 187,
-   "clicks": 17,
-   "opens_emails": 360,
-   "clicks_emails": 16
-  },
-  "14336": {
-   "opens": 39,
-   "clicks": 2,
-   "opens_emails": 85,
-   "clicks_emails": 2
-  },
-  "14337": {
-   "opens": 38,
-   "clicks": 1,
-   "opens_emails": 70,
-   "clicks_emails": 2
-  },
-  "14412": {
-   "opens": 373,
-   "clicks": 17,
-   "opens_emails": 539,
-   "clicks_emails": 7
-  },
-  "14413": {
-   "opens": 103,
-   "clicks": 7,
-   "opens_emails": 158,
-   "clicks_emails": 5
-  }
- },
- "objectif": {
-  "clients_actives": 200,
-  "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
- },
- "origine_simu_perimetre": {
-  "releve_le": "2026-10-05",
-  "run_collecteur": "2026-10-05",
-  "source": "PostHog production, requête du 05/10 sur les pages vues de my.nopillo.com depuis le 01/05, croisée par e-mail avec les clients activés du run du collecteur du 05/10 (14h12)",
-  "clients": 190,
-  "base": 294,
-  "clients_campagne": 97,
-  "base_campagne": 176,
-  "clients_hors": 93,
-  "base_hors": 118,
-  "repartition": [
-   {
-    "origine": "Referral · connexion Nopillo (origine perdue)",
-    "campagne": 45,
-    "hors": 80
-   },
-   {
-    "origine": "Direct · adresse tapée, favori, lien sans origine",
-    "campagne": 18,
-    "hors": 8
-   },
-   {
-    "origine": "Email · campagne AE (UTM)",
-    "campagne": 29,
-    "hors": 0
-   },
-   {
-    "origine": "Organic Search · Google, Bing",
-    "campagne": 1,
-    "hors": 4
-   },
-   {
-    "origine": "Email · sans UTM",
-    "campagne": 4,
-    "hors": 1
-   },
-   {
-    "origine": "Referral · site externe",
-    "campagne": 0,
-    "hors": 0
-   }
-  ],
-  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE (relevé du 05/10) : les 396 clients activés du run du 05/10 à 14h12 (273 campagne, 123 hors) ont été croisés par e-mail avec les personnes identifiées de PostHog production. Le partage campagne / hors campagne vient du log du run (section « activés HORS campagne »), pas des UTM. Sont comptés les activés AYANT SIMULÉ selon le collecteur qui ont, depuis le 01/05, une page vue /conseil ET une page vue sur une URL contenant courtage-ae : 190. Les activés par leur seul rendez-vous ne sont pas comptés (3 au relevé du 02/10), pour que les retrouvés restent inclus dans les bases. BASES : 294 clients activés ayant simulé selon le collecteur (176 campagne, 118 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, et activation après l'envoi du batch, comme le reste du dashboard. ORIGINE : celle de la 1re page vue /conseil sur la période, pas forcément celle de la visite où le client a simulé. RÈGLE DE CLASSEMENT (depuis le 02/10), appliquée dans cet ordre : 1) utm_campaign de la page vue /conseil ou de l'entrée de session contenant assurance_emprunteur → Email · campagne AE (UTM) ; 2) autre utm_campaign → Autre campagne UTM ; 3) site précédent d'entrée de session = webmail, appli Gmail ou Outlook → Email · sans UTM ; 4) Google, Bing… → Organic Search ; 5) Retool → exclu (sessions internes) ; 6) site précédent = domaine nopillo → Referral · connexion Nopillo (origine perdue) ; 7) aucun site précédent ($direct) → Direct ; 8) sinon → Referral · site externe. CHANGEMENT PAR RAPPORT AU 30/09 : l'export du 30/09 classait selon la page vue avant Conseil ; la règle du 02/10 lit l'entrée de session. Une arrivée directe sur /sign-in sans site précédent est classée Direct et non origine perdue : la version de la règle qui la rangeait en origine perdue contredisait un cas vérifié à la main et basculait 18 clients de Direct vers origine perdue. Les webmails SFR et Orange, classés Referral par PostHog, passent en Email · sans UTM : d'où « site externe » à 0. Le rattachement de l'UTM à la page vue /conseil, et pas seulement à l'entrée de session, ajoute 5 clients en Email · campagne AE : leur UTM a survécu à la redirection de connexion. LIMITE : le croisement se fait sur l'e-mail ; un client dont l'e-mail diffère entre HubSpot et PostHog n'est pas retrouvé (au moins un cas vérifié). AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
- },
- "rdv_exclus": [
-  {
-   "meeting_id": "522554056911",
-   "reserve_le": "2026-09-28",
-   "verifie_le": "2026-10-01",
-   "motif": "Lien de réservation AE envoyé par erreur par le CS pour reprogrammer un rendez-vous de renouvellement non honoré. Sujet hors assurance emprunteur."
-  },
-  {
-   "meeting_id": "519698150636",
-   "reserve_le": "2026-09-14",
-   "verifie_le": "2026-10-01",
-   "motif": "Lien de la signature AE utilisé pour un rendez-vous anti-churn. Sujet hors assurance emprunteur."
-  }
- ]
+#!/usr/bin/env python3
+"""
+Suivi campagne Assurance Emprunteur · refresh.py
+Alimente data.json depuis HubSpot.
+
+CORRECTIF CENTRAL DE CETTE VERSION — VAGUES DE RELANCE
+------------------------------------------------------
+Le 11/09/2026, 1 070 contacts déjà shootés en août ont été relancés sur 4 listes
+et 4 nouvelles séquences. Trois défauts du collecteur sont apparus, mesurés en
+direct entre deux runs espacés de 95 minutes :
+
+  * Les RDV n'avaient AUCUNE borne haute. Un RDV pris des mois après l'envoi
+    restait imputé au batch d'origine. Dans les 2 h suivant l'envoi des
+    relances, le batch du 13 août a gagné 7 RDV alors que sa fenêtre était
+    close depuis le 03/09. CORRIGÉ : borne haute J+21, comme les dossiers.
+
+  * Les ouvertures et les clics reposent sur hs_sales_email_last_opened et
+    hs_sales_email_last_clicked, des propriétés « dernière fois » sans
+    mémoire. Une ouverture de relance écrase la date d'août et reste comptée
+    comme une ouverture d'août. Le total campagne est passé de 1 214 à 1 236
+    ouvertures en 95 minutes. CORRIGÉ : les valeurs d'août sont FIGÉES dans
+    cohorts.json (frozen_metrics) et ne sont plus recalculées.
+
+  * Les dossiers de la relance étaient invisibles : seul deal_engages()
+    appliquait ATTRIB_DAYS, et les fenêtres d'août étaient fermées.
+    CORRIGÉ : fenêtre par contact, cf. ci-dessous.
+
+MODÈLE DE FENÊTRE PAR CONTACT
+------------------------------
+Un contact relancé dispose de DEUX fenêtres de 21 jours : celle de son batch
+initial (v1) et celle de sa relance (v2). Un événement compte s'il tombe dans
+l'une OU l'autre, et il est étiqueté. Deux raisons de ne pas simplement
+décaler la fenêtre :
+
+  * une activation réelle d'août ne doit pas disparaître parce que le contact
+    a été relancé un mois plus tard ;
+  * fusionner les deux en une fenêtre unique de 58 jours détruirait la
+    comparabilité entre cohortes que ATTRIB_DAYS sert à garantir.
+
+Le rattachement d'un contact relancé à sa cohorte est CALCULÉ, pas déclaré :
+les listes de relance sont construites sur un statut de séquence, pas sur
+l'appartenance à un batch, et un mapping en dur serait faux pour une partie
+des contacts.
+
+Une relance n'est JAMAIS une cohorte. Ses contacts sont déjà dans le
+dénominateur de leur batch ; les compter deux fois ferait baisser tous les
+taux mécaniquement.
+
+BIAIS DE SÉLECTION À NE PAS OUBLIER
+------------------------------------
+Les 4 listes de relance ne contiennent QUE des contacts non activés. Le taux
+d'activation d'une vague 2 n'est donc pas comparable à celui d'un batch
+initial, dont le dénominateur incluait tout le monde. Toute activation de
+vague 2 est un gain marginal pur.
+
+CORRECTIF DE LA VERSION PRÉCÉDENTE, TOUJOURS VALABLE
+----------------------------------------------------
+Les séquences sont RÉUTILISÉES d'un batch à l'autre : 841303267 a servi le RP
+du 5 août, celui du 13 août puis le batch du 10 septembre. Toute métrique est
+attribuée par APPARTENANCE À LA LISTE de la cellule. La séquence ne sert qu'à
+restreindre le périmètre des e-mails collectés.
+
+Prérequis
+  export HUBSPOT_TOKEN="pat-eu1-..."
+  pip install requests
+
+Portées de l'application privée — LECTURE SEULE
+  crm.objects.contacts.read     membres des listes
+  crm.lists.read                filtre d'appartenance
+  sales-email-read              objets EMAIL
+  crm.objects.meetings.read     RDV  (couvert par sales-email-read sur ce portail)
+  crm.objects.deals.read        dossiers courtage
+"""
+import os
+import json
+import time
+import datetime as dt
+from urllib.parse import unquote
+
+import requests
+
+TOKEN = os.environ["HUBSPOT_TOKEN"]
+BASE = "https://api.hubapi.com"
+H = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+CONTACTS = "/crm/v3/objects/contacts/search"
+EMAILS = "/crm/v3/objects/emails/search"
+MEETINGS = "/crm/v3/objects/meetings/search"
+CALLS = "/crm/v3/objects/calls/search"
+DEALS = "/crm/v3/objects/deals/search"
+CHUNK = 100          # taille de lot pour les filtres associations.contact
+
+# ---------------------------------------------------------------- engagement
+# Fenêtre d'attribution. Sans borne de fin, un cumul ouvert monte à chaque
+# rafraîchissement et deux cohortes d'âge différent cessent d'être comparables.
+#
+# NON CALIBRÉ. Les courbes de réponse cumulées relevées le 11/09 montrent que
+# les deux batchs d'août MONTAIENT ENCORE à J+21 (5 août : 9,28 → 9,44 → 9,60 % ;
+# 13 août : 7,14 → 7,43 → 8,00 %). La fenêtre coupe en pleine pente et
+# sous-estime les conversions : 30 à 45 jours serait plus juste. Non modifié
+# pour l'instant, car changer ce chiffre réécrit rétroactivement tout
+# l'historique déjà communiqué.
+# AUCUNE LIMITE DE DÉLAI (None). Décision de Clémence, 25/09/2026. Un RDV ou une simulation compte quel que soit le délai après
+# l'envoi ; seule la borne basse subsiste, rien d'antérieur à l'envoi.
+# CE QUE ÇA COÛTE, et qui doit être dit à chaque publication :
+#   - les cohortes ne sont plus comparables : une cohorte ancienne accumule
+#     plus longtemps et gagne toujours ;
+#   - tout chiffre publié remonte au fil du temps.
+# HISTORIQUE : cumul ouvert jusqu'au 22/08, J+21 du 22/08 au 25/09, puis
+# aucune borne. Mettre un entier ici rétablit une fenêtre.
+ATTRIB_DAYS = None
+
+# Batch de rattrapage : 10 transactions créées en 20 secondes le 06/08, mêlant
+# contacts enrôlés et contacts jamais touchés par une séquence. Import
+# d'antériorité, pas de l'activité. 4 concernent des contacts de cohorte.
+BACKFILL = [("2026-08-06T15:25:00Z", "2026-08-06T15:26:00Z"),
+            ("2026-09-16T09:57:00Z", "2026-09-16T09:58:00Z"),
+            ("2026-09-16T11:00:00Z", "2026-09-16T11:03:00Z")]
+
+# Marqueur de simulation réelle. Écrit par n8n depuis last_event_at, À LA
+# CRÉATION COMME À LA MISE À JOUR : un dossier ouvert à la main pendant une
+# panne puis repris par le flux le porte quand même. C'est exactement ce que
+# hs_object_source_label ne sait pas faire — un deal CRM_UI peut cacher une
+# vraie simulation.
+# NE PAS confondre avec last_step_id, qui vient du step_id du DERNIER event et
+# n'est renseignée que si cet event est une complétion d'étape : 3 transactions
+# sur 394 au 17/09, contre 245 pour last_step_date.
+# ÉTAPES QUI PROUVENT QUE LE CLIENT A AGI.
+# resolveDealStageId, dans le flow n8n « Sync Courtage AE x HubSpot » :
+#   étape 'ajout-emprunteurs' franchie  -> simulation_completed
+#   étape 'intro' franchie              -> simulation_started
+#   aucune étape franchie               -> optimization_activated
+# Donc optimization_activated signifie EXACTEMENT « le client a accès au
+# simulateur et n'a rien rempli ». Ce n'est pas une activation.
+# simulation_started correspond littéralement à « a rempli au minimum le
+# premier champ » de la définition du 17/09.
+# Nombre d'étapes réellement franchies dans le simulateur, écrit par n8n depuis
+# completed_steps. C'est le marqueur le plus sûr : il vient du produit, et il
+# survit à un déplacement d'étape manuel — un dossier passé en
+# optimization_declined le porte toujours.
+# COUVERTURE INCOMPLÈTE au 28/09 : le flow ne repasse que sur les optimisations
+# actives, 256 transactions ont encore la propriété vide dont 68 sur une étape
+# de parcours. D'où la règle additive ci-dessous, transitoire : dès que le
+# rattrapage est complet, l'étape pourra être retirée du test.
+ETAPES_PROP = "ae_etapes_simu"
+
+# Comptes internes. Ils remontent dans la question Metabase 4687 et créent de
+# vraies transactions de test dans le pipe. Exclus partout, campagne comme
+# global : henri.chabrand@nopillo.com était compté parmi les activés.
+DOMAINE_INTERNE = "@nopillo.com"
+
+SIMU_STAGES = {
+    "5363445963",   # simulation_started
+    "5363445964",   # simulation_completed
+    "5783848147",   # simulation_ready
+    "5363445965",   # offer_viewed
+    "5363445966",   # offer_accepted
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
 }
+# Étapes de SOUSCRIPTION : le client ne simule plus, il monte un dossier.
+# C'est le bas de funnel, celui qui précède le revenu.
+STAGE_PROCESS = {
+    "5363445967",   # process_started
+    "5378179265",   # process_completed
+}
+
+# Profondeur du parcours. Une entrée par étape RÉELLE du pipe, nommée comme
+# dans HubSpot — aucun regroupement, aucun libellé inventé. Un contact est
+# rangé au niveau le PLUS AVANCÉ qu'il a atteint, tous dossiers confondus.
+# L'ordre suit celui du pipe.
+NIVEAU_PARCOURS = [
+    (1, "simulation_started",   "5363445963"),
+    (2, "simulation_completed", "5363445964"),
+    (3, "simulation_ready",     "5783848147"),
+    (4, "offer_viewed",         "5363445965"),
+    (5, "offer_accepted",       "5363445966"),
+    (6, "process_started",      "5363445967"),
+    (7, "process_completed",    "5378179265"),
+]
+NIVEAU_LABEL = {r: lbl for r, lbl, _ in NIVEAU_PARCOURS}
+ORDRE_FIN = [f"{pref}{lbl}" for _, lbl, _ in reversed(NIVEAU_PARCOURS)
+             for pref in ("RDV + ", "")] + ["RDV seul"]
+
+
+def niveau_de(stage):
+    """Rang du parcours atteint par ce dossier, 0 si aucune étape franchie."""
+    for rang, _, sid in NIVEAU_PARCOURS:
+        if stage == sid:
+            return rang
+    return 0
+
+
+# Toutes les phases du pipe, dans l'ordre. Sert au décompte « où en sont les
+# transactions ». Les deux dernières ne sont pas des étapes de parcours :
+# l'accès au simulateur le précède, le refus le termine.
+PHASES_PIPE = [
+    ("5363445963", "simulation_started"),
+    ("5363445964", "simulation_completed"),
+    ("5783848147", "simulation_ready"),
+    ("5363445965", "offer_viewed"),
+    ("5363445966", "offer_accepted"),
+    ("5363445967", "process_started"),
+    ("5378179265", "process_completed"),
+    ("5363445962", "optimization_activated"),
+    ("5363445968", "optimization_declined"),
+]
+
+STAGE_ACTIVATED = "5363445962"   # accès au simulateur, aucune étape
+STAGE_DECLINED = "5363445968"    # étape terminale pilotée par le CS
+
+# NE PAS UTILISER COMME MARQUEUR DE SIMULATION. last_step_date vient de
+# last_event_at, et un event existe dès l'activation de l'optimisation :
+# 153 optimisations courtage AE ont des events sans aucune étape complétée.
+# La propriété prouve qu'il s'est passé quelque chose, pas que le client a
+# rempli un champ. Conservée pour information seulement.
+# Date de la PREMIÈRE étape franchie dans le simulateur, écrite par n8n et
+# jamais écrasée. C'est la seule date qui dit quand le client a réellement agi.
+# POURQUOI ELLE EST INDISPENSABLE : le collecteur datait une activation par
+# simulation à la CRÉATION de la transaction. Or n8n a été en panne du 13/08 au
+# 16/09 : 195 dossiers créés le 16/09 portent une date de simulation en juillet
+# ou août. Sans cette propriété, le graphe hebdomadaire affichait un pic
+# artificiel à la semaine du 14 septembre.
+# ELLE NE DIT PAS QUE LE CLIENT A AGI : une optimisation ouverte sans étape
+# franchie en porte une aussi. Seul ae_etapes_simu >= 1 prouve une action.
+DEBUT_SIMU_PROP = "ae_date_debut_simu"
+
+SIMU_PROP = "last_step_date"
+
+# Réservation en self-service via un lien public. Distingue un RDV que le
+# client a posé lui-même d'un RDV calé par un commercial au téléphone.
+MEETING_PUBLIC = "MEETINGS_PUBLIC"
+
+# RÉUNIONS EXCLUES DE L'ACTIVATION, depuis le 01/10. Faux positifs vérifiés à
+# la main : un RDV au bon intitulé et chez le bon commercial, mais dont le sujet
+# n'était PAS l'assurance emprunteur. La liste vit dans cohorts.json
+# (rdv_exclus), par identifiant de RÉUNION et non de contact : si le même
+# client simule ou prend un vrai RDV AE plus tard, il redevient activé.
+# Rempli par build() ; vide tant que la config n'est pas chargée.
+RDV_EXCLUS = set()
+
+# Transactions créées par un workflow HubSpot PARCE QU'un RDV existe, et non
+# parce qu'un client a fait quelque chose. Elles ne prouvent rien : le RDV est
+# déjà compté via l'objet MEETING. Les compter comme dossier reviendrait à
+# compter deux fois le même signal, et pire, à activer un contact dont le RDV
+# est hors fenêtre au motif qu'une carte a été créée depuis.
+# 43 transactions créées le 24/09 à 17h28, en moins d'une seconde.
+ORIGINE_RDV_SANS_SIMU = "rdv_sans_simu"
+
+# Owner IDs des commerciaux habilités sur la campagne. Ce sont des Owner IDs,
+# PAS des User IDs — HubSpot maintient les deux et ils ne sont pas
+# interchangeables.
+# Qui a saisi la transaction. Les identifiants sont des User IDs, distincts des
+# Owner IDs : Clara et Mathieu sont déduits de l'appariement avec le
+# propriétaire des transactions, pas confirmés par la table utilisateurs, qui
+# n'est pas interrogeable via l'API.
+# RÉSERVE DE LECTURE : le créateur dit qui a SAISI, pas qui a PROVOQUÉ. Une
+# fiche ouverte à la main qui porte ae_etapes_simu >= 1 signifie que le
+# commercial a créé la carte ET que le client a réellement simulé de son côté.
+CREATEURS = {
+    "63030630": "Team AE · Clara Baekelandt",
+    "48921115": "Team AE · Mathieu d'Ornellas",
+    "75453551": "Team AE · Lilian Maudet",
+    "33766697": "Marc Chevalier · CGP",
+    "31714049": "Autre utilisateur",
+}
+CREATEUR_AUTO = {
+    "INTEGRATION": "Simulation produit · n8n",
+    "AUTOMATION_PLATFORM": "Workflow HubSpot · RDV sans simu",
+}
+
+# Origine d'un rendez-vous, dans l'ordre d'application. Les trois premières
+# reposent sur l'UTM porté par hs_analytics_last_url : c'est un CLIC PROUVÉ.
+# Les suivantes sont des présomptions ou des constats de mode de réservation.
+# PLANCHER ASSUMÉ : hs_analytics_last_url est une propriété « dernière page ».
+# Si le client navigue après avoir réservé, l'URL disparaît et le rendez-vous
+# retombe dans une catégorie plus faible. Les catégories UTM sont donc un
+# minimum, jamais un compte exact — 19 contacts sur 180 en portent une.
+LIEN_RDV = "roundrobinassuranceemprunteur"
+RDV_ORIGINES = [
+    ("signature_rdv", "utm_campaign=signature_rdv"),
+    ("signature", "utm_medium=signature"),
+    ("nps", "utm_medium=nps"),
+]
+
+AE_MEETING_OWNERS = ["1722214870",  # Clara Baekelandt
+                     "75453551",    # Lilian Maudet
+                     "650299108"]   # Mathieu d'Ornellas
+
+# Portail HubSpot, pour les liens de vérification imprimés dans les logs.
+PORTAL = "26173790"
+
+
+# ---------------------------------------------------------------- utilitaires
+def post(path, body):
+    """POST avec retente exponentielle sur les limites de débit HubSpot."""
+    for attempt in range(5):
+        r = requests.post(BASE + path, headers=H, json=body, timeout=45)
+        if r.status_code == 429:
+            time.sleep(2 ** attempt)
+            continue
+        r.raise_for_status()
+        return r.json()
+    r.raise_for_status()
+
+
+def pcts(n, d):
+    return f"{100 * n / d:.1f} %".replace(".", ",") if d else "—"
+
+
+def num(v):
+    """Entier tolérant : HubSpot renvoie parfois '1.0' là où on attend 1."""
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return 0
+
+
+def to_dt(v):
+    """Date tolérante : millisecondes epoch ou chaîne ISO. None si illisible."""
+    if v in (None, ""):
+        return None
+    try:
+        return dt.datetime.fromtimestamp(float(v) / 1000, dt.timezone.utc)
+    except (TypeError, ValueError):
+        pass
+    try:
+        d = dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+        return d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)
+    except ValueError:
+        return None
+
+
+def iso(v):
+    """Chaîne ISO d'un champ sent_at de config."""
+    return dt.datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+
+
+def count_active(list_id, sequence_ids):
+    """Contacts encore activement enrôlés dans UNE SÉQUENCE DE LA CAMPAGNE.
+
+    Le filtre sur hs_sequences_is_enrolled seul ne suffit pas : cette propriété
+    vaut vrai pour n'importe quelle séquence du portail.
+
+    On croise donc avec hs_latest_sequence_enrolled. RÉSERVE AGGRAVÉE PAR LES
+    RELANCES : cette propriété ne garde que la DERNIÈRE séquence. Depuis le
+    11/09, les 1 070 contacts relancés pointent vers une séquence de relance,
+    donc leurs cellules d'origine basculent toutes en TERMINE. Pour août c'est
+    juste — les envois sont finis — mais le mécanisme est aveugle et non un
+    constat de fin réelle.
+    """
+    return count_lists([list_id], [
+        {"propertyName": "hs_sequences_is_enrolled", "operator": "EQ", "value": "true"},
+        {"propertyName": "hs_latest_sequence_enrolled", "operator": "IN",
+         "values": [str(s) for s in sequence_ids]},
+    ])
+
+
+def count_lists(list_ids, extra=None):
+    """Contacts appartenant à l'une des listes, avec un filtre additionnel."""
+    filters = [{"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                "values": [str(x) for x in list_ids]}]
+    if extra:
+        filters += (extra if isinstance(extra, list) else [extra])
+    body = {"filterGroups": [{"filters": filters}],
+            "properties": ["hs_object_id"], "limit": 1}
+    return post(CONTACTS, body).get("total", 0)
+
+
+def list_members(list_id):
+    """IDs des contacts d'une liste, avec leur propriétaire.
+
+    On ne demande que l'ID et le propriétaire : aucun nom, aucun e-mail,
+    aucun téléphone ne transite ni n'est écrit dans data.json.
+    """
+    out, after = [], None
+    while True:
+        body = {
+            "filterGroups": [{"filters": [
+                {"propertyName": "hs_crm_search.ilsListIds", "operator": "IN",
+                 "values": [str(list_id)]},
+            ]}],
+            "properties": ["hubspot_owner_id", "email", "hs_sales_email_last_replied",
+                           "hs_sales_email_last_opened", "hs_sales_email_last_clicked"],
+            "limit": CHUNK,
+        }
+        if after:
+            body["after"] = after
+        d = post(CONTACTS, body)
+        for r in d.get("results", []):
+            p = r["properties"]
+            if (p.get("email") or "").lower().endswith(DOMAINE_INTERNE):
+                continue
+            out.append((r["id"], p.get("hubspot_owner_id"),
+                        p.get("hs_sales_email_last_replied"),
+                        p.get("hs_sales_email_last_opened"),
+                        p.get("hs_sales_email_last_clicked")))
+        after = (d.get("paging") or {}).get("next", {}).get("after")
+        if not after:
+            return out
+
+
+def owners_map():
+    r = requests.get(BASE + "/crm/v3/owners/", headers=H,
+                     params={"limit": 200}, timeout=30)
+    r.raise_for_status()
+    return {o["id"]: (f'{o.get("firstName","")} {o.get("lastName","")}'.strip()
+                      or o.get("email", "?"))
+            for o in r.json().get("results", [])}
+
+
+# ------------------------------------------------------------- vagues
+def build_relance_map(cfg):
+    """contact_id -> date du DERNIER envoi de relance qui l'a touché.
+
+    Rattachement CALCULÉ : on ne déclare nulle part qu'une liste de relance
+    appartient à telle cohorte. On collecte les contacts, et chacun est
+    retrouvé plus bas dans la cellule à laquelle il appartient déjà. Les
+    listes de relance sont construites sur un statut de séquence — « a fini
+    sa campagne », « a été interrompu » — et non sur l'appartenance à un
+    batch : un mapping en dur serait faux pour une partie des contacts.
+
+    Le max() protège le cas d'un contact présent dans deux listes de relance :
+    c'est le dernier envoi qui ouvre sa fenêtre.
+    """
+    out = {}
+    for r in cfg.get("relances", []):
+        when = iso(r["sent_at"])
+        for m in list_members(r["list_id"]):
+            cid = m[0]
+            if cid not in out or when > out[cid]:
+                out[cid] = when
+    return out
+
+
+def windows_for(cid, cohort_send, rmap):
+    """Fenêtres d'attribution d'un contact, de la plus ancienne à la plus récente.
+
+    [("v1", envoi du batch, +21j)] et, si le contact a été relancé,
+    [("v2", envoi de la relance, +21j)] en plus.
+
+    Deux fenêtres disjointes plutôt qu'une seule élargie : une activation
+    réelle d'août ne doit pas disparaître parce que le contact a été relancé,
+    et une fenêtre unique de 58 jours détruirait la comparabilité entre
+    cohortes.
+    """
+    def fin(debut):
+        return (None if ATTRIB_DAYS is None
+                else debut + dt.timedelta(days=ATTRIB_DAYS))
+
+    w = [("v1", cohort_send, fin(cohort_send))]
+    r = rmap.get(cid)
+    if r and r > cohort_send:
+        w.append(("v2", r, fin(r)))
+    return w
+
+
+def in_windows(when, wins):
+    """Étiquette de la fenêtre contenant cette date, la plus récente d'abord."""
+    if not when:
+        return None
+    for tag, start, end in reversed(wins):
+        if start <= when and (end is None or when <= end):
+            return tag
+    return None
+
+
+# ------------------------------------------------------------------- e-mails
+def emails_for(contact_ids, sequence_ids, since_ms):
+    """Envois, ouvertures, clics et réponses des e-mails de séquence reçus par
+    ces contacts précisément.
+
+    Le double filtre est ce qui corrige le bug : hs_sequence_id restreint aux
+    séquences de la campagne, associations.contact restreint aux contacts de la
+    cellule. Sans le second, un batch ultérieur partageant la séquence viendrait
+    gonfler les chiffres.
+    """
+    agg = dict(sent=0, bounced=0, opens=0, clicks=0)
+    steps = {}
+    if not contact_ids:
+        return agg, []
+    for i in range(0, len(contact_ids), CHUNK):
+        chunk = contact_ids[i:i + CHUNK]
+        after = None
+        while True:
+            body = {
+                "filterGroups": [{"filters": [
+                    {"propertyName": "hs_sequence_id", "operator": "IN",
+                     "values": [str(s) for s in sequence_ids]},
+                    {"propertyName": "associations.contact", "operator": "IN",
+                     "values": chunk},
+                    {"propertyName": "hs_timestamp", "operator": "GTE",
+                     "value": str(since_ms)},
+                ]}],
+                "properties": ["hs_email_status", "hs_email_subject",
+                               "hs_email_open_count", "hs_email_click_count",
+                               "hs_timestamp"],
+                "limit": 200,
+            }
+            if after:
+                body["after"] = after
+            d = post(EMAILS, body)
+            for e in d.get("results", []):
+                p = e["properties"]
+                status = (p.get("hs_email_status") or "").upper()
+                if status not in ("SENT", "BOUNCED"):
+                    continue
+                agg["sent"] += 1
+                subj = p.get("hs_email_subject") or "(sans objet)"
+                st = steps.setdefault(subj, dict(sent=0, opens=0, clicks=0))
+                st["sent"] += 1
+                if status == "BOUNCED":
+                    agg["bounced"] += 1
+                    continue
+                op = 1 if num(p.get("hs_email_open_count")) > 0 else 0
+                cl = 1 if num(p.get("hs_email_click_count")) > 0 else 0
+                agg["opens"] += op
+                agg["clicks"] += cl
+                st["opens"] += op
+                st["clicks"] += cl
+            after = (d.get("paging") or {}).get("next", {}).get("after")
+            if not after:
+                break
+    ordered = sorted(steps.items(), key=lambda x: -x[1]["sent"])
+    return agg, [dict(order=i + 1, subject=k, **v)
+                 for i, (k, v) in enumerate(ordered)]
+
+
+# ------------------------------------------------------- RDV et engagement
+def _objects_assoc(path, contact_ids, extra_filters, props):
+    """Objets associés à ces contacts, AVEC leurs propriétés."""
+    out = {}
+    for i in range(0, len(contact_ids), CHUNK):
+        chunk = contact_ids[i:i + CHUNK]
+        after = None
+        while True:
+            filters = [{"propertyName": "associations.contact",
+                        "operator": "IN", "values": chunk}] + extra_filters
+            body = {"filterGroups": [{"filters": filters}],
+                    "properties": props, "limit": 200}
+            if after:
+                body["after"] = after
+            d = post(path, body)
+            for r in d.get("results", []):
+                out[r["id"]] = r["properties"]
+            after = (d.get("paging") or {}).get("next", {}).get("after")
+            if not after:
+                break
+    return out
+
+
+def _contacts_of(object_type, object_ids):
+    """Contacts associés à chaque objet, via l'API associations v4."""
+    m = {}
+    ids = list(object_ids)
+    for i in range(0, len(ids), CHUNK):
+        d = post(f"/crm/v4/associations/{object_type}/contacts/batch/read",
+                 {"inputs": [{"id": o} for o in ids[i:i + CHUNK]]})
+        for r in d.get("results", []):
+            m[r["from"]["id"]] = [str(t["toObjectId"]) for t in r["to"]]
+    return m
+
+
+def in_backfill(d):
+    """La date tombe-t-elle dans une rafale de rattrapage n8n ?
+
+    Un rattrapage importe de l'ANTÉRIORITÉ, pas de l'activité. Deux rafales
+    connues : 06/08 15h25-15h26 (10 transactions) et 16/09 11h00-11h03
+    (~190 créations et ~248 mises à jour, reprise du flux après 33 jours
+    d'arrêt). La borne haute du 16/09 est à 11h03 et non 11h02 : la rafale
+    s'est prolongée jusqu'à 11:02:04, et deux transactions ouvertes le 5 juin
+    y recevaient leur mouvement d'étape — comptées à tort comme activations
+    de septembre. Vérifié le 17/09 par requête directe sur le pipe.
+
+    L'exclusion porte sur CHAQUE date prise isolément, plus sur la transaction
+    entière comme avant : un dossier créé pendant la rafale mais réellement
+    déplacé d'étape trois jours plus tard reste une activation légitime. Sans
+    ce changement, la clause « déplacé d'étape dans la fenêtre » comptait les
+    248 mouvements du rattrapage du 16/09 comme autant d'activations.
+    """
+    if not d:
+        return False
+    return any(to_dt(a) <= d < to_dt(b) for a, b in BACKFILL)
+
+
+def deal_engages(props, wins):
+    """Étiquette de vague si la transaction entre dans une fenêtre, sinon None.
+
+    AUCUN filtre sur dealstage, volontairement : les transactions remontées
+    par n8n sautent des étapes, une étape absente ne prouve rien.
+
+    Deux bornes, en OU :
+      - createdate : dossier ouvert pendant la fenêtre ;
+      - hs_v2_date_entered_current_stage : dernier mouvement d'étape, ce qui
+        rattrape les dossiers ouverts AVANT la campagne mais réactivés.
+
+    Réserve : la propriété ne garde que le DERNIER mouvement. Un dossier
+    déplacé le 15/08 puis le 25/08 n'expose que le 25/08.
+
+    REPLI SUR LES DATES PRODUIT, depuis le 01/10. Quand une date HubSpot tombe
+    dans une rafale de rattrapage, elle ne dit rien de l'activité : elle a
+    été écrite par la reprise du flux. La transaction n'était pourtant pas
+    forcément ancienne : n8n était en panne du 13/08 au 16/09, et les clients
+    qui ont simulé pendant la panne ont TOUS reçu leur dossier le 16/09 à 11h.
+    Les ignorer sortait de la campagne des activations réelles (cas vérifié :
+    contact de la liste 14951, simulation le 15/09, dossier créé le 16/09
+    11:00:19, compté hors campagne). On teste alors les dates écrites par le
+    produit : ae_date_debut_simu (début du parcours) puis last_step_date
+    (dernière étape, qui rattrape un dossier ancien réactivé). Une simulation
+    antérieure à l'envoi reste hors fenêtre : le repli ne rachète que ce que
+    le rattrapage masquait.
+    Ces deux propriétés sont au JOUR près. Comparaison au jour : une
+    simulation le jour même de l'envoi compte, même si elle a eu lieu avant
+    l'heure d'envoi.
+    """
+    masque = False
+    for key in ("createdate", "hs_v2_date_entered_current_stage"):
+        d = to_dt(props.get(key))
+        if in_backfill(d):
+            masque = True
+            continue
+        tag = in_windows(d, wins)
+        if tag:
+            return tag
+    if masque:
+        for key in (DEBUT_SIMU_PROP, SIMU_PROP):
+            tag = in_windows_jour(to_dt(props.get(key)), wins)
+            if tag:
+                return tag
+    return None
+
+
+def in_windows_jour(when, wins):
+    """Comme in_windows, mais au jour près, pour les propriétés sans heure."""
+    if not when:
+        return None
+    jour = when.date()
+    for tag, start, end in reversed(wins):
+        if start.date() <= jour and (end is None or jour <= end.date()):
+            return tag
+    return None
+
+
+def first_outbound_call(contact_ids, since_ms):
+    """Premier appel SORTANT loggé pour chaque contact, après l'envoi du batch.
+
+    Marqueur de prise en main commerciale. On garde le PREMIER : la question
+    d'attribution est de savoir si un signal marketing a précédé le premier
+    contact sortant, pas le dernier.
+    """
+    out = {}
+    if not contact_ids:
+        return out
+    calls = _objects_assoc(
+        CALLS, contact_ids,
+        [{"propertyName": "hs_call_direction", "operator": "EQ", "value": "OUTBOUND"},
+         {"propertyName": "hs_timestamp", "operator": "GTE", "value": str(since_ms)}],
+        ["hs_timestamp", "hs_call_direction"])
+    cmap = _contacts_of("calls", list(calls.keys()))
+    for kid, p in calls.items():
+        when = to_dt(p.get("hs_timestamp"))
+        if not when:
+            continue
+        for c in cmap.get(kid, []):
+            if c not in out or when < out[c]:
+                out[c] = when
+    return out
+
+
+def attribute(cid, simulated, replies, rdv_pub, calls, simu_at=None):
+    """Origine de l'activation d'un contact : marketing, sales, ou ni l'un ni l'autre.
+
+    RÈGLE : le PREMIER qui agit l'emporte. Un signal du client — simulation,
+    réponse, RDV réservé — antérieur au premier appel sortant donne marketing.
+    Sinon, un appel sortant loggé donne sales.
+
+    LA SIMULATION EST DATÉE depuis le 30/09, grâce à ae_date_debut_simu. Avant,
+    faute de date, elle l'emportait systématiquement : un client appelé le 12 et
+    simulant le 15 comptait en marketing. Le sales était donc sous-estimé.
+    Une simulation SANS date conserve l'ancien comportement et prime, faute de
+    pouvoir la situer.
+
+    PIÈGE SUR LE RDV : on compare la date de RÉSERVATION (hs_createdate) au
+    premier appel, JAMAIS la date de tenue. Réservation le 11, rendez-vous le
+    15, appel le 15 à l'heure du rendez-vous : avec la date de tenue, le contact
+    bascule à tort en sales — 5 erreurs sur 57 venaient de là.
+
+    GRANULARITÉ : ae_date_debut_simu est au JOUR, pas à l'heure. Un client
+    appelé et simulant le même jour est indépartageable ; il part en marketing,
+    par cohérence avec le traitement d'une simulation sans date.
+    """
+    simu_at = simu_at or {}
+    call = calls.get(cid)
+    d_simu = simu_at.get(cid)
+
+    if cid in simulated and (call is None or d_simu is None
+                             or d_simu.date() <= call.date()):
+        return ("marketing", "simulation")
+
+    sigs = []
+    if replies.get(cid):
+        sigs.append((replies[cid], "reponse"))
+    if rdv_pub.get(cid):
+        sigs.append((rdv_pub[cid], "rdv_public"))
+    if sigs:
+        sigs.sort(key=lambda x: x[0])
+        when, kind = sigs[0]
+        if call is None or when < call:
+            return ("marketing", kind)
+    if call:
+        return ("sales", None)
+    if cid in simulated:
+        return ("marketing", "simulation")
+    return ("non_attribuable", None)
+
+
+def qualify(cid, bucket, sub, mset):
+    """Statut de qualification d'un contact activé : confirmé, ou en attente.
+
+    Définition arrêtée le 17/09/2026 avec Clémence. Un client est un lead dans
+    trois cas, et uniquement dans ces trois cas :
+      1. il prend lui-même un créneau, suite à nos e-mails ou depuis l'app ;
+      2. il démarre son parcours de son propre chef ;
+      3. outbound : on l'a eu au téléphone, ça peut l'intéresser, ET il veut
+         qu'on organise un RDV pour en parler.
+
+    LECTURE DU CAS 3 : le résultat attendu d'un outbound qualifié est un RDV
+    organisé. Un contact qui a un rendez-vous posé par un commercial a donc,
+    par construction, franchi les deux conditions — il a été joint, et il a
+    voulu qu'on lui cale un créneau. Il est CONFIRMÉ.
+    Réserve : rien dans HubSpot ne dit si le créneau a été honoré. La règle
+    porte sur l'intention exprimée au téléphone, pas sur la tenue du RDV.
+
+    RESTE EN ATTENTE : les contacts qui n'ont qu'une fiche ouverte dans
+    HubSpot, sans aucun rendez-vous. On ne sait pas si l'appel a produit un
+    accord ou un refus.
+    """
+    if sub == "rdv_public":
+        return "certain", "rdv_client"      # cas 1
+    if sub == "simulation":
+        return "certain", "parcours"        # cas 2
+    if cid in mset:
+        return "certain", "rdv_sales"       # cas 3, RDV organisé
+    return "attente", "carte_seule"
+
+
+def empty_qual():
+    return dict(certain=0, attente=0, certain_rdv_client=0, certain_parcours=0,
+                certain_rdv_sales=0, attente_carte_seule=0)
+
+
+def empty_attr():
+    return dict(marketing=dict(total=0, simulation=0, reponse=0, rdv_public=0),
+                sales=dict(total=0), non_attribuable=dict(total=0))
+
+
+def add_attr(acc, bucket, sub):
+    acc[bucket]["total"] += 1
+    if bucket == "marketing" and sub:
+        acc["marketing"][sub] += 1
+
+
+def business_hours_between(a, b):
+    """Heures ouvrées (lundi-vendredi) entre deux instants. Jours fériés ignorés."""
+    if not a or b <= a:
+        return 0
+    h, cur = 0, a.replace(minute=0, second=0, microsecond=0)
+    while cur < b and h < 24 * 30:
+        if cur.weekday() < 5:
+            h += 1
+        cur += dt.timedelta(hours=1)
+    return h
+
+
+def activation_globale(pipeline, meet_f_global):
+    """Tous les clients activés sur l'assurance emprunteur, campagne ou non.
+
+    MÊME RÈGLE que la campagne : un RDV « emprunteur » posé par les trois
+    commerciaux, ou une simulation réellement commencée. Ce qui saute, c'est
+    l'appartenance aux listes et la borne basse de l'envoi — on compte donc
+    tout l'historique, pas une période.
+
+    À QUOI ÇA SERT : le chiffre de campagne ne dit pas quelle part de
+    l'activation AE elle représente. Sans ce total, personne ne sait si 243
+    contacts sont l'essentiel du sujet ou une fraction.
+
+    RÉSERVE : ce total mélange des clients acquis depuis 2023 avec sept
+    semaines de campagne. Il se lit comme un cumul, jamais comme un taux.
+    """
+    deals = _search_all(DEALS,
+        [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
+        ["dealstage", ETAPES_PROP, DEBUT_SIMU_PROP, "hs_object_source_label",
+         "createdate", "hs_created_by_user_id", "origine_creation_deal_ae"])
+    ok_deals, deal_lib, deals_props = [], {}, {}
+    for d in deals:
+        p = d.get("properties") or {}
+        try:
+            etapes = int(float(p.get(ETAPES_PROP) or 0))
+        except (TypeError, ValueError):
+            etapes = 0
+        rdv_only = p.get("origine_creation_deal_ae") == ORIGINE_RDV_SANS_SIMU
+        if etapes >= 1 or (str(p.get("dealstage") or "") in SIMU_STAGES
+                           and not rdv_only):
+            ok_deals.append(d["id"])
+            deals_props[d["id"]] = p
+            src = str(p.get("hs_object_source_label") or "")
+            deal_lib[d["id"]] = CREATEUR_AUTO.get(src) or CREATEURS.get(
+                str(p.get("hs_created_by_user_id") or ""), "Saisie non identifiée")
+    dmap = _contacts_of("deals", ok_deals)
+    simu = {c for ids in dmap.values() for c in ids}
+    # Comptes internes. L'exclusion faite à la lecture des listes ne couvre PAS
+    # le périmètre global, qui part des transactions : « Test Henri Nopillo »
+    # comptait encore parmi les activés hors campagne au 30/09. On filtre donc
+    # ici aussi, sur les contacts rencontrés par les deux signaux.
+    vus = set(simu)
+    # Association contact -> transactions, sur TOUT le pipe et pas seulement
+    # sur les transactions prouvant une simulation : un client activé par son
+    # seul rendez-vous a bien un dossier, en optimization_activated, et il doit
+    # apparaître dans le décompte par phase.
+    tous = _contacts_of("deals", [d["id"] for d in deals])
+    deals_par_contact = {}
+    for did, cids in tous.items():
+        for cid in cids:
+            deals_par_contact.setdefault(cid, []).append(did)
+    # Qui a saisi, par contact. Un contact avec plusieurs transactions garde la
+    # première rencontrée : on situe l'origine, on ne retrace pas chaque carte.
+    createur_par_contact = {}
+    for did, cids in dmap.items():
+        for cid in cids:
+            createur_par_contact.setdefault(
+                cid, deal_lib.get(did, "Saisie non identifiée"))
+
+    meets = _search_all(MEETINGS, meet_f_global,
+                        ["hs_timestamp", "hs_createdate", "hs_meeting_source"])
+    meets = [m for m in meets if str(m["id"]) not in RDV_EXCLUS]
+    mmap = _contacts_of("meetings", [m["id"] for m in meets])
+    rdv = {c for ids in mmap.values() for c in ids}
+    vus |= rdv
+    mails = _contact_props(sorted(vus), ["email"])
+    internes = {cid for cid, p in mails.items()
+                if (p.get("email") or "").lower().endswith(DOMAINE_INTERNE)}
+    simu -= internes
+    rdv -= internes
+    for cid in internes:
+        createur_par_contact.pop(cid, None)
+    # Source par contact. MEETINGS_PUBLIC l'emporte : un client qui a réservé
+    # lui-même au moins une fois n'est pas « calé par un commercial ».
+    # Date d'activation = PREMIER signal du contact, RDV ou transaction.
+    # Pour le RDV c'est la RÉSERVATION (hs_createdate), pas la tenue : un
+    # créneau posé le 11 et honoré le 25 active le contact le 11.
+    premier = {}
+
+    def _garde(cid, quand):
+        if quand and (cid not in premier or quand < premier[cid]):
+            premier[cid] = quand
+
+    for did, cids in dmap.items():
+        p = deals_props.get(did) or {}
+        # La vraie date de simulation prime sur la date de création de la fiche.
+        d = to_dt(p.get(DEBUT_SIMU_PROP)) or to_dt(p.get("createdate"))
+        for cid in cids:
+            _garde(cid, d)
+
+    src_par_contact = {}
+    for m in meets:
+        booked = to_dt((m.get("properties") or {}).get("hs_createdate"))
+        for cid in mmap.get(m["id"], []):
+            _garde(cid, booked)
+    for m in meets:
+        src = (m.get("properties") or {}).get("hs_meeting_source")
+        for cid in mmap.get(m["id"], []):
+            if src_par_contact.get(cid) != MEETING_PUBLIC:
+                src_par_contact[cid] = src
+
+    return (simu, rdv, createur_par_contact, src_par_contact, premier,
+            deals, deals_par_contact)
+
+
+def _search_all(endpoint, filters, props):
+    """Pagine une recherche sans filtre d'association, jusqu'à épuisement."""
+    out, after = [], None
+    while True:
+        body = {"filterGroups": [{"filters": filters}],
+                "properties": props, "limit": 100}
+        if after:
+            body["after"] = after
+        data = post(endpoint, body)
+        out.extend(data.get("results") or [])
+        after = ((data.get("paging") or {}).get("next") or {}).get("after")
+        if not after:
+            return out
+
+
+def _contact_props(ids, props):
+    """Lit des propriétés de contact par lot de 100."""
+    out = {}
+    for i in range(0, len(ids), 100):
+        data = post("/crm/v3/objects/contacts/batch/read",
+                    {"inputs": [{"id": x} for x in ids[i:i + 100]],
+                     "properties": props})
+        for r in data.get("results", []):
+            out[r["id"]] = r.get("properties") or {}
+    return out
+
+
+def origine_rdv(url, source, dans_campagne):
+    """Catégorie d'origine d'un rendez-vous, première règle qui matche.
+
+    L'UTM prime parce qu'il prouve un clic. Vient ensuite le MODE de
+    réservation, qui est un fait : une réservation publique dit que le client a
+    cliqué un lien, même si on ignore lequel. L'appartenance à une liste ne
+    passe qu'après — c'est la plus faible des trois, le contact a été ciblé,
+    rien ne dit qu'il a réservé depuis l'e-mail.
+
+    « Lien roundrobin AE » est un raccourci assumé : on teste MEETINGS_PUBLIC,
+    qui couvre tous les liens de réservation, l'API HubSpot n'exposant pas
+    l'identifiant de la page. Mesuré le 30/09 : sur 178 réunions publiques,
+    177 portent le titre du roundrobin AE. Le raccourci est donc juste à une
+    réunion près.
+    """
+    u = (url or "").lower()
+    if LIEN_RDV in u:
+        for lib, motif in RDV_ORIGINES:
+            if motif in u:
+                return lib
+    if source == MEETING_PUBLIC:
+        return ("Lien roundrobin AE · ciblé par la campagne" if dans_campagne
+                else "Lien roundrobin AE · hors campagne")
+    if dans_campagne:
+        return "Posé par la Team AE · contact ciblé"
+    if source == "BIDIRECTIONAL_SYNC":
+        return "Posé par la Team AE · hors campagne"
+    return "Origine inconnue"
+
+
+def _ventile(createur_par_contact, perimetre):
+    """Compte les contacts d'un périmètre par auteur de leur transaction."""
+    out = {}
+    for cid in perimetre:
+        lib = createur_par_contact.get(cid)
+        if lib:
+            out[lib] = out.get(lib, 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def _utm(url):
+    """Extrait les 4 paramètres UTM de l'URL du lien de réservation.
+
+    On ne lit la query string QUE si l'URL est celle du lien de rendez-vous.
+    Un UTM présent sur une autre page — article d'aide, e-mail CS — ne dit
+    pas par quoi CE rendez-vous a été déclenché.
+
+    RÉSERVE : les liens de réservation ne portent des UTM que depuis le
+    10/09/2026. Tout rendez-vous antérieur est intraçable par construction.
+    """
+    u = url or ""
+    if LIEN_RDV not in u.lower() or "?" not in u:
+        return {}
+    out = {}
+    for pair in u.split("?", 1)[1].split("&"):
+        if "=" not in pair:
+            continue
+        k, v = pair.split("=", 1)
+        if k.lower() in ("utm_source", "utm_medium", "utm_campaign", "utm_content"):
+            out[k.lower()] = unquote(v)
+    return out
+
+
+def liste_clients(activated, rdv, simu, camp, src_par_contact, premier):
+    """Détail nominatif des clients activés, imprimé dans les LOGS.
+
+    JAMAIS publié dans data.json : ce fichier est servi publiquement par
+    GitHub Pages. Les logs, eux, supposent un accès au dépôt.
+    """
+    props = _contact_props(sorted(activated),
+                           ["firstname", "lastname", "email",
+                            "hs_analytics_last_url"])
+    out = []
+    for cid in sorted(activated):
+        p = props.get(cid) or {}
+        url = p.get("hs_analytics_last_url")
+        u = _utm(url)
+        d = premier.get(cid)
+        nom = " ".join(x for x in (p.get("firstname"), p.get("lastname")) if x)
+        out.append(dict(
+            id=cid, nom=nom or (p.get("email") or cid), email=p.get("email"),
+            camp=cid in camp, rdv=cid in rdv, simu=cid in simu,
+            origine=(origine_rdv(url, src_par_contact.get(cid), cid in camp)
+                     if cid in rdv else None),
+            date=d.date().isoformat() if d else None,
+            utm_source=u.get("utm_source"), utm_medium=u.get("utm_medium"),
+            utm_campaign=u.get("utm_campaign"), utm_content=u.get("utm_content")))
+    return out
+
+
+def _phases_des_actives(activated, deals_par_contact, deals):
+    """Phase de TOUTES les transactions des clients activés.
+
+    Pas seulement celles qui prouvent une simulation : un client activé par son
+    seul rendez-vous a bien un dossier, en optimization_activated, et il doit
+    apparaître ici. Le graphe répond à « où sont les dossiers de mes clients
+    activés », pas à « où sont les simulations ».
+
+    UNITÉ : des TRANSACTIONS. Quelques clients en ont plusieurs, une par bien,
+    donc le total dépasse le nombre de clients activés.
+    """
+    stage = {d["id"]: str((d.get("properties") or {}).get("dealstage") or "")
+             for d in deals}
+    par = {}
+    for cid in activated:
+        for did in deals_par_contact.get(cid, []):
+            st = stage.get(did)
+            if st:
+                par[st] = par.get(st, 0) + 1
+    return [dict(phase=lbl, transactions=par.get(sid, 0))
+            for sid, lbl in PHASES_PIPE if par.get(sid)]
+
+
+def _par_periode(activated, premier, camp, pas):
+    """Activations par jour ou par semaine, campagne contre hors campagne.
+
+    Le pas « semaine » regroupe au LUNDI. Un contact sans date exploitable est
+    ignoré plutôt que rangé dans une période arbitraire : le total du graphe
+    peut donc être inférieur au total activé, l'écart est affiché sous le
+    graphe.
+    """
+    par = {}
+    for cid in activated:
+        d = premier.get(cid)
+        if not d:
+            continue
+        j = d - dt.timedelta(days=d.weekday()) if pas == "semaine" else d
+        cle = j.date().isoformat()
+        e = par.setdefault(cle, {"campagne": 0, "hors": 0})
+        e["campagne" if cid in camp else "hors"] += 1
+    return [dict(periode=k, **v) for k, v in sorted(par.items())]
+
+
+def _origines_rdv(rdv_ids, src_par_contact, camp):
+    """Ventile les contacts ayant un RDV par origine présumée."""
+    urls = _contact_props(rdv_ids, ["hs_analytics_last_url"])
+    out = {}
+    for cid in rdv_ids:
+        lib = origine_rdv((urls.get(cid) or {}).get("hs_analytics_last_url"),
+                          src_par_contact.get(cid), cid in camp)
+        out[lib] = out.get(lib, 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def last_integration_move(pipeline):
+    """Date du dernier signe de vie de n8n sur ce pipe.
+
+    Sert au drapeau sync_stale. Sans lui, une panne du flux produit des faux
+    « sales » en silence : un client qui a simulé n'a pas de dossier remonté,
+    donc aucun signal marketing, donc il bascule sur l'appel du commercial.
+    C'est exactement ce qui s'est produit du 13/08 au 16/09.
+    """
+    body = {"filterGroups": [{"filters": [
+        {"propertyName": "pipeline", "operator": "EQ", "value": pipeline},
+        {"propertyName": "hs_object_source_label", "operator": "EQ",
+         "value": "INTEGRATION"}]}],
+        "properties": ["createdate", "hs_v2_date_entered_current_stage"],
+        "sorts": [{"propertyName": "createdate", "direction": "DESCENDING"}],
+        "limit": 1}
+    r = post(DEALS, body).get("results") or []
+    if not r:
+        return None
+    p = r[0]["properties"]
+    ds = [x for x in (to_dt(p.get("createdate")),
+                      to_dt(p.get("hs_v2_date_entered_current_stage"))) if x]
+    return max(ds) if ds else None
+
+
+def engagement_sets(ids, cohort_send, pipeline, meet_f, meet_f_attr, rmap):
+    """Ensembles d'activation, plus les signaux nécessaires à l'attribution.
+
+    Retourne des ENSEMBLES de contacts, jamais des compteurs d'objets : un
+    même contact peut avoir un RDV courtage puis un RDV devis.
+
+    DEUX collectes de réunions, volontairement :
+      - meet_f porte le filtre d'intitulé et sert la définition d'ACTIVATION,
+        inchangée depuis le 22/08 ;
+      - meet_f_attr ne le porte pas et sert l'ATTRIBUTION, via
+        hs_meeting_source. Le filtre d'intitulé rate les rendez-vous pris par
+        le lien générique « Rendez-vous téléphonique Nopillo » : acceptable
+        pour l'activation, faux pour l'attribution. Toucher au premier
+        changerait des chiffres déjà publiés, on ne le fait pas.
+    """
+    keep = set(ids)
+    wins = {c: windows_for(c, cohort_send, rmap) for c in keep}
+
+    # ---- dossiers courtage
+    deals = _objects_assoc(
+        DEALS, ids,
+        [{"propertyName": "pipeline", "operator": "EQ", "value": pipeline}],
+        ["createdate", "dealstage", "hs_v2_date_entered_current_stage",
+         "hs_object_source_label", "origine_creation_deal_ae",
+         ETAPES_PROP, DEBUT_SIMU_PROP, SIMU_PROP])
+    dmap = _contacts_of("deals", list(deals.keys()))
+    dset, d_auto, d_wave, simulated, process = set(), set(), {}, set(), set()
+    niveau = {}
+    simu_at = {}   # contact -> date de première étape franchie
+    # Pourquoi ce contact est compté : « etapes » si le produit atteste au
+    # moins une étape franchie, « pipe » si seule la position de la carte le
+    # justifie. Sert à localiser un écart avec un autre comptage.
+    motif = {}
+    for did, props in deals.items():
+        stage = str(props.get("dealstage") or "")
+        # SEULE une étape de parcours prouve une activation.
+        #  - optimization_activated : accès au simulateur, aucune étape. Non compté.
+        #  - carte créée par le workflow « RDV sans simu » : aucune information
+        #    propre, elle existe PARCE QU'un RDV existe, et le RDV est déjà
+        #    compté via MEETING. Non comptée.
+        #  - optimization_declined : étape terminale pilotée par le CS. Le flow
+        #    n8n ne l'écrit plus et la protège, donc elle efface l'information
+        #    de parcours. Non comptée : le contact reste activable par un RDV,
+        #    sinon il part en attente de qualification.
+        # Le client a agi si le produit compte au moins une étape franchie,
+        # OU si l'étape du pipe le dit. Les deux, parce que la propriété n'est
+        # pas encore remplie partout : le OU récupère les 34 dossiers refusés
+        # qui portaient une vraie simulation, sans perdre les 68 transactions
+        # en étape de parcours que le rattrapage n'a pas encore touchées.
+        try:
+            etapes = int(float(props.get(ETAPES_PROP) or 0))
+        except (TypeError, ValueError):
+            etapes = 0
+        # Une carte créée par le workflow « RDV sans simu » ne vaut JAMAIS
+        # simulation par son étape : elle a été ouverte parce qu'un rendez-vous
+        # existait, pas parce qu'un client avait rempli quelque chose. Cinq
+        # d'entre elles se sont retrouvées en simulation_started après un
+        # déplacement manuel, sans aucune étape franchie. Seule ae_etapes_simu
+        # peut les racheter — si le client simule vraiment par la suite.
+        rdv_only = props.get("origine_creation_deal_ae") == ORIGINE_RDV_SANS_SIMU
+        has_simu = etapes >= 1 or (stage in SIMU_STAGES and not rdv_only)
+        for c in dmap.get(did, []):
+            if c not in keep:
+                continue
+            if not has_simu:
+                continue
+            # LA FENÊTRE S'APPLIQUE AUSSI À LA SIMULATION, depuis le 25/09.
+            # Elle ne portait avant que sur le total activé : simulated et
+            # process étaient renseignés en amont du test. Cinq contacts se
+            # retrouvaient classés « a simulé » alors que leur transaction
+            # était hors fenêtre — activés par leur rendez-vous, mais rangés
+            # dans la mauvaise catégorie. Un signal hors fenêtre ne compte
+            # nulle part, c'est la même règle partout.
+            tag = deal_engages(props, wins[c])
+            if not tag:
+                continue
+            simulated.add(c)
+            d_simu = to_dt(props.get(DEBUT_SIMU_PROP))
+            if d_simu and (c not in simu_at or d_simu < simu_at[c]):
+                simu_at[c] = d_simu
+            m = "etapes" if etapes >= 1 else "pipe"
+            if motif.get(c) != "etapes":
+                motif[c] = m
+            if stage in STAGE_PROCESS:
+                process.add(c)
+            dset.add(c)
+            niveau[c] = max(niveau.get(c, 0), niveau_de(stage))
+            if d_wave.get(c) != "v2":
+                d_wave[c] = tag
+            # Un contact est classé « via n8n » dès qu'AU MOINS UNE de ses
+            # transactions vient de l'INTÉGRATION : c'est le signal le plus fort
+            # dont on dispose sur un parcours réellement produit.
+            # Le test portait avant sur « différent de CRM_UI », ce qui rangeait
+            # les transactions créées par un workflow HubSpot
+            # (AUTOMATION_PLATFORM) du côté n8n — alors qu'aucun client n'avait
+            # simulé. Corrigé le 25/09 après la mise en place du workflow
+            # « RDV sans simu ».
+            if props.get("hs_object_source_label") == "INTEGRATION":
+                d_auto.add(c)
+
+    # ---- rendez-vous, périmètre ACTIVATION (filtre d'intitulé)
+    meets = _objects_assoc(MEETINGS, ids, meet_f,
+                           ["hubspot_owner_id", "hs_timestamp", "hs_createdate"])
+    meets = {k: v for k, v in meets.items() if str(k) not in RDV_EXCLUS}
+    mmap = _contacts_of("meetings", list(meets.keys()))
+    mset, m_owner, m_wave = set(), {}, {}
+    # Tri chronologique : un contact ayant plusieurs RDV est attribué au
+    # propriétaire du PREMIER, celui qui a converti.
+    for mid, p in sorted(meets.items(),
+                         key=lambda x: x[1].get("hs_createdate") or ""):
+        booked = to_dt(p.get("hs_createdate")) or to_dt(p.get("hs_timestamp"))
+        for c in mmap.get(mid, []):
+            if c not in keep:
+                continue
+            tag = in_windows(booked, wins[c])
+            if not tag:
+                continue
+            mset.add(c)
+            m_owner.setdefault(c, p.get("hubspot_owner_id"))
+            if m_wave.get(c) != "v2":
+                m_wave[c] = tag
+
+    # ---- rendez-vous, périmètre ATTRIBUTION (sans filtre d'intitulé)
+    # On retient la date de RÉSERVATION du premier RDV self-service.
+    meets_a = _objects_assoc(MEETINGS, ids, meet_f_attr,
+                             ["hs_meeting_source", "hs_createdate"])
+    meets_a = {k: v for k, v in meets_a.items() if str(k) not in RDV_EXCLUS}
+    amap = _contacts_of("meetings", list(meets_a.keys()))
+    rdv_pub = {}
+    for mid, p in meets_a.items():
+        if (p.get("hs_meeting_source") or "").upper() != MEETING_PUBLIC:
+            continue
+        booked = to_dt(p.get("hs_createdate"))
+        if not booked:
+            continue
+        for c in amap.get(mid, []):
+            if c in keep and (c not in rdv_pub or booked < rdv_pub[c]):
+                rdv_pub[c] = booked
+
+    return (dset, mset, m_owner, d_auto, d_wave, m_wave, simulated, rdv_pub,
+            process, niveau, motif, simu_at)
+
+
+# -------------------------------------------------------------------- build
+def load_config():
+    with open("cohorts.json", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def cumulative_curve(delays, enrolled, send, horizon_max=None):
+    """Part des CONTACTS ayant répondu au plus tard à J+n.
+
+    Le dénominateur est l'effectif ciblé, pas le nombre de répondants : une
+    courbe rapportée aux répondants finit toujours à 100 %, ce qui se lit comme
+    « tout le monde a répondu » alors que c'est une tautologie.
+    """
+    if not delays or not enrolled:
+        return []
+    elapsed = (dt.datetime.now(dt.timezone.utc) - send).days
+    # L'horizon suit la fenêtre d'attribution : afficher la courbe au-delà
+    # montrerait des réponses qui ne sont pas comptées. Sans fenêtre, on borne
+    # à 90 jours pour que le graphe reste lisible.
+    plafond = horizon_max if horizon_max is not None else (ATTRIB_DAYS or 90)
+    horizon = max(0, min(plafond, elapsed))
+    return [dict(day=j, count=sum(1 for x in delays if x <= j),
+                 share=round(100 * sum(1 for x in delays if x <= j) / enrolled, 2))
+            for j in range(horizon + 1)]
+
+
+def activation_split(mset, dset, auto):
+    """Décomposition de l'activation, en CONTACTS uniques.
+
+    - les deux totaux qui se recoupent : `meet` et `deal` ;
+    - les trois sous-ensembles disjoints : `both`, `meet_only`, `deal_only` ;
+    - le total : `activated` = meet + deal − both, JAMAIS meet + deal.
+    """
+    return dict(
+        meet=len(mset), deal=len(dset), both=len(mset & dset),
+        meet_only=len(mset - dset), deal_only=len(dset - mset),
+        activated=len(mset | dset),
+        deal_auto=len(auto), deal_manual=len(dset - auto),
+        deal_only_manual=len((dset - mset) - auto),
+    )
+
+
+def build():
+    global RDV_EXCLUS
+    cfg = load_config()
+    RDV_EXCLUS = {str(r["meeting_id"]) for r in cfg.get("rdv_exclus", [])}
+    print(f"faux positifs exclus : {len(RDV_EXCLUS)} réunion(s) retirée(s) "
+          f"de l'activation (liste rdv_exclus de cohorts.json)")
+    owners = owners_map()
+    pipeline = cfg["deal_pipeline"]
+    frozen = cfg.get("frozen_metrics", {})
+    all_lists = [c["list_id"] for co in cfg["cohorts"] for c in co["cells"]]
+
+    # Vagues de relance : contact -> date du dernier envoi qui l'a touché.
+    rmap = build_relance_map(cfg)
+    if rmap:
+        print(f"relances : {len(rmap)} contact(s) relancé(s) sur "
+              f"{len(cfg.get('relances', []))} liste(s)")
+
+    camp_meet, camp_deal, camp_deal_auto = set(), set(), set()
+    camp_v2 = set()
+
+    # Attribution sales / marketing. Trois cas DISJOINTS dont la somme fait le
+    # total activé : le total ne change pas, seule sa décomposition est ajoutée.
+    camp_attr = empty_attr()
+    attr_cells, attr_v1, attr_v2 = {}, empty_attr(), empty_attr()
+    camp_qual, qual_cells = empty_qual(), {}
+    camp_process = set()
+    camp_fin = {}
+    camp_niveau = {}   # contact -> profondeur maximale atteinte
+    camp_motif = {}    # contact -> « etapes » ou « pipe »
+    last_sync = last_integration_move(pipeline)
+    sync_stale = business_hours_between(last_sync,
+                                        dt.datetime.now(dt.timezone.utc)) > 24
+    if sync_stale:
+        print(f"\n   /!\\ SYNC OBSOLETE : dernier mouvement n8n sur le pipe "
+              f"{last_sync.isoformat() if last_sync else 'jamais'}. "
+              f"Les contacts ayant simulé depuis n'ont pas de dossier remonté : "
+              f"ils basculent a tort en sales.\n")
+
+    cohorts = []
+    for co in cfg["cohorts"]:
+        send = iso(co["sent_at"])
+        since_ms = int(send.timestamp() * 1000)
+        forced = (co.get("status") or "AUTO").upper()
+        cells, all_delays = [], []
+        coh_meet, coh_deal, coh_deal_auto, coh_v2 = set(), set(), set(), set()
+        coh_process = set()
+
+        for c in co["cells"]:
+            members = list_members(c["list_id"])
+            ids = [m[0] for m in members]
+
+            agg, steps = emails_for(ids, [c["sequence_id"]], since_ms)
+
+            # Réponses, ouvertures et clics au CONTACT, pas à l'e-mail.
+            delays = []
+            n_open = n_click = 0
+            for _, _, rep, op, cl in members:
+                w = to_dt(rep)
+                if w and w >= send:
+                    delays.append((w - send).days)
+                wo = to_dt(op)
+                if wo and wo >= send:
+                    n_open += 1
+                wc = to_dt(cl)
+                if wc and wc >= send:
+                    n_click += 1
+            all_delays += delays
+
+            # MÉTRIQUES GELÉES. hs_sales_email_last_opened et
+            # hs_sales_email_last_clicked sont des propriétés « dernière fois »
+            # sans mémoire : une ouverture de relance écrase la date d'août et
+            # reste comptée comme une ouverture d'août, puisque la comparaison
+            # est >= date d'envoi. Borner en haut ne réglerait rien — un vrai
+            # ouvreur d'août sortirait alors du compte. La donnée d'origine
+            # n'existe plus : on fige le dernier relevé propre.
+            fz = frozen.get(str(c["list_id"]))
+            if fz:
+                n_open = fz.get("opens", n_open)
+                n_click = fz.get("clicks", n_click)
+                agg["opens"] = fz.get("opens_emails", agg["opens"])
+                agg["clicks"] = fz.get("clicks_emails", agg["clicks"])
+
+            meet_f = [{"propertyName": "hs_createdate", "operator": "GTE",
+                       "value": str(since_ms)},
+                      {"propertyName": "hubspot_owner_id", "operator": "IN",
+                       "values": AE_MEETING_OWNERS}]
+            # Périmètre ATTRIBUTION : même bornes, SANS filtre d'intitulé.
+            meet_f_attr = list(meet_f)
+            mf = cfg.get("meeting_filter")
+            if mf:
+                meet_f.append({"propertyName": mf["property"],
+                               "operator": mf["operator"], "value": mf["value"]})
+
+            (dset, mset, m_owner, d_auto, d_wave, m_wave,
+             simulated, rdv_pub, process, niveau, motif,
+             simu_at) = engagement_sets(
+                ids, send, pipeline, meet_f, meet_f_attr, rmap)
+
+            # Signaux d'attribution restants : réponses et premier appel sortant.
+            reply_at = {}
+            for cid, _, rep, _, _ in members:
+                w = to_dt(rep)
+                if w and w >= send:
+                    reply_at[cid] = w
+            calls_at = first_outbound_call(ids, since_ms)
+
+            cell_attr, cell_qual = empty_attr(), empty_qual()
+            attr_ids = {"marketing_simulation": [], "marketing_reponse": [],
+                        "marketing_rdv_public": [], "sales": [], "non_attribuable": []}
+            # Classement fin des activés : profondeur du parcours × présence
+            # d'un RDV. Catégories disjointes, leur somme fait le total activé.
+            fin_ids = {}
+            for cid in (dset | mset):
+                rang = niveau.get(cid, 0)
+                a_rdv = cid in mset
+                if rang == 0:
+                    cle = "RDV seul"
+                else:
+                    cle = ("RDV + " if a_rdv else "") + NIVEAU_LABEL[rang]
+                fin_ids.setdefault(cle, []).append(cid)
+
+            qual_ids = {"certain_rdv_client": [], "certain_parcours": [],
+                        "certain_rdv_sales": [], "attente_carte_seule": []}
+            for cid in (dset | mset):
+                bucket, sub = attribute(cid, simulated, reply_at, rdv_pub,
+                                        calls_at, simu_at)
+                attr_ids[f"{bucket}_{sub}" if sub else bucket].append(cid)
+                add_attr(cell_attr, bucket, sub)
+                add_attr(camp_attr, bucket, sub)
+                q, qsub = qualify(cid, bucket, sub, mset)
+                for acc in (cell_qual, camp_qual):
+                    acc[q] += 1
+                    acc[f"{q}_{qsub}"] += 1
+                qual_ids[f"{q}_{qsub}"].append(cid)
+                add_attr(attr_v2 if cid in ({x for x, t in d_wave.items() if t == "v2"} |
+                                            {x for x, t in m_wave.items() if t == "v2"})
+                         else attr_v1, bucket, sub)
+            attr_cells[c["list_id"]] = cell_attr
+            qual_cells[c["list_id"]] = cell_qual
+            for k, v in fin_ids.items():
+                camp_fin.setdefault(k, set()).update(v)
+            # NE PAS nommer la variable « c » ici : c'est déjà la cellule
+            # dans la boucle englobante, et l'écraser fait planter la
+            # cellule suivante avec « string indices must be integers ».
+            for cid_m, m_m in motif.items():
+                if camp_motif.get(cid_m) != "etapes":
+                    camp_motif[cid_m] = m_m
+            for cid_n, rang_n in niveau.items():
+                camp_niveau[cid_n] = max(camp_niveau.get(cid_n, 0), rang_n)
+
+            # Vague 2 : contacts dont l'activation est tombée dans la fenêtre
+            # de relance, donc attribuable à la relance et non au batch.
+            v2 = {x for x, t in d_wave.items() if t == "v2"} | \
+                 {x for x, t in m_wave.items() if t == "v2"}
+            relanced = {x for x in ids if x in rmap}
+
+            split = dict(both=len(dset & mset), meet_only=len(mset - dset),
+                         deal_only=len(dset - mset), engaged=len(dset | mset),
+                         deal_n8n=len(d_auto), deal_manual=len(dset - d_auto),
+                         deal_only_manual=len((dset - mset) - d_auto),
+                         relanced=len(relanced), engaged_v2=len(v2),
+                         engaged_v1=len((dset | mset) - v2),
+                         marketing=cell_attr["marketing"]["total"],
+                         sales=cell_attr["sales"]["total"],
+                         non_attribuable=cell_attr["non_attribuable"]["total"],
+                         simule=cell_attr["marketing"]["simulation"],
+                         certain=cell_qual["certain"],
+                         attente=cell_qual["attente"],
+                         process=len(process))
+            n_meet, n_deal = len(mset), len(dset)
+
+            coh_meet |= mset
+            coh_deal |= dset
+            coh_deal_auto |= d_auto
+            coh_v2 |= v2
+            coh_process |= process
+
+            m_own = {}
+            for cid in mset:
+                k = m_owner.get(cid)
+                m_own[k] = m_own.get(k, 0) + 1
+
+            active = count_active(c["list_id"], [c["sequence_id"]])
+
+            cells.append(dict(
+                list_id=c["list_id"], list_name=c.get("list_name"),
+                sequence_id=c["sequence_id"], audience=c["audience"],
+                version=c.get("version"),
+                enrolled=len(members), active=active,
+                status=(forced if forced in ("TERMINE", "EN_COURS")
+                        else ("EN_COURS" if active > 0 else "TERMINE")),
+                sent=agg["sent"], bounced=agg["bounced"],
+                opens=n_open, clicks=n_click,
+                opens_emails=agg["opens"], clicks_emails=agg["clicks"],
+                opens_frozen=bool(fz),
+                # replies_non_fiable : conservé pour mémoire, JAMAIS affiché.
+                # hs_sales_email_last_replied enregistre la dernière réponse du
+                # contact à n'importe quel e-mail commercial, et la date glisse
+                # à chaque nouvel échange. La cellule RP du 13 août est passée
+                # de 68 à 110 entre le 15 et le 25/09, sur une campagne
+                # terminée. Le nom dit explicitement de ne pas s'en servir.
+                replies_non_fiable=len(delays),
+                meetings=n_meet, deals_ae=n_deal,
+                engaged=split["engaged"], split=split,
+                # Détail par contact, RETIRÉ avant l'écriture de data.json :
+                # ce fichier est servi publiquement par GitHub Pages.
+                _ids=dict(both=sorted(dset & mset), meet_only=sorted(mset - dset),
+                          deal_only=sorted(dset - mset), v2=sorted(v2),
+                          attr={k: sorted(v) for k, v in attr_ids.items()},
+                          qual={k: sorted(v) for k, v in qual_ids.items()},
+                          fin={k: sorted(v) for k, v in fin_ids.items()}),
+                steps=steps,
+                by_owner=[dict(owner_id=o, owner=owners.get(o, "Non attribué"),
+                               meetings=n)
+                          for o, n in sorted(m_own.items(), key=lambda x: str(x[0]))],
+            ))
+
+        n_act = sum(c["active"] for c in cells)
+        done = [c for c in cells if c["status"] == "TERMINE"]
+        status = ("TERMINE" if n_act == 0 else ("PARTIEL" if done else "EN_COURS"))
+        note = None if n_act == 0 else (
+            f"{n_act} contact(s) encore en séquence sur cette cohorte"
+            + (f", mais la cellule {done[0]['audience']} a fini d'envoyer "
+               f"et alimente déjà la référence." if done
+               else ". Les chiffres vont encore monter."))
+        camp_meet |= coh_meet
+        camp_deal |= coh_deal
+        camp_deal_auto |= coh_deal_auto
+        camp_v2 |= coh_v2
+        camp_process |= coh_process
+
+        act = activation_split(coh_meet, coh_deal, coh_deal_auto)
+        act["activated_v2"] = len(coh_v2)
+        act["activated_v1"] = act["activated"] - len(coh_v2)
+        act["relanced"] = sum(c["split"]["relanced"] for c in cells)
+        act["process"] = len(coh_process)
+
+        cohorts.append(dict(id=co["id"], label=co["label"], sent_at=co["sent_at"],
+                            status=status, active=n_act, status_note=note,
+                            ab_test=co.get("ab_test", True), ab_note=co.get("ab_note"),
+                            targeting=co.get("targeting"),
+                            cells=cells, activation=act,
+                            # Courbe de réponses RETIRÉE le 25/09 : sa source,
+                            # hs_sales_email_last_replied, enregistre la dernière
+                            # réponse à n'importe quel e-mail commercial et glisse
+                            # à chaque nouvel échange. La cellule RP du 13 août est
+                            # passée de 68 à 110 réponses en dix jours sur une
+                            # campagne terminée. Aucune source fiable n'existe : les
+                            # e-mails entrants ne portent pas hs_sequence_id.
+                            reply_curve=[]))
+    cohorts.sort(key=lambda x: x["id"])
+
+    # Union dédupliquée : les cohortes peuvent se recouper
+    dedup = dict(contacts=count_lists(all_lists))
+    somme = sum(c["enrolled"] for co in cohorts for c in co["cells"])
+    ecart = somme - dedup["contacts"]
+
+    dedup["activation"] = activation_split(camp_meet, camp_deal, camp_deal_auto)
+    somme_act = sum(c["split"]["engaged"] for co in cohorts for c in co["cells"])
+    dedup["activation"]["sum_cells"] = somme_act
+    dedup["activation"]["overlap"] = somme_act - dedup["activation"]["activated"]
+    dedup["activation"]["activated_v2"] = len(camp_v2)
+    dedup["activation"]["activated_v1"] = (dedup["activation"]["activated"]
+                                           - len(camp_v2))
+    # ---- périmètre global : tous les activés AE, campagne ou non
+    meet_f_global = [{"propertyName": "hubspot_owner_id", "operator": "IN",
+                      "values": AE_MEETING_OWNERS}]
+    mf = cfg.get("meeting_filter")
+    if mf:
+        meet_f_global.append({"propertyName": mf["property"],
+                              "operator": mf["operator"], "value": mf["value"]})
+    (g_simu, g_rdv, g_crea, g_src, g_premier,
+     g_deals, g_deals_par_contact) = activation_globale(pipeline, meet_f_global)
+    g_all = g_simu | g_rdv
+    camp = camp_meet | camp_deal
+    dedup["global"] = dict(
+        activated=len(g_all), meet=len(g_rdv), deal=len(g_simu),
+        both=len(g_simu & g_rdv),
+        campagne=len(camp & g_all),
+        hors_campagne=len(g_all - camp),
+        campagne_hors_global=len(camp - g_all),
+        par_createur=_ventile(g_crea, g_all),
+        par_createur_camp=_ventile(g_crea, g_all & camp),
+        par_createur_hors=_ventile(g_crea, g_all - camp),
+        # Activés par leur RDV sans simulation entamée. Ils ont presque tous
+        # une transaction — carte du workflow « RDV sans simu », ou fiche en
+        # optimization_activated ou declined sans étape franchie. Ce n'est
+        # donc PAS « aucune transaction », c'est « aucune preuve de
+        # simulation ». Le libellé précédent induisait en erreur.
+        rdv_seul_camp=len({c for c in g_all & camp if c not in g_simu}),
+        rdv_seul_hors=len({c for c in g_all - camp if c not in g_simu}),
+        rdv_origine=_origines_rdv(sorted(g_rdv), g_src, camp),
+        rdv_origine_camp=_origines_rdv(sorted(g_rdv & camp), g_src, camp),
+        rdv_origine_hors=_origines_rdv(sorted(g_rdv - camp), g_src, camp),
+        par_semaine=_par_periode(g_all, g_premier, camp, "semaine"),
+        par_jour=_par_periode(g_all, g_premier, camp, "jour"),
+        par_phase=_phases_des_actives(g_all, g_deals_par_contact, g_deals))
+    # DÉTAIL NOMINATIF NON PUBLIÉ. data.json est servi publiquement par GitHub
+    # Pages : y écrire des noms et des e-mails les rendrait accessibles à
+    # quiconque connaît l'URL. Le dépôt a été passé en privé le 30/09 puis
+    # remis en public dans la foulée, GitHub Pages ne fonctionnant pas sur un
+    # dépôt privé en plan gratuit. La liste est donc imprimée dans les LOGS,
+    # qui supposent un accès au dépôt.
+    clients = liste_clients(g_all, g_rdv, g_simu, camp, g_src, g_premier)
+    # Identifiants des activés hors campagne, imprimés dans le log mais JAMAIS
+    # publiés dans data.json : le fichier est servi publiquement par GitHub
+    # Pages. C'est la seule liste fiable — une requête HubSpot avec « liste NOT
+    # IN » ne fait pas de vraie négation et remonte des contacts de campagne.
+    hors_ids = sorted(g_all - camp)
+    hors_avec_simu = g_simu
+
+    # POURQUOI CHAQUE CLIENT EST COMPTÉ. Quatre cas EXCLUSIFS dont la somme
+    # fait le total : sert à localiser un écart avec un autre comptage.
+    dedup["motifs"] = dict(
+        rdv_seul=len(camp_meet - camp_deal),
+        rdv_et_simu=len(camp_meet & camp_deal),
+        simu_seule_etapes=len({c for c in camp_deal - camp_meet
+                               if camp_motif.get(c) == "etapes"}),
+        simu_seule_pipe=len({c for c in camp_deal - camp_meet
+                             if camp_motif.get(c) != "etapes"}))
+
+    dedup["relanced"] = len(rmap)
+    # Bas de funnel : contacts dont un dossier est entré en souscription.
+    dedup["process"] = len(camp_process)
+
+    # Décomposition sales / marketing. Nouvel axe, sans rupture : le total
+    # activé est inchangé, marketing + sales + non attribuable = activés.
+    dedup["attribution"] = dict(
+        marketing=camp_attr["marketing"], sales=camp_attr["sales"],
+        non_attribuable=camp_attr["non_attribuable"],
+        par_cellule=attr_cells, par_vague=dict(v1=attr_v1, v2=attr_v2),
+        qualification=dict(camp_qual, par_cellule=qual_cells),
+        sync_stale=sync_stale,
+        last_sync=last_sync.isoformat() if last_sync else None)
+
+    data = dict(
+        meta=dict(
+            campaign=cfg["campaign"],
+            generated_at=dt.datetime.now(dt.timezone.utc).isoformat(),
+            collected=True,
+            primary_axis=cfg.get("primary_axis", "cohort"),
+            primary_kpi=cfg.get("primary_kpi"),
+            source=("HubSpot · listes statiques ∩ EMAIL.hs_sequence_id "
+                    "· MEETING_EVENT ∪ DEAL pipeline " + pipeline
+                    + (" · contacts uniques, SANS borne haute d'attribution"
+                       if ATTRIB_DAYS is None
+                       else f" · contacts uniques, fenêtre J+{ATTRIB_DAYS} par contact")),
+            attribution_note=cfg["notes"]["attribution"],
+            relance_note=cfg["notes"].get("relances"),
+            meeting_window_note=cfg["notes"].get("meeting_window"),
+            attribution_window_note=cfg["notes"].get("attribution_window"),
+            frozen_note=cfg.get("frozen_metrics", {}).get("_doc"),
+            attribution_sm_note=cfg["notes"].get("attribution_sales_marketing"),
+            overlap_note=(
+                f"Recoupement entre cohortes : {ecart} contact(s) ciblés dans "
+                f"plusieurs batchs. Le niveau 1 utilise l'union dédupliquée."
+                if ecart > 0 else "Aucun recoupement entre les cohortes."),
+            fix_note=("Attribution par appartenance aux listes. Les séquences étant "
+                      "réutilisées d'un batch à l'autre, une attribution par "
+                      "hs_sequence_id imputerait les envois d'un batch au précédent."),
+        ),
+        kpis=cfg["kpis"],
+        audience_labels=cfg["audience_labels"],
+        stats_config=cfg["stats"],
+        objectif=cfg.get("objectif"),
+        # Origine PostHog des clients ACTIVÉS, ventilée campagne / hors
+        # campagne. Chiffres FIGÉS, saisis à la main dans cohorts.json depuis un
+        # export : le collecteur ne les recalcule pas, il les recopie.
+        # Agrégats seulement, aucun identifiant.
+        origine_simu_perimetre=cfg.get("origine_simu_perimetre"),
+        # Entonnoir app → Conseil → activé, FIGÉ dans cohorts.json (PostHog).
+        entonnoir_posthog=cfg.get("entonnoir_posthog"),
+        # Nombre de RDV exclus comme faux positifs (liste rdv_exclus de
+        # cohorts.json). Le NOMBRE seulement : ni identifiant, ni motif.
+        rdv_exclus_n=len(RDV_EXCLUS),
+        relances=[dict(r) for r in cfg.get("relances", [])],
+        dedup=dedup,
+        cohorts=cohorts,
+    )
+
+    # Détail nominatif : dans les logs du run, JAMAIS dans data.json.
+    # Le pop() ci-dessous est ce qui garantit que _ids ne fuite pas dans le
+    # JSON — ne pas le déplacer après json.dump.
+    print("\n--- détail des contacts engagés ---")
+    for co in cohorts:
+        for c in co["cells"]:
+            ids = c.pop("_ids")
+            v2 = set(ids["v2"])
+            print(f"\n{co['id']} · {c['audience']}-{c['version']} "
+                  f"· {c['split']['engaged']} engagés sur {c['enrolled']} ciblés")
+            # Classement par profondeur de parcours, du plus loin au plus près.
+            # Catégories disjointes : un contact n'apparaît qu'une fois.
+            fin = ids.get("fin") or {}
+            for cat in ORDRE_FIN:
+                if fin.get(cat):
+                    print(f"  {cat} ({len(fin[cat])})")
+                    for cid in fin[cat]:
+                        flag = "  [vague 2]" if cid in v2 else ""
+                        print(f"    https://app-eu1.hubspot.com/contacts/"
+                              f"{PORTAL}/contact/{cid}{flag}")
+            # Mêmes contacts, relus par ORIGINE de l'activation. Les cinq
+            # catégories sont disjointes : un contact apparaît une seule fois.
+            # C'est ici qu'on vérifie un arbitrage douteux, fiche par fiche.
+            qua = ids.get("qual") or {}
+            if any(qua.values()):
+                print(f"  — qualification —")
+                for cat, label in (("certain_rdv_client", "confirmé · cas 1, RDV pris par le client"),
+                                   ("certain_parcours", "confirmé · cas 2, parcours démarré"),
+                                   ("certain_rdv_sales", "confirmé · cas 3, RDV organisé après appel"),
+                                   ("attente_carte_seule", "EN ATTENTE · carte seule, À ARBITRER")):
+                    if qua.get(cat):
+                        print(f"  {label} ({len(qua[cat])})")
+                        for cid in qua[cat]:
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}")
+            att = ids.get("attr") or {}
+            if any(att.values()):
+                print(f"  — origine de l'activation —")
+                for cat, label in (("marketing_simulation", "marketing · a simulé"),
+                                   ("marketing_reponse", "marketing · a répondu"),
+                                   ("marketing_rdv_public", "marketing · RDV self-service"),
+                                   ("sales", "sales · appel sortant d'abord"),
+                                   ("non_attribuable", "non attribuable")):
+                    if att.get(cat):
+                        print(f"  {label} ({len(att[cat])})")
+                        for cid in att[cat]:
+                            flag = "  [vague 2]" if cid in v2 else ""
+                            print(f"    https://app-eu1.hubspot.com/contacts/"
+                                  f"{PORTAL}/contact/{cid}{flag}")
+    print("--- fin du détail ---\n")
+
+    with open("data.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+
+    n_cells = sum(len(c["cells"]) for c in cohorts)
+    tot = {k["key"]: sum(c[k["key"]] for co in cohorts for c in co["cells"])
+           for k in cfg["kpis"]}
+    print(f"OK · {len(cohorts)} cohortes · {n_cells} cellules · "
+          f"{dedup['contacts']} contacts ciblés · {len(rmap)} relancés")
+    print("   " + " · ".join(f"{k['label']} {tot[k['key']]}" for k in cfg["kpis"]))
+    for co in cohorts:
+        for c in co["cells"]:
+            s = c["split"]
+            fz = " [ouvertures gelées]" if c.get("opens_frozen") else ""
+            print(f"   {co['id']} {c['audience']}-{c['version']} "
+                  f"n={c['enrolled']} · both {s['both']} · rdv seul {s['meet_only']} "
+                  f"· deal seul {s['deal_only']} · engagés {s['engaged']} "
+                  f"(v1 {s['engaged_v1']} · v2 {s['engaged_v2']} "
+                  f"sur {s['relanced']} relancés)"
+                  f" | deals n8n {s['deal_n8n']} · manuels {s['deal_manual']}"
+                  f"{fz}")
+    if ecart > 0:
+        print(f"   recoupement : somme des cellules {somme} vs union {dedup['contacts']}")
+
+    a = dedup["activation"]
+    print("\n--- clients activés · campagne, dédupliqué ---")
+    print(f"   RDV pris (uniques)        {a['meet']:5d}")
+    print(f"   Dossiers AE (uniques)     {a['deal']:5d}"
+          f"   dont n8n {a['deal_auto']} · à la main {a['deal_manual']}")
+    print(f"   Les deux                  {a['both']:5d}")
+    print(f"   = TOTAL ACTIVÉS           {a['activated']:5d}"
+          f"   soit {100 * a['activated'] / dedup['contacts']:.2f} % des ciblés")
+    obj = (cfg.get("objectif") or {}).get("clients_actives")
+    if obj:
+        ecart = a["activated"] - obj
+        print(f"   objectif                  {obj:5d}"
+              f"   {'atteint' if ecart >= 0 else 'restant : ' + str(-ecart)}"
+              f" · {pcts(a['activated'], obj)} de l'objectif")
+    print(f"   dont en souscription      {dedup['process']:5d}"
+          f"   dossier en process_started ou au-delà")
+    print(f"   dont RDV seul {a['meet_only']} · dossier seul {a['deal_only']}"
+          f" (dont {a['deal_only_manual']} créé(s) à la main)")
+    if rmap:
+        print(f"\n   vague 1 (envoi initial)   {a['activated_v1']:5d}")
+        print(f"   vague 2 (relance 11/09)   {a['activated_v2']:5d}"
+              f"   sur {len(rmap)} relancés"
+              f" · {100 * a['activated_v2'] / len(rmap):.2f} %")
+        print("   ATTENTION : les listes de relance ne contiennent QUE des")
+        print("   contacts non activés. Ce taux n'est PAS comparable à celui")
+        print("   d'un batch initial — c'est un gain marginal pur.")
+    if a["overlap"]:
+        print(f"   ⚠ somme des cellules {a['sum_cells']} vs union {a['activated']} :"
+              f" {a['overlap']} contact(s) activé(s) ciblé(s) dans deux batchs")
+
+    if ATTRIB_DAYS is None:
+        print("\n   /!\\ AUCUNE BORNE HAUTE D'ATTRIBUTION. Les cohortes ne sont plus")
+        print("   comparables entre elles — un batch ancien accumule plus longtemps —")
+        print("   et tout chiffre publié remontera au fil du temps.")
+
+    mo = dedup.get("motifs") or {}
+    if mo:
+        tot_mo = sum(mo.values())
+        print("\n--- pourquoi chaque client est compté ---")
+        for cle, lib in (("rdv_seul", "RDV seul"),
+                         ("rdv_et_simu", "RDV + simulation"),
+                         ("simu_seule_etapes", "Simulation seule · étapes produit"),
+                         ("simu_seule_pipe", "Simulation seule · position pipe")):
+            print(f"   {lib:38} {mo[cle]:5d}   {pcts(mo[cle], tot_mo)}")
+        print(f"   = TOTAL                                {tot_mo:5d}"
+              f"   doit égaler {a['activated']} activés"
+              f" · {'OK' if tot_mo == a['activated'] else 'ÉCART'}")
+        print("   Cas exclusifs : un écart avec un autre comptage se situe")
+        print("   forcément sur l'une de ces quatre lignes.")
+
+    cli = locals().get("clients") or []
+    if cli:
+        print(f"\n--- détail des clients activés · {len(cli)} ---")
+        print(f"   {'nom':34} {'signal':18} {'périmètre':14} {'origine du RDV':46} "
+              f"{'utm_source':14} {'utm_medium':12} {'utm_campaign':16} utm_content")
+        for c in cli:
+            sig = ("RDV + simulation" if c["rdv"] and c["simu"]
+                   else "RDV seul" if c["rdv"] else "Simulation seule")
+            print(f"   {(c['nom'] or '')[:33]:34} {sig:18} "
+                  f"{'Campagnes' if c['camp'] else 'Hors campagnes':14} "
+                  f"{(c['origine'] or '—')[:45]:46} "
+                  f"{(c['utm_source'] or '—')[:13]:14} "
+                  f"{(c['utm_medium'] or '—')[:11]:12} "
+                  f"{(c['utm_campaign'] or '—')[:15]:16} {c['utm_content'] or '—'}")
+        print("   Les colonnes UTM ne sont lues que sur l'URL du lien de réservation.")
+        print("   Elles sont vides pour la plupart : cette URL est écrasée dès que")
+        print("   le client navigue ailleurs après avoir réservé.")
+
+    hors = locals().get("hors_ids") or []
+    if hors:
+        print(f"\n--- activés HORS campagne · {len(hors)} contacts ---")
+        for cid in hors:
+            marque = "" if cid in hors_avec_simu else "   [RDV sans simulation entamée]"
+            print(f"   https://app-eu1.hubspot.com/contacts/{PORTAL}/contact/{cid}{marque}")
+
+    g = dedup.get("global") or {}
+    if g:
+        print("\n--- activation assurance emprunteur · tout le portefeuille ---")
+        print(f"   TOTAL ACTIVÉS AE         {g['activated']:5d}"
+              f"   RDV {g['meet']} · simulations {g['deal']} · les deux {g['both']}")
+        print(f"     issus des campagnes    {g['campagne']:5d}"
+              f"   {pcts(g['campagne'], g['activated'])} du total")
+        print(f"     hors campagnes         {g['hors_campagne']:5d}"
+              f"   {pcts(g['hors_campagne'], g['activated'])} du total")
+        if g.get("campagne_hors_global"):
+            print(f"   /!\\ {g['campagne_hors_global']} contact(s) comptés en campagne mais"
+                  f" absents du global — incohérence à investiguer")
+        pcc, pch = g.get("par_createur_camp") or {}, g.get("par_createur_hors") or {}
+        libs = list(dict.fromkeys(list(pcc) + list(pch)))
+        if libs:
+            print("   — d'où viennent les activés —")
+            print(f"     {'':34} {'camp.':>6} {'hors':>6} {'total':>6}")
+            for lib in libs:
+                a_, b_ = pcc.get(lib, 0), pch.get(lib, 0)
+                print(f"     {lib:34} {a_:6d} {b_:6d} {a_ + b_:6d}")
+            rc, rh = g.get("rdv_seul_camp", 0), g.get("rdv_seul_hors", 0)
+            print(f"     {'RDV sans simulation entamée':34} {rc:6d} {rh:6d} {rc + rh:6d}")
+            tc = sum(pcc.values()) + rc
+            th = sum(pch.values()) + rh
+            print(f"     {'= TOTAL':34} {tc:6d} {th:6d} {tc + th:6d}")
+            ok = tc == g["campagne"] and th == g["hors_campagne"]
+            print(f"     contrôle : {g['campagne']} campagne et {g['hors_campagne']} hors"
+                  f" · {'OK' if ok else 'ÉCART'}")
+        print("     Le créateur dit qui a SAISI, pas qui a provoqué la simulation.")
+        pp = g.get("par_phase") or []
+        if pp:
+            tot_pp = sum(e["transactions"] for e in pp)
+            print("   — où en sont les transactions des clients activés —")
+            for e in pp:
+                barre = "█" * min(40, e["transactions"])
+                print(f"     {e['phase']:24} {e['transactions']:5d}"
+                      f"   {pcts(e['transactions'], tot_pp)}  {barre}")
+            print(f"     {tot_pp} transactions pour {g['activated']} clients activés —")
+            print("     quelques clients en ont plusieurs, une par bien ;")
+            print("     les clients activés par leur seul RDV n'ont pas tous un dossier.")
+
+        ps = g.get("par_semaine") or []
+        if ps:
+            tot_ps = sum(e["campagne"] + e["hors"] for e in ps)
+            print("   — activations par semaine —")
+            for e in ps[-12:]:
+                tot_s = e["campagne"] + e["hors"]
+                barre = "█" * min(40, tot_s)
+                print(f"     {e['periode']}  {tot_s:4d}  "
+                      f"camp {e['campagne']:3d} · hors {e['hors']:3d}  {barre}")
+            print(f"     {len(ps)} semaines · {len(g.get('par_jour') or [])} jours actifs"
+                  f" · {tot_ps} contacts datés sur {g['activated']} activés"
+                  f"{'' if tot_ps == g['activated'] else ' · ÉCART'}")
+
+        ro = g.get("rdv_origine") or {}
+        if ro:
+            tot_ro = sum(ro.values())
+            roc = g.get("rdv_origine_camp") or {}
+            roh = g.get("rdv_origine_hors") or {}
+            print("   — d'où viennent les rendez-vous —")
+            print(f"     {'':34} {'camp.':>6} {'hors':>6} {'total':>6}")
+            for lib, v in ro.items():
+                print(f"     {lib:34} {roc.get(lib, 0):6d}"
+                      f" {roh.get(lib, 0):6d} {v:6d}")
+            print("     Les trois premières lignes prouvent un clic. Les autres sont")
+            print("     des présomptions : l'URL de dernière page est écrasée dès que")
+            print("     le client navigue ailleurs, ces catégories sont un plancher.")
+        print("   Ce total cumule tout l'historique AE, la campagne sept semaines.")
+        print("   Il se lit comme un cumul, jamais comme un taux.")
+
+    at = dedup["attribution"]
+    mk, sl, na = at["marketing"], at["sales"], at["non_attribuable"]
+    tot = mk["total"] + sl["total"] + na["total"]
+    print("\n--- origine de l'activation · sales contre marketing ---")
+    print(f"   MARKETING                 {mk['total']:5d}   {pcts(mk['total'], tot)}")
+    print(f"     dont simulation         {mk['simulation']:5d}")
+    print(f"     dont réponse séquence   {mk['reponse']:5d}")
+    print(f"     dont RDV self-service   {mk['rdv_public']:5d}")
+    print(f"   SALES                     {sl['total']:5d}   {pcts(sl['total'], tot)}")
+    print(f"   NON ATTRIBUABLE           {na['total']:5d}   {pcts(na['total'], tot)}")
+    print(f"   = TOTAL                   {tot:5d}   doit égaler {a['activated']} activés"
+          f" · {'OK' if tot == a['activated'] else 'ÉCART'}")
+    q = at["qualification"]
+    if camp_fin:
+        print("\n--- activés par profondeur de parcours ---")
+        tot_fin = 0
+        for cat in ORDRE_FIN:
+            v = len(camp_fin.get(cat, ()))
+            if v:
+                tot_fin += v
+                print(f"   {cat:30} {v:5d}   {pcts(v, a['activated'])}")
+        print(f"   = TOTAL                        {tot_fin:5d}"
+              f"   doit égaler {a['activated']} activés"
+              f" · {'OK' if tot_fin == a['activated'] else 'ÉCART'}")
+
+    print("\n--- qualification · définition du 17/09 ---")
+    print(f"   ACTIVÉS CONFIRMÉS          {q['certain']:5d}   {pcts(q['certain'], tot)}")
+    print(f"     cas 1 · RDV pris par le client   {q['certain_rdv_client']:5d}")
+    print(f"     cas 2 · parcours démarré         {q['certain_parcours']:5d}")
+    print(f"     cas 3 · RDV organisé après appel {q['certain_rdv_sales']:5d}")
+    print(f"   EN ATTENTE DE QUALIFICATION   {q['attente']:5d}   {pcts(q['attente'], tot)}")
+    print(f"     carte ouverte, aucun RDV         {q['attente_carte_seule']:5d}"
+          f"   accord ou refus : à arbitrer")
+    print(f"   = TOTAL POTENTIEL         {q['certain'] + q['attente']:5d}"
+          f"   doit égaler {a['activated']} activés"
+          f" · {'OK' if q['certain'] + q['attente'] == a['activated'] else 'ÉCART'}")
+    print("   Une réponse à un mail NE SUFFIT PAS : la propriété HubSpot ne")
+    print("   distingue pas « ça m'intéresse » d'un refus ou d'un message")
+    print("   d'absence. Ces contacts vont en attente, pas en activés.")
+    v1a, v2a = at["par_vague"]["v1"], at["par_vague"]["v2"]
+    print(f"   vague 1 : marketing {v1a['marketing']['total']} · "
+          f"sales {v1a['sales']['total']} · na {v1a['non_attribuable']['total']}")
+    print(f"   vague 2 : marketing {v2a['marketing']['total']} · "
+          f"sales {v2a['sales']['total']} · na {v2a['non_attribuable']['total']}")
+    if at["sync_stale"]:
+        print("   ⚠ sync_stale : aucun mouvement n8n depuis plus de 24 h ouvrées.")
+        print("     Les contacts ayant simulé depuis n'ont pas de dossier remonté")
+        print("     et basculent à tort en sales. Chiffres à ne pas publier.")
+
+    # Bloc figé « D'où viennent les clients qui simulent ». Simple contrôle
+    # d'addition : le collecteur ne relit pas PostHog. Noms de variables
+    # préfixés osp_ pour ne rien écraser plus haut.
+    osp_bloc = cfg.get("origine_simu_perimetre") or {}
+    if osp_bloc:
+        osp_rep = osp_bloc.get("repartition") or []
+        osp_c = sum(e["campagne"] for e in osp_rep)
+        osp_h = sum(e["hors"] for e in osp_rep)
+        osp_ok = (osp_c == osp_bloc["clients_campagne"]
+                  and osp_h == osp_bloc["clients_hors"]
+                  and osp_c + osp_h == osp_bloc["clients"])
+        print(f"\n--- origine des clients qui simulent · figé au "
+              f"{osp_bloc['releve_le']} ---")
+        print(f"   {'origine':30} {'camp.':>6} {'hors':>6} {'total':>6}")
+        for osp_e in osp_rep:
+            print(f"   {osp_e['origine']:30} {osp_e['campagne']:6d} "
+                  f"{osp_e['hors']:6d} {osp_e['campagne'] + osp_e['hors']:6d}")
+        print(f"   {'= TOTAL':30} {osp_c:6d} {osp_h:6d} {osp_c + osp_h:6d}"
+              f"   sur {osp_bloc['base']} · {'OK' if osp_ok else 'ÉCART'}")
+        print("   Chiffres saisis à la main, pas recalculés par ce run.")
+
+
+if __name__ == "__main__":
+    build()
