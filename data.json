@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-05T12:12:14.745501+00:00",
+  "generated_at": "2026-10-05T13:58:42.918975+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -73,20 +73,20 @@
   "_doc": "Objectif de la campagne AE : 200 clients activés, toutes cohortes confondues. Se lit sur le total campagne dédupliqué, pas par cohorte. RÉSERVE À DIRE EN MÊME TEMPS QUE LE CHIFFRE : il n'y a aucune limite de délai d'attribution, donc le compteur monte tout seul. L'objectif sera atteint mécaniquement avec le temps, même sans nouvel envoi. Un dépassement ne prouve pas à lui seul que la campagne a fonctionné — c'est la vitesse d'atteinte qui compte."
  },
  "origine_simu_perimetre": {
-  "releve_le": "2026-10-02",
-  "run_collecteur": "2026-10-02",
-  "source": "PostHog production, requête du 02/10 sur les pages vues de my.nopillo.com depuis le 01/05, croisée par e-mail avec les clients activés du run du collecteur du 02/10 (18h37)",
-  "clients": 187,
-  "base": 291,
+  "releve_le": "2026-10-05",
+  "run_collecteur": "2026-10-05",
+  "source": "PostHog production, requête du 05/10 sur les pages vues de my.nopillo.com depuis le 01/05, croisée par e-mail avec les clients activés du run du collecteur du 05/10 (14h12)",
+  "clients": 190,
+  "base": 294,
   "clients_campagne": 97,
   "base_campagne": 176,
-  "clients_hors": 90,
-  "base_hors": 115,
+  "clients_hors": 93,
+  "base_hors": 118,
   "repartition": [
    {
     "origine": "Referral · connexion Nopillo (origine perdue)",
     "campagne": 45,
-    "hors": 77
+    "hors": 80
    },
    {
     "origine": "Direct · adresse tapée, favori, lien sans origine",
@@ -114,18 +114,9 @@
     "hors": 0
    }
   ],
-  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE (relevé du 02/10) : les 392 clients activés du run du 02/10 à 18h37 (272 campagne, 120 hors) ont été croisés par e-mail avec les personnes identifiées de PostHog production. Le partage campagne / hors campagne vient du log du run (section « activés HORS campagne »), pas des UTM. Sont comptés les activés AYANT SIMULÉ selon le collecteur qui ont, depuis le 01/05, une page vue /conseil ET une page vue sur une URL contenant courtage-ae : 187. Les 3 activés par leur seul rendez-vous retrouvés dans PostHog sont écartés, pour que les retrouvés restent inclus dans les bases. BASES : 291 clients activés ayant simulé selon le collecteur (176 campagne, 115 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, et activation après l'envoi du batch, comme le reste du dashboard. ORIGINE : celle de la 1re page vue /conseil sur la période, pas forcément celle de la visite où le client a simulé. RÈGLE DE CLASSEMENT (02/10), appliquée dans cet ordre : 1) utm_campaign de la page vue /conseil ou de l'entrée de session contenant assurance_emprunteur → Email · campagne AE (UTM) ; 2) autre utm_campaign → Autre campagne UTM ; 3) site précédent d'entrée de session = webmail, appli Gmail ou Outlook → Email · sans UTM ; 4) Google, Bing… → Organic Search ; 5) Retool → exclu (sessions internes) ; 6) site précédent = domaine nopillo → Referral · connexion Nopillo (origine perdue) ; 7) aucun site précédent ($direct) → Direct ; 8) sinon → Referral · site externe. CHANGEMENT PAR RAPPORT AU 30/09 : l'export du 30/09 classait selon la page vue avant Conseil ; la règle du 02/10 lit l'entrée de session. Une arrivée directe sur /sign-in sans site précédent est classée Direct et non origine perdue : la version de la règle qui la rangeait en origine perdue contredisait un cas vérifié à la main et basculait 18 clients de Direct vers origine perdue. Les webmails SFR et Orange, classés Referral par PostHog, passent en Email · sans UTM : d'où « site externe » à 0. Le rattachement de l'UTM à la page vue /conseil, et pas seulement à l'entrée de session, ajoute 5 clients en Email · campagne AE : leur UTM a survécu à la redirection de connexion. LIMITE : le croisement se fait sur l'e-mail ; un client dont l'e-mail diffère entre HubSpot et PostHog n'est pas retrouvé (au moins un cas vérifié). AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
+  "_doc": "ORIGINE DE LA VISITE, PAR PÉRIMÈTRE. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas, il les recopie dans data.json. MÉTHODE (relevé du 05/10) : les 396 clients activés du run du 05/10 à 14h12 (273 campagne, 123 hors) ont été croisés par e-mail avec les personnes identifiées de PostHog production. Le partage campagne / hors campagne vient du log du run (section « activés HORS campagne »), pas des UTM. Sont comptés les activés AYANT SIMULÉ selon le collecteur qui ont, depuis le 01/05, une page vue /conseil ET une page vue sur une URL contenant courtage-ae : 190. Les activés par leur seul rendez-vous ne sont pas comptés (3 au relevé du 02/10), pour que les retrouvés restent inclus dans les bases. BASES : 294 clients activés ayant simulé selon le collecteur (176 campagne, 118 hors). PÉRIMÈTRE : appartenance à l'une des listes 14319, 14334, 14336, 14337, 14412, 14413, 14951, et activation après l'envoi du batch, comme le reste du dashboard. ORIGINE : celle de la 1re page vue /conseil sur la période, pas forcément celle de la visite où le client a simulé. RÈGLE DE CLASSEMENT (depuis le 02/10), appliquée dans cet ordre : 1) utm_campaign de la page vue /conseil ou de l'entrée de session contenant assurance_emprunteur → Email · campagne AE (UTM) ; 2) autre utm_campaign → Autre campagne UTM ; 3) site précédent d'entrée de session = webmail, appli Gmail ou Outlook → Email · sans UTM ; 4) Google, Bing… → Organic Search ; 5) Retool → exclu (sessions internes) ; 6) site précédent = domaine nopillo → Referral · connexion Nopillo (origine perdue) ; 7) aucun site précédent ($direct) → Direct ; 8) sinon → Referral · site externe. CHANGEMENT PAR RAPPORT AU 30/09 : l'export du 30/09 classait selon la page vue avant Conseil ; la règle du 02/10 lit l'entrée de session. Une arrivée directe sur /sign-in sans site précédent est classée Direct et non origine perdue : la version de la règle qui la rangeait en origine perdue contredisait un cas vérifié à la main et basculait 18 clients de Direct vers origine perdue. Les webmails SFR et Orange, classés Referral par PostHog, passent en Email · sans UTM : d'où « site externe » à 0. Le rattachement de l'UTM à la page vue /conseil, et pas seulement à l'entrée de session, ajoute 5 clients en Email · campagne AE : leur UTM a survécu à la redirection de connexion. LIMITE : le croisement se fait sur l'e-mail ; un client dont l'e-mail diffère entre HubSpot et PostHog n'est pas retrouvé (au moins un cas vérifié). AUCUNE DONNÉE NOMINATIVE ICI : cohorts.json est dans un dépôt public. À remplacer à la main après chaque nouvel export. LIBELLÉS (01/10) : nom du canal PostHog ($channel_type) suivi d'une précision. « Referral · connexion Nopillo » est classé Referral par PostHog parce que le site précédent est la page de connexion Nopillo : ce n'est pas un site partenaire. BLOC REMPLACÉ : l'ancien graphe origine_simu_posthog (261 visiteurs du simulateur, activés ou non, dont 2 sessions internes Retool) a été retiré le 01/10 : il ne mesurait pas la population de la campagne."
  },
- "entonnoir_posthog": {
-  "periode_debut": "2026-08-05",
-  "periode_fin": "2026-10-02",
-  "run_collecteur": "2026-10-02",
-  "app_visiteurs": 2539,
-  "conseil_visiteurs": 983,
-  "app_actives": 269,
-  "conseil_actives": 226,
-  "_doc": "ENTONNOIR APP → CONSEIL → ACTIVÉ, mesure PostHog. Chiffres FIGÉS, saisis à la main : le collecteur ne les recalcule pas. VISITEURS : personnes uniques IDENTIFIÉES (e-mail connu de PostHog, comptes @nopillo exclus) ayant au moins une page vue sur my.nopillo.com (app) ou sur /conseil, du 05/08 au 02/10, projet newpillo - production. ACTIVÉS PARMI EUX : les 392 activés du run du 02/10 (18h37), rapprochés par e-mail. TAUX = activés parmi les visiteurs ÷ visiteurs de l'étape. LIMITES : visiteurs anonymes exclus ; le taux est une association, pas un parcours prouvé (un activé compte même s'il a visité Conseil après s'être activé) ; aucun événement d'affichage de la bannière AE n'existe, d'où l'étape Conseil comme indicateur de remplacement. À refaire à la main avec l'export PostHog."
- },
+ "entonnoir_posthog": null,
  "rdv_exclus_n": 2,
  "relances": [
   {
@@ -160,27 +151,27 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 179,
-   "deal": 176,
+   "meet": 180,
+   "deal": 175,
    "both": 82,
-   "meet_only": 97,
-   "deal_only": 94,
+   "meet_only": 98,
+   "deal_only": 93,
    "activated": 273,
    "deal_auto": 101,
-   "deal_manual": 75,
-   "deal_only_manual": 11,
+   "deal_manual": 74,
+   "deal_only_manual": 10,
    "sum_cells": 273,
    "overlap": 0,
-   "activated_v2": 103,
-   "activated_v1": 170
+   "activated_v2": 104,
+   "activated_v1": 169
   },
   "global": {
-   "activated": 396,
-   "meet": 185,
+   "activated": 397,
+   "meet": 186,
    "deal": 294,
    "both": 83,
    "campagne": 273,
-   "hors_campagne": 123,
+   "hors_campagne": 124,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 213,
@@ -193,7 +184,7 @@
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 101,
-    "Team AE · Clara Baekelandt": 27,
+    "Team AE · Clara Baekelandt": 26,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 22,
     "Workflow HubSpot · RDV sans simu": 2
@@ -201,13 +192,14 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 112,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Workflow HubSpot · RDV sans simu": 1,
+    "Team AE · Clara Baekelandt": 1,
+    "Autre utilisateur": 1
    },
-   "rdv_seul_camp": 97,
+   "rdv_seul_camp": 98,
    "rdv_seul_hors": 5,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 153,
+    "Lien roundrobin AE · ciblé par la campagne": 154,
     "signature_rdv": 14,
     "Posé par la Team AE · contact ciblé": 13,
     "Lien roundrobin AE · hors campagne": 3,
@@ -215,7 +207,7 @@
     "signature": 1
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 153,
+    "Lien roundrobin AE · ciblé par la campagne": 154,
     "Posé par la Team AE · contact ciblé": 13,
     "signature_rdv": 13
    },
@@ -293,7 +285,7 @@
     },
     {
      "periode": "2026-09-14",
-     "campagne": 70,
+     "campagne": 69,
      "hors": 22
     },
     {
@@ -305,6 +297,11 @@
      "periode": "2026-09-28",
      "campagne": 10,
      "hors": 15
+    },
+    {
+     "periode": "2026-10-05",
+     "campagne": 1,
+     "hors": 1
     }
    ],
    "par_jour": [
@@ -535,7 +532,7 @@
     },
     {
      "periode": "2026-09-18",
-     "campagne": 10,
+     "campagne": 9,
      "hors": 4
     },
     {
@@ -617,20 +614,25 @@
      "periode": "2026-10-04",
      "campagne": 1,
      "hors": 0
+    },
+    {
+     "periode": "2026-10-05",
+     "campagne": 1,
+     "hors": 1
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 188
+     "transactions": 184
     },
     {
      "phase": "simulation_completed",
-     "transactions": 44
+     "transactions": 45
     },
     {
      "phase": "simulation_ready",
-     "transactions": 10
+     "transactions": 13
     },
     {
      "phase": "offer_viewed",
@@ -650,7 +652,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 45
+     "transactions": 46
     },
     {
      "phase": "optimization_declined",
@@ -659,22 +661,22 @@
    ]
   },
   "motifs": {
-   "rdv_seul": 97,
+   "rdv_seul": 98,
    "rdv_et_simu": 82,
    "simu_seule_etapes": 85,
-   "simu_seule_pipe": 9
+   "simu_seule_pipe": 8
   },
   "relanced": 1070,
   "process": 8,
   "attribution": {
    "marketing": {
-    "total": 249,
-    "simulation": 155,
+    "total": 248,
+    "simulation": 154,
     "reponse": 6,
     "rdv_public": 88
    },
    "sales": {
-    "total": 24
+    "total": 25
    },
    "non_attribuable": {
     "total": 0
@@ -702,7 +704,7 @@
       "rdv_public": 10
      },
      "sales": {
-      "total": 9
+      "total": 10
      },
      "non_attribuable": {
       "total": 0
@@ -766,8 +768,8 @@
     },
     "14951": {
      "marketing": {
-      "total": 83,
-      "simulation": 52,
+      "total": 82,
+      "simulation": 51,
       "reponse": 1,
       "rdv_public": 30
      },
@@ -782,8 +784,8 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 161,
-      "simulation": 95,
+      "total": 160,
+      "simulation": 94,
       "reponse": 1,
       "rdv_public": 65
      },
@@ -802,7 +804,7 @@
       "rdv_public": 23
      },
      "sales": {
-      "total": 15
+      "total": 16
      },
      "non_attribuable": {
       "total": 0
@@ -813,8 +815,8 @@
     "certain": 261,
     "attente": 12,
     "certain_rdv_client": 88,
-    "certain_parcours": 155,
-    "certain_rdv_sales": 18,
+    "certain_parcours": 154,
+    "certain_rdv_sales": 19,
     "attente_carte_seule": 12,
     "par_cellule": {
      "14319": {
@@ -826,11 +828,11 @@
       "attente_carte_seule": 4
      },
      "14334": {
-      "certain": 31,
+      "certain": 32,
       "attente": 6,
       "certain_rdv_client": 10,
       "certain_parcours": 15,
-      "certain_rdv_sales": 6,
+      "certain_rdv_sales": 7,
       "attente_carte_seule": 6
      },
      "14336": {
@@ -866,10 +868,10 @@
       "attente_carte_seule": 0
      },
      "14951": {
-      "certain": 83,
+      "certain": 82,
       "attente": 0,
       "certain_rdv_client": 30,
-      "certain_parcours": 52,
+      "certain_parcours": 51,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 0
      }
@@ -981,25 +983,25 @@
      "clicks_emails": 16,
      "opens_frozen": true,
      "replies_non_fiable": 66,
-     "meetings": 23,
+     "meetings": 24,
      "deals_ae": 23,
-     "engaged": 37,
+     "engaged": 38,
      "split": {
       "both": 9,
-      "meet_only": 14,
+      "meet_only": 15,
       "deal_only": 14,
-      "engaged": 37,
+      "engaged": 38,
       "deal_n8n": 13,
       "deal_manual": 10,
       "deal_only_manual": 3,
       "relanced": 165,
-      "engaged_v2": 19,
+      "engaged_v2": 20,
       "engaged_v1": 18,
       "marketing": 28,
-      "sales": 9,
+      "sales": 10,
       "non_attribuable": 0,
       "simule": 15,
-      "certain": 31,
+      "certain": 32,
       "attente": 6,
       "process": 3
      },
@@ -1040,7 +1042,7 @@
       {
        "owner_id": "75453551",
        "owner": "Lilian Maudet",
-       "meetings": 12
+       "meetings": 13
       }
      ]
     },
@@ -1213,16 +1215,16 @@
     }
    ],
    "activation": {
-    "meet": 64,
+    "meet": 65,
     "deal": 62,
     "both": 31,
-    "meet_only": 33,
+    "meet_only": 34,
     "deal_only": 31,
-    "activated": 95,
+    "activated": 96,
     "deal_auto": 32,
     "deal_manual": 30,
     "deal_only_manual": 6,
-    "activated_v2": 38,
+    "activated_v2": 39,
     "activated_v1": 57,
     "relanced": 413,
     "process": 5
@@ -1431,26 +1433,26 @@
      "opens_emails": 828,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 78,
+     "replies_non_fiable": 79,
      "meetings": 45,
-     "deals_ae": 54,
-     "engaged": 83,
+     "deals_ae": 53,
+     "engaged": 82,
      "split": {
       "both": 16,
       "meet_only": 29,
-      "deal_only": 38,
-      "engaged": 83,
+      "deal_only": 37,
+      "engaged": 82,
       "deal_n8n": 41,
-      "deal_manual": 13,
-      "deal_only_manual": 3,
+      "deal_manual": 12,
+      "deal_only_manual": 2,
       "relanced": 0,
       "engaged_v2": 0,
-      "engaged_v1": 83,
-      "marketing": 83,
+      "engaged_v1": 82,
+      "marketing": 82,
       "sales": 0,
       "non_attribuable": 0,
-      "simule": 52,
-      "certain": 83,
+      "simule": 51,
+      "certain": 82,
       "attente": 0,
       "process": 1
      },
@@ -1498,16 +1500,16 @@
    ],
    "activation": {
     "meet": 45,
-    "deal": 54,
+    "deal": 53,
     "both": 16,
     "meet_only": 29,
-    "deal_only": 38,
-    "activated": 83,
+    "deal_only": 37,
+    "activated": 82,
     "deal_auto": 41,
-    "deal_manual": 13,
-    "deal_only_manual": 3,
+    "deal_manual": 12,
+    "deal_only_manual": 2,
     "activated_v2": 0,
-    "activated_v1": 83,
+    "activated_v1": 82,
     "relanced": 0,
     "process": 1
    },
