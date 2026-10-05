@@ -1230,17 +1230,26 @@ function render(){
       document.getElementById('funWrap').style.display='block';
       const dfr=x=>new Date(x).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
       document.getElementById('funSub').textContent=
-        `Personnes identifiées venues sur l'espace client du ${dfr(FUN.periode_debut)} au `+
-        `${dfr(FUN.periode_fin)}, et part d'entre elles devenues clientes activées.`;
+        `Personnes identifiées venues sur l'espace client, et part d'entre elles devenues `+
+        `clientes activées. Deux fenêtres : pendant la campagne, et depuis le premier usage du simulateur.`;
       const ft=(cls,lab,val,sub)=>`<div class="eq-t ${cls||''}"><div class="l">${lab}</div>`+
         `<div class="v">${val}</div><div class="s">${sub}</div></div>`;
       const pc=(n,d)=>(100*n/d).toFixed(1).replace('.',',')+' %';
-      document.getElementById('funEq').innerHTML=
-        ft('','Visiteurs de l\'app',fmt(FUN.app_visiteurs),`dont ${fmt(FUN.app_actives)} activés · ${pc(FUN.app_actives,FUN.app_visiteurs)}`)+
+      const ligneFun=(F,titre)=>
+        `<div class="rlab" style="margin:14px 0 8px;font-size:11px">${titre}</div>`+
+        `<div class="eq">`+
+        ft('','Visiteurs de l\'app',fmt(F.app_visiteurs),`dont ${fmt(F.app_actives)} activés · ${pc(F.app_actives,F.app_visiteurs)}`)+
         `<div class="eq-op">→</div>`+
-        ft('','Visiteurs de Conseil',fmt(FUN.conseil_visiteurs),`${pc(FUN.conseil_visiteurs,FUN.app_visiteurs)} des visiteurs de l'app`)+
+        ft('','Visiteurs de Conseil',fmt(F.conseil_visiteurs),`${pc(F.conseil_visiteurs,F.app_visiteurs)} des visiteurs de l'app`)+
         `<div class="eq-op">→</div>`+
-        ft('res','Conversion Conseil → activé',pc(FUN.conseil_actives,FUN.conseil_visiteurs),`${fmt(FUN.conseil_actives)} activés sur ${fmt(FUN.conseil_visiteurs)} visiteurs`);
+        ft('res','Conversion Conseil → activé',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs`)+
+        `</div>`;
+      const fenetre=F=>`du ${dfr(F.periode_debut)} au ${dfr(F.periode_fin)}`;
+      const eqF=document.getElementById('funEq');
+      eqF.className='';
+      eqF.innerHTML=ligneFun(FUN,`Pendant la campagne · ${fenetre(FUN)}`)+
+        (FUN.depuis_lancement?ligneFun(FUN.depuis_lancement,
+          `Depuis le premier usage du simulateur · ${fenetre(FUN.depuis_lancement)}`):'');
       document.getElementById('funNote').innerHTML=
         `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées, `+
         `clientes ou non (définitions dans l'onglet Méthodo). `+
