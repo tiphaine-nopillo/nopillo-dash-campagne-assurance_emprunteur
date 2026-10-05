@@ -628,19 +628,19 @@
             les cohortes ne se comparent pas entre elles</strong>, une ancienne accumule plus
             longtemps, et les chiffres montent au fil du temps.</td></tr>
 
-        <tr><td>Rattrapages exclus</td>
-          <td>3 rafales</td>
-          <td>Quand le flux n8n se rétablit après une panne, il crée des centaines de dossiers en
-            quelques secondes. Ce sont d'anciens dossiers qui arrivent d'un coup, pas de l'activité :
-            ils sont écartés (06/08 et 16/09).</td></tr>
+        <tr><td>Rattrapages n8n</td>
+          <td>3 rafales (06/08, 16/09 et un essai le 16/09 au matin)</td>
+          <td>Quand n8n redémarre après une panne, il crée d'un coup les dossiers qu'il n'avait pas pu
+            créer. Leur date de création est donc celle du rattrapage, pas celle de la simulation.
+            Pour ces dossiers, le dashboard utilise la date de simulation réelle, écrite par le
+            produit : une simulation faite après l'envoi compte, un dossier ancien réimporté ne
+            compte pas.</td></tr>
 
         <tr><td>Visiteurs uniques de l'app</td>
           <td>Entonnoir · mesure PostHog</td>
           <td>Personnes uniques <strong>identifiées</strong> dans PostHog (e-mail connu, comptes
             @nopillo exclus) ayant au moins une page vue sur l'espace client (my.nopillo.com)
-            pendant la période indiquée. Les visiteurs anonymes ne sont pas comptés.
-            <strong>Identifié ne veut pas dire client</strong> : un compte ouvert sans liasse peut y
-            figurer. Le dénominateur est donc un peu large, et les taux un peu sous-estimés.</td></tr>
+            pendant la période indiquée. Les visiteurs anonymes ne sont pas comptés.</td></tr>
         <tr><td>Taux de conversion<br>connexion → activation</td>
           <td>Activés parmi les visiteurs ÷ visiteurs</td>
           <td>Parmi les visiteurs uniques de l'app, part de ceux qui figurent dans la liste des clients
@@ -1272,8 +1272,8 @@ function render(){
         `<em>Visiteurs de l'app</em> = personnes uniques connectées ayant vu au moins une page de `+
         `l'espace client (my.nopillo.com), comptes @nopillo exclus. Activés : liste des clients activés du collecteur `+
         `HubSpot (run du ${dfr(FUN.run_collecteur)}), rapprochée par e-mail.<br>`+
-        `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées, `+
-        `clientes ou non (définitions dans l'onglet Méthodo). `+
+        `<strong>Ce que ces taux ne disent pas.</strong> Seules les personnes identifiées sont comptées `+
+        `(définitions dans l'onglet Méthodo). `+
         `Un activé compte même s'il s'est connecté après s'être activé : c'est une association, pas un `+
         `parcours prouvé (voir la vérification ci-dessus). L'affichage de la bannière AE n'est pas tracé. `+
         `Chiffres figés, issus d'un export PostHog manuel.`;
