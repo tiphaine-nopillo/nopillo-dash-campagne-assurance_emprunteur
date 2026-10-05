@@ -1238,11 +1238,13 @@ function render(){
       const ligneFun=(F,titre)=>
         `<div class="rlab" style="margin:14px 0 8px;font-size:11px">${titre}</div>`+
         `<div class="eq">`+
-        ft('','Visiteurs uniques de l\'app',fmt(F.app_visiteurs),`dont ${fmt(F.app_actives)} activés · ${pc(F.app_actives,F.app_visiteurs)}`)+
+        ft('','Visiteurs uniques de l\'app',fmt(F.app_visiteurs),`connectés à leur espace client`)+
         `<div class="eq-op">→</div>`+
+        ft('res','Connexion → activation',pc(F.app_actives,F.app_visiteurs),`${fmt(F.app_actives)} activés sur ${fmt(F.app_visiteurs)} visiteurs uniques`)+
+        `<div class="eq-op">·</div>`+
         ft('','Visiteurs uniques de Conseil',fmt(F.conseil_visiteurs),`${pc(F.conseil_visiteurs,F.app_visiteurs)} des visiteurs uniques de l'app`)+
         `<div class="eq-op">→</div>`+
-        ft('res','Conversion Conseil → activé',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs uniques`)+
+        ft('res','Conseil → activation',pc(F.conseil_actives,F.conseil_visiteurs),`${fmt(F.conseil_actives)} activés sur ${fmt(F.conseil_visiteurs)} visiteurs uniques`)+
         `</div>`;
       const fenetre=F=>`du ${dfr(F.periode_debut)} au ${dfr(F.periode_fin)}`;
       const eqF=document.getElementById('funEq');
@@ -1258,7 +1260,15 @@ function render(){
         `${fmt(FUN.actives_total-L.app_actives)} autres sont activés sans connexion identifiée : `+
         `rendez-vous pris sans passer par l'app, simulation saisie par l'équipe, ou navigation non `+
         `reconnue par PostHog.<br>`:'';
-      document.getElementById('funNote').innerHTML=raccord+
+      const S=FUN.strict, SL=(FUN.depuis_lancement||{}).strict;
+      const verif=S?
+        `<strong>Vérification.</strong> En ne comptant que les clients connectés <em>avant</em> de `+
+        `s'activer, la conversion connexion → activation est de ${pc(S.app_actives,FUN.app_visiteurs)} `+
+        `pendant la campagne`+(SL?` et de ${pc(SL.app_actives,FUN.depuis_lancement.app_visiteurs)} depuis le `+
+        `${dfr(FUN.depuis_lancement.periode_debut)}`:'')+` (${pc(S.conseil_actives,FUN.conseil_visiteurs)}`+
+        (SL?` et ${pc(SL.conseil_actives,FUN.depuis_lancement.conseil_visiteurs)}`:'')+` via Conseil). `+
+        `Date d'activation : premier RDV AE réservé (HubSpot) ou ouverture du simulateur (base produit).<br>`:'';
+      document.getElementById('funNote').innerHTML=raccord+verif+
         `<strong>Source.</strong> Visiteurs : PostHog, projet newpillo - production. `+
         `<em>Visiteurs de l'app</em> = personnes uniques connectées ayant vu au moins une page de `+
         `l'espace client (my.nopillo.com) ; <em>visiteurs de Conseil</em> = même règle sur l'onglet `+
