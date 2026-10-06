@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-06T18:15:55.562879+00:00",
+  "generated_at": "2026-10-06T22:58:49.724798+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,12 +192,12 @@
    "activated_v1": 172
   },
   "global": {
-   "activated": 414,
-   "meet": 192,
+   "activated": 415,
+   "meet": 193,
    "deal": 306,
    "both": 84,
    "campagne": 279,
-   "hors_campagne": 135,
+   "hors_campagne": 136,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 223,
@@ -210,25 +210,25 @@
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 104,
-    "Team AE · Clara Baekelandt": 26,
     "Team AE · Lilian Maudet": 26,
+    "Team AE · Clara Baekelandt": 26,
     "Team AE · Mathieu d'Ornellas": 22,
     "Workflow HubSpot · RDV sans simu": 2
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 119,
     "Marc Chevalier · CGP": 4,
+    "Autre utilisateur": 1,
     "Team AE · Clara Baekelandt": 1,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 99,
-   "rdv_seul_hors": 9,
+   "rdv_seul_hors": 10,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 153,
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
-    "Lien roundrobin AE · hors campagne": 7,
+    "Lien roundrobin AE · hors campagne": 8,
     "signature": 2,
     "nps": 1
    },
@@ -238,7 +238,7 @@
     "signature_rdv": 14
    },
    "rdv_origine_hors": {
-    "Lien roundrobin AE · hors campagne": 7,
+    "Lien roundrobin AE · hors campagne": 8,
     "signature": 2,
     "nps": 1,
     "signature_rdv": 1
@@ -327,7 +327,7 @@
     {
      "periode": "2026-10-05",
      "campagne": 7,
-     "hors": 11
+     "hors": 12
     }
    ],
    "par_jour": [
@@ -649,7 +649,7 @@
     {
      "periode": "2026-10-06",
      "campagne": 5,
-     "hors": 6
+     "hors": 7
     }
    ],
    "par_phase": [
@@ -683,7 +683,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 50
+     "transactions": 51
     },
     {
      "phase": "optimization_declined",
