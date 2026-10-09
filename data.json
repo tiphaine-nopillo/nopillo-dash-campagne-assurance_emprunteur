@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-09T18:16:47.663297+00:00",
+  "generated_at": "2026-10-09T23:09:35.281565+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -218,8 +218,8 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 127,
     "Marc Chevalier · CGP": 4,
-    "Workflow HubSpot · RDV sans simu": 1,
     "Team AE · Clara Baekelandt": 1,
+    "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1
    },
    "rdv_seul_camp": 102,
