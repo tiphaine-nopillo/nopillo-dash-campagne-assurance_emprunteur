@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-08T23:43:26.612696+00:00",
+  "generated_at": "2026-10-09T11:47:46.680946+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,15 +192,15 @@
    "activated_v1": 173
   },
   "global": {
-   "activated": 422,
-   "meet": 196,
-   "deal": 312,
+   "activated": 426,
+   "meet": 197,
+   "deal": 315,
    "both": 86,
    "campagne": 281,
-   "hors_campagne": 141,
+   "hors_campagne": 145,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 229,
+    "Simulation produit · n8n": 232,
     "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 26,
     "Team AE · Mathieu d'Ornellas": 22,
@@ -216,21 +216,21 @@
     "Workflow HubSpot · RDV sans simu": 2
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 124,
+    "Simulation produit · n8n": 127,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1,
-    "Workflow HubSpot · RDV sans simu": 1,
-    "Team AE · Clara Baekelandt": 1
+    "Team AE · Clara Baekelandt": 1,
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 100,
-   "rdv_seul_hors": 10,
+   "rdv_seul_hors": 11,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 155,
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
     "Lien roundrobin AE · hors campagne": 10,
-    "signature": 1,
-    "nps": 1
+    "nps": 2,
+    "signature": 1
    },
    "rdv_origine_camp": {
     "Lien roundrobin AE · ciblé par la campagne": 155,
@@ -239,8 +239,8 @@
    },
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 10,
+    "nps": 2,
     "signature": 1,
-    "nps": 1,
     "signature_rdv": 1
    },
    "par_semaine": [
@@ -327,7 +327,7 @@
     {
      "periode": "2026-10-05",
      "campagne": 9,
-     "hors": 17
+     "hors": 21
     }
    ],
    "par_jour": [
@@ -644,7 +644,7 @@
     {
      "periode": "2026-10-05",
      "campagne": 2,
-     "hors": 5
+     "hors": 6
     },
     {
      "periode": "2026-10-06",
@@ -659,6 +659,11 @@
     {
      "periode": "2026-10-08",
      "campagne": 0,
+     "hors": 3
+    },
+    {
+     "periode": "2026-10-09",
+     "campagne": 0,
      "hors": 2
     }
    ],
@@ -669,15 +674,15 @@
     },
     {
      "phase": "simulation_completed",
-     "transactions": 32
+     "transactions": 33
     },
     {
      "phase": "simulation_ready",
-     "transactions": 17
+     "transactions": 16
     },
     {
      "phase": "offer_viewed",
-     "transactions": 20
+     "transactions": 22
     },
     {
      "phase": "offer_accepted",
@@ -693,7 +698,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 45
+     "transactions": 47
     },
     {
      "phase": "optimization_declined",
@@ -919,7 +924,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-10-08T17:00:06.229000+00:00"
+   "last_sync": "2026-10-09T08:00:02.644000+00:00"
   }
  },
  "cohorts": [
@@ -1335,7 +1340,7 @@
        "subject": "Renégociation assurance emprunteur",
        "sent": 539,
        "opens": 275,
-       "clicks": 2
+       "clicks": 3
       }
      ],
      "by_owner": [
@@ -1372,7 +1377,7 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 39,
+     "replies_non_fiable": 40,
      "meetings": 17,
      "deals_ae": 20,
      "engaged": 27,
@@ -1469,12 +1474,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 444,
+     "opens": 445,
      "clicks": 27,
      "opens_emails": 830,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 91,
+     "replies_non_fiable": 92,
      "meetings": 46,
      "deals_ae": 57,
      "engaged": 86,
