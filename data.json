@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-14T10:02:38.730187+00:00",
+  "generated_at": "2026-10-14T15:47:40.448949+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -193,9 +193,9 @@
   },
   "global": {
    "activated": 444,
-   "meet": 203,
+   "meet": 204,
    "deal": 327,
-   "both": 86,
+   "both": 87,
    "campagne": 285,
    "hors_campagne": 159,
    "campagne_hors_global": 0,
@@ -218,8 +218,8 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 138,
     "Marc Chevalier · CGP": 4,
-    "Team AE · Clara Baekelandt": 1,
     "Workflow HubSpot · RDV sans simu": 1,
+    "Team AE · Clara Baekelandt": 1,
     "Autre utilisateur": 1
    },
    "rdv_seul_camp": 103,
@@ -230,6 +230,7 @@
     "Posé par la Team AE · contact ciblé": 14,
     "Lien roundrobin AE · hors campagne": 13,
     "nps": 3,
+    "Posé par la Team AE · hors campagne": 1,
     "signature": 1
    },
    "rdv_origine_camp": {
@@ -240,6 +241,7 @@
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 13,
     "nps": 3,
+    "Posé par la Team AE · hors campagne": 1,
     "signature": 1,
     "signature_rdv": 1
    },
@@ -700,15 +702,15 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 205
+     "transactions": 204
     },
     {
      "phase": "simulation_completed",
-     "transactions": 37
+     "transactions": 36
     },
     {
      "phase": "simulation_ready",
-     "transactions": 14
+     "transactions": 15
     },
     {
      "phase": "offer_viewed",
@@ -728,11 +730,11 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 49
+     "transactions": 48
     },
     {
      "phase": "optimization_declined",
-     "transactions": 100
+     "transactions": 102
     }
    ]
   },
