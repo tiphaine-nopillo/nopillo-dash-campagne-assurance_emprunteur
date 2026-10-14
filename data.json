@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-14T15:47:40.448949+00:00",
+  "generated_at": "2026-10-14T20:08:01.792764+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,17 +192,17 @@
    "activated_v1": 176
   },
   "global": {
-   "activated": 444,
-   "meet": 204,
-   "deal": 327,
-   "both": 87,
+   "activated": 445,
+   "meet": 205,
+   "deal": 328,
+   "both": 88,
    "campagne": 285,
-   "hors_campagne": 159,
+   "hors_campagne": 160,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 246,
     "Team AE · Clara Baekelandt": 27,
-    "Team AE · Lilian Maudet": 24,
+    "Team AE · Lilian Maudet": 25,
     "Team AE · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
     "Workflow HubSpot · RDV sans simu": 3,
@@ -218,9 +218,10 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 138,
     "Marc Chevalier · CGP": 4,
+    "Autre utilisateur": 1,
     "Workflow HubSpot · RDV sans simu": 1,
-    "Team AE · Clara Baekelandt": 1,
-    "Autre utilisateur": 1
+    "Team AE · Lilian Maudet": 1,
+    "Team AE · Clara Baekelandt": 1
    },
    "rdv_seul_camp": 103,
    "rdv_seul_hors": 14,
@@ -229,7 +230,7 @@
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
     "Lien roundrobin AE · hors campagne": 13,
-    "nps": 3,
+    "nps": 4,
     "Posé par la Team AE · hors campagne": 1,
     "signature": 1
    },
@@ -240,7 +241,7 @@
    },
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 13,
-    "nps": 3,
+    "nps": 4,
     "Posé par la Team AE · hors campagne": 1,
     "signature": 1,
     "signature_rdv": 1
@@ -334,7 +335,7 @@
     {
      "periode": "2026-10-12",
      "campagne": 1,
-     "hors": 7
+     "hors": 8
     }
    ],
    "par_jour": [
@@ -696,13 +697,13 @@
     {
      "periode": "2026-10-14",
      "campagne": 0,
-     "hors": 1
+     "hors": 2
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 204
+     "transactions": 203
     },
     {
      "phase": "simulation_completed",
@@ -710,15 +711,15 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 15
+     "transactions": 13
     },
     {
      "phase": "offer_viewed",
-     "transactions": 25
+     "transactions": 27
     },
     {
      "phase": "offer_accepted",
-     "transactions": 4
+     "transactions": 6
     },
     {
      "phase": "process_started",
@@ -730,7 +731,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 48
+     "transactions": 49
     },
     {
      "phase": "optimization_declined",
