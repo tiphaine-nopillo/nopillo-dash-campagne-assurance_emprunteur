@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-15T22:11:53.469612+00:00",
+  "generated_at": "2026-10-16T09:38:32.418404+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -218,10 +218,10 @@
    "par_createur_hors": {
     "Simulation produit · n8n": 138,
     "Marc Chevalier · CGP": 4,
-    "Team AE · Clara Baekelandt": 1,
-    "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1,
     "Team AE · Lilian Maudet": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Team AE · Clara Baekelandt": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 104,
    "rdv_seul_hors": 13,
@@ -711,19 +711,19 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 11
+     "transactions": 10
     },
     {
      "phase": "offer_viewed",
-     "transactions": 25
+     "transactions": 24
     },
     {
      "phase": "offer_accepted",
-     "transactions": 6
+     "transactions": 5
     },
     {
      "phase": "process_started",
-     "transactions": 11
+     "transactions": 14
     },
     {
      "phase": "process_completed",
@@ -746,7 +746,7 @@
    "simu_seule_pipe": 9
   },
   "relanced": 1070,
-  "process": 13,
+  "process": 14,
   "attribution": {
    "marketing": {
     "total": 258,
@@ -1082,7 +1082,7 @@
       "simule": 15,
       "certain": 35,
       "attente": 6,
-      "process": 4
+      "process": 5
      },
      "steps": [
       {
@@ -1306,7 +1306,7 @@
     "activated_v2": 42,
     "activated_v1": 58,
     "relanced": 413,
-    "process": 6
+    "process": 7
    },
    "reply_curve": []
   },
@@ -1507,8 +1507,8 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 449,
-     "clicks": 29,
+     "opens": 450,
+     "clicks": 30,
      "opens_emails": 833,
      "clicks_emails": 33,
      "opens_frozen": false,
