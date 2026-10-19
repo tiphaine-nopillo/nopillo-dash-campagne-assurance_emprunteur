@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-19T17:25:47.091196+00:00",
+  "generated_at": "2026-10-19T22:14:59.994163+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -204,8 +204,8 @@
     "Team AE · Clara Baekelandt": 28,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 22,
-    "Workflow HubSpot · RDV sans simu": 4,
     "Marc Chevalier · CGP": 4,
+    "Workflow HubSpot · RDV sans simu": 4,
     "Autre utilisateur": 1
    },
    "par_createur_camp": {
@@ -220,8 +220,8 @@
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 2,
     "Workflow HubSpot · RDV sans simu": 1,
-    "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Team AE · Lilian Maudet": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 103,
    "rdv_seul_hors": 14,
