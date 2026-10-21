@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-20T19:08:06.232547+00:00",
+  "generated_at": "2026-10-21T09:59:29.877673+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -178,39 +178,39 @@
   "contacts": 2075,
   "activation": {
    "meet": 186,
-   "deal": 182,
+   "deal": 183,
    "both": 83,
    "meet_only": 103,
-   "deal_only": 99,
-   "activated": 285,
+   "deal_only": 100,
+   "activated": 286,
    "deal_auto": 108,
-   "deal_manual": 74,
-   "deal_only_manual": 11,
-   "sum_cells": 285,
+   "deal_manual": 75,
+   "deal_only_manual": 12,
+   "sum_cells": 286,
    "overlap": 0,
-   "activated_v2": 109,
+   "activated_v2": 110,
    "activated_v1": 176
   },
   "global": {
-   "activated": 456,
+   "activated": 457,
    "meet": 207,
-   "deal": 339,
+   "deal": 340,
    "both": 90,
-   "campagne": 285,
+   "campagne": 286,
    "hors_campagne": 171,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 255,
-    "Team AE · Clara Baekelandt": 29,
+    "Team AE · Clara Baekelandt": 30,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 22,
-    "Workflow HubSpot · RDV sans simu": 4,
     "Marc Chevalier · CGP": 4,
+    "Workflow HubSpot · RDV sans simu": 4,
     "Autre utilisateur": 1
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 108,
-    "Team AE · Clara Baekelandt": 26,
+    "Team AE · Clara Baekelandt": 27,
     "Team AE · Lilian Maudet": 23,
     "Team AE · Mathieu d'Ornellas": 22,
     "Workflow HubSpot · RDV sans simu": 3
@@ -339,7 +339,7 @@
     },
     {
      "periode": "2026-10-19",
-     "campagne": 0,
+     "campagne": 1,
      "hors": 3
     }
    ],
@@ -723,12 +723,17 @@
      "periode": "2026-10-20",
      "campagne": 0,
      "hors": 2
+    },
+    {
+     "periode": "2026-10-21",
+     "campagne": 1,
+     "hors": 0
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 213
+     "transactions": 214
     },
     {
      "phase": "simulation_completed",
@@ -768,14 +773,14 @@
    "rdv_seul": 103,
    "rdv_et_simu": 83,
    "simu_seule_etapes": 91,
-   "simu_seule_pipe": 8
+   "simu_seule_pipe": 9
   },
   "relanced": 1070,
   "process": 14,
   "attribution": {
    "marketing": {
-    "total": 258,
-    "simulation": 160,
+    "total": 259,
+    "simulation": 161,
     "reponse": 4,
     "rdv_public": 94
    },
@@ -844,8 +849,8 @@
     },
     "14412": {
      "marketing": {
-      "total": 67,
-      "simulation": 38,
+      "total": 68,
+      "simulation": 39,
       "reponse": 2,
       "rdv_public": 27
      },
@@ -902,8 +907,8 @@
     },
     "v2": {
      "marketing": {
-      "total": 91,
-      "simulation": 61,
+      "total": 92,
+      "simulation": 62,
       "reponse": 4,
       "rdv_public": 26
      },
@@ -916,10 +921,10 @@
     }
    },
    "qualification": {
-    "certain": 273,
+    "certain": 274,
     "attente": 12,
     "certain_rdv_client": 94,
-    "certain_parcours": 160,
+    "certain_parcours": 161,
     "certain_rdv_sales": 19,
     "attente_carte_seule": 12,
     "par_cellule": {
@@ -956,10 +961,10 @@
       "attente_carte_seule": 0
      },
      "14412": {
-      "certain": 69,
+      "certain": 70,
       "attente": 1,
       "certain_rdv_client": 27,
-      "certain_parcours": 38,
+      "certain_parcours": 39,
       "certain_rdv_sales": 4,
       "attente_carte_seule": 1
      },
@@ -1362,26 +1367,26 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 139,
+     "replies_non_fiable": 141,
      "meetings": 55,
-     "deals_ae": 40,
-     "engaged": 70,
+     "deals_ae": 41,
+     "engaged": 71,
      "split": {
       "both": 25,
       "meet_only": 30,
-      "deal_only": 15,
-      "engaged": 70,
+      "deal_only": 16,
+      "engaged": 71,
       "deal_n8n": 15,
-      "deal_manual": 25,
-      "deal_only_manual": 2,
+      "deal_manual": 26,
+      "deal_only_manual": 3,
       "relanced": 532,
-      "engaged_v2": 50,
+      "engaged_v2": 51,
       "engaged_v1": 20,
-      "marketing": 67,
+      "marketing": 68,
       "sales": 3,
       "non_attribuable": 0,
-      "simule": 38,
-      "certain": 69,
+      "simule": 39,
+      "certain": 70,
       "attente": 1,
       "process": 3
      },
@@ -1495,15 +1500,15 @@
    ],
    "activation": {
     "meet": 72,
-    "deal": 59,
+    "deal": 60,
     "both": 34,
     "meet_only": 38,
-    "deal_only": 25,
-    "activated": 97,
+    "deal_only": 26,
+    "activated": 98,
     "deal_auto": 29,
-    "deal_manual": 30,
-    "deal_only_manual": 2,
-    "activated_v2": 67,
+    "deal_manual": 31,
+    "deal_only_manual": 3,
+    "activated_v2": 68,
     "activated_v1": 30,
     "relanced": 657,
     "process": 4
@@ -1532,9 +1537,9 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 455,
+     "opens": 456,
      "clicks": 31,
-     "opens_emails": 834,
+     "opens_emails": 835,
      "clicks_emails": 33,
      "opens_frozen": false,
      "replies_non_fiable": 108,
@@ -1579,7 +1584,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 217,
+       "opens": 218,
        "clicks": 15
       }
      ],
