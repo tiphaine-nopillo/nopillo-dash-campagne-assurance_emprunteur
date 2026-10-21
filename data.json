@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-21T15:07:30.989925+00:00",
+  "generated_at": "2026-10-21T20:03:00.358223+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -177,11 +177,11 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 186,
+   "meet": 187,
    "deal": 183,
-   "both": 83,
+   "both": 84,
    "meet_only": 103,
-   "deal_only": 100,
+   "deal_only": 99,
    "activated": 286,
    "deal_auto": 108,
    "deal_manual": 75,
@@ -193,9 +193,9 @@
   },
   "global": {
    "activated": 457,
-   "meet": 207,
+   "meet": 208,
    "deal": 340,
-   "both": 90,
+   "both": 91,
    "campagne": 286,
    "hors_campagne": 171,
    "campagne_hors_global": 0,
@@ -219,14 +219,14 @@
     "Simulation produit · n8n": 147,
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 3,
-    "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1,
+    "Workflow HubSpot · RDV sans simu": 1,
     "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 103,
    "rdv_seul_hors": 14,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 159,
+    "Lien roundrobin AE · ciblé par la campagne": 160,
     "Posé par la Team AE · contact ciblé": 14,
     "signature_rdv": 14,
     "Lien roundrobin AE · hors campagne": 13,
@@ -235,7 +235,7 @@
     "Posé par la Team AE · hors campagne": 1
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 159,
+    "Lien roundrobin AE · ciblé par la campagne": 160,
     "Posé par la Team AE · contact ciblé": 14,
     "signature_rdv": 13
    },
@@ -771,8 +771,8 @@
   },
   "motifs": {
    "rdv_seul": 103,
-   "rdv_et_simu": 83,
-   "simu_seule_etapes": 91,
+   "rdv_et_simu": 84,
+   "simu_seule_etapes": 90,
    "simu_seule_pipe": 9
   },
   "relanced": 1070,
@@ -1542,14 +1542,14 @@
      "opens_emails": 835,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 108,
-     "meetings": 47,
+     "replies_non_fiable": 109,
+     "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
      "split": {
-      "both": 19,
+      "both": 20,
       "meet_only": 28,
-      "deal_only": 41,
+      "deal_only": 40,
       "engaged": 88,
       "deal_n8n": 46,
       "deal_manual": 14,
@@ -1592,7 +1592,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 10
+       "meetings": 11
       },
       {
        "owner_id": "650299108",
@@ -1608,11 +1608,11 @@
     }
    ],
    "activation": {
-    "meet": 47,
+    "meet": 48,
     "deal": 60,
-    "both": 19,
+    "both": 20,
     "meet_only": 28,
-    "deal_only": 41,
+    "deal_only": 40,
     "activated": 88,
     "deal_auto": 46,
     "deal_manual": 14,
