@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-21T09:59:29.877673+00:00",
+  "generated_at": "2026-10-21T15:07:30.989925+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -219,9 +219,9 @@
     "Simulation produit · n8n": 147,
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 3,
+    "Workflow HubSpot · RDV sans simu": 1,
     "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1,
-    "Workflow HubSpot · RDV sans simu": 1
+    "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 103,
    "rdv_seul_hors": 14,
@@ -1468,14 +1468,14 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 136,
-       "opens": 90,
+       "opens": 91,
        "clicks": 5
       },
       {
        "order": 2,
        "subject": "Renégociation assurance emprunteur",
        "sent": 123,
-       "opens": 70,
+       "opens": 71,
        "clicks": 0
       }
      ],
