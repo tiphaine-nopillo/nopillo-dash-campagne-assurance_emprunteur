@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-22T15:08:08.567881+00:00",
+  "generated_at": "2026-10-22T19:56:17.448639+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,16 +192,16 @@
    "activated_v1": 176
   },
   "global": {
-   "activated": 460,
+   "activated": 461,
    "meet": 210,
-   "deal": 342,
+   "deal": 343,
    "both": 92,
    "campagne": 286,
-   "hors_campagne": 174,
+   "hors_campagne": 175,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 255,
-    "Team AE · Clara Baekelandt": 32,
+    "Team AE · Clara Baekelandt": 33,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 22,
     "Marc Chevalier · CGP": 4,
@@ -217,7 +217,7 @@
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Team AE · Clara Baekelandt": 5,
+    "Team AE · Clara Baekelandt": 6,
     "Marc Chevalier · CGP": 4,
     "Team AE · Lilian Maudet": 1,
     "Autre utilisateur": 1,
@@ -340,7 +340,7 @@
     {
      "periode": "2026-10-19",
      "campagne": 1,
-     "hors": 6
+     "hors": 7
     }
    ],
    "par_jour": [
@@ -732,13 +732,13 @@
     {
      "periode": "2026-10-22",
      "campagne": 0,
-     "hors": 3
+     "hors": 4
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 216
+     "transactions": 217
     },
     {
      "phase": "simulation_completed",
