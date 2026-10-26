@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-26T10:56:36.950948+00:00",
+  "generated_at": "2026-10-26T17:16:56.112981+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -747,7 +747,7 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 225
+     "transactions": 223
     },
     {
      "phase": "simulation_completed",
@@ -759,15 +759,15 @@
     },
     {
      "phase": "offer_viewed",
-     "transactions": 18
+     "transactions": 19
     },
     {
      "phase": "offer_accepted",
-     "transactions": 11
+     "transactions": 8
     },
     {
      "phase": "process_started",
-     "transactions": 14
+     "transactions": 19
     },
     {
      "phase": "process_completed",
@@ -775,11 +775,11 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 52
+     "transactions": 51
     },
     {
      "phase": "optimization_declined",
-     "transactions": 112
+     "transactions": 113
     }
    ]
   },
@@ -790,7 +790,7 @@
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
-  "process": 15,
+  "process": 17,
   "attribution": {
    "marketing": {
     "total": 261,
@@ -1185,7 +1185,7 @@
      "opens_emails": 85,
      "clicks_emails": 2,
      "opens_frozen": true,
-     "replies_non_fiable": 9,
+     "replies_non_fiable": 10,
      "meetings": 7,
      "deals_ae": 7,
      "engaged": 11,
@@ -1381,7 +1381,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 145,
+     "replies_non_fiable": 146,
      "meetings": 55,
      "deals_ae": 40,
      "engaged": 71,
@@ -1402,7 +1402,7 @@
       "simule": 38,
       "certain": 70,
       "attente": 1,
-      "process": 2
+      "process": 3
      },
      "steps": [
       {
@@ -1525,7 +1525,7 @@
     "activated_v2": 69,
     "activated_v1": 30,
     "relanced": 657,
-    "process": 3
+    "process": 4
    },
    "reply_curve": []
   },
@@ -1577,7 +1577,7 @@
       "simule": 57,
       "certain": 88,
       "attente": 0,
-      "process": 4
+      "process": 5
      },
      "steps": [
       {
@@ -1634,7 +1634,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 4
+    "process": 5
    },
    "reply_curve": []
   }
