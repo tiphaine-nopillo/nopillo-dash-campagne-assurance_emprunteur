@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-27T10:21:06.177026+00:00",
+  "generated_at": "2026-10-27T16:22:56.836733+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,13 +192,13 @@
    "activated_v1": 177
   },
   "global": {
-   "activated": 465,
-   "meet": 215,
+   "activated": 464,
+   "meet": 214,
    "deal": 342,
    "both": 92,
-   "campagne": 288,
+   "campagne": 287,
    "hors_campagne": 177,
-   "campagne_hors_global": 0,
+   "campagne_hors_global": 1,
    "par_createur": {
     "Simulation produit · n8n": 255,
     "Team AE · Clara Baekelandt": 33,
@@ -222,13 +222,13 @@
     "Autre utilisateur": 1,
     "Team AE · Lilian Maudet": 1
    },
-   "rdv_seul_camp": 105,
+   "rdv_seul_camp": 104,
    "rdv_seul_hors": 18,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 160,
     "Lien roundrobin AE · hors campagne": 17,
-    "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
+    "signature_rdv": 14,
     "nps": 5,
     "signature": 3,
     "Posé par la Team AE · hors campagne": 1
@@ -236,7 +236,7 @@
    "rdv_origine_camp": {
     "Lien roundrobin AE · ciblé par la campagne": 160,
     "Posé par la Team AE · contact ciblé": 14,
-    "signature_rdv": 14
+    "signature_rdv": 13
    },
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 17,
@@ -333,7 +333,7 @@
     },
     {
      "periode": "2026-10-19",
-     "campagne": 2,
+     "campagne": 1,
      "hors": 9
     },
     {
@@ -735,7 +735,7 @@
     },
     {
      "periode": "2026-10-25",
-     "campagne": 1,
+     "campagne": 0,
      "hors": 1
     },
     {
@@ -747,15 +747,15 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 223
+     "transactions": 224
     },
     {
      "phase": "simulation_completed",
-     "transactions": 25
+     "transactions": 22
     },
     {
      "phase": "simulation_ready",
-     "transactions": 8
+     "transactions": 9
     },
     {
      "phase": "offer_viewed",
@@ -775,11 +775,11 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 50
+     "transactions": 49
     },
     {
      "phase": "optimization_declined",
-     "transactions": 115
+     "transactions": 116
     }
    ]
   },
@@ -1551,7 +1551,7 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 458,
+     "opens": 459,
      "clicks": 31,
      "opens_emails": 837,
      "clicks_emails": 33,
