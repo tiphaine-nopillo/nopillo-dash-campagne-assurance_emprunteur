@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-27T21:12:11.140194+00:00",
+  "generated_at": "2026-10-28T11:12:36.483016+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -747,11 +747,11 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 224
+     "transactions": 225
     },
     {
      "phase": "simulation_completed",
-     "transactions": 21
+     "transactions": 20
     },
     {
      "phase": "simulation_ready",
@@ -763,7 +763,7 @@
     },
     {
      "phase": "offer_accepted",
-     "transactions": 8
+     "transactions": 9
     },
     {
      "phase": "process_started",
@@ -775,7 +775,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 49
+     "transactions": 48
     },
     {
      "phase": "optimization_declined",
@@ -1409,7 +1409,7 @@
        "order": 1,
        "subject": "Rapide point sur votre assurance emprunteur",
        "sent": 556,
-       "opens": 269,
+       "opens": 270,
        "clicks": 5
       },
       {
@@ -1551,12 +1551,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 460,
+     "opens": 461,
      "clicks": 31,
      "opens_emails": 837,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 115,
+     "replies_non_fiable": 116,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
