@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-28T11:12:36.483016+00:00",
+  "generated_at": "2026-10-28T18:16:36.370795+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -747,7 +747,7 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 225
+     "transactions": 224
     },
     {
      "phase": "simulation_completed",
@@ -755,7 +755,7 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 10
+     "transactions": 11
     },
     {
      "phase": "offer_viewed",
