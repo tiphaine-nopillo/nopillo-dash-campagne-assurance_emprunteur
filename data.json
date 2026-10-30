@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-29T23:13:57.798251+00:00",
+  "generated_at": "2026-10-30T11:17:58.451029+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -755,11 +755,11 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 10
+     "transactions": 9
     },
     {
      "phase": "offer_viewed",
-     "transactions": 20
+     "transactions": 21
     },
     {
      "phase": "offer_accepted",
@@ -767,7 +767,7 @@
     },
     {
      "phase": "process_started",
-     "transactions": 18
+     "transactions": 17
     },
     {
      "phase": "process_completed",
@@ -779,7 +779,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 118
+     "transactions": 119
     }
    ]
   },
@@ -790,7 +790,7 @@
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
-  "process": 16,
+  "process": 15,
   "attribution": {
    "marketing": {
     "total": 260,
@@ -1475,7 +1475,7 @@
       "simule": 19,
       "certain": 27,
       "attente": 0,
-      "process": 1
+      "process": 0
      },
      "steps": [
       {
@@ -1525,7 +1525,7 @@
     "activated_v2": 68,
     "activated_v1": 30,
     "relanced": 657,
-    "process": 4
+    "process": 3
    },
    "reply_curve": []
   },
@@ -1556,7 +1556,7 @@
      "opens_emails": 837,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 118,
+     "replies_non_fiable": 119,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
