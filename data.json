@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-02T13:20:37.314460+00:00",
+  "generated_at": "2026-11-02T22:42:20.517566+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -751,11 +751,11 @@
     },
     {
      "phase": "simulation_completed",
-     "transactions": 18
+     "transactions": 13
     },
     {
      "phase": "simulation_ready",
-     "transactions": 11
+     "transactions": 12
     },
     {
      "phase": "offer_viewed",
@@ -763,7 +763,7 @@
     },
     {
      "phase": "offer_accepted",
-     "transactions": 7
+     "transactions": 6
     },
     {
      "phase": "process_started",
@@ -771,7 +771,7 @@
     },
     {
      "phase": "process_completed",
-     "transactions": 12
+     "transactions": 13
     },
     {
      "phase": "optimization_activated",
@@ -779,7 +779,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 119
+     "transactions": 123
     }
    ]
   },
@@ -1032,7 +1032,7 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 56,
+     "replies_non_fiable": 57,
      "meetings": 24,
      "deals_ae": 23,
      "engaged": 36,
@@ -1551,12 +1551,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 463,
+     "opens": 465,
      "clicks": 31,
      "opens_emails": 837,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 122,
+     "replies_non_fiable": 124,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
