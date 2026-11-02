@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-10-30T22:13:06.415982+00:00",
+  "generated_at": "2026-11-02T13:20:37.314460+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -225,18 +225,18 @@
    "rdv_seul_camp": 105,
    "rdv_seul_hors": 18,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 160,
+    "Lien roundrobin AE · ciblé par la campagne": 161,
     "Lien roundrobin AE · hors campagne": 17,
     "Posé par la Team AE · contact ciblé": 14,
-    "signature_rdv": 14,
+    "signature_rdv": 13,
     "nps": 5,
     "signature": 3,
     "Posé par la Team AE · hors campagne": 1
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 160,
+    "Lien roundrobin AE · ciblé par la campagne": 161,
     "Posé par la Team AE · contact ciblé": 14,
-    "signature_rdv": 13
+    "signature_rdv": 12
    },
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 17,
@@ -751,23 +751,23 @@
     },
     {
      "phase": "simulation_completed",
-     "transactions": 20
+     "transactions": 18
     },
     {
      "phase": "simulation_ready",
-     "transactions": 9
+     "transactions": 11
     },
     {
      "phase": "offer_viewed",
-     "transactions": 21
+     "transactions": 19
     },
     {
      "phase": "offer_accepted",
-     "transactions": 9
+     "transactions": 7
     },
     {
      "phase": "process_started",
-     "transactions": 17
+     "transactions": 21
     },
     {
      "phase": "process_completed",
@@ -790,7 +790,7 @@
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
-  "process": 15,
+  "process": 17,
   "attribution": {
    "marketing": {
     "total": 260,
@@ -1381,7 +1381,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 147,
+     "replies_non_fiable": 151,
      "meetings": 55,
      "deals_ae": 40,
      "engaged": 71,
@@ -1402,7 +1402,7 @@
       "simule": 38,
       "certain": 70,
       "attente": 1,
-      "process": 3
+      "process": 4
      },
      "steps": [
       {
@@ -1525,7 +1525,7 @@
     "activated_v2": 68,
     "activated_v1": 30,
     "relanced": 657,
-    "process": 3
+    "process": 4
    },
    "reply_curve": []
   },
@@ -1551,12 +1551,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 462,
+     "opens": 463,
      "clicks": 31,
      "opens_emails": 837,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 119,
+     "replies_non_fiable": 122,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
@@ -1577,7 +1577,7 @@
       "simule": 57,
       "certain": 88,
       "attente": 0,
-      "process": 4
+      "process": 5
      },
      "steps": [
       {
@@ -1634,7 +1634,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 4
+    "process": 5
    },
    "reply_curve": []
   }
