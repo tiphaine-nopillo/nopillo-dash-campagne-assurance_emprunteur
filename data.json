@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-03T12:44:16.864921+00:00",
+  "generated_at": "2026-11-03T20:03:11.524635+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -193,9 +193,9 @@
   },
   "global": {
    "activated": 464,
-   "meet": 214,
+   "meet": 215,
    "deal": 340,
-   "both": 90,
+   "both": 91,
    "campagne": 287,
    "hors_campagne": 177,
    "campagne_hors_global": 0,
@@ -226,7 +226,7 @@
    "rdv_seul_hors": 19,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
-    "Lien roundrobin AE · hors campagne": 16,
+    "Lien roundrobin AE · hors campagne": 17,
     "Posé par la Team AE · contact ciblé": 14,
     "signature_rdv": 14,
     "nps": 5,
@@ -239,7 +239,7 @@
     "signature_rdv": 12
    },
    "rdv_origine_hors": {
-    "Lien roundrobin AE · hors campagne": 16,
+    "Lien roundrobin AE · hors campagne": 17,
     "nps": 5,
     "signature": 3,
     "signature_rdv": 2,
@@ -747,7 +747,7 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 224
+     "transactions": 223
     },
     {
      "phase": "simulation_completed",
@@ -755,7 +755,7 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 12
+     "transactions": 13
     },
     {
      "phase": "offer_viewed",
@@ -763,7 +763,7 @@
     },
     {
      "phase": "offer_accepted",
-     "transactions": 7
+     "transactions": 6
     },
     {
      "phase": "process_started",
@@ -771,7 +771,7 @@
     },
     {
      "phase": "process_completed",
-     "transactions": 13
+     "transactions": 14
     },
     {
      "phase": "optimization_activated",
@@ -790,7 +790,7 @@
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
-  "process": 17,
+  "process": 18,
   "attribution": {
    "marketing": {
     "total": 260,
@@ -1105,7 +1105,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 72,
+     "replies_non_fiable": 74,
      "meetings": 26,
      "deals_ae": 24,
      "engaged": 41,
@@ -1381,7 +1381,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 152,
+     "replies_non_fiable": 153,
      "meetings": 55,
      "deals_ae": 40,
      "engaged": 71,
@@ -1551,12 +1551,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 466,
-     "clicks": 31,
-     "opens_emails": 837,
+     "opens": 468,
+     "clicks": 32,
+     "opens_emails": 838,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 127,
+     "replies_non_fiable": 129,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
@@ -1577,7 +1577,7 @@
       "simule": 57,
       "certain": 88,
       "attente": 0,
-      "process": 5
+      "process": 6
      },
      "steps": [
       {
@@ -1598,7 +1598,7 @@
        "order": 3,
        "subject": "Dernière chance pour votre assurance emprunteur",
        "sent": 537,
-       "opens": 219,
+       "opens": 220,
        "clicks": 15
       }
      ],
@@ -1634,7 +1634,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 5
+    "process": 6
    },
    "reply_curve": []
   }
