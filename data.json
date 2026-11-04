@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-03T20:03:11.524635+00:00",
+  "generated_at": "2026-11-04T12:54:11.029198+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -219,8 +219,8 @@
     "Simulation produit · n8n": 147,
     "Team AE · Clara Baekelandt": 5,
     "Marc Chevalier · CGP": 4,
-    "Team AE · Lilian Maudet": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 105,
    "rdv_seul_hors": 19,
@@ -755,11 +755,11 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 13
+     "transactions": 12
     },
     {
      "phase": "offer_viewed",
-     "transactions": 19
+     "transactions": 20
     },
     {
      "phase": "offer_accepted",
@@ -1185,7 +1185,7 @@
      "opens_emails": 85,
      "clicks_emails": 2,
      "opens_frozen": true,
-     "replies_non_fiable": 10,
+     "replies_non_fiable": 11,
      "meetings": 7,
      "deals_ae": 7,
      "engaged": 11,
@@ -1381,7 +1381,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 153,
+     "replies_non_fiable": 154,
      "meetings": 55,
      "deals_ae": 40,
      "engaged": 71,
@@ -1454,7 +1454,7 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 41,
+     "replies_non_fiable": 42,
      "meetings": 17,
      "deals_ae": 19,
      "engaged": 27,
@@ -1551,12 +1551,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 468,
+     "opens": 469,
      "clicks": 32,
      "opens_emails": 838,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 129,
+     "replies_non_fiable": 132,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
