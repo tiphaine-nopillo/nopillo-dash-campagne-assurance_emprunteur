@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-05T13:01:47.046890+00:00",
+  "generated_at": "2026-11-05T21:00:14.549604+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -194,14 +194,14 @@
   "global": {
    "activated": 465,
    "meet": 216,
-   "deal": 341,
-   "both": 92,
+   "deal": 340,
+   "both": 91,
    "campagne": 288,
    "hors_campagne": 177,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 256,
-    "Team AE · Clara Baekelandt": 32,
+    "Team AE · Clara Baekelandt": 31,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 21,
     "Marc Chevalier · CGP": 4,
@@ -217,13 +217,13 @@
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Team AE · Clara Baekelandt": 5,
+    "Team AE · Clara Baekelandt": 4,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1,
     "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 105,
-   "rdv_seul_hors": 19,
+   "rdv_seul_hors": 20,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
     "Lien roundrobin AE · hors campagne": 18,
@@ -747,11 +747,11 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 223
+     "transactions": 225
     },
     {
      "phase": "simulation_completed",
-     "transactions": 12
+     "transactions": 10
     },
     {
      "phase": "simulation_ready",
@@ -759,11 +759,11 @@
     },
     {
      "phase": "offer_viewed",
-     "transactions": 20
+     "transactions": 19
     },
     {
      "phase": "offer_accepted",
-     "transactions": 6
+     "transactions": 4
     },
     {
      "phase": "process_started",
@@ -771,7 +771,7 @@
     },
     {
      "phase": "process_completed",
-     "transactions": 14
+     "transactions": 16
     },
     {
      "phase": "optimization_activated",
@@ -779,7 +779,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 124
+     "transactions": 125
     }
    ]
   },
@@ -790,7 +790,7 @@
    "simu_seule_pipe": 10
   },
   "relanced": 1070,
-  "process": 18,
+  "process": 19,
   "attribution": {
    "marketing": {
     "total": 261,
@@ -1577,7 +1577,7 @@
       "simule": 57,
       "certain": 88,
       "attente": 0,
-      "process": 6
+      "process": 7
      },
      "steps": [
       {
@@ -1634,7 +1634,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 6
+    "process": 7
    },
    "reply_curve": []
   }
