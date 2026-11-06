@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-05T21:00:14.549604+00:00",
+  "generated_at": "2026-11-06T12:50:20.347085+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -178,30 +178,30 @@
   "contacts": 2075,
   "activation": {
    "meet": 187,
-   "deal": 183,
+   "deal": 184,
    "both": 82,
    "meet_only": 105,
-   "deal_only": 101,
-   "activated": 288,
+   "deal_only": 102,
+   "activated": 289,
    "deal_auto": 109,
-   "deal_manual": 74,
-   "deal_only_manual": 13,
-   "sum_cells": 288,
+   "deal_manual": 75,
+   "deal_only_manual": 14,
+   "sum_cells": 289,
    "overlap": 0,
-   "activated_v2": 111,
+   "activated_v2": 112,
    "activated_v1": 177
   },
   "global": {
-   "activated": 465,
-   "meet": 216,
-   "deal": 340,
-   "both": 91,
-   "campagne": 288,
+   "activated": 466,
+   "meet": 217,
+   "deal": 341,
+   "both": 92,
+   "campagne": 289,
    "hors_campagne": 177,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 256,
-    "Team AE · Clara Baekelandt": 31,
+    "Team AE · Clara Baekelandt": 32,
     "Team AE · Lilian Maudet": 24,
     "Team AE · Mathieu d'Ornellas": 21,
     "Marc Chevalier · CGP": 4,
@@ -210,23 +210,23 @@
    },
    "par_createur_camp": {
     "Simulation produit · n8n": 109,
-    "Team AE · Clara Baekelandt": 27,
+    "Team AE · Clara Baekelandt": 28,
     "Team AE · Lilian Maudet": 23,
     "Team AE · Mathieu d'Ornellas": 21,
     "Workflow HubSpot · RDV sans simu": 3
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Team AE · Clara Baekelandt": 4,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Team AE · Clara Baekelandt": 4,
+    "Team AE · Lilian Maudet": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 105,
    "rdv_seul_hors": 20,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
-    "Lien roundrobin AE · hors campagne": 18,
+    "Lien roundrobin AE · hors campagne": 19,
     "Posé par la Team AE · contact ciblé": 14,
     "signature_rdv": 14,
     "nps": 5,
@@ -239,7 +239,7 @@
     "signature_rdv": 12
    },
    "rdv_origine_hors": {
-    "Lien roundrobin AE · hors campagne": 18,
+    "Lien roundrobin AE · hors campagne": 19,
     "nps": 5,
     "signature": 3,
     "signature_rdv": 2,
@@ -340,6 +340,11 @@
      "periode": "2026-10-26",
      "campagne": 0,
      "hors": 1
+    },
+    {
+     "periode": "2026-11-02",
+     "campagne": 1,
+     "hors": 0
     }
    ],
    "par_jour": [
@@ -742,12 +747,17 @@
      "periode": "2026-10-26",
      "campagne": 0,
      "hors": 1
+    },
+    {
+     "periode": "2026-11-06",
+     "campagne": 1,
+     "hors": 0
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 225
+     "transactions": 224
     },
     {
      "phase": "simulation_completed",
@@ -755,7 +765,7 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 13
+     "transactions": 14
     },
     {
      "phase": "offer_viewed",
@@ -779,7 +789,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 125
+     "transactions": 126
     }
    ]
   },
@@ -787,14 +797,14 @@
    "rdv_seul": 105,
    "rdv_et_simu": 82,
    "simu_seule_etapes": 91,
-   "simu_seule_pipe": 10
+   "simu_seule_pipe": 11
   },
   "relanced": 1070,
   "process": 19,
   "attribution": {
    "marketing": {
-    "total": 261,
-    "simulation": 161,
+    "total": 262,
+    "simulation": 162,
     "reponse": 4,
     "rdv_public": 96
    },
@@ -835,8 +845,8 @@
     },
     "14336": {
      "marketing": {
-      "total": 9,
-      "simulation": 5,
+      "total": 10,
+      "simulation": 6,
       "reponse": 0,
       "rdv_public": 4
      },
@@ -921,8 +931,8 @@
     },
     "v2": {
      "marketing": {
-      "total": 93,
-      "simulation": 62,
+      "total": 94,
+      "simulation": 63,
       "reponse": 4,
       "rdv_public": 27
      },
@@ -935,10 +945,10 @@
     }
    },
    "qualification": {
-    "certain": 276,
+    "certain": 277,
     "attente": 12,
     "certain_rdv_client": 96,
-    "certain_parcours": 161,
+    "certain_parcours": 162,
     "certain_rdv_sales": 19,
     "attente_carte_seule": 12,
     "par_cellule": {
@@ -959,10 +969,10 @@
       "attente_carte_seule": 6
      },
      "14336": {
-      "certain": 10,
+      "certain": 11,
       "attente": 1,
       "certain_rdv_client": 4,
-      "certain_parcours": 5,
+      "certain_parcours": 6,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 1
      },
@@ -1032,7 +1042,7 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 58,
+     "replies_non_fiable": 59,
      "meetings": 24,
      "deals_ae": 23,
      "engaged": 36,
@@ -1187,24 +1197,24 @@
      "opens_frozen": true,
      "replies_non_fiable": 11,
      "meetings": 7,
-     "deals_ae": 7,
-     "engaged": 11,
+     "deals_ae": 8,
+     "engaged": 12,
      "split": {
       "both": 3,
       "meet_only": 4,
-      "deal_only": 4,
-      "engaged": 11,
+      "deal_only": 5,
+      "engaged": 12,
       "deal_n8n": 2,
-      "deal_manual": 5,
-      "deal_only_manual": 2,
+      "deal_manual": 6,
+      "deal_only_manual": 3,
       "relanced": 42,
-      "engaged_v2": 3,
+      "engaged_v2": 4,
       "engaged_v1": 8,
-      "marketing": 9,
+      "marketing": 10,
       "sales": 2,
       "non_attribuable": 0,
-      "simule": 5,
-      "certain": 10,
+      "simule": 6,
+      "certain": 11,
       "attente": 1,
       "process": 0
      },
@@ -1339,15 +1349,15 @@
    ],
    "activation": {
     "meet": 67,
-    "deal": 63,
+    "deal": 64,
     "both": 29,
     "meet_only": 38,
-    "deal_only": 34,
-    "activated": 101,
+    "deal_only": 35,
+    "activated": 102,
     "deal_auto": 33,
-    "deal_manual": 30,
-    "deal_only_manual": 8,
-    "activated_v2": 42,
+    "deal_manual": 31,
+    "deal_only_manual": 9,
+    "activated_v2": 43,
     "activated_v1": 59,
     "relanced": 413,
     "process": 8
@@ -1556,7 +1566,7 @@
      "opens_emails": 838,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 136,
+     "replies_non_fiable": 138,
      "meetings": 48,
      "deals_ae": 60,
      "engaged": 88,
