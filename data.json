@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-09T23:22:29.552247+00:00",
+  "generated_at": "2026-11-10T13:24:37.483058+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -177,26 +177,26 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 187,
+   "meet": 188,
    "deal": 183,
    "both": 81,
-   "meet_only": 106,
+   "meet_only": 107,
    "deal_only": 102,
-   "activated": 289,
+   "activated": 290,
    "deal_auto": 109,
    "deal_manual": 74,
    "deal_only_manual": 14,
-   "sum_cells": 289,
+   "sum_cells": 290,
    "overlap": 0,
    "activated_v2": 112,
-   "activated_v1": 177
+   "activated_v1": 178
   },
   "global": {
-   "activated": 467,
-   "meet": 218,
+   "activated": 468,
+   "meet": 219,
    "deal": 340,
    "both": 91,
-   "campagne": 289,
+   "campagne": 290,
    "hors_campagne": 178,
    "campagne_hors_global": 0,
    "par_createur": {
@@ -219,16 +219,16 @@
     "Simulation produit · n8n": 147,
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 4,
-    "Team AE · Lilian Maudet": 1,
-    "Autre utilisateur": 1
+    "Autre utilisateur": 1,
+    "Team AE · Lilian Maudet": 1
    },
-   "rdv_seul_camp": 106,
+   "rdv_seul_camp": 107,
    "rdv_seul_hors": 21,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
     "Lien roundrobin AE · hors campagne": 21,
+    "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
-    "signature_rdv": 14,
     "nps": 4,
     "Posé par la Team AE · hors campagne": 2,
     "signature": 2
@@ -236,7 +236,7 @@
    "rdv_origine_camp": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
     "Posé par la Team AE · contact ciblé": 14,
-    "signature_rdv": 12
+    "signature_rdv": 13
    },
    "rdv_origine_hors": {
     "Lien roundrobin AE · hors campagne": 21,
@@ -348,7 +348,7 @@
     },
     {
      "periode": "2026-11-09",
-     "campagne": 0,
+     "campagne": 1,
      "hors": 1
     }
    ],
@@ -762,16 +762,21 @@
      "periode": "2026-11-09",
      "campagne": 0,
      "hors": 1
+    },
+    {
+     "periode": "2026-11-10",
+     "campagne": 1,
+     "hors": 0
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 221
+     "transactions": 222
     },
     {
      "phase": "simulation_completed",
-     "transactions": 12
+     "transactions": 11
     },
     {
      "phase": "simulation_ready",
@@ -795,7 +800,7 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 46
+     "transactions": 47
     },
     {
      "phase": "optimization_declined",
@@ -804,7 +809,7 @@
    ]
   },
   "motifs": {
-   "rdv_seul": 106,
+   "rdv_seul": 107,
    "rdv_et_simu": 81,
    "simu_seule_etapes": 91,
    "simu_seule_pipe": 11
@@ -813,10 +818,10 @@
   "process": 18,
   "attribution": {
    "marketing": {
-    "total": 261,
+    "total": 262,
     "simulation": 161,
     "reponse": 4,
-    "rdv_public": 96
+    "rdv_public": 97
    },
    "sales": {
     "total": 28
@@ -827,10 +832,10 @@
    "par_cellule": {
     "14319": {
      "marketing": {
-      "total": 28,
+      "total": 29,
       "simulation": 15,
       "reponse": 0,
-      "rdv_public": 13
+      "rdv_public": 14
      },
      "sales": {
       "total": 8
@@ -927,10 +932,10 @@
    "par_vague": {
     "v1": {
      "marketing": {
-      "total": 168,
+      "total": 169,
       "simulation": 99,
       "reponse": 0,
-      "rdv_public": 69
+      "rdv_public": 70
      },
      "sales": {
       "total": 9
@@ -955,17 +960,17 @@
     }
    },
    "qualification": {
-    "certain": 277,
+    "certain": 278,
     "attente": 12,
-    "certain_rdv_client": 96,
+    "certain_rdv_client": 97,
     "certain_parcours": 161,
     "certain_rdv_sales": 20,
     "attente_carte_seule": 12,
     "par_cellule": {
      "14319": {
-      "certain": 32,
+      "certain": 33,
       "attente": 4,
-      "certain_rdv_client": 13,
+      "certain_rdv_client": 14,
       "certain_parcours": 15,
       "certain_rdv_sales": 4,
       "attente_carte_seule": 4
@@ -1053,25 +1058,25 @@
      "clicks_emails": 5,
      "opens_frozen": true,
      "replies_non_fiable": 59,
-     "meetings": 24,
+     "meetings": 25,
      "deals_ae": 21,
-     "engaged": 36,
+     "engaged": 37,
      "split": {
       "both": 9,
-      "meet_only": 15,
+      "meet_only": 16,
       "deal_only": 12,
-      "engaged": 36,
+      "engaged": 37,
       "deal_n8n": 11,
       "deal_manual": 10,
       "deal_only_manual": 3,
       "relanced": 173,
       "engaged_v2": 16,
-      "engaged_v1": 20,
-      "marketing": 28,
+      "engaged_v1": 21,
+      "marketing": 29,
       "sales": 8,
       "non_attribuable": 0,
       "simule": 15,
-      "certain": 32,
+      "certain": 33,
       "attente": 4,
       "process": 2
      },
@@ -1095,7 +1100,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 4
+       "meetings": 5
       },
       {
        "owner_id": "650299108",
@@ -1125,7 +1130,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 74,
+     "replies_non_fiable": 76,
      "meetings": 26,
      "deals_ae": 24,
      "engaged": 41,
@@ -1358,17 +1363,17 @@
     }
    ],
    "activation": {
-    "meet": 67,
+    "meet": 68,
     "deal": 62,
     "both": 27,
-    "meet_only": 40,
+    "meet_only": 41,
     "deal_only": 35,
-    "activated": 102,
+    "activated": 103,
     "deal_auto": 33,
     "deal_manual": 29,
     "deal_only_manual": 9,
     "activated_v2": 43,
-    "activated_v1": 59,
+    "activated_v1": 60,
     "relanced": 413,
     "process": 7
    },
@@ -1571,12 +1576,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 476,
+     "opens": 477,
      "clicks": 34,
      "opens_emails": 839,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 141,
+     "replies_non_fiable": 142,
      "meetings": 48,
      "deals_ae": 61,
      "engaged": 88,
