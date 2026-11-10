@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-10T13:24:37.483058+00:00",
+  "generated_at": "2026-11-10T20:46:25.295642+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -219,8 +219,8 @@
     "Simulation produit · n8n": 147,
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 4,
-    "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Team AE · Lilian Maudet": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 107,
    "rdv_seul_hors": 21,
@@ -772,19 +772,19 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 222
+     "transactions": 221
     },
     {
      "phase": "simulation_completed",
-     "transactions": 11
+     "transactions": 10
     },
     {
      "phase": "simulation_ready",
-     "transactions": 13
+     "transactions": 14
     },
     {
      "phase": "offer_viewed",
-     "transactions": 19
+     "transactions": 18
     },
     {
      "phase": "offer_accepted",
@@ -792,7 +792,7 @@
     },
     {
      "phase": "process_started",
-     "transactions": 22
+     "transactions": 24
     },
     {
      "phase": "process_completed",
@@ -804,7 +804,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 130
+     "transactions": 131
     }
    ]
   },
@@ -815,7 +815,7 @@
    "simu_seule_pipe": 11
   },
   "relanced": 1070,
-  "process": 18,
+  "process": 19,
   "attribution": {
    "marketing": {
     "total": 262,
@@ -1151,7 +1151,7 @@
       "simule": 15,
       "certain": 35,
       "attente": 6,
-      "process": 5
+      "process": 6
      },
      "steps": [
       {
@@ -1375,7 +1375,7 @@
     "activated_v2": 43,
     "activated_v1": 60,
     "relanced": 413,
-    "process": 7
+    "process": 8
    },
    "reply_curve": []
   },
