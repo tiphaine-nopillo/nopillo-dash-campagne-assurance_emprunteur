@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-12T13:39:50.077799+00:00",
+  "generated_at": "2026-11-12T21:25:03.179299+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -177,14 +177,14 @@
  "dedup": {
   "contacts": 2075,
   "activation": {
-   "meet": 188,
-   "deal": 183,
+   "meet": 189,
+   "deal": 182,
    "both": 81,
-   "meet_only": 107,
-   "deal_only": 102,
+   "meet_only": 108,
+   "deal_only": 101,
    "activated": 290,
    "deal_auto": 109,
-   "deal_manual": 74,
+   "deal_manual": 73,
    "deal_only_manual": 14,
    "sum_cells": 290,
    "overlap": 0,
@@ -193,8 +193,8 @@
   },
   "global": {
    "activated": 468,
-   "meet": 220,
-   "deal": 340,
+   "meet": 221,
+   "deal": 339,
    "both": 92,
    "campagne": 290,
    "hors_campagne": 178,
@@ -203,7 +203,7 @@
     "Simulation produit · n8n": 256,
     "Team AE · Clara Baekelandt": 33,
     "Team AE · Lilian Maudet": 23,
-    "Team AE · Mathieu d'Ornellas": 20,
+    "Team AE · Mathieu d'Ornellas": 19,
     "Marc Chevalier · CGP": 4,
     "Workflow HubSpot · RDV sans simu": 3,
     "Autre utilisateur": 1
@@ -212,20 +212,20 @@
     "Simulation produit · n8n": 109,
     "Team AE · Clara Baekelandt": 29,
     "Team AE · Lilian Maudet": 22,
-    "Team AE · Mathieu d'Ornellas": 20,
+    "Team AE · Mathieu d'Ornellas": 19,
     "Workflow HubSpot · RDV sans simu": 3
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 4,
-    "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Marc Chevalier · CGP": 4,
+    "Team AE · Lilian Maudet": 1,
+    "Autre utilisateur": 1
    },
-   "rdv_seul_camp": 107,
+   "rdv_seul_camp": 108,
    "rdv_seul_hors": 21,
    "rdv_origine": {
-    "Lien roundrobin AE · ciblé par la campagne": 161,
+    "Lien roundrobin AE · ciblé par la campagne": 162,
     "Lien roundrobin AE · hors campagne": 22,
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
@@ -234,7 +234,7 @@
     "signature": 2
    },
    "rdv_origine_camp": {
-    "Lien roundrobin AE · ciblé par la campagne": 161,
+    "Lien roundrobin AE · ciblé par la campagne": 162,
     "Posé par la Team AE · contact ciblé": 14,
     "signature_rdv": 13
    },
@@ -772,7 +772,7 @@
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 222
+     "transactions": 219
     },
     {
      "phase": "simulation_completed",
@@ -780,19 +780,19 @@
     },
     {
      "phase": "simulation_ready",
-     "transactions": 14
+     "transactions": 13
     },
     {
      "phase": "offer_viewed",
-     "transactions": 17
+     "transactions": 18
     },
     {
      "phase": "offer_accepted",
-     "transactions": 3
+     "transactions": 5
     },
     {
      "phase": "process_started",
-     "transactions": 24
+     "transactions": 22
     },
     {
      "phase": "process_completed",
@@ -800,28 +800,28 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 47
+     "transactions": 46
     },
     {
      "phase": "optimization_declined",
-     "transactions": 132
+     "transactions": 137
     }
    ]
   },
   "motifs": {
-   "rdv_seul": 107,
+   "rdv_seul": 108,
    "rdv_et_simu": 81,
-   "simu_seule_etapes": 91,
+   "simu_seule_etapes": 90,
    "simu_seule_pipe": 11
   },
   "relanced": 1070,
-  "process": 19,
+  "process": 18,
   "attribution": {
    "marketing": {
     "total": 262,
-    "simulation": 161,
+    "simulation": 160,
     "reponse": 4,
-    "rdv_public": 97
+    "rdv_public": 98
    },
    "sales": {
     "total": 28
@@ -875,9 +875,9 @@
     "14337": {
      "marketing": {
       "total": 12,
-      "simulation": 9,
+      "simulation": 8,
       "reponse": 0,
-      "rdv_public": 3
+      "rdv_public": 4
      },
      "sales": {
       "total": 1
@@ -933,9 +933,9 @@
     "v1": {
      "marketing": {
       "total": 169,
-      "simulation": 99,
+      "simulation": 98,
       "reponse": 0,
-      "rdv_public": 70
+      "rdv_public": 71
      },
      "sales": {
       "total": 9
@@ -962,8 +962,8 @@
    "qualification": {
     "certain": 278,
     "attente": 12,
-    "certain_rdv_client": 97,
-    "certain_parcours": 161,
+    "certain_rdv_client": 98,
+    "certain_parcours": 160,
     "certain_rdv_sales": 20,
     "attente_carte_seule": 12,
     "par_cellule": {
@@ -994,8 +994,8 @@
      "14337": {
       "certain": 13,
       "attente": 0,
-      "certain_rdv_client": 3,
-      "certain_parcours": 9,
+      "certain_rdv_client": 4,
+      "certain_parcours": 8,
       "certain_rdv_sales": 1,
       "attente_carte_seule": 0
      },
@@ -1058,13 +1058,13 @@
      "clicks_emails": 5,
      "opens_frozen": true,
      "replies_non_fiable": 59,
-     "meetings": 25,
+     "meetings": 26,
      "deals_ae": 21,
      "engaged": 37,
      "split": {
-      "both": 9,
+      "both": 10,
       "meet_only": 16,
-      "deal_only": 12,
+      "deal_only": 11,
       "engaged": 37,
       "deal_n8n": 11,
       "deal_manual": 10,
@@ -1100,7 +1100,7 @@
       {
        "owner_id": "1722214870",
        "owner": "Clara Baekelandt",
-       "meetings": 5
+       "meetings": 6
       },
       {
        "owner_id": "650299108",
@@ -1292,15 +1292,15 @@
      "opens_frozen": true,
      "replies_non_fiable": 17,
      "meetings": 10,
-     "deals_ae": 9,
+     "deals_ae": 8,
      "engaged": 13,
      "split": {
-      "both": 6,
-      "meet_only": 4,
+      "both": 5,
+      "meet_only": 5,
       "deal_only": 3,
       "engaged": 13,
       "deal_n8n": 5,
-      "deal_manual": 4,
+      "deal_manual": 3,
       "deal_only_manual": 0,
       "relanced": 33,
       "engaged_v2": 1,
@@ -1308,7 +1308,7 @@
       "marketing": 12,
       "sales": 1,
       "non_attribuable": 0,
-      "simule": 9,
+      "simule": 8,
       "certain": 13,
       "attente": 0,
       "process": 0
@@ -1363,14 +1363,14 @@
     }
    ],
    "activation": {
-    "meet": 68,
-    "deal": 62,
+    "meet": 69,
+    "deal": 61,
     "both": 27,
-    "meet_only": 41,
-    "deal_only": 35,
+    "meet_only": 42,
+    "deal_only": 34,
     "activated": 103,
     "deal_auto": 33,
-    "deal_manual": 29,
+    "deal_manual": 28,
     "deal_only_manual": 9,
     "activated_v2": 43,
     "activated_v1": 60,
@@ -1576,8 +1576,8 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 478,
-     "clicks": 35,
+     "opens": 479,
+     "clicks": 37,
      "opens_emails": 839,
      "clicks_emails": 33,
      "opens_frozen": false,
@@ -1602,7 +1602,7 @@
       "simule": 58,
       "certain": 88,
       "attente": 0,
-      "process": 7
+      "process": 6
      },
      "steps": [
       {
@@ -1659,7 +1659,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 7
+    "process": 6
    },
    "reply_curve": []
   }
