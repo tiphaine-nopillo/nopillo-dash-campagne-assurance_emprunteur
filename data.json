@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-12T21:25:03.179299+00:00",
+  "generated_at": "2026-11-13T12:58:27.434319+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,12 +192,12 @@
    "activated_v1": 178
   },
   "global": {
-   "activated": 468,
+   "activated": 467,
    "meet": 221,
    "deal": 339,
-   "both": 92,
+   "both": 93,
    "campagne": 290,
-   "hors_campagne": 178,
+   "hors_campagne": 177,
    "campagne_hors_global": 0,
    "par_createur": {
     "Simulation produit · n8n": 256,
@@ -217,20 +217,20 @@
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Team AE · Clara Baekelandt": 4,
     "Marc Chevalier · CGP": 4,
-    "Team AE · Lilian Maudet": 1,
-    "Autre utilisateur": 1
+    "Team AE · Clara Baekelandt": 4,
+    "Autre utilisateur": 1,
+    "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 108,
-   "rdv_seul_hors": 21,
+   "rdv_seul_hors": 20,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 162,
-    "Lien roundrobin AE · hors campagne": 22,
+    "Lien roundrobin AE · hors campagne": 24,
     "signature_rdv": 15,
     "Posé par la Team AE · contact ciblé": 14,
-    "nps": 4,
     "Posé par la Team AE · hors campagne": 2,
+    "nps": 2,
     "signature": 2
    },
    "rdv_origine_camp": {
@@ -239,9 +239,9 @@
     "signature_rdv": 13
    },
    "rdv_origine_hors": {
-    "Lien roundrobin AE · hors campagne": 22,
-    "nps": 4,
+    "Lien roundrobin AE · hors campagne": 24,
     "Posé par la Team AE · hors campagne": 2,
+    "nps": 2,
     "signature": 2,
     "signature_rdv": 2
    },
@@ -334,7 +334,7 @@
     {
      "periode": "2026-10-19",
      "campagne": 1,
-     "hors": 9
+     "hors": 8
     },
     {
      "periode": "2026-10-26",
@@ -736,7 +736,7 @@
     {
      "periode": "2026-10-22",
      "campagne": 0,
-     "hors": 4
+     "hors": 3
     },
     {
      "periode": "2026-10-23",
@@ -1025,8 +1025,8 @@
      }
     }
    },
-   "sync_stale": true,
-   "last_sync": "2026-10-19T09:10:39.445000+00:00"
+   "sync_stale": false,
+   "last_sync": "2026-11-13T12:36:19.430000+00:00"
   }
  },
  "cohorts": [
@@ -1581,7 +1581,7 @@
      "opens_emails": 839,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 143,
+     "replies_non_fiable": 144,
      "meetings": 48,
      "deals_ae": 61,
      "engaged": 88,
