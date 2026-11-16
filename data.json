@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-13T20:27:22.706412+00:00",
+  "generated_at": "2026-11-16T13:30:34.003493+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -217,8 +217,8 @@
    },
    "par_createur_hors": {
     "Simulation produit · n8n": 147,
-    "Team AE · Clara Baekelandt": 4,
     "Marc Chevalier · CGP": 4,
+    "Team AE · Clara Baekelandt": 4,
     "Autre utilisateur": 1,
     "Team AE · Lilian Maudet": 1
    },
@@ -784,7 +784,7 @@
     },
     {
      "phase": "offer_viewed",
-     "transactions": 17
+     "transactions": 16
     },
     {
      "phase": "offer_accepted",
@@ -792,7 +792,7 @@
     },
     {
      "phase": "process_started",
-     "transactions": 22
+     "transactions": 23
     },
     {
      "phase": "process_completed",
@@ -815,7 +815,7 @@
    "simu_seule_pipe": 11
   },
   "relanced": 1070,
-  "process": 18,
+  "process": 19,
   "attribution": {
    "marketing": {
     "total": 262,
@@ -1025,7 +1025,7 @@
      }
     }
    },
-   "sync_stale": false,
+   "sync_stale": true,
    "last_sync": "2026-11-13T12:36:19.430000+00:00"
   }
  },
@@ -1130,7 +1130,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 77,
+     "replies_non_fiable": 78,
      "meetings": 26,
      "deals_ae": 24,
      "engaged": 41,
@@ -1406,7 +1406,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 156,
+     "replies_non_fiable": 158,
      "meetings": 55,
      "deals_ae": 40,
      "engaged": 71,
@@ -1479,7 +1479,7 @@
      "opens_emails": 158,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 45,
+     "replies_non_fiable": 46,
      "meetings": 17,
      "deals_ae": 20,
      "engaged": 28,
@@ -1576,12 +1576,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 479,
+     "opens": 481,
      "clicks": 37,
      "opens_emails": 839,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 147,
+     "replies_non_fiable": 148,
      "meetings": 48,
      "deals_ae": 61,
      "engaged": 88,
@@ -1602,7 +1602,7 @@
       "simule": 58,
       "certain": 88,
       "attente": 0,
-      "process": 6
+      "process": 7
      },
      "steps": [
       {
@@ -1659,7 +1659,7 @@
     "activated_v2": 0,
     "activated_v1": 88,
     "relanced": 0,
-    "process": 6
+    "process": 7
    },
    "reply_curve": []
   }
