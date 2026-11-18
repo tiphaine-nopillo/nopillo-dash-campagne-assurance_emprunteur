@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-17T22:50:41.965574+00:00",
+  "generated_at": "2026-11-18T13:46:24.332931+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,15 +192,15 @@
    "activated_v1": 199
   },
   "global": {
-   "activated": 652,
+   "activated": 657,
    "meet": 222,
-   "deal": 530,
+   "deal": 535,
    "both": 100,
    "campagne": 321,
-   "hors_campagne": 331,
+   "hors_campagne": 336,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 439,
+    "Simulation produit · n8n": 444,
     "Team AE · Clara Baekelandt": 33,
     "Team AE · Mathieu d'Ornellas": 23,
     "Team AE · Lilian Maudet": 23,
@@ -216,11 +216,11 @@
     "Workflow HubSpot · RDV sans simu": 7
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 300,
-    "Marc Chevalier · CGP": 4,
+    "Simulation produit · n8n": 305,
     "Team AE · Clara Baekelandt": 4,
-    "Team AE · Lilian Maudet": 1,
-    "Autre utilisateur": 1
+    "Marc Chevalier · CGP": 4,
+    "Autre utilisateur": 1,
+    "Team AE · Lilian Maudet": 1
    },
    "rdv_seul_camp": 101,
    "rdv_seul_hors": 21,
@@ -354,7 +354,7 @@
     {
      "periode": "2026-11-16",
      "campagne": 4,
-     "hors": 14
+     "hors": 19
     }
    ],
    "par_jour": [
@@ -881,17 +881,22 @@
     {
      "periode": "2026-11-17",
      "campagne": 2,
-     "hors": 4
+     "hors": 6
+    },
+    {
+     "periode": "2026-11-18",
+     "campagne": 0,
+     "hors": 3
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 324
+     "transactions": 325
     },
     {
      "phase": "simulation_completed",
-     "transactions": 82
+     "transactions": 86
     },
     {
      "phase": "simulation_ready",
@@ -1141,7 +1146,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-11-17T18:00:24.511000+00:00"
+   "last_sync": "2026-11-18T11:00:19.321000+00:00"
   }
  },
  "cohorts": [
@@ -1245,7 +1250,7 @@
      "opens_emails": 360,
      "clicks_emails": 16,
      "opens_frozen": true,
-     "replies_non_fiable": 78,
+     "replies_non_fiable": 79,
      "meetings": 26,
      "deals_ae": 27,
      "engaged": 42,
@@ -1521,7 +1526,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 160,
+     "replies_non_fiable": 161,
      "meetings": 55,
      "deals_ae": 47,
      "engaged": 77,
@@ -1691,12 +1696,12 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 483,
+     "opens": 485,
      "clicks": 38,
      "opens_emails": 839,
      "clicks_emails": 33,
      "opens_frozen": false,
-     "replies_non_fiable": 152,
+     "replies_non_fiable": 154,
      "meetings": 48,
      "deals_ae": 85,
      "engaged": 109,
