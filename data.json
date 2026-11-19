@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-19T14:15:47.003592+00:00",
+  "generated_at": "2026-11-19T22:39:18.786754+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -202,8 +202,8 @@
    "par_createur": {
     "Simulation produit · n8n": 451,
     "Team AE · Clara Baekelandt": 34,
-    "Team AE · Mathieu d'Ornellas": 23,
     "Team AE · Lilian Maudet": 23,
+    "Team AE · Mathieu d'Ornellas": 23,
     "Workflow HubSpot · RDV sans simu": 8,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1
@@ -925,11 +925,11 @@
     },
     {
      "phase": "optimization_activated",
-     "transactions": 54
+     "transactions": 48
     },
     {
      "phase": "optimization_declined",
-     "transactions": 140
+     "transactions": 146
     }
    ]
   },
@@ -1151,7 +1151,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-11-19T14:00:28.289000+00:00"
+   "last_sync": "2026-11-19T17:00:18.321000+00:00"
   }
  },
  "cohorts": [
@@ -1182,7 +1182,7 @@
      "opens_emails": 379,
      "clicks_emails": 5,
      "opens_frozen": true,
-     "replies_non_fiable": 60,
+     "replies_non_fiable": 61,
      "meetings": 26,
      "deals_ae": 24,
      "engaged": 40,
@@ -1531,7 +1531,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 163,
+     "replies_non_fiable": 164,
      "meetings": 55,
      "deals_ae": 49,
      "engaged": 78,
@@ -1701,7 +1701,7 @@
      "status": "TERMINE",
      "sent": 1728,
      "bounced": 2,
-     "opens": 488,
+     "opens": 490,
      "clicks": 38,
      "opens_emails": 839,
      "clicks_emails": 33,
