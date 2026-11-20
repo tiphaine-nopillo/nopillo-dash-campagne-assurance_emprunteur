@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-20T13:56:23.942588+00:00",
+  "generated_at": "2026-11-20T21:46:23.109966+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,18 +192,18 @@
    "activated_v1": 200
   },
   "global": {
-   "activated": 668,
-   "meet": 223,
-   "deal": 548,
-   "both": 103,
+   "activated": 673,
+   "meet": 224,
+   "deal": 553,
+   "both": 104,
    "campagne": 323,
-   "hors_campagne": 345,
+   "hors_campagne": 350,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 455,
+    "Simulation produit · n8n": 460,
     "Team AE · Clara Baekelandt": 34,
-    "Team AE · Mathieu d'Ornellas": 23,
     "Team AE · Lilian Maudet": 23,
+    "Team AE · Mathieu d'Ornellas": 23,
     "Workflow HubSpot · RDV sans simu": 8,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1
@@ -216,17 +216,17 @@
     "Workflow HubSpot · RDV sans simu": 8
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 315,
-    "Team AE · Clara Baekelandt": 4,
+    "Simulation produit · n8n": 320,
     "Marc Chevalier · CGP": 4,
-    "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Team AE · Clara Baekelandt": 4,
+    "Team AE · Lilian Maudet": 1,
+    "Autre utilisateur": 1
    },
    "rdv_seul_camp": 100,
    "rdv_seul_hors": 20,
    "rdv_origine": {
     "Lien roundrobin AE · ciblé par la campagne": 161,
-    "Lien roundrobin AE · hors campagne": 25,
+    "Lien roundrobin AE · hors campagne": 26,
     "signature_rdv": 17,
     "Posé par la Team AE · contact ciblé": 14,
     "Posé par la Team AE · hors campagne": 2,
@@ -239,7 +239,7 @@
     "signature_rdv": 14
    },
    "rdv_origine_hors": {
-    "Lien roundrobin AE · hors campagne": 25,
+    "Lien roundrobin AE · hors campagne": 26,
     "signature_rdv": 3,
     "Posé par la Team AE · hors campagne": 2,
     "nps": 2,
@@ -319,7 +319,7 @@
     {
      "periode": "2026-09-28",
      "campagne": 10,
-     "hors": 17
+     "hors": 18
     },
     {
      "periode": "2026-10-05",
@@ -354,7 +354,7 @@
     {
      "periode": "2026-11-16",
      "campagne": 6,
-     "hors": 27
+     "hors": 31
     }
    ],
    "par_jour": [
@@ -651,7 +651,7 @@
     {
      "periode": "2026-10-02",
      "campagne": 0,
-     "hors": 5
+     "hors": 6
     },
     {
      "periode": "2026-10-03",
@@ -896,17 +896,17 @@
     {
      "periode": "2026-11-20",
      "campagne": 0,
-     "hors": 3
+     "hors": 7
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 331
+     "transactions": 333
     },
     {
      "phase": "simulation_completed",
-     "transactions": 87
+     "transactions": 90
     },
     {
      "phase": "simulation_ready",
@@ -922,11 +922,11 @@
     },
     {
      "phase": "process_started",
-     "transactions": 18
+     "transactions": 16
     },
     {
      "phase": "process_completed",
-     "transactions": 22
+     "transactions": 24
     },
     {
      "phase": "optimization_activated",
@@ -1156,7 +1156,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-11-20T12:00:24.671000+00:00"
+   "last_sync": "2026-11-20T17:00:18.210000+00:00"
   }
  },
  "cohorts": [
