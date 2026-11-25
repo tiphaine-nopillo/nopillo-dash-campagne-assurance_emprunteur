@@ -1,7 +1,7 @@
 {
  "meta": {
   "campaign": "Suivi du lancement cross-sell Assurance Emprunteur",
-  "generated_at": "2026-11-24T15:41:58.265833+00:00",
+  "generated_at": "2026-11-25T00:33:31.582904+00:00",
   "collected": true,
   "primary_axis": "cohort",
   "primary_kpi": "engaged",
@@ -192,19 +192,19 @@
    "activated_v1": 202
   },
   "global": {
-   "activated": 712,
+   "activated": 715,
    "meet": 227,
-   "deal": 588,
+   "deal": 591,
    "both": 103,
    "campagne": 326,
-   "hors_campagne": 386,
+   "hors_campagne": 389,
    "campagne_hors_global": 0,
    "par_createur": {
-    "Simulation produit · n8n": 497,
+    "Simulation produit · n8n": 500,
     "Team AE · Clara Baekelandt": 33,
     "Team AE · Mathieu d'Ornellas": 23,
-    "Team AE · Lilian Maudet": 22,
-    "Workflow HubSpot · RDV sans simu": 8,
+    "Team AE · Lilian Maudet": 21,
+    "Workflow HubSpot · RDV sans simu": 9,
     "Marc Chevalier · CGP": 4,
     "Autre utilisateur": 1
    },
@@ -216,11 +216,11 @@
     "Workflow HubSpot · RDV sans simu": 8
    },
    "par_createur_hors": {
-    "Simulation produit · n8n": 354,
+    "Simulation produit · n8n": 357,
     "Marc Chevalier · CGP": 4,
     "Team AE · Clara Baekelandt": 3,
     "Autre utilisateur": 1,
-    "Team AE · Lilian Maudet": 1
+    "Workflow HubSpot · RDV sans simu": 1
    },
    "rdv_seul_camp": 101,
    "rdv_seul_hors": 23,
@@ -354,12 +354,12 @@
     {
      "periode": "2026-11-16",
      "campagne": 7,
-     "hors": 45
+     "hors": 46
     },
     {
      "periode": "2026-11-23",
      "campagne": 2,
-     "hors": 22
+     "hors": 24
     }
    ],
    "par_jour": [
@@ -896,7 +896,7 @@
     {
      "periode": "2026-11-19",
      "campagne": 1,
-     "hors": 3
+     "hors": 4
     },
     {
      "periode": "2026-11-20",
@@ -921,37 +921,37 @@
     {
      "periode": "2026-11-24",
      "campagne": 2,
-     "hors": 17
+     "hors": 19
     }
    ],
    "par_phase": [
     {
      "phase": "simulation_started",
-     "transactions": 353
+     "transactions": 354
     },
     {
      "phase": "simulation_completed",
-     "transactions": 86
+     "transactions": 89
     },
     {
      "phase": "simulation_ready",
-     "transactions": 16
+     "transactions": 17
     },
     {
      "phase": "offer_viewed",
-     "transactions": 16
+     "transactions": 14
     },
     {
      "phase": "offer_accepted",
-     "transactions": 8
+     "transactions": 7
     },
     {
      "phase": "process_started",
-     "transactions": 25
+     "transactions": 19
     },
     {
      "phase": "process_completed",
-     "transactions": 27
+     "transactions": 23
     },
     {
      "phase": "optimization_activated",
@@ -959,7 +959,7 @@
     },
     {
      "phase": "optimization_declined",
-     "transactions": 152
+     "transactions": 151
     }
    ]
   },
@@ -970,7 +970,7 @@
    "simu_seule_pipe": 12
   },
   "relanced": 1070,
-  "process": 20,
+  "process": 19,
   "attribution": {
    "marketing": {
     "total": 294,
@@ -1181,7 +1181,7 @@
     }
    },
    "sync_stale": false,
-   "last_sync": "2026-11-24T15:00:20.893000+00:00"
+   "last_sync": "2026-11-24T19:18:01.173000+00:00"
   }
  },
  "cohorts": [
@@ -1561,7 +1561,7 @@
      "opens_emails": 539,
      "clicks_emails": 7,
      "opens_frozen": true,
-     "replies_non_fiable": 170,
+     "replies_non_fiable": 171,
      "meetings": 55,
      "deals_ae": 50,
      "engaged": 79,
@@ -1757,7 +1757,7 @@
       "simule": 81,
       "certain": 112,
       "attente": 0,
-      "process": 8
+      "process": 7
      },
      "steps": [
       {
@@ -1814,7 +1814,7 @@
     "activated_v2": 0,
     "activated_v1": 112,
     "relanced": 0,
-    "process": 8
+    "process": 7
    },
    "reply_curve": []
   }
